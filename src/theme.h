@@ -129,11 +129,16 @@ inline constexpr int ControlRadius  = 5;   // controls, rows, buttons
 inline constexpr int BadgeRadius    = 3;   // ⌃K badge
 inline constexpr qreal ToggleRadius = 7.5; // spec says 8, clamped to half of 15
 
-inline constexpr int ToggleWidth  = 26;
-inline constexpr int ToggleHeight = 15;
-inline constexpr int KnobDiameter = 9;
+// The handoff's switch is 26×15 with a 9px knob. The redesigned one is a shade larger
+// so the wipe fill and the squash have room to read; everything else in the row grid is
+// derived from these, so the layout follows automatically.
+inline constexpr int ToggleWidth  = 30;    // the capsule itself
+inline constexpr int ToggleHeight = 16;
 inline constexpr int KnobInset    = 2;     // from the padding box
-inline constexpr int KnobTravel   = 13;    // left: 2px → 13px
+// The switch's accent halo has to fade out somewhere. Without transparent room around
+// the capsule it gets clipped to the widget rectangle and reads as a tinted box, so the
+// widget is larger than the capsule and rows offset it back by this much.
+inline constexpr int ToggleBleed  = 7;
 
 inline constexpr int WindowButtonWidth = 40;
 

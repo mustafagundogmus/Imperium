@@ -11,6 +11,7 @@
 #include "updater.h"
 #include "views/settingspage.h"
 #include "views/statusbar.h"
+#include "widgets/applyoverlay.h"
 #include "views/titlebar.h"
 #include "views/tweakpage.h"
 #include "widgets/searchfield.h"
@@ -128,6 +129,11 @@ void MainWindow::buildUi()
 
     m_statusBar = new StatusBar(card());
     main->addWidget(m_statusBar);
+
+    // Sits above the content column, not in a layout: it covers the header, the list and
+    // the status bar while a write is running, and leaves the title bar reachable.
+    m_applyOverlay = new ApplyOverlay(m_state, card());
+    m_applyOverlay->hide();
 }
 
 void MainWindow::wire()
@@ -145,6 +151,8 @@ void MainWindow::wire()
     connect(m_header, &ContentHeader::sortToggled, this, &MainWindow::onSortToggled);
 
     connect(m_statusBar, &StatusBar::applyRequested, this, &MainWindow::onApply);
+    connect(m_applyOverlay, &ApplyOverlay::finished, this, &MainWindow::onApplyFinished);
+    connect(m_applyOverlay, &ApplyOverlay::notice, m_statusBar, &StatusBar::setNotice);
     connect(m_statusBar, &StatusBar::revertRequested, this, &MainWindow::onRevert);
 
     connect(m_state, &AppState::pendingChanged, this, &MainWindow::refreshCounters);
@@ -345,15 +353,43 @@ void MainWindow::onSortToggled(bool alphabetical)
     refreshView();
 }
 
+QRect MainWindow::overlayRect() const
+{
+    // Everything below the title bar, sidebar included: while a write is running the
+    // user should not be able to navigate away from it. The title bar stays reachable
+    // so the window can still be moved or minimised.
+    const QRect inner = card()->rect().adjusted(1, 1, -1, -1);
+    return inner.adjusted(0, m_titleBar->height(), 0, 0);
+}
+
+void MainWindow::previewApply()
+{
+    m_applyOverlay->setGeometry(overlayRect());
+    m_applyOverlay->preview(24);
+}
+
 void MainWindow::onApply()
 {
-    const AppState::ApplyReport report = m_state->applyPending();
+    if (m_state->pendingCount() == 0 || m_applyOverlay->running())
+        return;
 
-    if (report.failed == 0) {
-        if (report.succeeded > 0)
-            m_statusBar->setNotice(QStringLiteral("%1 tweak uygulandı").arg(report.succeeded));
+    // The overlay drives the writes itself, one per tick, and reports back when done.
+    m_applyOverlay->setGeometry(overlayRect());
+    m_applyOverlay->run();
+}
+
+void MainWindow::onApplyFinished(int succeeded, int failed, bool elevationRequired)
+{
+    refreshCounters();
+    refreshView();
+
+    if (failed == 0) {
+        if (succeeded > 0)
+            m_statusBar->setNotice(QStringLiteral("%1 tweak uygulandı").arg(succeeded));
         return;
     }
+
+    const AppState::ApplyReport report{succeeded, failed, elevationRequired, QString()};
 
     if (report.elevationRequired && !TweakEngine::isElevated()) {
         // These tweaks live outside HKCU, so they cannot be written by a standard token.

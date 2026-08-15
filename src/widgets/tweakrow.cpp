@@ -11,7 +11,7 @@ namespace {
 
 constexpr qreal BorderW = 1.0;   // `border:1px solid transparent`
 constexpr qreal PadX = 6.0;
-constexpr qreal ToggleCol = 26.0;
+const qreal ToggleCol = Theme::Metric::ToggleWidth;
 constexpr qreal ColGap = 12.0;
 constexpr qreal TextGap = 1.0;   // flex column gap between name and desc
 
@@ -79,8 +79,8 @@ void TweakRow::resizeEvent(QResizeEvent *e)
 void TweakRow::positionToggle()
 {
     // `align-items:center` centres the 15px pill in the content box.
-    const int x = qRound(BorderW + PadX);
-    const int y = qRound((height() - Theme::Metric::ToggleHeight) / 2.0);
+    const int x = qRound(BorderW + PadX) - Theme::Metric::ToggleBleed;
+    const int y = qRound((height() - m_toggle->height()) / 2.0);
     m_toggle->move(x, y);
 }
 

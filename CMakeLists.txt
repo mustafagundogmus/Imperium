@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(Arbitrium VERSION 0.9.2 LANGUAGES CXX)
+project(Arbitrium VERSION 0.9.3 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -27,11 +27,13 @@ set(PROJECT_SOURCES
     src/preset.h                      src/preset.cpp
     src/settings.h                    src/settings.cpp
     src/updater.h                     src/updater.cpp
+    src/shell.h                       src/shell.cpp
     src/tweakengine.h                 src/tweakengine.cpp
     src/framelesswindow.h             src/framelesswindow.cpp
     src/mainwindow.h                  src/mainwindow.cpp
 
     src/widgets/accentpicker.h        src/widgets/accentpicker.cpp
+    src/widgets/applyoverlay.h        src/widgets/applyoverlay.cpp
     src/widgets/buttons.h             src/widgets/buttons.cpp
     src/widgets/categoryrow.h         src/widgets/categoryrow.cpp
     src/widgets/livechart.h           src/widgets/livechart.cpp

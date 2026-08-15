@@ -1,14 +1,19 @@
-// toggleswitch.h — the 26×15 pill from §4 of the handoff.
+// toggleswitch.h — the switch used everywhere in the app.
 //
-//   off : background #232329, border 1px #33333A, 9px knob #8A8A93 at left 2px
-//   on  : background + border = accent,            9px knob #141414   at left 13px
-//   transition: background .15s, border-color .15s, left .15s
+// The handoff draws a flat 26×15 pill that cross-fades to the accent. This is a richer
+// take on the same idea, kept inside the design's language (no gradients, no glass, 1px
+// borders only):
 //
-// The knob colour is deliberately *not* interpolated — the mockup only transitions
-// background, border-color and left, so the knob swaps instantly.
+//   · the accent does not cross-fade in — it *wipes* across the track, following the
+//     knob, so the fill and the knob read as one movement
+//   · the knob squashes while held and springs back on release
+//   · turning on overshoots very slightly (OutBack), turning off settles (OutCubic)
+//   · a soft accent halo sits under the track while on, which is what gives it presence
+//     against #121214 without adding a single new colour
 
 #pragma once
 
+#include <QRectF>
 #include <QWidget>
 
 class QVariantAnimation;
@@ -30,13 +35,24 @@ Q_SIGNALS:
 
 protected:
     void paintEvent(QPaintEvent *) override;
+    void enterEvent(QEnterEvent *) override;
+    void leaveEvent(QEvent *) override;
     void mousePressEvent(QMouseEvent *) override;
     void mouseReleaseEvent(QMouseEvent *) override;
     void keyPressEvent(QKeyEvent *) override;
 
 private:
+    QRectF capsule() const;        ///< the drawn switch inside the padded widget
+    qreal knobCentre() const;      ///< x of the knob centre at the current position
+    qreal knobRadius() const;
+    void animateTo(qreal target, bool overshoot);
+
     bool m_checked = false;
     bool m_pressed = false;
-    qreal m_t = 0.0;                 ///< 0 = off, 1 = on
-    QVariantAnimation *m_anim = nullptr;
+    bool m_hovered = false;
+
+    qreal m_t = 0.0;               ///< 0 = off, 1 = on (may briefly exceed 1 on overshoot)
+    qreal m_squash = 0.0;          ///< 0 = round knob, 1 = fully squashed
+    QVariantAnimation *m_slide = nullptr;
+    QVariantAnimation *m_squashAnim = nullptr;
 };

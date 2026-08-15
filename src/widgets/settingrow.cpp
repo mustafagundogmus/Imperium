@@ -9,7 +9,7 @@ namespace {
 
 constexpr qreal BorderW = 1.0;
 constexpr qreal PadX = 6.0;
-constexpr qreal LeadingCol = 26.0;
+const qreal LeadingCol = Theme::Metric::ToggleWidth;
 constexpr qreal ColGap = 12.0;
 constexpr qreal TrailingGap = 16.0;
 constexpr qreal TextGap = 1.0;
@@ -83,7 +83,7 @@ void SettingRow::positionControl()
 
     const int y = qRound((height() - m_control->height()) / 2.0);
     if (m_placement == Leading)
-        m_control->move(qRound(BorderW + PadX), y);
+        m_control->move(qRound(BorderW + PadX) - Theme::Metric::ToggleBleed, y);
     else
         m_control->move(qRound(width() - BorderW - PadX - m_control->width()), y);
 }

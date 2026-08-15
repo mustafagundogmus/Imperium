@@ -26,6 +26,7 @@ class Sidebar;
 class SmoothScrollArea;
 class StatusBar;
 class TitleBar;
+class ApplyOverlay;
 class SettingsPage;
 class TweakEngine;
 class TweakPage;
@@ -42,12 +43,16 @@ public:
     /// Opens a category by id ("ov", "priv", …). Ignored if the id is unknown.
     void showCategory(const QString &id);
 
+    /// --preview-apply: runs the apply overlay without writing anything.
+    void previewApply();
+
 private Q_SLOTS:
     void onCategoryActivated(const QString &id);
     void onQueryChanged(const QString &query);
     void onFilterChanged(int index);
     void onSortToggled(bool alphabetical);
     void onApply();
+    void onApplyFinished(int succeeded, int failed, bool elevationRequired);
     void onRevert();
     void onRestorePointRequested();
 
@@ -57,6 +62,7 @@ private:
     void refreshView();       ///< header + list + stack page
     void refreshCounters();   ///< pending-driven labels and tiles
     QVector<Section> visibleSections() const;
+    QRect overlayRect() const;
 
     TweakEngine *m_engine = nullptr;
     AppState *m_state = nullptr;
@@ -77,6 +83,7 @@ private:
     OverviewPage *m_overview = nullptr;
     TweakPage *m_tweaks = nullptr;
     StatusBar *m_statusBar = nullptr;
+    ApplyOverlay *m_applyOverlay = nullptr;
 
     bool m_alphabetical = false;
 };

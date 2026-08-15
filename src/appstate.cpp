@@ -164,6 +164,45 @@ AppState::ApplyReport AppState::applyPending()
     return report;
 }
 
+AppState::StepOutcome AppState::applyOne(const QString &id)
+{
+    StepOutcome outcome;
+    outcome.id = id;
+
+    const Tweak *tweak = Catalog::instance().tweak(id);
+    if (!tweak || !m_engine || !m_pending.contains(id))
+        return outcome;
+
+    outcome.name = tweak->name;
+    outcome.path = tweak->reg.hive + QLatin1String("\\") + tweak->reg.path
+                   + QLatin1String("\\") + tweak->reg.value;
+
+    const bool desired = m_on.value(id, false);
+    const QVector<TweakEngine::Outcome> results = m_engine->apply({{tweak, desired}});
+    if (results.isEmpty())
+        return outcome;
+
+    const TweakEngine::Outcome &result = results.first();
+    outcome.ok = result.ok;
+    outcome.elevationRequired = result.elevationRequired;
+
+    if (result.ok) {
+        const bool was = m_applied.value(id, false);
+        m_applied[id] = desired;
+        if (desired && !was)
+            ++m_appliedCount;
+        else if (!desired && was)
+            --m_appliedCount;
+        m_pending.remove(id);
+
+        m_lastApplied = QDateTime::currentDateTime();
+        QSettings().setValue(QStringLiteral("state/lastApplied"), m_lastApplied);
+        Q_EMIT pendingChanged();
+    }
+
+    return outcome;
+}
+
 void AppState::revertPending()
 {
     if (m_pending.isEmpty())

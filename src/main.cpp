@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QApplication::setApplicationName(QStringLiteral("Arbitrium"));
-    QApplication::setApplicationVersion(QStringLiteral("0.9.2"));
+    QApplication::setApplicationVersion(QStringLiteral("0.9.3"));
     QApplication::setOrganizationName(QStringLiteral("Arbitrium"));
     QApplication::setOrganizationDomain(QStringLiteral("arbitrium.local"));
     QApplication::setWindowIcon(QIcon(QStringLiteral(":/icons/tweaker.ico")));
@@ -169,12 +169,16 @@ int main(int argc, char *argv[])
     parser.addOption(compactOption);
     parser.addOption(themeOption);
     parser.addOption(categoryOption);
+    QCommandLineOption previewApplyOption(QStringLiteral("preview-apply"),
+                                          QStringLiteral("Open the apply overlay without "
+                                                         "writing anything (design preview)."));
     QCommandLineOption selfTestOption(QStringLiteral("self-test"),
                                       QStringLiteral("Exercise the window buttons and write the "
                                                      "result to a file, then exit."),
                                       QStringLiteral("path"));
     parser.addOption(shotOption);
     parser.addOption(shotDelayOption);
+    parser.addOption(previewApplyOption);
     parser.addOption(selfTestOption);
     parser.process(app);
 
@@ -199,6 +203,9 @@ int main(int argc, char *argv[])
     if (parser.isSet(categoryOption))
         window.showCategory(parser.value(categoryOption));
     window.show();
+
+    if (parser.isSet(previewApplyOption))
+        QTimer::singleShot(250, &window, [&window] { window.previewApply(); });
 
     if (parser.isSet(selfTestOption)) {
         const QString path = parser.value(selfTestOption);

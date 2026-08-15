@@ -59,6 +59,18 @@ public:
     /// Writes every pending change to the registry and folds the results back in.
     ApplyReport applyPending();
 
+    struct StepOutcome
+    {
+        QString id;
+        QString name;
+        QString path;    ///< "HKCU\Software\..." — shown while the write happens
+        bool ok = false;
+        bool elevationRequired = false;
+    };
+
+    /// Writes exactly one pending tweak, so an apply can be driven a step at a time.
+    StepOutcome applyOne(const QString &id);
+
     /// Puts every switch back where the system currently stands. Writes nothing.
     void revertPending();
 
