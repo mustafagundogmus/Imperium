@@ -57,7 +57,7 @@ private:
         QString data;
     };
 
-    void journal(const Tweak &tweak, bool desired);
+    void journal(const Tweak &tweak, int index, const struct RegistryEntry &entry, bool desired);
     void loadOriginals();
 
     QString m_journalPath;

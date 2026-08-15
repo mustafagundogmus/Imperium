@@ -1,6 +1,9 @@
 {
- "version": 3,
- "source": "elevenforum.com/tutorials",
+ "version": 4,
+ "sources": [
+  "https://www.elevenforum.com/tutorials/",
+  "https://github.com/christitustech/winutil"
+ ],
  "categories": [
   {
    "id": "ov",
@@ -20,129 +23,145 @@
        "id": "sys-01-5206",
        "name": "İpucu ve öneri bildirimleri",
        "desc": "Windows kullanırken gelen ipucu ve öneri bildirimlerini kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+         "value": "SubscribedContent-338389Enabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.5206/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
-        "value": "SubscribedContent-338389Enabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.5206/"
+       "on": false
       },
       {
        "id": "sys-02-5205",
        "name": "Kurulumu tamamlama ekranı",
        "desc": "Oturum açarken çıkan cihaz kurulumu tamamlama ekranını engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\UserProfileEngagement",
+         "value": "ScoobeSystemSettingEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.5205/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\UserProfileEngagement",
-        "value": "ScoobeSystemSettingEnabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.5205/"
+       "on": false
       },
       {
        "id": "sys-03-46609",
        "name": "Paylaşım penceresi önerileri",
        "desc": "Paylaşım penceresindeki önerilen uygulama reklamlarını kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\CDP",
+         "value": "EnablePromotionalAppsForShare",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.46609/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\CDP",
-        "value": "EnablePromotionalAppsForShare",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.46609/"
+       "on": false
       },
       {
        "id": "sys-04-27972",
        "name": "Bildirim önerileri",
        "desc": "Bildirim merkezinin sunduğu bildirim önerilerini devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Notifications\\Settings\\Windows.ActionCenter.SmartOptOut",
+         "value": "Enabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.27972/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Notifications\\Settings\\Windows.ActionCenter.SmartOptOut",
-        "value": "Enabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.27972/"
+       "on": false
       },
       {
        "id": "sys-05-6489",
        "name": "Önerilen eylemler",
        "desc": "Kopyalanan metin için çıkan önerilen eylemler kutusunu kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SmartActionPlatform\\SmartClipboard",
+         "value": "Disabled",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.6489/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SmartActionPlatform\\SmartClipboard",
-        "value": "Disabled",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.6489/"
+       "on": false
       },
       {
        "id": "sys-06-3534",
        "name": "Bildirim sesleri",
        "desc": "Bildirim geldiğinde çalan uyarı seslerini tamamen kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Notifications\\Settings",
+         "value": "NOC_GLOBAL_SETTING_ALLOW_NOTIFICATION_SOUND",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.3534/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Notifications\\Settings",
-        "value": "NOC_GLOBAL_SETTING_ALLOW_NOTIFICATION_SOUND",
-        "type": "DWORD",
-        "on": "0",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.3534/"
+       "on": false
       },
       {
        "id": "sys-07-5665",
        "name": "Bluetooth hızlı eşleştirme",
        "desc": "Yakındaki Bluetooth cihazları için çıkan eşleştirme bildirimlerini kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Bluetooth",
+         "value": "QuickPair",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.5665/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Bluetooth",
-        "value": "QuickPair",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.5665/"
+       "on": false
       },
       {
        "id": "sys-08-7748",
        "name": "USB bağlantı uyarıları",
        "desc": "USB aygıtlarında sorun olduğunda çıkan bildirimleri engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Shell\\USB",
+         "value": "NotifyOnUsbErrors",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.7748/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Shell\\USB",
-        "value": "NotifyOnUsbErrors",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.7748/"
+       "on": false
       }
      ]
     },
@@ -153,81 +172,91 @@
        "id": "sys-01-35166",
        "name": "Click to Do aracı",
        "desc": "Windows tuşu ile açılan Click to Do yapay zekâ aracını devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\Shell\\ClickToDo",
+         "value": "DisableClickToDo",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.35166/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\Shell\\ClickToDo",
-        "value": "DisableClickToDo",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.35166/"
+       "on": false
       },
       {
        "id": "sys-02-39614",
        "name": "Ayarlar arama aracısı",
        "desc": "Ayarlar uygulamasındaki yapay zekâ arama aracısını devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsAI",
+         "value": "DisableSettingsAgent",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.39614/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsAI",
-        "value": "DisableSettingsAgent",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.39614/"
+       "on": false
       },
       {
        "id": "sys-03-6407",
        "name": "Cortana asistanı",
        "desc": "Cortana sesli asistanını tüm kullanıcılar için devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search",
+         "value": "AllowCortana",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.6407/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search",
-        "value": "AllowCortana",
-        "type": "DWORD",
-        "on": "0",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.6407/"
+       "on": false
       },
       {
        "id": "sys-04-2318",
        "name": "OneDrive eşitlemesi",
        "desc": "OneDrive dosya eşitlemesini tüm kullanıcılar için devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\OneDrive",
+         "value": "DisableFileSyncNGSC",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.2318/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\OneDrive",
-        "value": "DisableFileSyncNGSC",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.2318/"
+       "on": false
       },
       {
        "id": "sys-05-29671",
        "name": "Telefondan devam etme",
        "desc": "Telefonda açılan dosyaları bilgisayarda sürdürme özelliğini kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\CrossDeviceResume\\Configuration",
+         "value": "IsResumeAllowed",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.29671/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\CrossDeviceResume\\Configuration",
-        "value": "IsResumeAllowed",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.29671/"
+       "on": false
       }
      ]
     },
@@ -238,65 +267,73 @@
        "id": "sys-01-16757",
        "name": "Mağaza otomatik güncellemesi",
        "desc": "Microsoft Store uygulamalarının arka planda güncellenmesini durdurur.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsStore\\WindowsUpdate",
+         "value": "AutoDownload",
+         "type": "DWORD",
+         "on": "2",
+         "off": "4"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.16757/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsStore\\WindowsUpdate",
-        "value": "AutoDownload",
-        "type": "DWORD",
-        "on": "2",
-        "off": "4"
-       },
-       "source": "https://www.elevenforum.com/t/x.16757/"
+       "on": false
       },
       {
        "id": "sys-02-10109",
        "name": "Çevrimdışı harita güncellemesi",
        "desc": "Çevrimdışı haritaların otomatik olarak güncellenmesini durdurur.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\Maps",
+         "value": "AutoUpdateEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.10109/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SYSTEM\\Maps",
-        "value": "AutoUpdateEnabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.10109/"
+       "on": false
       },
       {
        "id": "sys-03-22666",
        "name": "Otomatik bakım görevleri",
        "desc": "Windows'un gece çalıştırdığı otomatik bakım görevlerini durdurur.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Schedule\\Maintenance",
+         "value": "MaintenanceDisabled",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.22666/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Schedule\\Maintenance",
-        "value": "MaintenanceDisabled",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.22666/"
+       "on": false
       },
       {
        "id": "sys-04-2688",
        "name": "Uygulamaları arşivleme",
        "desc": "Az kullanılan uygulamaların otomatik arşivlenmesini engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Appx",
+         "value": "AllowAutomaticAppArchiving",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.2688/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Appx",
-        "value": "AllowAutomaticAppArchiving",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.2688/"
+       "on": false
       }
      ]
     },
@@ -307,145 +344,857 @@
        "id": "sys-01-8283",
        "name": "Kapanışta zorla kapatma",
        "desc": "Kapatırken takılan uygulamaların beklenmesini engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Desktop",
+         "value": "AutoEndTasks",
+         "type": "SZ",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.8283/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Control Panel\\Desktop",
-        "value": "AutoEndTasks",
-        "type": "SZ",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.8283/"
+       "on": false
       },
       {
        "id": "sys-02-520",
        "name": "Print Screen tuşu davranışı",
        "desc": "Print Screen tuşuna basınca Ekran Alıntısı açılmasını engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Keyboard",
+         "value": "PrintScreenKeyForSnippingEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.520/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Control Panel\\Keyboard",
-        "value": "PrintScreenKeyForSnippingEnabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.520/"
+       "on": false
       },
       {
        "id": "sys-03-7759",
        "name": "Varsayılan yazıcı yönetimi",
        "desc": "Windows'un varsayılan yazıcıyı kendi seçmesini devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows NT\\CurrentVersion\\Windows",
+         "value": "LegacyDefaultPrinterMode",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.7759/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows NT\\CurrentVersion\\Windows",
-        "value": "LegacyDefaultPrinterMode",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.7759/"
+       "on": false
       },
       {
        "id": "sys-04-3150",
        "name": "Otomatik kullan",
        "desc": "Takılan medya ve aygıtlar için otomatik kullan özelliğini kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\AutoplayHandlers",
+         "value": "DisableAutoplay",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.3150/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\AutoplayHandlers",
-        "value": "DisableAutoplay",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.3150/"
+       "on": false
       },
       {
        "id": "sys-05-6631",
        "name": "Açılır bilgi balonları",
        "desc": "Klasör ve masaüstü öğelerinde çıkan bilgi balonlarını gizler.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "ShowInfoTip",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.6631/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "ShowInfoTip",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.6631/"
+       "on": false
       },
       {
        "id": "sys-06-35345",
        "name": "Bildirim merkezinde saat",
        "desc": "Bildirim merkezinin en üstünde saat ve tarih gösterimini açar.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "ShowClockInNotificationCenter",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.35345/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "ShowClockInNotificationCenter",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.35345/"
+       "on": false
       },
       {
        "id": "sys-07-973",
        "name": "Pano geçmişi",
        "desc": "Win+V ile açılan pano geçmişi özelliğini etkinleştirir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Clipboard",
+         "value": "EnableClipboardHistory",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.973/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Clipboard",
-        "value": "EnableClipboardHistory",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.973/"
+       "on": false
       },
       {
        "id": "sys-08-83",
        "name": "Monitör çıkınca küçültme",
        "desc": "Monitör bağlantısı kesildiğinde pencerelerin küçültülmesini engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Desktop",
+         "value": "MonitorRemovalRecalcBehavior",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.83/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Control Panel\\Desktop",
-        "value": "MonitorRemovalRecalcBehavior",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.83/"
+       "on": false
       },
       {
        "id": "sys-09-8084",
        "name": "Mavi ekranda yeniden başlatma",
        "desc": "Mavi ekran hatasında bilgisayarın kendiliğinden başlatılmasını engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\CrashControl",
+         "value": "AutoReboot",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.8084/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SYSTEM\\CurrentControlSet\\Control\\CrashControl",
-        "value": "AutoReboot",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.8084/"
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Arayüz ve görünüm · WinUtil",
+     "tweaks": [
+      {
+       "id": "wu-WPFToggleDarkMode",
+       "name": "Koyu tema",
+       "desc": "Windows arayüzü ve uygulamalar için koyu temayı açar.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+         "value": "AppsUseLightTheme",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        },
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+         "value": "SystemUsesLightTheme",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/darkmode",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFToggleBatteryPercentage",
+       "name": "Pil yüzdesi göstergesi",
+       "desc": "Sistem tepsisindeki pil simgesinin yanında yüzde değerini açar.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "IsBatteryPercentageEnabled",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/batterypercentage",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFToggleScrollbars",
+       "name": "Kaydırma çubukları",
+       "desc": "Kaydırma çubuklarının kullanılmadığında gizlenmesini kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Accessibility",
+         "value": "DynamicScrollbars",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/scrollbars",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFToggleHideSettingsHome",
+       "name": "Ayarlar giriş sayfası",
+       "desc": "Ayarlar uygulamasındaki Giriş sayfasını geri getirir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+         "value": "SettingsPageVisibility",
+         "type": "SZ",
+         "on": "show:home",
+         "off": "hide:home"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/hidesettingshome",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFTweaksEndTaskOnTaskbar",
+       "name": "Görev çubuğunda görevi sonlandır",
+       "desc": "Görev çubuğu sağ tık menüsünde görevi sonlandırma seçeneğini açar.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced\\TaskbarDeveloperSettings",
+         "value": "TaskbarEndTask",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/endtaskontaskbar",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFTweaksDisableNotifications",
+       "name": "Bildirimler ve takvim",
+       "desc": "Tüm bildirimleri ve saat yanındaki takvim panelini devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Policies\\Microsoft\\Windows\\Explorer",
+         "value": "DisableNotificationCenter",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\PushNotifications",
+         "value": "ToastEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/disablenotifications",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFToggleMouseAcceleration",
+       "name": "Fare ivmelenmesi",
+       "desc": "İmleç hızını hareket hızına göre değiştiren fare ivmesini açar.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Mouse",
+         "value": "MouseSpeed",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Mouse",
+         "value": "MouseThreshold1",
+         "type": "DWORD",
+         "on": "6",
+         "off": "0"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Mouse",
+         "value": "MouseThreshold2",
+         "type": "DWORD",
+         "on": "10",
+         "off": "0"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/mouseacceleration",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFToggleStickyKeys",
+       "name": "Yapışkan tuşlar",
+       "desc": "Shift tuşuna arka arkaya basınca çıkan yapışkan tuşları açar.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Accessibility\\StickyKeys",
+         "value": "Flags",
+         "type": "DWORD",
+         "on": "506",
+         "off": "58"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/stickykeys",
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Sistem davranışı · WinUtil",
+     "tweaks": [
+      {
+       "id": "wu-WPFTweaksUTC",
+       "name": "Donanım saatini UTC yapma",
+       "desc": "Donanım saatini UTC olarak okuyup Linux ile saat farkını kaldırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation",
+         "value": "RealTimeIsUniversal",
+         "type": "QWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/utc",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFToggleS3Sleep",
+       "name": "S3 uyku modu",
+       "desc": "Modern Beklemeyi kapatıp klasik S3 uyku modunu açar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Power",
+         "value": "PlatformAoAcOverride",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/s3sleep",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFTweaksDisableBGapps",
+       "name": "Arka plan uygulamaları",
+       "desc": "Mağaza uygulamalarının arka planda çalışmasını durdurur.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications",
+         "value": "GlobalUserDisabled",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/disablebgapps",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFTweaksDisableFSO",
+       "name": "Tam ekran optimizasyonları",
+       "desc": "Tüm uygulamalarda tam ekran optimizasyonlarını devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "System\\GameConfigStore",
+         "value": "GameDVR_DXGIHonorFSEWindowsCompatible",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/disablefso",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFTweaksRestorePoint",
+       "name": "Geri yükleme noktası",
+       "desc": "Geri yükleme noktası oluşturmayı sınırlayan bekleme süresini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\SystemRestore",
+         "value": "SystemRestorePointCreationFrequency",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1440"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/restorepoint",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFToggleDetailedBSoD",
+       "name": "Ayrıntılı mavi ekran",
+       "desc": "Mavi ekranda teknik ayrıntıları açar ve üzgün yüz simgesini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\CrashControl",
+         "value": "DisplayParameters",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\CrashControl",
+         "value": "DisableEmoticon",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/detailedbsod",
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Güvenlik ve kurulum · WinUtil",
+     "tweaks": [
+      {
+       "id": "wu-WPFTweaksWPBT",
+       "name": "WPBT üretici yazılımı",
+       "desc": "Üreticinin önyüklemede yazılım çalıştırmasını sağlayan WPBT'yi kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager",
+         "value": "DisableWpbtExecution",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/wpbt",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFTweaksPreventDeviceMetadataFromNetwork",
+       "name": "Cihaz eşlik uygulamaları",
+       "desc": "Cihaz takıldığında ek uygulama ve reklam kurulmasını engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Device Metadata",
+         "value": "PreventDeviceMetadataFromNetwork",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/preventdevicemetadatafromnetwork",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFTweaksRazerBlock",
+       "name": "Razer yazılımı engelleme",
+       "desc": "Sürücüyle gelen Razer yazılımlarının otomatik kurulumunu engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\DriverSearching",
+         "value": "SearchOrderConfig",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Device Installer",
+         "value": "DisableCoInstallers",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/razerblock",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFTweaksDisableWarningForUnsignedRdp",
+       "name": "İmzasız RDP uyarıları",
+       "desc": "İmzasız RDP dosyaları açılırken çıkan güvenlik uyarılarını gizler.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services\\Client",
+         "value": "RedirectionWarningDialogVersion",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Terminal Server Client",
+         "value": "RdpLaunchConsentAccepted",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/disablewarningforunsignedrdp",
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Uygulamalar · WinUtil",
+     "tweaks": [
+      {
+       "id": "wu-WPFTweaksEdgeDebloat",
+       "name": "Microsoft Edge sadeleştirme",
+       "desc": "Edge'deki önerileri, alışveriş araçlarını ve telemetri gönderimini kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\EdgeUpdate",
+         "value": "CreateDesktopShortcutDefault",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge",
+         "value": "PersonalizationReportingEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge\\ExtensionInstallBlocklist",
+         "value": "1",
+         "type": "SZ",
+         "on": "ofefcgjbeghpigppfmkologfjadafddi",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge",
+         "value": "ShowRecommendationsEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge",
+         "value": "HideFirstRunExperience",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge",
+         "value": "UserFeedbackAllowed",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge",
+         "value": "ConfigureDoNotTrack",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge",
+         "value": "AlternateErrorPagesEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge",
+         "value": "EdgeCollectionsEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge",
+         "value": "EdgeShoppingAssistantEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge",
+         "value": "MicrosoftEdgeInsiderPromotionEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge",
+         "value": "ShowMicrosoftRewards",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge",
+         "value": "WebWidgetAllowed",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge",
+         "value": "DiagnosticData",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge",
+         "value": "EdgeAssetDeliveryServiceEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge",
+         "value": "WalletDonationEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge",
+         "value": "DefaultBrowserSettingsCampaignEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/edgedebloat",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFTweaksBraveDebloat",
+       "name": "Brave tarayıcı sadeleştirme",
+       "desc": "Brave'deki Ödüller, Leo yapay zekâ, cüzdan, VPN ve telemetriyi kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\BraveSoftware\\Brave",
+         "value": "BraveRewardsDisabled",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\BraveSoftware\\Brave",
+         "value": "BraveWalletDisabled",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\BraveSoftware\\Brave",
+         "value": "BraveVPNDisabled",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\BraveSoftware\\Brave",
+         "value": "BraveAIChatEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\BraveSoftware\\Brave",
+         "value": "BraveStatsPingEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\BraveSoftware\\Brave",
+         "value": "BraveNewsDisabled",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\BraveSoftware\\Brave",
+         "value": "BraveTalkDisabled",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\BraveSoftware\\Brave",
+         "value": "TorDisabled",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\BraveSoftware\\Brave",
+         "value": "BraveP3AEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\BraveSoftware\\Brave",
+         "value": "UrlKeyedAnonymizedDataCollectionEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\BraveSoftware\\Brave",
+         "value": "SafeBrowsingExtendedReportingEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\BraveSoftware\\Brave",
+         "value": "MetricsReportingEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/bravedebloat",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFToggleNewOutlook",
+       "name": "Yeni Outlook sürümü",
+       "desc": "Yeni Outlook sürümünü açar, zorunlu otomatik geçişi engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Office\\16.0\\Outlook\\Preferences",
+         "value": "UseNewOutlook",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Office\\16.0\\Outlook\\Options\\General",
+         "value": "HideNewOutlookToggle",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Software\\Policies\\Microsoft\\Office\\16.0\\Outlook\\Options\\General",
+         "value": "DoNewOutlookAutoMigration",
+         "type": "DWORD",
+         "on": "0",
+         "off": "0"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Software\\Policies\\Microsoft\\Office\\16.0\\Outlook\\Preferences",
+         "value": "NewOutlookMigrationUserSetting",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/newoutlook",
+       "applied": false,
+       "on": false
       }
      ]
     }
@@ -463,81 +1212,91 @@
        "id": "vis-01-1110",
        "name": "Saydamlık efektleri",
        "desc": "Pencere ve menülerdeki saydamlık efektlerini kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+         "value": "EnableTransparency",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.1110/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
-        "value": "EnableTransparency",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.1110/"
+       "on": false
       },
       {
        "id": "vis-02-6560",
        "name": "Sürüklerken pencere içeriği",
        "desc": "Pencereleri sürüklerken içeriğin gösterilmesini engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Desktop",
+         "value": "DragFullWindows",
+         "type": "SZ",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.6560/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Control Panel\\Desktop",
-        "value": "DragFullWindows",
-        "type": "SZ",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.6560/"
+       "on": false
       },
       {
        "id": "vis-03-8420",
        "name": "Pencere önizleme efekti",
        "desc": "Görev çubuğu ve masaüstü önizleme efektini devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\DWM",
+         "value": "EnableAeroPeek",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.8420/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\DWM",
-        "value": "EnableAeroPeek",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.8420/"
+       "on": false
       },
       {
        "id": "vis-04-26747",
        "name": "Ekran modu animasyonu",
        "desc": "Görüntü modu değişirken oynatılan geçiş animasyonunu kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\Dwm",
+         "value": "ForceDisableModeChangeAnimation",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.26747/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\Dwm",
-        "value": "ForceDisableModeChangeAnimation",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.26747/"
+       "on": false
       },
       {
        "id": "vis-05-1149",
        "name": "Başlık çubuğu vurgu rengi",
        "desc": "Başlık çubuklarına ve pencere kenarlıklarına vurgu rengini geri getirir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\DWM",
+         "value": "ColorPrevalence",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.1149/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\DWM",
-        "value": "ColorPrevalence",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.1149/"
+       "on": false
       }
      ]
     },
@@ -548,49 +1307,55 @@
        "id": "vis-01-6545",
        "name": "Saydam seçim dikdörtgeni",
        "desc": "Masaüstünde fareyle seçim yaparken saydam dikdörtgeni kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "ListviewAlphaSelect",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.6545/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "ListviewAlphaSelect",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.6545/"
+       "on": false
       },
       {
        "id": "vis-02-6554",
        "name": "Simge yazı gölgeleri",
        "desc": "Masaüstü simge adlarının altındaki gölge efektini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "ListviewShadow",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.6554/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "ListviewShadow",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.6554/"
+       "on": false
       },
       {
        "id": "vis-03-8476",
        "name": "Yazı tipi yumuşatma",
        "desc": "Ekrandaki yazıların kenar yumuşatma işlemini devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Desktop",
+         "value": "FontSmoothing",
+         "type": "SZ",
+         "on": "0",
+         "off": "2"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.8476/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Control Panel\\Desktop",
-        "value": "FontSmoothing",
-        "type": "SZ",
-        "on": "0",
-        "off": "2"
-       },
-       "source": "https://www.elevenforum.com/t/x.8476/"
+       "on": false
       }
      ]
     },
@@ -601,81 +1366,91 @@
        "id": "vis-01-40485",
        "name": "Sürükle bırak tepsisi",
        "desc": "Dosyaları sürüklerken ekranın üstünde çıkan tepsiyi kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\CDP",
+         "value": "DragTrayEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.40485/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\CDP",
-        "value": "DragTrayEnabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.40485/"
+       "on": false
       },
       {
        "id": "vis-02-16017",
        "name": "Ayarlar giriş sayfası",
        "desc": "Ayarlar uygulamasındaki öneri dolu giriş sayfasını gizler.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+         "value": "SettingsPageVisibility",
+         "type": "SZ",
+         "on": "hide:home",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.16017/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
-        "value": "SettingsPageVisibility",
-        "type": "SZ",
-        "on": "hide:home",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.16017/"
+       "on": false
       },
       {
        "id": "vis-03-14613",
        "name": "Arama üzerine gelince açılma",
        "desc": "Fareyle arama simgesine gelince pencerenin açılmasını engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Feeds\\DSB",
+         "value": "OpenOnHover",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.14613/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Feeds\\DSB",
-        "value": "OpenOnHover",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.14613/"
+       "on": false
       },
       {
        "id": "vis-04-1526",
        "name": "Son aramalar önizlemesi",
        "desc": "Arama simgesinin üzerine gelince son aramaların çıkmasını engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "TaskbarSh",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.1526/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "TaskbarSh",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.1526/"
+       "on": false
       },
       {
        "id": "vis-05-10840",
        "name": "Sürücü doluluk çubuğu",
        "desc": "Bu bilgisayar penceresindeki renkli disk doluluk çubuğunu gizler.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Classes\\Drive",
+         "value": "TileInfo",
+         "type": "SZ",
+         "on": "prop:*System.Computer.DecoratedFreeSpace;System.Volume.FileSystem",
+         "off": "prop:*System.PercentFull;System.Computer.DecoratedFreeSpace;System.Volume.FileSystem"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.10840/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Classes\\Drive",
-        "value": "TileInfo",
-        "type": "SZ",
-        "on": "prop:*System.Computer.DecoratedFreeSpace;System.Volume.FileSystem",
-        "off": "prop:*System.PercentFull;System.Computer.DecoratedFreeSpace;System.Volume.FileSystem"
-       },
-       "source": "https://www.elevenforum.com/t/x.10840/"
+       "on": false
       }
      ]
     },
@@ -686,49 +1461,55 @@
        "id": "vis-01-15151",
        "name": "Dinamik aydınlatma denetimi",
        "desc": "Windows'un RGB cihazların aydınlatmasını yönetmesini durdurur.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Lighting",
+         "value": "AmbientLightingEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.15151/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Lighting",
-        "value": "AmbientLightingEnabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.15151/"
+       "on": false
       },
       {
        "id": "vis-02-2878",
        "name": "Dokunmatik klavye tuş zemini",
        "desc": "Dokunmatik klavyedeki tuşların arka plan zeminini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\TabletTip\\1.7",
+         "value": "IsKeyBackgroundEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.2878/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\TabletTip\\1.7",
-        "value": "IsKeyBackgroundEnabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.2878/"
+       "on": false
       },
       {
        "id": "vis-03-45963",
        "name": "Kaydırma yaylanma animasyonu",
        "desc": "Dokunmatik ekranda kaydırma sonundaki yaylanmayı devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Wisp\\Touch",
+         "value": "Bouncing",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.45963/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Wisp\\Touch",
-        "value": "Bouncing",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.45963/"
+       "on": false
       }
      ]
     }
@@ -746,129 +1527,145 @@
        "id": "priv-01-2621",
        "name": "Tanılama verisi gönderimi",
        "desc": "Windows'un Microsoft'a gönderdiği isteğe bağlı tanılama verisini kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+         "value": "AllowTelemetry",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.2621/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
-        "value": "AllowTelemetry",
-        "type": "DWORD",
-        "on": "0",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.2621/"
+       "on": false
       },
       {
        "id": "priv-02-7810",
        "name": "Etkinlik geçmişi gönderimi",
        "desc": "Etkinlik geçmişinin Microsoft sunucularına gönderilmesini engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+         "value": "UploadUserActivities",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.7810/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
-        "value": "UploadUserActivities",
-        "type": "DWORD",
-        "on": "0",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.7810/"
+       "on": false
       },
       {
        "id": "priv-03-7812",
        "name": "Cihazda etkinlik geçmişi",
        "desc": "Uygulama ve dosya etkinliğinin cihazda saklanmasını durdurur.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+         "value": "PublishUserActivities",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.7812/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
-        "value": "PublishUserActivities",
-        "type": "DWORD",
-        "on": "0",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.7812/"
+       "on": false
       },
       {
        "id": "priv-04-7554",
        "name": "Kişiselleştirilmiş öneri ve teklifler",
        "desc": "Tanılama verisine dayalı kişiselleştirilmiş önerileri kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Privacy",
+         "value": "TailoredExperiencesWithDiagnosticDataEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.7554/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Privacy",
-        "value": "TailoredExperiencesWithDiagnosticDataEnabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.7554/"
+       "on": false
       },
       {
        "id": "priv-05-7575",
        "name": "Yazma ve mürekkep verisi",
        "desc": "Yazdıklarınızın Microsoft'a örnek olarak gönderilmesini engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Input\\TIPC",
+         "value": "Enabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.7575/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Input\\TIPC",
-        "value": "Enabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.7575/"
+       "on": false
       },
       {
        "id": "priv-06-3727",
        "name": "Uygulama açılış takibi",
        "desc": "Başlat ve aramada uygulama açma alışkanlıklarının izlenmesini durdurur.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "Start_TrackProgs",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.3727/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "Start_TrackProgs",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.3727/"
+       "on": false
       },
       {
        "id": "priv-07-3730",
        "name": "Reklam kimliği",
        "desc": "Uygulamaların kişiselleştirilmiş reklam için kullandığı kimliği kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo",
+         "value": "Enabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.3730/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo",
-        "value": "Enabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.3730/"
+       "on": false
       },
       {
        "id": "priv-08-3733",
        "name": "Web sitelerine dil listesi",
        "desc": "Web sitelerinin tercih ettiğiniz dil listesine erişimini engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\International\\User Profile",
+         "value": "HttpAcceptLanguageOptOut",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.3733/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Control Panel\\International\\User Profile",
-        "value": "HttpAcceptLanguageOptOut",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.3733/"
+       "on": false
       }
      ]
     },
@@ -879,97 +1676,109 @@
        "id": "priv-01-26022",
        "name": "Uygulamalarda yapay zekâ üretimi",
        "desc": "Uygulamaların metin ve görüntü üretme modellerini kullanmasını engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\systemAIModels",
+         "value": "Value",
+         "type": "SZ",
+         "on": "Deny",
+         "off": "Allow"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.26022/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\systemAIModels",
-        "value": "Value",
-        "type": "SZ",
-        "on": "Deny",
-        "off": "Allow"
-       },
-       "source": "https://www.elevenforum.com/t/x.26022/"
+       "on": false
       },
       {
        "id": "priv-02-17140",
        "name": "Uygulamaların kamera erişimi",
        "desc": "Tüm uygulamaların kameranıza erişmesini tamamen engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\webcam",
+         "value": "Value",
+         "type": "SZ",
+         "on": "Deny",
+         "off": "Allow"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.17140/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\webcam",
-        "value": "Value",
-        "type": "SZ",
-        "on": "Deny",
-        "off": "Allow"
-       },
-       "source": "https://www.elevenforum.com/t/x.17140/"
+       "on": false
       },
       {
        "id": "priv-03-17117",
        "name": "Uygulamaların mikrofon erişimi",
        "desc": "Tüm uygulamaların mikrofonunuza erişmesini tamamen engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\microphone",
+         "value": "Value",
+         "type": "SZ",
+         "on": "Deny",
+         "off": "Allow"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.17117/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\microphone",
-        "value": "Value",
-        "type": "SZ",
-        "on": "Deny",
-        "off": "Allow"
-       },
-       "source": "https://www.elevenforum.com/t/x.17117/"
+       "on": false
       },
       {
        "id": "priv-04-3017",
        "name": "Uygulamaların konum erişimi",
        "desc": "Uygulamaların konum bilginize erişmesini tamamen engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\location",
+         "value": "Value",
+         "type": "SZ",
+         "on": "Deny",
+         "off": "Allow"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.3017/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\location",
-        "value": "Value",
-        "type": "SZ",
-        "on": "Deny",
-        "off": "Allow"
-       },
-       "source": "https://www.elevenforum.com/t/x.3017/"
+       "on": false
       },
       {
        "id": "priv-05-18578",
        "name": "Konum isteği bildirimleri",
        "desc": "Uygulamalar konum istediğinde çıkan bildirimleri gizler.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\location",
+         "value": "ShowGlobalPrompts",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.18578/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\location",
-        "value": "ShowGlobalPrompts",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.18578/"
+       "on": false
       },
       {
        "id": "priv-06-3861",
        "name": "Cihazımı bul",
        "desc": "Cihaz konumunun Microsoft hesabına bildirilmesini durdurur.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\MdmCommon\\SettingValues",
+         "value": "LocationSyncEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.3861/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\MdmCommon\\SettingValues",
-        "value": "LocationSyncEnabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.3861/"
+       "on": false
       }
      ]
     },
@@ -980,97 +1789,109 @@
        "id": "priv-01-47667",
        "name": "Mağaza arama önerileri",
        "desc": "Windows aramasında Microsoft Store uygulama önerilerini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SearchSettings",
+         "value": "IsStoreSuggestionsEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.47667/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SearchSettings",
-        "value": "IsStoreSuggestionsEnabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.47667/"
+       "on": false
       },
       {
        "id": "priv-02-35409",
        "name": "Bulut dosya araması",
        "desc": "Aramanın OneDrive gibi çevrimiçi dosya içeriklerini taramasını durdurur.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SearchSettings",
+         "value": "IsGlobalFileSearchProviderToggleEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.35409/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SearchSettings",
-        "value": "IsGlobalFileSearchProviderToggleEnabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.35409/"
+       "on": false
       },
       {
        "id": "priv-03-5378",
        "name": "Hesap içeriği araması",
        "desc": "Microsoft hesabındaki içeriklerin arama sonuçlarına gelmesini engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SearchSettings",
+         "value": "IsMSACloudSearchEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.5378/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SearchSettings",
-        "value": "IsMSACloudSearchEnabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.5378/"
+       "on": false
       },
       {
        "id": "priv-04-5395",
        "name": "Son aramalar geçmişi",
        "desc": "Windows aramasının cihazda arama geçmişi tutmasını devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SearchSettings",
+         "value": "IsDeviceSearchHistoryEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.5395/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SearchSettings",
-        "value": "IsDeviceSearchHistoryEnabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.5395/"
+       "on": false
       },
       {
        "id": "priv-05-48551",
        "name": "Dizin oluşturma yavaşlatması",
        "desc": "Sistem meşgulken dizin oluşturucunun hız düşürmesini engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search",
+         "value": "DisableBackoff",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.48551/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search",
-        "value": "DisableBackoff",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.48551/"
+       "on": false
       },
       {
        "id": "priv-06-2960",
        "name": "Dizinlemede güç ayarları",
        "desc": "Dizin oluşturucunun güç ayarlarına göre yavaşlamasını engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows Search\\Gather\\Windows\\SystemIndex",
+         "value": "RespectPowerModes",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.2960/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows Search\\Gather\\Windows\\SystemIndex",
-        "value": "RespectPowerModes",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.2960/"
+       "on": false
       }
      ]
     },
@@ -1081,81 +1902,91 @@
        "id": "priv-01-25835",
        "name": "Ayarlar hesap bildirimleri",
        "desc": "Ayarlar uygulamasındaki hesap önerisi bildirimlerini gizler.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SystemSettings\\AccountNotifications",
+         "value": "EnableAccountNotifications",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.25835/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SystemSettings\\AccountNotifications",
-        "value": "EnableAccountNotifications",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.25835/"
+       "on": false
       },
       {
        "id": "priv-02-10185",
        "name": "Defender bilgi bildirimleri",
        "desc": "Virüs korumasının kritik olmayan bilgi bildirimlerini kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows Defender Security Center\\Notifications",
+         "value": "DisableEnhancedNotifications",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.10185/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows Defender Security Center\\Notifications",
-        "value": "DisableEnhancedNotifications",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.10185/"
+       "on": false
       },
       {
        "id": "priv-03-10521",
        "name": "Fidye yazılımı kurtarma alanı",
        "desc": "Windows Güvenlik'teki fidye yazılımı kurtarma bölümünü gizler.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows Defender Security Center\\Virus and threat protection",
+         "value": "HideRansomwareRecovery",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.10521/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows Defender Security Center\\Virus and threat protection",
-        "value": "HideRansomwareRecovery",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.10521/"
+       "on": false
       },
       {
        "id": "priv-04-10491",
        "name": "Hesap koruması sayfası",
        "desc": "Windows Güvenlik'teki hesap koruması sayfasını gizler.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows Defender Security Center\\Account protection",
+         "value": "UILockdown",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.10491/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows Defender Security Center\\Account protection",
-        "value": "UILockdown",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.10491/"
+       "on": false
       },
       {
        "id": "priv-05-10467",
        "name": "Aile seçenekleri sayfası",
        "desc": "Windows Güvenlik'teki aile seçenekleri sayfasını tamamen gizler.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows Defender Security Center\\Family options",
+         "value": "UILockdown",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.10467/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows Defender Security Center\\Family options",
-        "value": "UILockdown",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.10467/"
+       "on": false
       }
      ]
     },
@@ -1166,33 +1997,60 @@
        "id": "priv-01-4010",
        "name": "Otomatik örnek gönderimi",
        "desc": "Şüpheli dosyaların Microsoft'a otomatik gönderilmesini durdurur.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Spynet",
+         "value": "SubmitSamplesConsent",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.4010/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Spynet",
-        "value": "SubmitSamplesConsent",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.4010/"
+       "on": false
       },
       {
        "id": "priv-02-4013",
        "name": "Denetimli klasör erişimi",
        "desc": "Denetimli klasör erişimini açıp fidye yazılımı saldırılarını engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Windows Defender Exploit Guard\\Controlled Folder Access",
+         "value": "EnableControlledFolderAccess",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.4013/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Windows Defender Exploit Guard\\Controlled Folder Access",
-        "value": "EnableControlledFolderAccess",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.4013/"
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Öneriler ve reklamlar · WinUtil",
+     "tweaks": [
+      {
+       "id": "wu-WPFTweaksConsumerFeatures",
+       "name": "Otomatik uygulama önerileri",
+       "desc": "Microsoft'un otomatik uygulama yüklemelerini ve mağaza önerilerini engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent",
+         "value": "DisableWindowsConsumerFeatures",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/consumerfeatures",
+       "applied": false,
+       "on": false
       }
      ]
     }
@@ -1210,65 +2068,73 @@
        "id": "net-01-3859",
        "name": "Paylaşılan deneyimler",
        "desc": "Cihazlar arası paylaşım ve arka plan iletişimini kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+         "value": "EnableCdp",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.3859/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
-        "value": "EnableCdp",
-        "type": "DWORD",
-        "on": "0",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.3859/"
+       "on": false
       },
       {
        "id": "net-02-3286",
        "name": "Bekleme modunda ağ bağlantısı",
        "desc": "Modern bekleme sırasında ağın bağlı kalmasını engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Power\\PowerSettings\\f15576e8-98b7-4186-b944-eafa664402d9",
+         "value": "ACSettingIndex",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.3286/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Power\\PowerSettings\\f15576e8-98b7-4186-b944-eafa664402d9",
-        "value": "ACSettingIndex",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.3286/"
+       "on": false
       },
       {
        "id": "net-03-8117",
        "name": "Uzaktan yardım bağlantıları",
        "desc": "Bilgisayara uzaktan yardım bağlantısı kurulmasını engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services",
+         "value": "fAllowToGetHelp",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.8117/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services",
-        "value": "fAllowToGetHelp",
-        "type": "DWORD",
-        "on": "0",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.8117/"
+       "on": false
       },
       {
        "id": "net-04-3573",
        "name": "Mobil etkin nokta",
        "desc": "Mobil etkin nokta paylaşımını devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Network Connections",
+         "value": "NC_ShowSharedAccessUI",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.3573/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Network Connections",
-        "value": "NC_ShowSharedAccessUI",
-        "type": "DWORD",
-        "on": "0",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.3573/"
+       "on": false
       }
      ]
     },
@@ -1279,81 +2145,91 @@
        "id": "net-01-2236",
        "name": "Ölçülü bağlantıda güncelleme indirme",
        "desc": "Ölçülü bağlantılarda güncelleme indirme kısıtlamasını kaldırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\WindowsUpdate\\UX\\Settings",
+         "value": "AllowAutoWindowsUpdateDownloadOverMeteredNetwork",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.2236/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\WindowsUpdate\\UX\\Settings",
-        "value": "AllowAutoWindowsUpdateDownloadOverMeteredNetwork",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.2236/"
+       "on": false
       },
       {
        "id": "net-02-14242",
        "name": "Ölçülü bağlantıda sürücü indirme",
        "desc": "Ölçülü bağlantılarda sürücü indirme engelini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\DeviceSetup",
+         "value": "CostedNetworkPolicy",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.14242/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\DeviceSetup",
-        "value": "CostedNetworkPolicy",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.14242/"
+       "on": false
       },
       {
        "id": "net-03-5897",
        "name": "Düşük çözünürlüklü video",
        "desc": "Video oynatırken yüksek çözünürlüklü akışı devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\VideoSettings",
+         "value": "AllowLowResolution",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.5897/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\VideoSettings",
-        "value": "AllowLowResolution",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.5897/"
+       "on": false
       },
       {
        "id": "net-04-15985",
        "name": "Zayıf Wi-Fi'de hücresel veri",
        "desc": "Wi-Fi zayıfken hücresel veriye otomatik geçişi engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\WcmSvc\\CellularFailover",
+         "value": "AllowFailover",
+         "type": "DWORD",
+         "on": "0",
+         "off": "2"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.15985/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\WcmSvc\\CellularFailover",
-        "value": "AllowFailover",
-        "type": "DWORD",
-        "on": "0",
-        "off": "2"
-       },
-       "source": "https://www.elevenforum.com/t/x.15985/"
+       "on": false
       },
       {
        "id": "net-05-16002",
        "name": "Hücresel veri dolaşımı",
        "desc": "Hücresel bağlantıda veri dolaşımını tamamen engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WcmSvc\\GroupPolicy",
+         "value": "fBlockRoaming",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.16002/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WcmSvc\\GroupPolicy",
-        "value": "fBlockRoaming",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.16002/"
+       "on": false
       }
      ]
     },
@@ -1364,65 +2240,73 @@
        "id": "net-01-14237",
        "name": "Gelişmiş Bluetooth taraması",
        "desc": "Bluetooth cihaz aramasındaki tür filtresini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Bluetooth",
+         "value": "AdvancedDiscoveryMode",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.14237/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Bluetooth",
-        "value": "AdvancedDiscoveryMode",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.14237/"
+       "on": false
       },
       {
        "id": "net-02-8616",
        "name": "Bluetooth donanımı",
        "desc": "Bluetooth radyosunu ilke ile tamamen devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\PolicyManager\\default\\Connectivity\\AllowBluetooth",
+         "value": "value",
+         "type": "DWORD",
+         "on": "0",
+         "off": "2"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.8616/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\PolicyManager\\default\\Connectivity\\AllowBluetooth",
-        "value": "value",
-        "type": "DWORD",
-        "on": "0",
-        "off": "2"
-       },
-       "source": "https://www.elevenforum.com/t/x.8616/"
+       "on": false
       },
       {
        "id": "net-03-8603",
        "name": "Wi-Fi donanımı",
        "desc": "Wi-Fi bağdaştırıcısını ilke ile devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\PolicyManager\\default\\Wifi\\AllowWiFi",
+         "value": "value",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.8603/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\PolicyManager\\default\\Wifi\\AllowWiFi",
-        "value": "value",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.8603/"
+       "on": false
       },
       {
        "id": "net-04-43608",
        "name": "Kablosuz adaptör güç ayarı",
        "desc": "Güç seçeneklerindeki gizli kablosuz adaptör ayarını geri getirir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Power\\PowerSettings\\19cbb8fa-5279-450e-9fac-8a3d5fedd0c1\\12bbebe6-58d6-4636-95bb-3217ef867c1a",
+         "value": "Attributes",
+         "type": "DWORD",
+         "on": "2",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.43608/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SYSTEM\\CurrentControlSet\\Control\\Power\\PowerSettings\\19cbb8fa-5279-450e-9fac-8a3d5fedd0c1\\12bbebe6-58d6-4636-95bb-3217ef867c1a",
-        "value": "Attributes",
-        "type": "DWORD",
-        "on": "2",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.43608/"
+       "on": false
       }
      ]
     },
@@ -1433,33 +2317,106 @@
        "id": "net-01-31919",
        "name": "Bulut dosya silme onayı",
        "desc": "Buluttaki dosyaları silerken çıkan onay penceresini kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\SyncRootManager",
+         "value": "Donotshowagain",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.31919/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\SyncRootManager",
-        "value": "Donotshowagain",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.31919/"
+       "on": false
       },
       {
        "id": "net-02-19242",
        "name": "SMB istemci şifrelemesi",
        "desc": "Şifrelenmemiş SMB ağ paylaşımı bağlantılarını engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\LanmanWorkstation\\Parameters",
+         "value": "RequireEncryption",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.19242/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SYSTEM\\CurrentControlSet\\Services\\LanmanWorkstation\\Parameters",
-        "value": "RequireEncryption",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.19242/"
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "İnternet trafiği · WinUtil",
+     "tweaks": [
+      {
+       "id": "wu-WPFTweaksDeliveryOptimization",
+       "name": "Teslim iyileştirme",
+       "desc": "İnternet bant genişliğinizin güncelleme dağıtımına kullanılmasını engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization",
+         "value": "DODownloadMode",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/deliveryoptimization",
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "IPv6 ayarları · WinUtil",
+     "tweaks": [
+      {
+       "id": "wu-WPFTweaksIPv46",
+       "name": "IPv4 önceliği",
+       "desc": "İnternet bağlantılarında IPv6 önceliğini devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters",
+         "value": "DisabledComponents",
+         "type": "DWORD",
+         "on": "32",
+         "off": "0"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/ipv46",
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Güç ve bağlantı · WinUtil",
+     "tweaks": [
+      {
+       "id": "wu-WPFToggleStandbyFix",
+       "name": "Uyku modunda ağ bağlantısı",
+       "desc": "S0 uyku modunda ağ bağlantısının kesilmesini engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Power\\PowerSettings\\f15576e8-98b7-4186-b944-eafa664402d9",
+         "value": "ACSettingIndex",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/standbyfix",
+       "applied": false,
+       "on": false
       }
      ]
     }
@@ -1469,7 +2426,63 @@
    "id": "svc",
    "name": "Hizmetler",
    "icon": "M6 4.2a1.8 1.8 0 100 3.6 1.8 1.8 0 000-3.6M6 1v1.6M6 9.4V11M1.7 3.5l1.4.8M8.9 7.7l1.4.8M1.7 8.5l1.4-.8M8.9 4.3l1.4-.8",
-   "sections": []
+   "sections": [
+    {
+     "title": "Arka plan hizmetleri · WinUtil",
+     "tweaks": [
+      {
+       "id": "wu-WPFTweaksServices",
+       "name": "Hizmetleri elle başlatmaya al",
+       "desc": "Telemetri, çevrimdışı dosya ve bağlantı paylaşımı hizmetlerini kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\CscService",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "4",
+         "off": "3"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\DiagTrack",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "4",
+         "off": "2"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\MapsBroker",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "3",
+         "off": "2"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\StorSvc",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "3",
+         "off": "2"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\SharedAccess",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "4",
+         "off": "2"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/services",
+       "applied": false,
+       "on": false
+      }
+     ]
+    }
+   ]
   },
   {
    "id": "boot",
@@ -1483,65 +2496,73 @@
        "id": "boot-01-85",
        "name": "Açılış sesi",
        "desc": "Windows açılırken çalan başlangıç sesini kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+         "value": "DisableStartupSound",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.85/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-        "value": "DisableStartupSound",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.85/"
+       "on": false
       },
       {
        "id": "boot-02-1212",
        "name": "Hızlı başlatma",
        "desc": "Bilgisayarın tam kapanması için hızlı başlatmayı devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Power",
+         "value": "HiberbootEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.1212/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Power",
-        "value": "HiberbootEnabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.1212/"
+       "on": false
       },
       {
        "id": "boot-03-3324",
        "name": "Güncelleme sonrası otomatik oturum açma",
        "desc": "Güncelleme sonrası otomatik oturum açıp kilitlemeyi engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+         "value": "DisableAutomaticRestartSignOn",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.3324/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-        "value": "DisableAutomaticRestartSignOn",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.3324/"
+       "on": false
       },
       {
        "id": "boot-04-3657",
        "name": "Windows karşılama deneyimi",
        "desc": "Güncellemelerden sonra çıkan Windows karşılama ekranını kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+         "value": "SubscribedContent-310093Enabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.3657/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
-        "value": "SubscribedContent-310093Enabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.3657/"
+       "on": false
       }
      ]
     },
@@ -1552,33 +2573,37 @@
        "id": "boot-01-9995",
        "name": "Başlangıç uygulaması bildirimi",
        "desc": "Yeni başlangıç uygulaması eklendiğinde çıkan bildirimi kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Notifications\\Settings\\Windows.SystemToast.StartupApp",
+         "value": "Enabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.9995/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Notifications\\Settings\\Windows.SystemToast.StartupApp",
-        "value": "Enabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.9995/"
+       "on": false
       },
       {
        "id": "boot-02-5176",
        "name": "Uygulamaları yeniden başlatma",
        "desc": "Oturum açıldığında kapatılan uygulamaları geri getirir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon",
+         "value": "RestartApps",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.5176/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon",
-        "value": "RestartApps",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.5176/"
+       "on": false
       }
      ]
     },
@@ -1589,49 +2614,55 @@
        "id": "boot-01-823",
        "name": "Kilit ekranı bildirimleri",
        "desc": "Kilit ekranında uygulama bildirimlerinin gösterilmesini engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+         "value": "DisableLockScreenAppNotifications",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.823/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
-        "value": "DisableLockScreenAppNotifications",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.823/"
+       "on": false
       },
       {
        "id": "boot-02-47882",
        "name": "Hatırlatıcı ve VoIP bildirimleri",
        "desc": "Kilit ekranında hatırlatıcı ve VoIP çağrı bildirimlerini gizler.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Notifications\\Settings",
+         "value": "NOC_GLOBAL_SETTING_ALLOW_CRITICAL_TOASTS_ABOVE_LOCK",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.47882/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Notifications\\Settings",
-        "value": "NOC_GLOBAL_SETTING_ALLOW_CRITICAL_TOASTS_ABOVE_LOCK",
-        "type": "DWORD",
-        "on": "0",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.47882/"
+       "on": false
       },
       {
        "id": "boot-03-13708",
        "name": "Kilit ekranı slayt gösterisi",
        "desc": "Kilit ekranındaki slayt gösterisi seçeneğini devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Personalization",
+         "value": "NoLockScreenSlideshow",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.13708/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Personalization",
-        "value": "NoLockScreenSlideshow",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.13708/"
+       "on": false
       }
      ]
     },
@@ -1642,97 +2673,181 @@
        "id": "boot-01-927",
        "name": "Oturum ekranı arka planı",
        "desc": "Oturum açma ekranında kilit ekranı resminin gösterilmesini kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+         "value": "DisableLogonBackgroundImage",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.927/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
-        "value": "DisableLogonBackgroundImage",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.927/"
+       "on": false
       },
       {
        "id": "boot-02-1117",
        "name": "Oturum ekranı bulanıklığı",
        "desc": "Oturum açma ekranındaki akrilik bulanıklık efektini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+         "value": "DisableAcrylicBackgroundOnLogon",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.1117/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
-        "value": "DisableAcrylicBackgroundOnLogon",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.1117/"
+       "on": false
       },
       {
        "id": "boot-03-17256",
        "name": "Son oturum açan kullanıcı",
        "desc": "Oturum açma ekranında son giriş yapan kullanıcı adını gizler.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+         "value": "dontdisplaylastusername",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.17256/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-        "value": "dontdisplaylastusername",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.17256/"
+       "on": false
       },
       {
        "id": "boot-04-9031",
        "name": "Oturum ekranı güç düğmesi",
        "desc": "Oturum açma ekranındaki güç düğmesini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+         "value": "shutdownwithoutlogon",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.9031/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-        "value": "shutdownwithoutlogon",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.9031/"
+       "on": false
       },
       {
        "id": "boot-05-9113",
        "name": "Oturum ekranı ağ simgesi",
        "desc": "Oturum açma ekranındaki ağ bağlantısı simgesini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+         "value": "DontDisplayNetworkSelectionUI",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.9113/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
-        "value": "DontDisplayNetworkSelectionUI",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.9113/"
+       "on": false
       },
       {
        "id": "boot-06-3313",
        "name": "PIN sıfırlama bağlantısı",
        "desc": "Oturum açma ekranındaki PIN sıfırlama bağlantısını kaldırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Authentication\\LogonUI\\NgcPin",
+         "value": "EnablePinReset",
+         "type": "DWORD",
+         "on": "0",
+         "off": "15"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.3313/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Authentication\\LogonUI\\NgcPin",
-        "value": "EnablePinReset",
-        "type": "DWORD",
-        "on": "0",
-        "off": "15"
-       },
-       "source": "https://www.elevenforum.com/t/x.3313/"
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Oturum açma · WinUtil",
+     "tweaks": [
+      {
+       "id": "wu-WPFTweaksDisableLockscreen",
+       "name": "Kilit ekranı",
+       "desc": "Açılışta ve uyanışta gösterilen kilit ekranını devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Personalization",
+         "value": "NoLockScreen",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/disablelockscreen",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFToggleVerboseLogon",
+       "name": "Ayrıntılı oturum mesajları",
+       "desc": "Açılış ve kapanış sırasında ayrıntılı durum mesajlarını açar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+         "value": "VerboseStatus",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/verboselogon",
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Klavye · WinUtil",
+     "tweaks": [
+      {
+       "id": "wu-WPFToggleNumLock",
+       "name": "Açılışta Num Lock",
+       "desc": "Oturum açma ekranı dahil açılışta Num Lock tuşunu açar.",
+       "reg": [
+        {
+         "hive": "HKU",
+         "path": ".Default\\Control Panel\\Keyboard",
+         "value": "InitialKeyboardIndicators",
+         "type": "SZ",
+         "on": "2",
+         "off": "0"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Keyboard",
+         "value": "InitialKeyboardIndicators",
+         "type": "SZ",
+         "on": "2",
+         "off": "0"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/numlock",
+       "applied": false,
+       "on": false
       }
      ]
     }
@@ -1750,177 +2865,199 @@
        "id": "exp-01-898",
        "name": "Dosya uzantılarını göster",
        "desc": "Bilinen dosya türlerinin gizlenen uzantılarını geri getirir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "HideFileExt",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.898/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "HideFileExt",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.898/"
+       "on": false
       },
       {
        "id": "exp-02-896",
        "name": "Kompakt görünüm",
        "desc": "Dosya Gezgini listelerinde öğeler arasındaki fazla boşluğu kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "UseCompactMode",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.896/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "UseCompactMode",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.896/"
+       "on": false
       },
       {
        "id": "exp-03-7643",
        "name": "Klasik menü çubuğu",
        "desc": "Dosya Gezgini'nin üstündeki klasik menü çubuğunu geri getirir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "AlwaysShowMenus",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.7643/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "AlwaysShowMenus",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.7643/"
+       "on": false
       },
       {
        "id": "exp-04-5004",
        "name": "Durum çubuğunu gizle",
        "desc": "Dosya Gezgini penceresinin altındaki durum çubuğunu gizler.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "ShowStatusBar",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.5004/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "ShowStatusBar",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.5004/"
+       "on": false
       },
       {
        "id": "exp-05-764",
        "name": "Onay kutulu seçim",
        "desc": "Dosya Gezgini'nde öğeleri onay kutularıyla seçmeyi etkinleştirir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "AutoCheckSelect",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.764/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "AutoCheckSelect",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.764/"
+       "on": false
       },
       {
        "id": "exp-06-10616",
        "name": "Önizleme bölmesi içerikleri",
        "desc": "Önizleme bölmesinde dosya içeriklerinin gösterilmesini etkinleştirir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "ShowPreviewHandlers",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.10616/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "ShowPreviewHandlers",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.10616/"
+       "on": false
       },
       {
        "id": "exp-07-22506",
        "name": "Küçük resim tür simgesi",
        "desc": "Küçük resimlerin köşesindeki dosya türü simgesini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "ShowTypeOverlay",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.22506/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "ShowTypeOverlay",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.22506/"
+       "on": false
       },
       {
        "id": "exp-08-5177",
        "name": "Klasör pencerelerini geri yükle",
        "desc": "Oturum açıldığında önceden açık olan klasör pencerelerini geri getirir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "PersistBrowsers",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.5177/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "PersistBrowsers",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.5177/"
+       "on": false
       },
       {
        "id": "exp-09-10080",
        "name": "Ayrı gezgin işlemi",
        "desc": "Klasör pencerelerini ayrı işlemde açarak topluca donmalarını engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "SeparateProcess",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.10080/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "SeparateProcess",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.10080/"
+       "on": false
       },
       {
        "id": "exp-10-45222",
        "name": "Gönder menüsü gecikmesi",
        "desc": "Gönder menüsünü geciktirerek sağ tık menüsünün yavaşlamasını engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer",
+         "value": "DelaySendToMenuBuild",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.45222/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer",
-        "value": "DelaySendToMenuBuild",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.45222/"
+       "on": false
       },
       {
        "id": "exp-11-15050",
        "name": "Satır içi otomatik tamamlama",
        "desc": "Adres çubuğunda ve Çalıştır'da satır içi tamamlamayı etkinleştirir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\AutoComplete",
+         "value": "Append Completion",
+         "type": "SZ",
+         "on": "yes",
+         "off": "no"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.15050/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\AutoComplete",
-        "value": "Append Completion",
-        "type": "SZ",
-        "on": "yes",
-        "off": "no"
-       },
-       "source": "https://www.elevenforum.com/t/x.15050/"
+       "on": false
       }
      ]
     },
@@ -1931,81 +3068,91 @@
        "id": "exp-01-5200",
        "name": "Eşitleme sağlayıcı bildirimleri",
        "desc": "Dosya Gezgini'ndeki OneDrive reklam ve bildirimlerini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "ShowSyncProviderNotifications",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.5200/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "ShowSyncProviderNotifications",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.5200/"
+       "on": false
       },
       {
        "id": "exp-02-6886",
        "name": "Office.com dosyaları",
        "desc": "Dosya Gezgini Giriş'te Office.com dosyalarının gösterimini kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
+         "value": "ShowCloudFilesInQuickAccess",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.6886/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
-        "value": "ShowCloudFilesInQuickAccess",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.6886/"
+       "on": false
       },
       {
        "id": "exp-03-6825",
        "name": "Son kullanılan dosyalar",
        "desc": "Dosya Gezgini Giriş sayfasındaki son kullanılan dosyaları gizler.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
+         "value": "ShowRecent",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.6825/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
-        "value": "ShowRecent",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.6825/"
+       "on": false
       },
       {
        "id": "exp-04-6858",
        "name": "Sık kullanılan klasörler",
        "desc": "Hızlı Erişim'de sık kullanılan klasörlerin listelenmesini kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
+         "value": "ShowFrequent",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.6858/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
-        "value": "ShowFrequent",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.6858/"
+       "on": false
       },
       {
        "id": "exp-05-1161",
        "name": "Son öğe geçmişi",
        "desc": "Atlama listelerinde ve Başlat'ta son açılan öğelerin izlenmesini durdurur.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "Start_TrackDocs",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.1161/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "Start_TrackDocs",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.1161/"
+       "on": false
       }
      ]
     },
@@ -2016,113 +3163,127 @@
        "id": "exp-01-2535",
        "name": "Tüm klasörleri göster",
        "desc": "Gezinti bölmesinde tüm klasörleri gösteren klasik ağacı geri getirir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "NavPaneShowAllFolders",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.2535/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "NavPaneShowAllFolders",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.2535/"
+       "on": false
       },
       {
        "id": "exp-02-2544",
        "name": "Açık klasöre genişlet",
        "desc": "Gezinti bölmesini açık olan klasöre otomatik olarak genişletir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "NavPaneExpandToCurrentFolder",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.2544/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "NavPaneExpandToCurrentFolder",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.2544/"
+       "on": false
       },
       {
        "id": "exp-03-14178",
        "name": "Galeri girdisi",
        "desc": "Dosya Gezgini gezinti bölmesindeki Galeri öğesini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Classes\\CLSID\\{e88865ea-0e1c-4e20-9aa6-edcd0212c87c}",
+         "value": "System.IsPinnedToNameSpaceTree",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.14178/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Classes\\CLSID\\{e88865ea-0e1c-4e20-9aa6-edcd0212c87c}",
-        "value": "System.IsPinnedToNameSpaceTree",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.14178/"
+       "on": false
       },
       {
        "id": "exp-04-2478",
        "name": "OneDrive girdisi",
        "desc": "Gezinti bölmesindeki OneDrive girdisini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Classes\\CLSID\\{018D5C66-4533-4307-9B53-224DE2ED1FE6}",
+         "value": "System.IsPinnedToNameSpaceTree",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.2478/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Classes\\CLSID\\{018D5C66-4533-4307-9B53-224DE2ED1FE6}",
-        "value": "System.IsPinnedToNameSpaceTree",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.2478/"
+       "on": false
       },
       {
        "id": "exp-05-7272",
        "name": "Ağ girdisi",
        "desc": "Dosya Gezgini gezinti bölmesindeki Ağ girdisini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}",
+         "value": "System.IsPinnedToNameSpaceTree",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.7272/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}",
-        "value": "System.IsPinnedToNameSpaceTree",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.7272/"
+       "on": false
       },
       {
        "id": "exp-06-6255",
        "name": "Geri dönüşüm kutusu girdisi",
        "desc": "Geri Dönüşüm Kutusu'nu gezinti bölmesine geri getirir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Classes\\CLSID\\{645FF040-5081-101B-9F08-00AA002F954E}",
+         "value": "System.IsPinnedToNameSpaceTree",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.6255/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Classes\\CLSID\\{645FF040-5081-101B-9F08-00AA002F954E}",
-        "value": "System.IsPinnedToNameSpaceTree",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.6255/"
+       "on": false
       },
       {
        "id": "exp-07-5953",
        "name": "Kitaplıklar girdisi",
        "desc": "Kitaplıklar klasörünü Dosya Gezgini gezinti bölmesine geri getirir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Classes\\CLSID\\{031E4825-7B94-4dc3-B131-E946B44C8DD5}",
+         "value": "System.IsPinnedToNameSpaceTree",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.5953/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Classes\\CLSID\\{031E4825-7B94-4dc3-B131-E946B44C8DD5}",
-        "value": "System.IsPinnedToNameSpaceTree",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.5953/"
+       "on": false
       }
      ]
     },
@@ -2133,145 +3294,338 @@
        "id": "exp-01-1778",
        "name": "Cihaza yayınla menüsü",
        "desc": "Sağ tık menüsündeki Cihaza yayınla seçeneğini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Blocked",
+         "value": "{7AD84985-87B4-4a16-BE58-8B72A5B390F7}",
+         "type": "SZ",
+         "on": "Cast to Device",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.1778/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Blocked",
-        "value": "{7AD84985-87B4-4a16-BE58-8B72A5B390F7}",
-        "type": "SZ",
-        "on": "Cast to Device",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.1778/"
+       "on": false
       },
       {
        "id": "exp-02-11209",
        "name": "Erişim izni ver menüsü",
        "desc": "Sağ tık menüsündeki Erişim izni ver seçeneğini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Blocked",
+         "value": "{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}",
+         "type": "SZ",
+         "on": "Give access to",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.11209/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Blocked",
-        "value": "{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}",
-        "type": "SZ",
-        "on": "Give access to",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.11209/"
+       "on": false
       },
       {
        "id": "exp-03-1690",
        "name": "Paylaş menüsü",
        "desc": "Dosya sağ tık menüsündeki Windows Paylaş seçeneğini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Blocked",
+         "value": "{e2bf9676-5f8f-435c-97eb-11607a5bedf7}",
+         "type": "SZ",
+         "on": "Share",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.1690/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Blocked",
-        "value": "{e2bf9676-5f8f-435c-97eb-11607a5bedf7}",
-        "type": "SZ",
-        "on": "Share",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.1690/"
+       "on": false
       },
       {
        "id": "exp-04-26916",
        "name": "OneDrive'a taşı menüsü",
        "desc": "Sağ tık menüsündeki OneDrive'a taşı seçeneğini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Blocked",
+         "value": "{1FA0E654-C9F2-4A1F-9800-B9A75D744B00}",
+         "type": "SZ",
+         "on": "OneDrive",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.26916/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Blocked",
-        "value": "{1FA0E654-C9F2-4A1F-9800-B9A75D744B00}",
-        "type": "SZ",
-        "on": "OneDrive",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.26916/"
+       "on": false
       },
       {
        "id": "exp-05-36440",
        "name": "Telefonuma gönder menüsü",
        "desc": "Sağ tık menüsündeki Telefonuma gönder seçeneğini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Blocked",
+         "value": "{2F788D0F-1317-441B-86D2-4725301BD49D}",
+         "type": "SZ",
+         "on": "Send to My Phone",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.36440/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Blocked",
-        "value": "{2F788D0F-1317-441B-86D2-4725301BD49D}",
-        "type": "SZ",
-        "on": "Send to My Phone",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.36440/"
+       "on": false
       },
       {
        "id": "exp-06-6795",
        "name": "Sık kullanılanlara ekle menüsü",
        "desc": "Dosya sağ tık menüsündeki Sık kullanılanlara ekle öğesini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Classes\\*\\shell\\pintohomefile",
+         "value": "ProgrammaticAccessOnly",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.6795/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Classes\\*\\shell\\pintohomefile",
-        "value": "ProgrammaticAccessOnly",
-        "type": "SZ",
-        "on": "",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.6795/"
+       "on": false
       },
       {
        "id": "exp-07-40663",
        "name": "Arka planı keşfet menüsü",
        "desc": "Masaüstü sağ tık menüsündeki Arka planı keşfet öğesini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Classes\\DesktopBackground\\shell\\.SpotlightLearnMore",
+         "value": "ProgrammaticAccessOnly",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.40663/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Classes\\DesktopBackground\\shell\\.SpotlightLearnMore",
-        "value": "ProgrammaticAccessOnly",
-        "type": "SZ",
-        "on": "",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.40663/"
+       "on": false
       },
       {
        "id": "exp-08-40665",
        "name": "Sonraki arka plan menüsü",
        "desc": "Masaüstü sağ tık menüsündeki Sonraki arka plan öğesini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Classes\\DesktopBackground\\shell\\.SpotlightNextImage",
+         "value": "ProgrammaticAccessOnly",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.40665/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Classes\\DesktopBackground\\shell\\.SpotlightNextImage",
-        "value": "ProgrammaticAccessOnly",
-        "type": "SZ",
-        "on": "",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.40665/"
+       "on": false
       },
       {
        "id": "exp-09-5292",
        "name": "Yeni uygulama bildirimi",
        "desc": "Yeni uygulama kurulduğunda çıkan Birlikte aç penceresini engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Explorer",
+         "value": "NoNewAppAlert",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.5292/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Explorer",
-        "value": "NoNewAppAlert",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.5292/"
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Başlat menüsü · WinUtil",
+     "tweaks": [
+      {
+       "id": "wu-WPFTweaksRevertStartMenu",
+       "name": "Başlat menüsü eski düzeni",
+       "desc": "Windows'un yeni Başlat menüsü yerine eski düzeni geri getirir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\ControlSet001\\Control\\FeatureManagement\\Overrides\\8\\3036241548",
+         "value": "EnabledState",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/revertstartmenu",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFToggleStartMenuRecommendations",
+       "name": "Başlat menüsü önerileri",
+       "desc": "Başlat menüsündeki önerilen öğeler bölümünü yeniden açar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\PolicyManager\\current\\device\\Start",
+         "value": "HideRecommendedSection",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\PolicyManager\\current\\device\\Education",
+         "value": "IsEducationEnvironment",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Explorer",
+         "value": "HideRecommendedSection",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/startmenurecommendations",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFToggleBingSearch",
+       "name": "Aramada Bing sonuçları",
+       "desc": "Windows aramasında Bing web sonuçlarının gösterimini açar.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+         "value": "BingSearchEnabled",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/bingsearch",
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Görev çubuğu · WinUtil",
+     "tweaks": [
+      {
+       "id": "wu-WPFToggleTaskbarAlignment",
+       "name": "Görev çubuğu ortalı simgeler",
+       "desc": "Görev çubuğundaki simgelerin ortalanmış yerleşimini açar.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "TaskbarAl",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/taskbaralignment",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFToggleTaskbarSearch",
+       "name": "Görev çubuğu arama simgesi",
+       "desc": "Görev çubuğundaki arama düğmesinin görünümünü açar.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+         "value": "SearchboxTaskbarMode",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/taskbarsearch",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFToggleTaskView",
+       "name": "Görev görünümü simgesi",
+       "desc": "Görev çubuğundaki görev görünümü düğmesini geri getirir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "ShowTaskViewButton",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/taskview",
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Dosya ve pencere · WinUtil",
+     "tweaks": [
+      {
+       "id": "wu-WPFToggleHiddenFiles",
+       "name": "Gizli dosyaları göster",
+       "desc": "Dosya Gezgini'nde gizli dosya ve klasörlerin görünümünü açar.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "Hidden",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/hiddenfiles",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFToggleWindowSnapping",
+       "name": "Pencere yapıştırma",
+       "desc": "Pencereleri kenarlara sürüklerken hizalayan yapıştırmayı açar.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Desktop",
+         "value": "WindowArrangementActive",
+         "type": "SZ",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/windowsnapping",
+       "applied": false,
+       "on": false
       }
      ]
     }
@@ -2289,33 +3643,37 @@
        "id": "perf-01-8637",
        "name": "Sayfa dosyasını temizleme",
        "desc": "Kapanışta sayfa dosyasını temizleyerek bellek izlerini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management",
+         "value": "ClearPageFileAtShutdown",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.8637/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management",
-        "value": "ClearPageFileAtShutdown",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.8637/"
+       "on": false
       },
       {
        "id": "perf-02-20226",
        "name": "Sürekli enerji tasarrufu",
        "desc": "Enerji tasarrufunu sürekli açık tutarak gereksiz güç kullanımını engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Power\\EnergySaver",
+         "value": "EnableEnergySaver",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.20226/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Power\\EnergySaver",
-        "value": "EnableEnergySaver",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.20226/"
+       "on": false
       }
      ]
     },
@@ -2326,33 +3684,37 @@
        "id": "perf-01-17611",
        "name": "Oyun kaydı özelliği",
        "desc": "Windows'un oyun kayıt bileşenini tamamen devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\GameDVR",
+         "value": "AllowgameDVR",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.17611/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\GameDVR",
-        "value": "AllowgameDVR",
-        "type": "DWORD",
-        "on": "0",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.17611/"
+       "on": false
       },
       {
        "id": "perf-02-1447",
        "name": "Oyun modu",
        "desc": "Windows oyun modunu kapatarak oyunlara özel önceliklendirmeyi durdurur.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\GameBar",
+         "value": "AutoGameModeEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.1447/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\GameBar",
-        "value": "AutoGameModeEnabled",
-        "type": "DWORD",
-        "on": "0",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.1447/"
+       "on": false
       }
      ]
     },
@@ -2363,33 +3725,68 @@
        "id": "perf-01-852",
        "name": "Donanım hızlandırmalı GPU zamanlaması",
        "desc": "Ekran kartı zamanlamasını devreye alarak işlemcideki ek yükü kaldırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\GraphicsDrivers",
+         "value": "HwSchMode",
+         "type": "DWORD",
+         "on": "2",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.852/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SYSTEM\\CurrentControlSet\\Control\\GraphicsDrivers",
-        "value": "HwSchMode",
-        "type": "DWORD",
-        "on": "2",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.852/"
+       "on": false
       },
       {
        "id": "perf-02-46210",
        "name": "Toplu iş dosyası kilidi",
        "desc": "Çalışan toplu iş dosyalarını kilitleyerek değiştirilmesini engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Command Processor",
+         "value": "LockBatchFilesWhenInUse",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.46210/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Command Processor",
-        "value": "LockBatchFilesWhenInUse",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.46210/"
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Güç ve bellek · WinUtil",
+     "tweaks": [
+      {
+       "id": "wu-WPFTweaksHiber",
+       "name": "Hazırda bekletme",
+       "desc": "Hazırda bekletmeyi devre dışı bırakır ve güç menüsündeki seçeneği gizler.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "System\\CurrentControlSet\\Control\\Session Manager\\Power",
+         "value": "HibernateEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FlyoutMenuSettings",
+         "value": "ShowHibernateOption",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/hiber",
+       "applied": false,
+       "on": false
       }
      ]
     }
@@ -2407,33 +3804,37 @@
        "id": "cln-01-1236",
        "name": "Depolama alanı duyarlığı",
        "desc": "Gereksiz geçici dosyaları ve çöp kutusu içeriğini otomatik kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\StorageSense\\Parameters\\StoragePolicy",
+         "value": "01",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.1236/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\StorageSense\\Parameters\\StoragePolicy",
-        "value": "01",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.1236/"
+       "on": false
       },
       {
        "id": "cln-02-1238",
        "name": "Zorunlu depolama temizliği",
        "desc": "Depolama alanı duyarlığını her zaman açık tutar ve kapatılmasını engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\StorageSense",
+         "value": "AllowStorageSenseGlobal",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.1238/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\StorageSense",
-        "value": "AllowStorageSenseGlobal",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.1238/"
+       "on": false
       }
      ]
     },
@@ -2444,17 +3845,19 @@
        "id": "cln-01-2050",
        "name": "Simge önbelleği boyutu",
        "desc": "Simge önbelleğini 4 MB'a yükseltip bozuk simge sorunlarını engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer",
+         "value": "MaxCachedIcons",
+         "type": "SZ",
+         "on": "4096",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.2050/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer",
-        "value": "MaxCachedIcons",
-        "type": "SZ",
-        "on": "4096",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.2050/"
+       "on": false
       }
      ]
     }
@@ -2472,49 +3875,55 @@
        "id": "adv-01-38860",
        "name": "Uzun dosya yolu desteği",
        "desc": "Win32 uygulamaları için 260 karakterlik yol sınırını kaldırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\FileSystem",
+         "value": "LongPathsEnabled",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.38860/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SYSTEM\\CurrentControlSet\\Control\\FileSystem",
-        "value": "LongPathsEnabled",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.38860/"
+       "on": false
       },
       {
        "id": "adv-02-928",
        "name": "Geliştirici modu",
        "desc": "Uygulamaları imzasız yüklemek için geliştirici modunu açar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\AppModelUnlock",
+         "value": "AllowDevelopmentWithoutDevLicense",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.928/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\AppModelUnlock",
-        "value": "AllowDevelopmentWithoutDevLicense",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.928/"
+       "on": false
       },
       {
        "id": "adv-03-9742",
        "name": "Sıkıştırılmış dosya rengi",
        "desc": "Şifreli ve sıkıştırılmış NTFS dosyalarını renkli gösterir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "ShowEncryptCompressedColor",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.9742/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKCU",
-        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-        "value": "ShowEncryptCompressedColor",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.9742/"
+       "on": false
       }
      ]
     },
@@ -2525,33 +3934,37 @@
        "id": "adv-01-41838",
        "name": "Eşlenmiş sürücü erişimi",
        "desc": "Eşlenmiş ağ sürücülerini yükseltilmiş komut isteminde gösterir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+         "value": "EnableLinkedConnections",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.41838/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-        "value": "EnableLinkedConnections",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.41838/"
+       "on": false
       },
       {
        "id": "adv-02-3531",
        "name": "Uzak masaüstü bağlantısı",
        "desc": "Bilgisayara uzak masaüstü ile bağlanmayı ilke üzerinden açar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services",
+         "value": "fDenyTSConnections",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.3531/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services",
-        "value": "fDenyTSConnections",
-        "type": "DWORD",
-        "on": "0",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.3531/"
+       "on": false
       }
      ]
     },
@@ -2562,65 +3975,73 @@
        "id": "adv-01-48624",
        "name": "Güvenli kimlik istemi",
        "desc": "UAC istemi öncesinde Ctrl+Alt+Del basmayı zorunlu kılar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\CredUI",
+         "value": "EnableSecureCredentialPrompting",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.48624/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\CredUI",
-        "value": "EnableSecureCredentialPrompting",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.48624/"
+       "on": false
       },
       {
        "id": "adv-02-29115",
        "name": "Yönetici koruması",
        "desc": "Yönetici haklarını yalıtarak yükseltme onayını sıkılaştırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+         "value": "TypeOfAdminApprovalMode",
+         "type": "DWORD",
+         "on": "2",
+         "off": "1"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.29115/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-        "value": "TypeOfAdminApprovalMode",
-        "type": "DWORD",
-        "on": "2",
-        "off": "1"
-       },
-       "source": "https://www.elevenforum.com/t/x.29115/"
+       "on": false
       },
       {
        "id": "adv-03-12970",
        "name": "Yerleşik yönetici için UAC",
        "desc": "Gizli yönetici hesabı için de UAC onayını zorunlu kılar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+         "value": "FilterAdministratorToken",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.12970/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-        "value": "FilterAdministratorToken",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.12970/"
+       "on": false
       },
       {
        "id": "adv-04-14750",
        "name": "Yönetici hesap listesi",
        "desc": "UAC isteminde yönetici hesaplarının listelenmesini gizler.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\CredUI",
+         "value": "EnumerateAdministrators",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.14750/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\CredUI",
-        "value": "EnumerateAdministrators",
-        "type": "DWORD",
-        "on": "0",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.14750/"
+       "on": false
       }
      ]
     },
@@ -2631,49 +4052,55 @@
        "id": "adv-01-1395",
        "name": "Dosya geçmişi",
        "desc": "Dosya Geçmişi yedekleme özelliğini tüm kullanıcılar için kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\FileHistory",
+         "value": "Disabled",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.1395/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\FileHistory",
-        "value": "Disabled",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.1395/"
+       "on": false
       },
       {
        "id": "adv-02-15866",
        "name": "Sistem geri yükleme",
        "desc": "Sistem geri yükleme özelliğini ilke ile devre dışı bırakır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows NT\\SystemRestore",
+         "value": "DisableSR",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.15866/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Policies\\Microsoft\\Windows NT\\SystemRestore",
-        "value": "DisableSR",
-        "type": "DWORD",
-        "on": "1",
-        "off": "DELETE"
-       },
-       "source": "https://www.elevenforum.com/t/x.15866/"
+       "on": false
       },
       {
        "id": "adv-03-42394",
        "name": "Zaman noktası geri yükleme",
        "desc": "Sistemi belirli bir zamana döndüren otomatik geri yüklemeyi açar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup\\Recovery\\PITR\\Settings",
+         "value": "Active_UX",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "source": "https://www.elevenforum.com/t/x.42394/",
        "applied": false,
-       "on": false,
-       "reg": {
-        "hive": "HKLM",
-        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup\\Recovery\\PITR\\Settings",
-        "value": "Active_UX",
-        "type": "DWORD",
-        "on": "1",
-        "off": "0"
-       },
-       "source": "https://www.elevenforum.com/t/x.42394/"
+       "on": false
       }
      ]
     }

@@ -79,7 +79,7 @@ void TweakRow::resizeEvent(QResizeEvent *e)
 void TweakRow::positionToggle()
 {
     // `align-items:center` centres the 15px pill in the content box.
-    const int x = qRound(BorderW + PadX) - Theme::Metric::ToggleBleed;
+    const int x = qRound(BorderW + PadX);
     const int y = qRound((height() - m_toggle->height()) / 2.0);
     m_toggle->move(x, y);
 }

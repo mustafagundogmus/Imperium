@@ -362,12 +362,6 @@ QRect MainWindow::overlayRect() const
     return inner.adjusted(0, m_titleBar->height(), 0, 0);
 }
 
-void MainWindow::previewApply()
-{
-    m_applyOverlay->setGeometry(overlayRect());
-    m_applyOverlay->preview(24);
-}
-
 void MainWindow::onApply()
 {
     if (m_state->pendingCount() == 0 || m_applyOverlay->running())

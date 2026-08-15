@@ -43,9 +43,6 @@ public:
     /// Opens a category by id ("ov", "priv", …). Ignored if the id is unknown.
     void showCategory(const QString &id);
 
-    /// --preview-apply: runs the apply overlay without writing anything.
-    void previewApply();
-
 private Q_SLOTS:
     void onCategoryActivated(const QString &id);
     void onQueryChanged(const QString &query);

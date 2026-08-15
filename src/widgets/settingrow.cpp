@@ -83,7 +83,7 @@ void SettingRow::positionControl()
 
     const int y = qRound((height() - m_control->height()) / 2.0);
     if (m_placement == Leading)
-        m_control->move(qRound(BorderW + PadX) - Theme::Metric::ToggleBleed, y);
+        m_control->move(qRound(BorderW + PadX), y);
     else
         m_control->move(qRound(width() - BorderW - PadX - m_control->width()), y);
 }

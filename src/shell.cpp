@@ -26,7 +26,10 @@ bool needsExplorerRestart(const Tweak &tweak)
                        "|\\\\Dsh\\b"),
         QRegularExpression::CaseInsensitiveOption);
 
-    return shellKeys.match(tweak.reg.path).hasMatch();
+    for (const RegistryEntry &entry : tweak.reg)
+        if (shellKeys.match(entry.path).hasMatch())
+            return true;
+    return false;
 }
 
 bool restartExplorer(QString *error)

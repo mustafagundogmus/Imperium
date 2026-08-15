@@ -135,10 +135,7 @@ inline constexpr qreal ToggleRadius = 7.5; // spec says 8, clamped to half of 15
 inline constexpr int ToggleWidth  = 30;    // the capsule itself
 inline constexpr int ToggleHeight = 16;
 inline constexpr int KnobInset    = 2;     // from the padding box
-// The switch's accent halo has to fade out somewhere. Without transparent room around
-// the capsule it gets clipped to the widget rectangle and reads as a tinted box, so the
-// widget is larger than the capsule and rows offset it back by this much.
-inline constexpr int ToggleBleed  = 7;
+inline constexpr int ToggleBleed  = 0;   // kept at zero: the switch has no outer glow
 
 inline constexpr int WindowButtonWidth = 40;
 

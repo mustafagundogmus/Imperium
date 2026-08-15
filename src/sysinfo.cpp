@@ -26,6 +26,7 @@
 #  include <lmaccess.h>
 #  include <lmapibuf.h>
 #  include <winioctl.h>
+#  include <psapi.h>
 #endif
 
 namespace SysInfo {
@@ -518,6 +519,259 @@ void readVolumes(Facts &f)
     }
 }
 
+
+QString formatCount(quint64 n)
+{
+    return QLocale().toString(qulonglong(n));
+}
+
+/// Machine, board and firmware identity. All of it sits in one registry key that
+/// Windows populates from SMBIOS at boot.
+void readFirmware(Facts &f)
+{
+    QSettings bios = hklm(QStringLiteral("HARDWARE\\DESCRIPTION\\System\\BIOS"));
+    f.manufacturer = orUnknown(bios.value(QStringLiteral("SystemManufacturer")).toString());
+    f.model = orUnknown(bios.value(QStringLiteral("SystemProductName")).toString());
+    f.biosVendor = orUnknown(bios.value(QStringLiteral("BIOSVendor")).toString());
+    f.biosDate = orUnknown(bios.value(QStringLiteral("BIOSReleaseDate")).toString());
+
+    // The SMBIOS version lives in the first two bytes of the raw table header.
+    constexpr DWORD RawSmbios = 0x52534D42;
+    const DWORD size = GetSystemFirmwareTable(RawSmbios, 0, nullptr, 0);
+    if (size >= 8) {
+        QByteArray raw(int(size), Qt::Uninitialized);
+        if (GetSystemFirmwareTable(RawSmbios, 0, raw.data(), size) == size) {
+            const uchar major = uchar(raw.at(1));
+            const uchar minor = uchar(raw.at(2));
+            if (major > 0)
+                f.smbios = QStringLiteral("%1.%2").arg(major).arg(minor);
+        }
+    }
+
+    // A UEFI machine answers this call; a legacy BIOS one fails with
+    // ERROR_INVALID_FUNCTION. The dummy GUID is the documented probe.
+    SetLastError(ERROR_SUCCESS);
+    GetFirmwareEnvironmentVariableW(L"", L"{00000000-0000-0000-0000-000000000000}", nullptr, 0);
+    f.bootMode = GetLastError() == ERROR_INVALID_FUNCTION ? QStringLiteral("Eski (BIOS)")
+                                                          : QStringLiteral("UEFI");
+}
+
+void readProcessorDetail(Facts &f)
+{
+    QSettings cpu = hklm(QStringLiteral("HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0"));
+    f.cpuVendor = orUnknown(cpu.value(QStringLiteral("VendorIdentifier")).toString());
+
+    const int mhz = cpu.value(QStringLiteral("~MHz")).toInt();
+    if (mhz > 0)
+        f.cpuBaseClock = QStringLiteral("%1 GHz").arg(QLocale().toString(mhz / 1000.0, 'f', 2));
+
+    f.cpuArchitecture = QSysInfo::currentCpuArchitecture();
+    f.cpuVirtualization = IsProcessorFeaturePresent(PF_VIRT_FIRMWARE_ENABLED)
+                              ? QStringLiteral("Açık")
+                              : QStringLiteral("Kapalı");
+}
+
+void readMemoryDetail(Facts &f)
+{
+    MEMORYSTATUSEX memory{};
+    memory.dwLength = sizeof(memory);
+    if (GlobalMemoryStatusEx(&memory)) {
+        f.memoryInUse = formatBytes(memory.ullTotalPhys - memory.ullAvailPhys);
+        f.memoryFree = formatBytes(memory.ullAvailPhys);
+
+        // The commit limit includes RAM, so the page file is the difference.
+        if (memory.ullTotalPageFile > memory.ullTotalPhys)
+            f.pageFile = formatBytes(memory.ullTotalPageFile - memory.ullTotalPhys);
+        else
+            f.pageFile = QStringLiteral("Yok");
+    }
+
+    // Populated versus total memory slots, from SMBIOS type 17.
+    constexpr DWORD RawSmbios = 0x52534D42;
+    const DWORD size = GetSystemFirmwareTable(RawSmbios, 0, nullptr, 0);
+    if (size == 0)
+        return;
+    QByteArray raw(int(size), Qt::Uninitialized);
+    if (GetSystemFirmwareTable(RawSmbios, 0, raw.data(), size) != size || raw.size() < 8)
+        return;
+
+    const quint32 tableLength = *reinterpret_cast<const quint32 *>(raw.constData() + 4);
+    const uchar *p = reinterpret_cast<const uchar *>(raw.constData()) + 8;
+    const uchar *end = p + qMin<quint32>(tableLength, quint32(raw.size() - 8));
+
+    // Not "slots": Qt defines that as a keyword macro.
+    int slotCount = 0, filledCount = 0;
+    while (p + 4 <= end) {
+        const uchar type = p[0];
+        const uchar headerLength = p[1];
+        if (headerLength < 4)
+            break;
+        const uchar *structEnd = p + headerLength;
+        if (type == 17 && headerLength >= 0x0E) {
+            ++slotCount;
+            if (*reinterpret_cast<const quint16 *>(p + 0x0C) != 0)
+                ++filledCount;
+        }
+        p = structEnd;
+        while (p + 1 < end && !(p[0] == 0 && p[1] == 0))
+            ++p;
+        p += 2;
+    }
+    if (slotCount > 0)
+        f.memorySlots = QStringLiteral("%1 / %2 dolu").arg(filledCount).arg(slotCount);
+}
+
+/// Counts the values under a Run key.
+int countRunEntries(const QString &root)
+{
+    return QSettings(root, QSettings::NativeFormat).childKeys().size();
+}
+
+/// Counts uninstall entries that actually carry a display name.
+int countInstalled(const QString &root)
+{
+    QSettings s(root, QSettings::NativeFormat);
+    int n = 0;
+    const QStringList children = s.childGroups();
+    for (const QString &child : children) {
+        QSettings entry(root + QLatin1Char('\\') + child, QSettings::NativeFormat);
+        if (!entry.value(QStringLiteral("DisplayName")).toString().trimmed().isEmpty()
+            && entry.value(QStringLiteral("SystemComponent")).toInt() == 0)
+            ++n;
+    }
+    return n;
+}
+
+void readSoftware(Facts &f)
+{
+    const int installed =
+        countInstalled(QStringLiteral("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"))
+        + countInstalled(QStringLiteral("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall"))
+        + countInstalled(QStringLiteral("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"));
+    f.installedPrograms = QStringLiteral("%1 kayıt").arg(installed);
+
+    const int startup =
+        countRunEntries(QStringLiteral("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
+        + countRunEntries(QStringLiteral("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
+        + countRunEntries(QStringLiteral("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"));
+    f.startupEntries = QStringLiteral("%1 giriş").arg(startup);
+
+    QSettings ndp = hklm(QStringLiteral("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full"));
+    const int release = ndp.value(QStringLiteral("Release")).toInt();
+    if (release > 0) {
+        const QString version = ndp.value(QStringLiteral("Version")).toString();
+        f.dotNet = version.isEmpty() ? QStringLiteral("release %1").arg(release) : version;
+    }
+
+    QSettings ps = hklm(QStringLiteral("SOFTWARE\\Microsoft\\PowerShell\\3\\PowerShellEngine"));
+    f.powerShell = orUnknown(ps.value(QStringLiteral("PowerShellVersion")).toString());
+
+    QSettings choice = hkcu(QStringLiteral(
+        "SOFTWARE\\Microsoft\\Windows\\Shell\\Associations\\UrlAssociations\\https\\UserChoice"));
+    QString progId = choice.value(QStringLiteral("ProgId")).toString();
+    if (!progId.isEmpty()) {
+        // Turn "MSEdgeHTM" / "ChromeHTML" into something a person recognises.
+        QSettings app(QStringLiteral("HKEY_CLASSES_ROOT\\") + progId + QStringLiteral("\\Application"),
+                      QSettings::NativeFormat);
+        const QString friendly = app.value(QStringLiteral("ApplicationName")).toString();
+        f.defaultBrowser = friendly.isEmpty() ? progId : friendly;
+    }
+}
+
+void readLocale(Facts &f)
+{
+    QSettings tz = hklm(QStringLiteral("SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation"));
+    QString zone = tz.value(QStringLiteral("TimeZoneKeyName")).toString().trimmed();
+    if (zone.isEmpty())
+        zone = tz.value(QStringLiteral("StandardName")).toString().trimmed();
+
+    TIME_ZONE_INFORMATION info{};
+    if (GetTimeZoneInformation(&info) != TIME_ZONE_ID_INVALID) {
+        const int offset = -(info.Bias + info.DaylightBias) / 60;
+        zone = QStringLiteral("%1 (UTC%2%3)")
+                   .arg(zone.isEmpty() ? QStringLiteral("—") : zone,
+                        offset >= 0 ? QStringLiteral("+") : QStringLiteral("-"))
+                   .arg(qAbs(offset));
+    }
+    f.timeZone = orUnknown(zone);
+
+    QSettings w32 = hklm(QStringLiteral("SYSTEM\\CurrentControlSet\\Services\\W32Time\\Parameters"));
+    QString ntp = w32.value(QStringLiteral("NtpServer")).toString();
+    f.ntpServer = orUnknown(ntp.section(QLatin1Char(','), 0, 0));
+
+    f.locale = QLocale::system().nativeLanguageName() + QStringLiteral(" · ")
+               + QLocale::system().nativeTerritoryName();
+
+    wchar_t layout[KL_NAMELENGTH] = {};
+    if (GetKeyboardLayoutNameW(layout))
+        f.keyboardLayout = QString::fromWCharArray(layout);
+}
+
+void readIdentity(Facts &f)
+{
+    QSettings cv = hklm(QStringLiteral("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion"));
+    f.buildBranch = orUnknown(cv.value(QStringLiteral("BuildBranch")).toString());
+    f.editionId = orUnknown(cv.value(QStringLiteral("EditionID")).toString());
+    f.profilePath = orUnknown(QDir::toNativeSeparators(qEnvironmentVariable("USERPROFILE")));
+
+    const int vw = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+    const int vh = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+    if (vw > 0 && vh > 0)
+        f.virtualDesktop = QStringLiteral("%1×%2").arg(vw).arg(vh);
+}
+
+/// Second pass over the adapter list for the details the first pass does not need.
+void readNetworkDetail(Facts &f)
+{
+    ULONG size = 16 * 1024;
+    QByteArray buffer(int(size), Qt::Uninitialized);
+    const ULONG flags = GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_INCLUDE_GATEWAYS;
+
+    ULONG status = GetAdaptersAddresses(
+        AF_UNSPEC, flags, nullptr, reinterpret_cast<PIP_ADAPTER_ADDRESSES>(buffer.data()), &size);
+    if (status == ERROR_BUFFER_OVERFLOW) {
+        buffer.resize(int(size));
+        status = GetAdaptersAddresses(
+            AF_UNSPEC, flags, nullptr, reinterpret_cast<PIP_ADAPTER_ADDRESSES>(buffer.data()), &size);
+    }
+    if (status != NO_ERROR)
+        return;
+
+    int adapters = 0;
+    bool first = true;
+    for (auto *a = reinterpret_cast<PIP_ADAPTER_ADDRESSES>(buffer.data()); a; a = a->Next) {
+        if (a->IfType == IF_TYPE_SOFTWARE_LOOPBACK)
+            continue;
+        ++adapters;
+        if (a->OperStatus != IfOperStatusUp || !first)
+            continue;
+
+        for (auto *u = a->FirstUnicastAddress; u; u = u->Next) {
+            if (u->Address.lpSockaddr->sa_family != AF_INET6)
+                continue;
+            auto *sa = reinterpret_cast<sockaddr_in6 *>(u->Address.lpSockaddr);
+            wchar_t text[INET6_ADDRSTRLEN] = {};
+            if (InetNtopW(AF_INET6, &sa->sin6_addr, text, INET6_ADDRSTRLEN)) {
+                f.ipv6 = QString::fromWCharArray(text);
+                break;
+            }
+        }
+
+        if (a->FirstGatewayAddress) {
+            auto *g = a->FirstGatewayAddress->Address.lpSockaddr;
+            wchar_t text[INET6_ADDRSTRLEN] = {};
+            if (g->sa_family == AF_INET) {
+                auto *v4 = reinterpret_cast<sockaddr_in *>(g);
+                if (InetNtopW(AF_INET, &v4->sin_addr, text, INET6_ADDRSTRLEN))
+                    f.gateway = QString::fromWCharArray(text);
+            }
+        }
+        first = false;
+    }
+    if (adapters > 0)
+        f.adapterCount = QStringLiteral("%1 bağdaştırıcı").arg(adapters);
+}
+
 #endif // Q_OS_WIN
 
 } // namespace
@@ -546,6 +800,32 @@ QString uptimeString()
 #else
     return Unknown;
 #endif
+}
+
+
+LiveCounters liveCounters()
+{
+    LiveCounters c;
+#ifdef Q_OS_WIN
+    PERFORMANCE_INFORMATION info{};
+    info.cb = sizeof(info);
+    if (GetPerformanceInfo(&info, sizeof(info))) {
+        c.processes = formatCount(info.ProcessCount);
+        c.threads = formatCount(info.ThreadCount);
+        c.handles = formatCount(info.HandleCount);
+    }
+
+    LASTINPUTINFO last{};
+    last.cbSize = sizeof(last);
+    if (GetLastInputInfo(&last)) {
+        const qint64 idleMs = qint64(GetTickCount64()) - qint64(last.dwTime);
+        if (idleMs < 60000)
+            c.idle = QStringLiteral("%1 sn").arg(qMax<qint64>(0, idleMs / 1000));
+        else
+            c.idle = QStringLiteral("%1 dk").arg(idleMs / 60000);
+    }
+#endif
+    return c;
 }
 
 Facts collect()
@@ -657,6 +937,13 @@ Facts collect()
     readPower(f);
     readSecurity(f);
     readVolumes(f);
+    readFirmware(f);
+    readProcessorDetail(f);
+    readMemoryDetail(f);
+    readSoftware(f);
+    readLocale(f);
+    readIdentity(f);
+    readNetworkDetail(f);
 #else
     f.osName = QSysInfo::prettyProductName();
     f.version = QSysInfo::productVersion();

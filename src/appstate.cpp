@@ -174,8 +174,7 @@ AppState::StepOutcome AppState::applyOne(const QString &id)
         return outcome;
 
     outcome.name = tweak->name;
-    outcome.path = tweak->reg.hive + QLatin1String("\\") + tweak->reg.path
-                   + QLatin1String("\\") + tweak->reg.value;
+    outcome.path = tweak->targetSummary();
 
     const bool desired = m_on.value(id, false);
     const QVector<TweakEngine::Outcome> results = m_engine->apply({{tweak, desired}});

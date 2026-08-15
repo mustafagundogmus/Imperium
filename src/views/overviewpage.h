@@ -49,4 +49,10 @@ private:
     InfoSection *m_security = nullptr;
     InfoSection *m_storage = nullptr;
     InfoSection *m_session = nullptr;
+    InfoSection *m_firmware = nullptr;
+    InfoSection *m_processor = nullptr;
+    InfoSection *m_memory = nullptr;
+    InfoSection *m_software = nullptr;
+    InfoSection *m_locale = nullptr;
+    InfoSection *m_processes = nullptr;
 };

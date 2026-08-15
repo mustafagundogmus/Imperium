@@ -1,15 +1,13 @@
 // toggleswitch.h — the switch used everywhere in the app.
 //
-// The handoff draws a flat 26×15 pill that cross-fades to the accent. This is a richer
-// take on the same idea, kept inside the design's language (no gradients, no glass, 1px
-// borders only):
+// Rectangular rather than a pill, to match the window's square corners and the 1px-line
+// language of the rest of the UI:
 //
-//   · the accent does not cross-fade in — it *wipes* across the track, following the
-//     knob, so the fill and the knob read as one movement
-//   · the knob squashes while held and springs back on release
-//   · turning on overshoots very slightly (OutBack), turning off settles (OutCubic)
-//   · a soft accent halo sits under the track while on, which is what gives it presence
-//     against #121214 without adding a single new colour
+//   track  30×16, 3px radius, 1px border
+//   knob   10×10 square, 2px radius, inset 2px from the padding box
+//   on     the accent fills the track *behind* the knob — the fill edge tracks the knob
+//          instead of cross-fading, so the two read as one movement
+//   motion 140ms, no overshoot: short and decided
 
 #pragma once
 
@@ -42,17 +40,12 @@ protected:
     void keyPressEvent(QKeyEvent *) override;
 
 private:
-    QRectF capsule() const;        ///< the drawn switch inside the padded widget
-    qreal knobCentre() const;      ///< x of the knob centre at the current position
-    qreal knobRadius() const;
-    void animateTo(qreal target, bool overshoot);
+    QRectF knobRect() const;
 
     bool m_checked = false;
     bool m_pressed = false;
     bool m_hovered = false;
 
-    qreal m_t = 0.0;               ///< 0 = off, 1 = on (may briefly exceed 1 on overshoot)
-    qreal m_squash = 0.0;          ///< 0 = round knob, 1 = fully squashed
+    qreal m_t = 0.0;               ///< 0 = off, 1 = on
     QVariantAnimation *m_slide = nullptr;
-    QVariantAnimation *m_squashAnim = nullptr;
 };

@@ -13,14 +13,16 @@
 #include <QString>
 #include <QVector>
 
-struct RegistrySpec
+/// One registry value a tweak owns. A tweak may own several: plenty of real tweaks
+/// only take effect when two or three values move together.
+struct RegistryEntry
 {
-    QString hive;      // HKLM | HKCU | HKCR | NONE
-    QString path;      // key path, or the service name when type == "SERVICE"
+    QString hive;      // HKLM | HKCU | HKCR
+    QString path;      // key path
     QString value;     // value name
-    QString type;      // DWORD | SZ | EXPAND_SZ | QWORD | SERVICE | COMMAND | NONE
-    QString on;        // value written when the tweak is enabled
-    QString off;       // value that restores the Windows default
+    QString type;      // DWORD | QWORD | SZ | EXPAND_SZ | BINARY
+    QString on;        // written when the switch is on
+    QString off;       // written when it is off; "DELETE" removes the value
 };
 
 struct Tweak
@@ -30,7 +32,11 @@ struct Tweak
     QString desc;
     bool applied = false;   ///< state already committed to the system
     bool on = false;        ///< state the switch starts in (differs → pending)
-    RegistrySpec reg;
+    QVector<RegistryEntry> reg;
+    QString source;         ///< where the definition came from, for auditing
+
+    /// Human-readable target, e.g. "HKCU\Software\…\Enabled" (+2 more).
+    QString targetSummary() const;
 };
 
 struct Section

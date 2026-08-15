@@ -122,16 +122,27 @@ OverviewPage::OverviewPage(SystemMonitor *monitor, QWidget *parent)
     m_security = new InfoSection(QStringLiteral("Güvenlik"), sections);
     m_storage = new InfoSection(QStringLiteral("Depolama"), sections);
     m_session = new InfoSection(QStringLiteral("Oturum"), sections);
+    m_firmware = new InfoSection(QStringLiteral("Bellenim"), sections);
+    m_processor = new InfoSection(QStringLiteral("İşlemci"), sections);
+    m_memory = new InfoSection(QStringLiteral("Bellek"), sections);
+    m_software = new InfoSection(QStringLiteral("Yazılım"), sections);
+    m_locale = new InfoSection(QStringLiteral("Zaman & bölge"), sections);
+    m_processes = new InfoSection(QStringLiteral("Süreçler"), sections);
 
-    // Two columns, filled left-to-right; the sections are ordered so the pair sitting on
-    // any given row is roughly the same height.
-    const QVector<InfoSection *> order{m_system, m_hardware, m_user, m_display,
-                                       m_network, m_security, m_power, m_storage,
-                                       m_session};
+    // Three columns rather than the handoff's two: there is a lot to show and the window
+    // is wide enough that a third column costs nothing but gains a whole screen of
+    // vertical space. Ordered so related blocks sit near each other.
+    const QVector<InfoSection *> order{
+        m_system,    m_hardware,  m_processor,
+        m_user,      m_memory,    m_firmware,
+        m_display,   m_storage,   m_network,
+        m_security,  m_power,     m_software,
+        m_session,   m_processes, m_locale,
+    };
     for (int i = 0; i < order.size(); ++i)
-        grid->addWidget(order.at(i), i / 2, i % 2, Qt::AlignTop);
-    grid->setColumnStretch(0, 1);
-    grid->setColumnStretch(1, 1);
+        grid->addWidget(order.at(i), i / 3, i % 3, Qt::AlignTop);
+    for (int c = 0; c < 3; ++c)
+        grid->setColumnStretch(c, 1);
 
     outer->addWidget(sections);
     outer->addStretch(1);
@@ -169,8 +180,14 @@ void OverviewPage::onSampled(const Sample &sample)
 
     m_chart->setSeries(m_monitor->cpuHistory(), m_monitor->ramHistory(), SystemMonitor::HistorySize);
 
-    // "Çalışma süresi" is the one info row that moves on its own.
+    // Uptime and the process counters are the rows that move on their own.
     m_session->setRowValue(0, SysInfo::uptimeString());
+
+    const SysInfo::LiveCounters live = SysInfo::liveCounters();
+    m_processes->setRowValue(0, live.processes);
+    m_processes->setRowValue(1, live.threads);
+    m_processes->setRowValue(2, live.handles);
+    m_processes->setRowValue(3, live.idle);
 }
 
 void OverviewPage::setFacts(const SysInfo::Facts &facts)
@@ -186,6 +203,8 @@ void OverviewPage::setFacts(const SysInfo::Facts &facts)
         {QStringLiteral("Etkinleştirme"), facts.activation, false},
         {QStringLiteral("Güvenli Önyükleme"), facts.secureBoot, false},
         {QStringLiteral("TPM"), facts.tpm, true},
+        {QStringLiteral("Sürüm dalı"), facts.buildBranch, true},
+        {QStringLiteral("Edisyon kimliği"), facts.editionId, true},
     });
 
     m_user->setRows({
@@ -194,6 +213,7 @@ void OverviewPage::setFacts(const SysInfo::Facts &facts)
         {QStringLiteral("Bilgisayar adı"), facts.computerName, true},
         {QStringLiteral("Microsoft hesabı"), facts.microsoftAccount, false},
         {QStringLiteral("Etkin grup ilkesi"), facts.activePolicies, true},
+        {QStringLiteral("Profil klasörü"), facts.profilePath, true},
     });
 
     m_hardware->setRows({
@@ -211,6 +231,7 @@ void OverviewPage::setFacts(const SysInfo::Facts &facts)
         {QStringLiteral("Renk derinliği"), facts.colorDepth, true},
         {QStringLiteral("Ölçekleme"), facts.dpiScale, true},
         {QStringLiteral("Ekran sürücüsü"), facts.graphicsDriver, true},
+        {QStringLiteral("Sanal masaüstü"), facts.virtualDesktop, true},
     });
 
     m_network->setRows({
@@ -218,6 +239,9 @@ void OverviewPage::setFacts(const SysInfo::Facts &facts)
         {QStringLiteral("IPv4 adresi"), facts.ipv4, true},
         {QStringLiteral("Bağlantı hızı"), facts.linkSpeed, true},
         {QStringLiteral("DNS sunucusu"), facts.dnsServer, true},
+        {QStringLiteral("IPv6 adresi"), facts.ipv6, true},
+        {QStringLiteral("Ağ geçidi"), facts.gateway, true},
+        {QStringLiteral("Bağdaştırıcı"), facts.adapterCount, false},
         {QStringLiteral("Etki alanı"), facts.domain, false},
     });
 
@@ -242,6 +266,54 @@ void OverviewPage::setFacts(const SysInfo::Facts &facts)
     if (volumes.isEmpty())
         volumes.append({QStringLiteral("Birim"), QStringLiteral("—"), false});
     m_storage->setRows(volumes);
+
+    m_firmware->setRows({
+        {QStringLiteral("Üretici"), facts.manufacturer, false},
+        {QStringLiteral("Model"), facts.model, false},
+        {QStringLiteral("Anakart"), facts.motherboard, false},
+        {QStringLiteral("BIOS üreticisi"), facts.biosVendor, false},
+        {QStringLiteral("BIOS tarihi"), facts.biosDate, true},
+        {QStringLiteral("SMBIOS"), facts.smbios, true},
+        {QStringLiteral("Önyükleme modu"), facts.bootMode, false},
+    });
+
+    m_processor->setRows({
+        {QStringLiteral("Model"), facts.cpu, false},
+        {QStringLiteral("Üretici"), facts.cpuVendor, true},
+        {QStringLiteral("Taban frekans"), facts.cpuBaseClock, true},
+        {QStringLiteral("Mimari"), facts.cpuArchitecture, true},
+        {QStringLiteral("Sanallaştırma"), facts.cpuVirtualization, false},
+    });
+
+    m_memory->setRows({
+        {QStringLiteral("Takılı"), facts.memory, false},
+        {QStringLiteral("Kullanımda"), facts.memoryInUse, true},
+        {QStringLiteral("Boşta"), facts.memoryFree, true},
+        {QStringLiteral("Sayfa dosyası"), facts.pageFile, true},
+        {QStringLiteral("Yuvalar"), facts.memorySlots, true},
+    });
+
+    m_software->setRows({
+        {QStringLiteral("Kurulu program"), facts.installedPrograms, true},
+        {QStringLiteral("Başlangıç girişi"), facts.startupEntries, true},
+        {QStringLiteral(".NET Framework"), facts.dotNet, true},
+        {QStringLiteral("PowerShell"), facts.powerShell, true},
+        {QStringLiteral("Varsayılan tarayıcı"), facts.defaultBrowser, false},
+    });
+
+    m_locale->setRows({
+        {QStringLiteral("Saat dilimi"), facts.timeZone, false},
+        {QStringLiteral("NTP sunucusu"), facts.ntpServer, true},
+        {QStringLiteral("Dil ve bölge"), facts.locale, false},
+        {QStringLiteral("Klavye düzeni"), facts.keyboardLayout, true},
+    });
+
+    m_processes->setRows({
+        {QStringLiteral("Çalışan süreç"), facts.processCount, true},
+        {QStringLiteral("İş parçacığı"), facts.threadCount, true},
+        {QStringLiteral("Tanıtıcı"), facts.handleCount, true},
+        {QStringLiteral("Boşta süre"), facts.idleTime, true},
+    });
 
     m_session->setRows({
         {QStringLiteral("Çalışma süresi"), facts.uptime, true},

@@ -31,11 +31,6 @@ public:
     /// Shows the overlay and starts writing. Does nothing when nothing is pending.
     void run();
 
-    /// Same overlay, same pacing, but nothing is written — it walks the first  count
-    /// catalogue entries so the presentation can be checked without touching a machine.
-    /// Reachable only through --preview-apply.
-    void preview(int count);
-
     bool running() const { return m_running; }
 
 Q_SIGNALS:

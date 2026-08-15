@@ -79,6 +79,54 @@ struct Facts
     // Depolama — one row per fixed volume, "C:" → "953 GB · 378 GB boş"
     QVector<QPair<QString, QString>> volumes;
 
+    // Bellenim
+    QString manufacturer    = QStringLiteral("—");
+    QString model           = QStringLiteral("—");
+    QString biosVendor      = QStringLiteral("—");
+    QString biosDate        = QStringLiteral("—");
+    QString smbios          = QStringLiteral("—");
+    QString bootMode        = QStringLiteral("—");   ///< "UEFI" / "Eski (BIOS)"
+
+    // İşlemci ayrıntısı
+    QString cpuVendor       = QStringLiteral("—");
+    QString cpuBaseClock    = QStringLiteral("—");
+    QString cpuArchitecture = QStringLiteral("—");
+    QString cpuVirtualization= QStringLiteral("—");
+
+    // Bellek ayrıntısı
+    QString memoryInUse     = QStringLiteral("—");
+    QString memoryFree      = QStringLiteral("—");
+    QString pageFile        = QStringLiteral("—");
+    QString memorySlots     = QStringLiteral("—");
+
+    // Yazılım
+    QString installedPrograms = QStringLiteral("—");
+    QString startupEntries  = QStringLiteral("—");
+    QString dotNet          = QStringLiteral("—");
+    QString powerShell      = QStringLiteral("—");
+    QString defaultBrowser  = QStringLiteral("—");
+
+    // Zaman & bölge
+    QString timeZone        = QStringLiteral("—");
+    QString ntpServer       = QStringLiteral("—");
+    QString locale          = QStringLiteral("—");
+    QString keyboardLayout  = QStringLiteral("—");
+
+    // Süreçler
+    QString processCount    = QStringLiteral("—");
+    QString threadCount     = QStringLiteral("—");
+    QString handleCount     = QStringLiteral("—");
+    QString idleTime        = QStringLiteral("—");
+
+    // Ek alanlar
+    QString buildBranch     = QStringLiteral("—");
+    QString editionId       = QStringLiteral("—");
+    QString virtualDesktop  = QStringLiteral("—");
+    QString ipv6            = QStringLiteral("—");
+    QString gateway         = QStringLiteral("—");
+    QString adapterCount    = QStringLiteral("—");
+    QString profilePath     = QStringLiteral("—");
+
     // Title bar / header
     QString titleBarSummary = QStringLiteral("—");   ///< "Windows 11 Pro · 26100.4202 · Yönetici"
     bool elevated = false;
@@ -93,6 +141,16 @@ QString friendlyDateTime(const QDateTime &dt, bool withComma = false);
 
 /// "6 sa 18 dk" — recomputed on demand because it ticks while the app is open.
 QString uptimeString();
+
+/// Live process / thread / handle counts and idle time, refreshed on every sample.
+struct LiveCounters
+{
+    QString processes = QStringLiteral("—");
+    QString threads   = QStringLiteral("—");
+    QString handles   = QStringLiteral("—");
+    QString idle      = QStringLiteral("—");
+};
+LiveCounters liveCounters();
 
 /// Fills in the CIM-only facts in the background.
 class Probe : public QObject

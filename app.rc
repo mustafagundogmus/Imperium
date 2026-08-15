@@ -5,8 +5,8 @@
 IDI_ICON1 ICON "resources/icons/tweaker.ico"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION     0,9,3,0
-PRODUCTVERSION  0,9,3,0
+FILEVERSION     0,9,4,0
+PRODUCTVERSION  0,9,4,0
 FILEOS          VOS_NT_WINDOWS32
 FILETYPE        VFT_APP
 BEGIN
@@ -16,11 +16,11 @@ BEGIN
         BEGIN
             VALUE "CompanyName",      "Arbitrium"
             VALUE "FileDescription",  "Windows Tweaker"
-            VALUE "FileVersion",      "0.9.3"
+            VALUE "FileVersion",      "0.9.4"
             VALUE "InternalName",     "Arbitrium"
             VALUE "OriginalFilename", "Arbitrium.exe"
             VALUE "ProductName",      "Arbitrium"
-            VALUE "ProductVersion",   "0.9.3"
+            VALUE "ProductVersion",   "0.9.4"
         END
     END
     BLOCK "VarFileInfo"

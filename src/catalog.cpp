@@ -8,6 +8,17 @@
 
 Q_LOGGING_CATEGORY(lcCatalog, "tweaker.catalog")
 
+QString Tweak::targetSummary() const
+{
+    if (reg.isEmpty())
+        return {};
+    const RegistryEntry &first = reg.first();
+    QString text = first.hive + QLatin1String("\\") + first.path + QLatin1String("\\") + first.value;
+    if (reg.size() > 1)
+        text += QStringLiteral("  (+%1)").arg(reg.size() - 1);
+    return text;
+}
+
 int Category::tweakCount() const
 {
     int n = 0;
@@ -70,13 +81,21 @@ void Catalog::load()
                 t.applied = to.value(QStringLiteral("applied")).toBool();
                 t.on = to.value(QStringLiteral("on")).toBool(t.applied);
 
-                const QJsonObject ro = to.value(QStringLiteral("reg")).toObject();
-                t.reg.hive  = ro.value(QStringLiteral("hive")).toString();
-                t.reg.path  = ro.value(QStringLiteral("path")).toString();
-                t.reg.value = ro.value(QStringLiteral("value")).toString();
-                t.reg.type  = ro.value(QStringLiteral("type")).toString();
-                t.reg.on    = ro.value(QStringLiteral("on")).toString();
-                t.reg.off   = ro.value(QStringLiteral("off")).toString();
+                const QJsonArray entries = to.value(QStringLiteral("reg")).toArray();
+                t.reg.reserve(entries.size());
+                for (const QJsonValue &ev : entries) {
+                    const QJsonObject eo = ev.toObject();
+                    RegistryEntry entry;
+                    entry.hive  = eo.value(QStringLiteral("hive")).toString();
+                    entry.path  = eo.value(QStringLiteral("path")).toString();
+                    entry.value = eo.value(QStringLiteral("value")).toString();
+                    entry.type  = eo.value(QStringLiteral("type")).toString();
+                    entry.on    = eo.value(QStringLiteral("on")).toString();
+                    entry.off   = eo.value(QStringLiteral("off")).toString();
+                    if (!entry.hive.isEmpty() && !entry.path.isEmpty())
+                        t.reg.append(entry);
+                }
+                t.source = to.value(QStringLiteral("source")).toString();
 
                 sec.tweaks.append(t);
                 ++m_total;

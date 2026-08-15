@@ -26,8 +26,12 @@ constexpr qreal GapNameToPath = 2.0;
 constexpr qreal GapToButtons = 14.0;
 constexpr int ButtonGap = 8;
 
-/// The whole run is paced to roughly this, however many tweaks are queued.
-constexpr int TargetDurationMs = 1100;
+// Pacing. The writes themselves take under a millisecond each, so the run is spaced
+// out deliberately: fast enough not to feel like waiting, slow enough that the name of
+// each tweak can actually be read as it goes past.
+constexpr int TargetDurationMs = 3600;
+constexpr int MinStepMs = 75;
+constexpr int MaxStepMs = 300;
 
 } // namespace
 
@@ -53,7 +57,7 @@ ApplyOverlay::ApplyOverlay(AppState *state, QWidget *parent)
 
     // The rail chases the real count instead of jumping, so it reads as motion.
     m_progress = new QVariantAnimation(this);
-    m_progress->setDuration(220);
+    m_progress->setDuration(320);
     m_progress->setEasingCurve(QEasingCurve::OutCubic);
     connect(m_progress, &QVariantAnimation::valueChanged, this, [this](const QVariant &v) {
         m_shown = v.toReal();
@@ -101,29 +105,7 @@ void ApplyOverlay::run()
     if (m_running)
         return;
 
-    m_dryRun = false;
     m_queue = m_state->pendingIds().toVector();
-    if (m_queue.isEmpty())
-        return;
-    start();
-}
-
-void ApplyOverlay::preview(int count)
-{
-    if (m_running)
-        return;
-
-    m_dryRun = true;
-    m_queue.clear();
-    for (const Category &c : Catalog::instance().categories()) {
-        for (const Section &s : c.sections) {
-            for (const Tweak &t : s.tweaks) {
-                if (m_queue.size() >= count)
-                    break;
-                m_queue.append(t.id);
-            }
-        }
-    }
     if (m_queue.isEmpty())
         return;
     start();
@@ -155,7 +137,7 @@ void ApplyOverlay::start()
     m_fade->start();
     m_shimmer->start();
 
-    m_timer->start(qBound(10, TargetDurationMs / m_total, 55));
+    m_timer->start(qBound(MinStepMs, TargetDurationMs / m_total, MaxStepMs));
 }
 
 void ApplyOverlay::step()
@@ -166,19 +148,7 @@ void ApplyOverlay::step()
     }
 
     const QString id = m_queue.takeFirst();
-
-    AppState::StepOutcome outcome;
-    if (m_dryRun) {
-        if (const Tweak *tweak = Catalog::instance().tweak(id)) {
-            outcome.id = id;
-            outcome.name = tweak->name;
-            outcome.path = tweak->reg.hive + QLatin1String("\\") + tweak->reg.path
-                           + QLatin1String("\\") + tweak->reg.value;
-            outcome.ok = true;
-        }
-    } else {
-        outcome = m_state->applyOne(id);
-    }
+    const AppState::StepOutcome outcome = m_state->applyOne(id);
 
     ++m_done;
     if (outcome.ok) {
@@ -222,18 +192,10 @@ void ApplyOverlay::complete()
                         : QStringLiteral("Tüm değişiklikler yürürlükte.");
     m_currentPath.clear();
 
-    m_restartExplorer->setVisible(m_needsExplorer && !m_dryRun);
+    m_restartExplorer->setVisible(m_needsExplorer);
     m_close->show();
     layoutButtons();
     update();
-
-    if (m_dryRun) {
-        // A preview writes nothing, so it must not report an apply that never happened.
-        m_summary = QStringLiteral("önizleme · hiçbir şey yazılmadı");
-        Q_EMIT notice(QStringLiteral("önizleme tamamlandı · registry'ye yazılmadı"));
-        update();
-        return;
-    }
 
     Q_EMIT finished(m_succeeded, m_failed, m_elevationRequired);
 }
