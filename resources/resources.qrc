@@ -1,0 +1,17 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/fonts">
+        <file alias="IBMPlexSans-Regular.ttf">fonts/IBMPlexSans-Regular.ttf</file>
+        <file alias="IBMPlexSans-Text.ttf">fonts/IBMPlexSans-Text.ttf</file>
+        <file alias="IBMPlexSans-Medium.ttf">fonts/IBMPlexSans-Medium.ttf</file>
+        <file alias="IBMPlexSans-SemiBold.ttf">fonts/IBMPlexSans-SemiBold.ttf</file>
+        <file alias="IBMPlexMono-Regular.ttf">fonts/IBMPlexMono-Regular.ttf</file>
+        <file alias="IBMPlexMono-Medium.ttf">fonts/IBMPlexMono-Medium.ttf</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="tweaker.ico">icons/tweaker.ico</file>
+    </qresource>
+    <qresource prefix="/data">
+        <file alias="catalog.json">data/catalog.json</file>
+    </qresource>
+</RCC>
