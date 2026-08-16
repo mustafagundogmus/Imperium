@@ -86,5 +86,9 @@ CMakeLists.txt.user*
 # keep the Windows resource script (it carries the app icon)
 !app.rc
 
-# kept local for now, not published yet
-README.md
+# Windows Explorer folder customization — per-machine, hardcodes a local absolute path
+desktop.ini
+
+# Qt Linguist .ts/.qm are not this project's translation mechanism — see src/i18n.h
+*.ts
+
