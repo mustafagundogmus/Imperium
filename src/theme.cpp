@@ -1,4 +1,5 @@
 #include "theme.h"
+#include "i18n.h"
 
 #include <QFontDatabase>
 #include <QGuiApplication>
@@ -466,9 +467,9 @@ QString accentName(const QColor &c)
 {
     static const QHash<QString, QString> names{
         {QStringLiteral("#d2a75a"), QStringLiteral("Amber")},
-        {QStringLiteral("#7fb8a4"), QStringLiteral("Adaçayı")},
-        {QStringLiteral("#8e9bd8"), QStringLiteral("Lavanta")},
-        {QStringLiteral("#c4c4cc"), QStringLiteral("Nötr")},
+        {QStringLiteral("#7fb8a4"), Locale::tr(QStringLiteral("accent.sage"))},
+        {QStringLiteral("#8e9bd8"), Locale::tr(QStringLiteral("accent.lavender"))},
+        {QStringLiteral("#c4c4cc"), Locale::tr(QStringLiteral("accent.neutral"))},
     };
     return names.value(c.name(QColor::HexRgb).toLower(), c.name(QColor::HexRgb).toUpper());
 }

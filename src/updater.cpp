@@ -1,4 +1,5 @@
 #include "updater.h"
+#include "i18n.h"
 
 #include <QCoreApplication>
 #include <QJsonDocument>
@@ -69,7 +70,7 @@ void Updater::check()
             // A repo with no published release answers 404; that is not a failure.
             if (status == 404) {
                 Q_EMIT finished(false, QString(), releasesUrl(),
-                                QStringLiteral("henüz yayımlanmış sürüm yok"));
+                                Locale::tr(QStringLiteral("err.noRelease")));
                 return;
             }
             Q_EMIT finished(false, QString(), releasesUrl(), reply->errorString());
@@ -79,7 +80,7 @@ void Updater::check()
         const QJsonObject release = QJsonDocument::fromJson(reply->readAll()).object();
         const QString tag = release.value(QStringLiteral("tag_name")).toString();
         if (tag.isEmpty()) {
-            Q_EMIT finished(false, QString(), releasesUrl(), QStringLiteral("yanıt okunamadı"));
+            Q_EMIT finished(false, QString(), releasesUrl(), Locale::tr(QStringLiteral("err.badResponse")));
             return;
         }
 

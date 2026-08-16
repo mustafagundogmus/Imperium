@@ -47,6 +47,42 @@
   "ru": "Разработчик, исходный код и поддержка",
   "tr": "Geliştirici, kaynak kod ve destek"
  },
+ "accent.lavender": {
+  "ar": "الخزامى",
+  "de": "Lavendel",
+  "en": "Lavender",
+  "es": "Lavanda",
+  "fr": "Lavande",
+  "it": "Lavanda",
+  "pl": "Lawenda",
+  "pt": "Lavanda",
+  "ru": "Лаванда",
+  "tr": "Lavanta"
+ },
+ "accent.neutral": {
+  "ar": "محايد",
+  "de": "Neutral",
+  "en": "Neutral",
+  "es": "Neutro",
+  "fr": "Neutre",
+  "it": "Neutro",
+  "pl": "Neutralny",
+  "pt": "Neutro",
+  "ru": "Нейтральный",
+  "tr": "Nötr"
+ },
+ "accent.sage": {
+  "ar": "المريمية",
+  "de": "Salbei",
+  "en": "Sage",
+  "es": "Salvia",
+  "fr": "Sauge",
+  "it": "Salvia",
+  "pl": "Szałwia",
+  "pt": "Salva",
+  "ru": "Шалфей",
+  "tr": "Adaçayı"
+ },
  "action.act-block-adobe.desc": {
   "ar": "يضيف عناوين Adobe الواردة في قائمة Ruddernation إلى ملف hosts.",
   "de": "Fügt die Adobe-Adressen aus der Ruddernation-Liste zur hosts-Datei hinzu.",
@@ -1726,6 +1762,138 @@
   "pt": "Remover aplicativos",
   "ru": "Удаление приложений",
   "tr": "Uygulamaları Kaldır"
+ },
+ "err.badHive": {
+  "ar": "خلية سجل غير صالحة",
+  "de": "ungültige Registrierungsstruktur",
+  "en": "invalid registry hive",
+  "es": "subárbol del Registro no válido",
+  "fr": "ruche de registre non valide",
+  "it": "hive del Registro di sistema non valido",
+  "pl": "nieprawidłowy gałąź rejestru",
+  "pt": "ramo do Registo inválido",
+  "ru": "недопустимый куст реестра",
+  "tr": "geçersiz kayıt kovanı"
+ },
+ "err.badResponse": {
+  "ar": "تعذّرت قراءة الاستجابة",
+  "de": "die Antwort konnte nicht gelesen werden",
+  "en": "the response could not be read",
+  "es": "no se pudo leer la respuesta",
+  "fr": "impossible de lire la réponse",
+  "it": "impossibile leggere la risposta",
+  "pl": "nie można odczytać odpowiedzi",
+  "pt": "não foi possível ler a resposta",
+  "ru": "не удалось прочитать ответ",
+  "tr": "yanıt okunamadı"
+ },
+ "err.explorerStop": {
+  "ar": "تعذّر إيقاف explorer.exe",
+  "de": "explorer.exe konnte nicht beendet werden",
+  "en": "explorer.exe could not be stopped",
+  "es": "no se pudo detener explorer.exe",
+  "fr": "impossible d'arrêter explorer.exe",
+  "it": "impossibile arrestare explorer.exe",
+  "pl": "nie można zatrzymać explorer.exe",
+  "pt": "não foi possível parar o explorer.exe",
+  "ru": "не удалось остановить explorer.exe",
+  "tr": "explorer.exe durdurulamadı"
+ },
+ "err.keyNotFound": {
+  "ar": "لم يُعثر على المفتاح",
+  "de": "Schlüssel nicht gefunden",
+  "en": "key not found",
+  "es": "no se encontró la clave",
+  "fr": "clé introuvable",
+  "it": "chiave non trovata",
+  "pl": "nie znaleziono klucza",
+  "pt": "chave não encontrada",
+  "ru": "раздел не найден",
+  "tr": "anahtar bulunamadı"
+ },
+ "err.needAdmin": {
+  "ar": "مطلوب صلاحيات المسؤول",
+  "de": "Administratorrechte erforderlich",
+  "en": "administrator rights required",
+  "es": "se requieren derechos de administrador",
+  "fr": "droits d'administrateur requis",
+  "it": "sono richiesti i diritti di amministratore",
+  "pl": "wymagane uprawnienia administratora",
+  "pt": "são necessários direitos de administrador",
+  "ru": "требуются права администратора",
+  "tr": "yönetici yetkisi gerekiyor"
+ },
+ "err.noRegDef": {
+  "ar": "تعريف السجل مفقود",
+  "de": "Registrierungsdefinition fehlt",
+  "en": "registry definition missing",
+  "es": "falta la definición del Registro",
+  "fr": "définition de registre manquante",
+  "it": "definizione del Registro mancante",
+  "pl": "brak definicji rejestru",
+  "pt": "definição do Registo em falta",
+  "ru": "отсутствует описание раздела реестра",
+  "tr": "kayıt tanımı eksik"
+ },
+ "err.noRelease": {
+  "ar": "لم يُنشر أي إصدار بعد",
+  "de": "noch keine Version veröffentlicht",
+  "en": "no release published yet",
+  "es": "aún no hay ninguna versión publicada",
+  "fr": "aucune version publiée pour l'instant",
+  "it": "nessuna versione ancora pubblicata",
+  "pl": "nie opublikowano jeszcze żadnej wersji",
+  "pt": "ainda não há nenhuma versão publicada",
+  "ru": "выпусков пока нет",
+  "tr": "henüz yayımlanmış sürüm yok"
+ },
+ "err.noRootDelete": {
+  "ar": "لا يمكن حذف مفتاح جذري",
+  "de": "ein Stammschlüssel kann nicht gelöscht werden",
+  "en": "a root key cannot be deleted",
+  "es": "no se puede eliminar una clave raíz",
+  "fr": "une clé racine ne peut pas être supprimée",
+  "it": "una chiave radice non può essere eliminata",
+  "pl": "nie można usunąć klucza głównego",
+  "pt": "não é possível eliminar uma chave raiz",
+  "ru": "корневой раздел нельзя удалить",
+  "tr": "kök anahtar silinemez"
+ },
+ "err.notOnThisBuild": {
+  "ar": "غير صالح في هذا الإصدار من Windows",
+  "de": "in diesem Windows-Build ungültig",
+  "en": "not valid on this Windows build",
+  "es": "no válido en esta compilación de Windows",
+  "fr": "non valide sur cette build de Windows",
+  "it": "non valido in questa build di Windows",
+  "pl": "nieprawidłowe w tej kompilacji systemu Windows",
+  "pt": "não válido nesta compilação do Windows",
+  "ru": "недействительно в этой сборке Windows",
+  "tr": "bu Windows sürümünde geçersiz"
+ },
+ "err.scriptWrite": {
+  "ar": "تعذّرت كتابة ملف البرنامج النصي",
+  "de": "die Skriptdatei konnte nicht geschrieben werden",
+  "en": "the script file could not be written",
+  "es": "no se pudo escribir el archivo de script",
+  "fr": "impossible d'écrire le fichier de script",
+  "it": "impossibile scrivere il file di script",
+  "pl": "nie można zapisać pliku skryptu",
+  "pt": "não foi possível escrever o ficheiro de script",
+  "ru": "не удалось записать файл сценария",
+  "tr": "betik dosyası yazılamadı"
+ },
+ "err.windowsOnly": {
+  "ar": "لنظام Windows فقط",
+  "de": "nur unter Windows",
+  "en": "Windows only",
+  "es": "solo en Windows",
+  "fr": "Windows uniquement",
+  "it": "solo su Windows",
+  "pl": "tylko w systemie Windows",
+  "pt": "apenas no Windows",
+  "ru": "только для Windows",
+  "tr": "yalnızca Windows"
  },
  "journal.count": {
   "ar": "%1 إدخال",
@@ -3550,6 +3718,126 @@
   "pt": "Memória",
   "ru": "Память",
   "tr": "Bellek"
+ },
+ "own.exitCode": {
+  "ar": "رمز الخروج",
+  "de": "Exitcode",
+  "en": "exit code",
+  "es": "código de salida",
+  "fr": "code de sortie",
+  "it": "codice di uscita",
+  "pl": "kod wyjścia",
+  "pt": "código de saída",
+  "ru": "код возврата",
+  "tr": "çıkış kodu"
+ },
+ "own.failed": {
+  "ar": "تعذّر أخذ الملكية: %1",
+  "de": "Besitz konnte nicht übernommen werden: %1",
+  "en": "Ownership could not be taken: %1",
+  "es": "No se pudo tomar la propiedad: %1",
+  "fr": "Impossible de prendre la propriété : %1",
+  "it": "Impossibile acquisire la proprietà: %1",
+  "pl": "Nie można przejąć własności: %1",
+  "pt": "Não foi possível obter a propriedade: %1",
+  "ru": "Не удалось получить владение: %1",
+  "tr": "Sahiplik alınamadı: %1"
+ },
+ "own.notFound": {
+  "ar": "لم يُعثر عليه: %1",
+  "de": "Nicht gefunden: %1",
+  "en": "Not found: %1",
+  "es": "No encontrado: %1",
+  "fr": "Introuvable : %1",
+  "it": "Non trovato: %1",
+  "pl": "Nie znaleziono: %1",
+  "pt": "Não encontrado: %1",
+  "ru": "Не найдено: %1",
+  "tr": "Bulunamadı: %1"
+ },
+ "own.ok": {
+  "ar": "تم أخذ الملكية ومنح التحكم الكامل: %1",
+  "de": "Besitz übernommen, Vollzugriff gewährt: %1",
+  "en": "Ownership taken, full control granted: %1",
+  "es": "Propiedad tomada, control total concedido: %1",
+  "fr": "Propriété prise, contrôle total accordé : %1",
+  "it": "Proprietà acquisita, controllo completo concesso: %1",
+  "pl": "Przejęto własność, przyznano pełną kontrolę: %1",
+  "pt": "Propriedade obtida, controlo total concedido: %1",
+  "ru": "Владение получено, полный доступ предоставлен: %1",
+  "tr": "Sahiplik alındı, tam yetki verildi: %1"
+ },
+ "own.partial": {
+  "ar": "تم أخذ الملكية لكن الأذونات غير مكتملة: %1",
+  "de": "Besitz übernommen, aber Berechtigungen unvollständig: %1",
+  "en": "Ownership taken, but permissions are incomplete: %1",
+  "es": "Propiedad tomada, pero los permisos están incompletos: %1",
+  "fr": "Propriété prise, mais autorisations incomplètes : %1",
+  "it": "Proprietà acquisita, ma le autorizzazioni sono incomplete: %1",
+  "pl": "Przejęto własność, ale uprawnienia są niepełne: %1",
+  "pt": "Propriedade obtida, mas as permissões estão incompletas: %1",
+  "ru": "Владение получено, но права выданы не полностью: %1",
+  "tr": "Sahiplik alındı ama yetkiler eksik kaldı: %1"
+ },
+ "own.startFailed": {
+  "ar": "تعذّر بدء %1",
+  "de": "%1 konnte nicht gestartet werden",
+  "en": "%1 could not be started",
+  "es": "no se pudo iniciar %1",
+  "fr": "impossible de démarrer %1",
+  "it": "impossibile avviare %1",
+  "pl": "nie można uruchomić %1",
+  "pt": "não foi possível iniciar %1",
+  "ru": "не удалось запустить %1",
+  "tr": "%1 başlatılamadı"
+ },
+ "own.timeout": {
+  "ar": "انتهت مهلة %1",
+  "de": "bei %1 ist eine Zeitüberschreitung aufgetreten",
+  "en": "%1 timed out",
+  "es": "%1 agotó el tiempo de espera",
+  "fr": "%1 a expiré",
+  "it": "%1 è scaduto",
+  "pl": "przekroczono limit czasu %1",
+  "pt": "%1 excedeu o tempo limite",
+  "ru": "истекло время ожидания %1",
+  "tr": "%1 zaman aşımına uğradı"
+ },
+ "preset.notAPreset": {
+  "ar": "هذا ليس ملف إعداد مسبق لـ Arbitrium",
+  "de": "dies ist keine Arbitrium-Voreinstellungsdatei",
+  "en": "this is not an Arbitrium preset file",
+  "es": "este no es un archivo de perfil de Arbitrium",
+  "fr": "ce n'est pas un fichier de préréglage Arbitrium",
+  "it": "questo non è un file di preimpostazione Arbitrium",
+  "pl": "to nie jest plik ustawień Arbitrium",
+  "pt": "este não é um ficheiro de predefinição do Arbitrium",
+  "ru": "это не файл профиля Arbitrium",
+  "tr": "bu bir Arbitrium ön ayar dosyası değil"
+ },
+ "preset.off": {
+  "ar": "معطّل",
+  "de": "aus",
+  "en": "off",
+  "es": "desactivado",
+  "fr": "désactivé",
+  "it": "disattivo",
+  "pl": "wyłączone",
+  "pt": "desativado",
+  "ru": "выкл.",
+  "tr": "kapalı"
+ },
+ "preset.on": {
+  "ar": "مفعّل",
+  "de": "ein",
+  "en": "on",
+  "es": "activado",
+  "fr": "activé",
+  "it": "attivo",
+  "pl": "włączone",
+  "pt": "ativado",
+  "ru": "вкл.",
+  "tr": "açık"
  },
  "section.Arama ve dizin": {
   "ar": "البحث والفهرسة",
@@ -5639,6 +5927,18 @@
   "ru": "Не подключено",
   "tr": "Bağlı değil"
  },
+ "sys.batteryFull": {
+  "ar": "مشحونة",
+  "de": "voll",
+  "en": "full",
+  "es": "cargada",
+  "fr": "chargée",
+  "it": "carica",
+  "pl": "naładowana",
+  "pt": "carregada",
+  "ru": "заряжена",
+  "tr": "dolu"
+ },
  "sys.bos": {
   "ar": "%1 · %2 متاح",
   "de": "%1 · %2 frei",
@@ -5759,6 +6059,30 @@
   "ru": "%1 записей",
   "tr": "%1 giriş"
  },
+ "sys.idleMin": {
+  "ar": "%1 د",
+  "de": "%1 Min.",
+  "en": "%1 min",
+  "es": "%1 min",
+  "fr": "%1 min",
+  "it": "%1 min",
+  "pl": "%1 min",
+  "pt": "%1 min",
+  "ru": "%1 мин",
+  "tr": "%1 dk"
+ },
+ "sys.idleSec": {
+  "ar": "%1 ث",
+  "de": "%1 s",
+  "en": "%1 s",
+  "es": "%1 s",
+  "fr": "%1 s",
+  "it": "%1 s",
+  "pl": "%1 s",
+  "pt": "%1 s",
+  "ru": "%1 с",
+  "tr": "%1 sn"
+ },
  "sys.kapali": {
   "ar": "معطّل",
   "de": "Aus",
@@ -5807,6 +6131,30 @@
   "ru": "используется",
   "tr": "kullanımda"
  },
+ "sys.no": {
+  "ar": "لا",
+  "de": "Nein",
+  "en": "No",
+  "es": "No",
+  "fr": "Non",
+  "it": "No",
+  "pl": "Nie",
+  "pt": "Não",
+  "ru": "Нет",
+  "tr": "Yok"
+ },
+ "sys.none": {
+  "ar": "لا يوجد",
+  "de": "Keine",
+  "en": "None",
+  "es": "Ninguno",
+  "fr": "Aucun",
+  "it": "Nessuno",
+  "pl": "Brak",
+  "pt": "Nenhum",
+  "ru": "Нет",
+  "tr": "Yok"
+ },
  "sys.oemLisans": {
   "ar": "ترخيص OEM",
   "de": "OEM-Lizenz",
@@ -5818,6 +6166,18 @@
   "pt": "Licença OEM",
   "ru": "OEM-лицензия",
   "tr": "OEM lisans"
+ },
+ "sys.onBattery": {
+  "ar": "البطارية",
+  "de": "Akku",
+  "en": "Battery",
+  "es": "Batería",
+  "fr": "Batterie",
+  "it": "Batteria",
+  "pl": "Bateria",
+  "pt": "Bateria",
+  "ru": "Батарея",
+  "tr": "Pil"
  },
  "sys.perakendeLisans": {
   "ar": "ترخيص تجزئة",
@@ -5855,6 +6215,30 @@
   "ru": "Сеть",
   "tr": "Şebeke"
  },
+ "sys.slotsFilled": {
+  "ar": "%1 / %2 مشغولة",
+  "de": "%1 / %2 belegt",
+  "en": "%1 / %2 filled",
+  "es": "%1 / %2 ocupadas",
+  "fr": "%1 / %2 occupés",
+  "it": "%1 / %2 occupati",
+  "pl": "%1 / %2 zajętych",
+  "pt": "%1 / %2 ocupadas",
+  "ru": "%1 / %2 занято",
+  "tr": "%1 / %2 dolu"
+ },
+ "sys.uptimeHm": {
+  "ar": "%1 س %2 د",
+  "de": "%1 Std. %2 Min.",
+  "en": "%1 h %2 min",
+  "es": "%1 h %2 min",
+  "fr": "%1 h %2 min",
+  "it": "%1 h %2 min",
+  "pl": "%1 godz. %2 min",
+  "pt": "%1 h %2 min",
+  "ru": "%1 ч %2 мин",
+  "tr": "%1 sa %2 dk"
+ },
  "sys.yerel": {
   "ar": "محلي",
   "de": "Lokal",
@@ -5866,6 +6250,18 @@
   "pt": "Local",
   "ru": "Локальная",
   "tr": "Yerel"
+ },
+ "sys.yes": {
+  "ar": "نعم",
+  "de": "Ja",
+  "en": "Yes",
+  "es": "Sí",
+  "fr": "Oui",
+  "it": "Sì",
+  "pl": "Tak",
+  "pt": "Sim",
+  "ru": "Да",
+  "tr": "Var"
  },
  "theme.dark": {
   "ar": "داكن",

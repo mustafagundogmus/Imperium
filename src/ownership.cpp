@@ -1,4 +1,5 @@
 #include "ownership.h"
+#include "i18n.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -104,13 +105,13 @@ Run run(const QString &program, const QStringList &arguments)
     process.start();
     Run result;
     if (!process.waitForStarted(5000)) {
-        result.output = QStringLiteral("%1 başlatılamadı").arg(program);
+        result.output = Locale::tr(QStringLiteral("own.startFailed")).arg(program);
         return result;
     }
     // Long enough for a deep folder; a system directory can take a while.
     if (!process.waitForFinished(120000)) {
         process.kill();
-        result.output = QStringLiteral("%1 zaman aşımına uğradı").arg(program);
+        result.output = Locale::tr(QStringLiteral("own.timeout")).arg(program);
         return result;
     }
 
@@ -130,7 +131,10 @@ int failedCount(const Run &r)
 
 QString describe(const QString &step, const Run &r)
 {
-    return QStringLiteral("$ %1  → çıkış kodu %2\n%3").arg(step).arg(r.code).arg(r.output);
+    return QStringLiteral("$ %1  → %2 %3\n%4")
+        .arg(step, Locale::tr(QStringLiteral("own.exitCode")))
+        .arg(r.code)
+        .arg(r.output);
 }
 
 } // namespace
@@ -140,7 +144,7 @@ Ownership::Result Ownership::take(const QString &path)
     Result result;
     const QFileInfo info(path);
     if (!info.exists()) {
-        result.summary = QStringLiteral("Bulunamadı: %1").arg(QDir::toNativeSeparators(path));
+        result.summary = Locale::tr(QStringLiteral("own.notFound")).arg(QDir::toNativeSeparators(path));
         return result;
     }
 
@@ -180,11 +184,11 @@ Ownership::Result Ownership::take(const QString &path)
     result.ok = mine && failedCount(granted) == 0;
 
     if (result.ok)
-        result.summary = QStringLiteral("Sahiplik alındı, tam yetki verildi: %1").arg(native);
+        result.summary = Locale::tr(QStringLiteral("own.ok")).arg(native);
     else if (mine)
-        result.summary = QStringLiteral("Sahiplik alındı ama yetkiler eksik kaldı: %1").arg(native);
+        result.summary = Locale::tr(QStringLiteral("own.partial")).arg(native);
     else
-        result.summary = QStringLiteral("Sahiplik alınamadı: %1").arg(native);
+        result.summary = Locale::tr(QStringLiteral("own.failed")).arg(native);
     return result;
 }
 
@@ -193,7 +197,7 @@ Ownership::Result Ownership::giveBack(const QString &path)
     Result result;
     const QFileInfo info(path);
     if (!info.exists()) {
-        result.summary = QStringLiteral("Bulunamadı: %1").arg(QDir::toNativeSeparators(path));
+        result.summary = Locale::tr(QStringLiteral("own.notFound")).arg(QDir::toNativeSeparators(path));
         return result;
     }
 

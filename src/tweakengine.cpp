@@ -1,4 +1,5 @@
 #include "tweakengine.h"
+#include "i18n.h"
 
 #include "catalog.h"
 #include "registry.h"
@@ -187,7 +188,7 @@ QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak
         outcome.id = tweak->id;
 
         if (tweak->reg.isEmpty() || tweak->options.isEmpty()) {
-            outcome.error = QStringLiteral("kayıt tanımı eksik");
+            outcome.error = Locale::tr(QStringLiteral("err.noRegDef"));
             outcomes.append(outcome);
             continue;
         }
@@ -196,7 +197,7 @@ QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak
         // so the refusal lives here as well as in the UI.
         if (!tweak->editable()) {
             outcome.error = tweak->locked ? QStringLiteral("bu hizmet kilitli")
-                                          : QStringLiteral("bu Windows sürümünde geçersiz");
+                                          : Locale::tr(QStringLiteral("err.notOnThisBuild"));
             outcomes.append(outcome);
             continue;
         }
@@ -216,7 +217,7 @@ QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak
 
         if (needsElevation && !isElevated()) {
             outcome.elevationRequired = true;
-            outcome.error = QStringLiteral("yönetici yetkisi gerekiyor");
+            outcome.error = Locale::tr(QStringLiteral("err.needAdmin"));
             outcomes.append(outcome);
             continue;
         }
@@ -228,7 +229,7 @@ QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak
             if (hive == Registry::Hive::Invalid) {
                 allOk = false;
                 if (outcome.error.isEmpty())
-                    outcome.error = QStringLiteral("geçersiz kayıt kovanı");
+                    outcome.error = Locale::tr(QStringLiteral("err.badHive"));
                 continue;
             }
 
@@ -324,7 +325,7 @@ bool TweakEngine::revert(const JournalEntry &entry, QString *error)
     const Registry::Hive hive = Registry::hiveFromString(entry.hive);
     if (hive == Registry::Hive::Invalid) {
         if (error)
-            *error = QStringLiteral("geçersiz kayıt kovanı");
+            *error = Locale::tr(QStringLiteral("err.badHive"));
         return false;
     }
 

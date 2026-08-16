@@ -91,9 +91,9 @@ QString tpmVersion()
 
     HMODULE tbs = LoadLibraryW(L"tbs.dll");
     if (!tbs)
-        return QStringLiteral("Yok");
+        return Locale::tr(QStringLiteral("sys.none"));
 
-    QString result = QStringLiteral("Yok");
+    QString result = Locale::tr(QStringLiteral("sys.none"));
     if (auto fn = reinterpret_cast<GetDeviceInfoFn>(
             reinterpret_cast<void *>(GetProcAddress(tbs, "Tbsi_GetDeviceInfo")))) {
         TbsDeviceInfo info{};
@@ -452,14 +452,14 @@ void readPower(Facts &f)
     SYSTEM_POWER_STATUS power{};
     if (GetSystemPowerStatus(&power)) {
         f.powerSource = power.ACLineStatus == 1   ? Locale::tr(QStringLiteral("sys.sebeke"))
-                        : power.ACLineStatus == 0 ? QStringLiteral("Pil")
+                        : power.ACLineStatus == 0 ? Locale::tr(QStringLiteral("sys.onBattery"))
                                                   : Unknown;
 
         if (power.BatteryFlag == 128 || power.BatteryLifePercent == 255) {
-            f.battery = QStringLiteral("Yok");
+            f.battery = Locale::tr(QStringLiteral("sys.none"));
         } else {
             const QString state = (power.BatteryFlag & 8)  ? Locale::tr(QStringLiteral("sys.sarjOluyor"))
-                                  : power.ACLineStatus == 1 ? QStringLiteral("dolu")
+                                  : power.ACLineStatus == 1 ? Locale::tr(QStringLiteral("sys.batteryFull"))
                                                             : Locale::tr(QStringLiteral("sys.kullanimda"));
             f.battery = QStringLiteral("%%1 · %2").arg(power.BatteryLifePercent).arg(state);
         }
@@ -605,7 +605,7 @@ void readMemoryDetail(Facts &f)
         if (memory.ullTotalPageFile > memory.ullTotalPhys)
             f.pageFile = formatBytes(memory.ullTotalPageFile - memory.ullTotalPhys);
         else
-            f.pageFile = QStringLiteral("Yok");
+            f.pageFile = Locale::tr(QStringLiteral("sys.none"));
     }
 
     // Populated versus total memory slots, from SMBIOS type 17.
@@ -640,7 +640,7 @@ void readMemoryDetail(Facts &f)
         p += 2;
     }
     if (slotCount > 0)
-        f.memorySlots = QStringLiteral("%1 / %2 dolu").arg(filledCount).arg(slotCount);
+        f.memorySlots = Locale::tr(QStringLiteral("sys.slotsFilled")).arg(filledCount).arg(slotCount);
 }
 
 /// Counts the values under a Run key.
@@ -823,7 +823,7 @@ QString uptimeString()
 {
 #ifdef Q_OS_WIN
     const qint64 ms = qint64(GetTickCount64());
-    return QStringLiteral("%1 sa %2 dk").arg(ms / 3600000).arg((ms % 3600000) / 60000);
+    return Locale::tr(QStringLiteral("sys.uptimeHm")).arg(ms / 3600000).arg((ms % 3600000) / 60000);
 #else
     return Unknown;
 #endif
@@ -847,9 +847,9 @@ LiveCounters liveCounters()
     if (GetLastInputInfo(&last)) {
         const qint64 idleMs = qint64(GetTickCount64()) - qint64(last.dwTime);
         if (idleMs < 60000)
-            c.idle = QStringLiteral("%1 sn").arg(qMax<qint64>(0, idleMs / 1000));
+            c.idle = Locale::tr(QStringLiteral("sys.idleSec")).arg(qMax<qint64>(0, idleMs / 1000));
         else
-            c.idle = QStringLiteral("%1 dk").arg(idleMs / 60000);
+            c.idle = Locale::tr(QStringLiteral("sys.idleMin")).arg(idleMs / 60000);
     }
 #endif
     return c;
@@ -969,7 +969,7 @@ Facts collect()
     f.uptime = uptimeString();
     f.lastBoot = friendlyDateTime(QDateTime::currentDateTime().addMSecs(-uptimeMs));
     f.lastLogon = friendlyDateTime(lastLogonTime());
-    f.pendingRestart = rebootPending() ? QStringLiteral("Var") : QStringLiteral("Yok");
+    f.pendingRestart = Locale::tr(rebootPending() ? QStringLiteral("sys.yes") : QStringLiteral("sys.no"));
 
     readDisplays(f);
     readNetwork(f);

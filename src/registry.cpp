@@ -1,4 +1,5 @@
 #include "registry.h"
+#include "i18n.h"
 
 #include <QStringList>
 
@@ -40,9 +41,9 @@ const wchar_t *wide(const QString &s)
 QString describe(LONG status)
 {
     if (status == ERROR_ACCESS_DENIED)
-        return QStringLiteral("yönetici yetkisi gerekiyor");
+        return Locale::tr(QStringLiteral("err.needAdmin"));
     if (status == ERROR_FILE_NOT_FOUND)
-        return QStringLiteral("anahtar bulunamadı");
+        return Locale::tr(QStringLiteral("err.keyNotFound"));
     return QStringLiteral("Windows hata kodu %1").arg(status);
 }
 
@@ -166,7 +167,7 @@ bool write(Hive hive, const QString &path, const QString &name,
 #ifdef Q_OS_WIN
     HKEY root = nativeHive(hive);
     if (!root) {
-        if (error) *error = QStringLiteral("geçersiz kayıt kovanı");
+        if (error) *error = Locale::tr(QStringLiteral("err.badHive"));
         return false;
     }
 
@@ -212,7 +213,7 @@ bool write(Hive hive, const QString &path, const QString &name,
     return true;
 #else
     Q_UNUSED(hive); Q_UNUSED(path); Q_UNUSED(name); Q_UNUSED(type); Q_UNUSED(data);
-    if (error) *error = QStringLiteral("yalnızca Windows");
+    if (error) *error = Locale::tr(QStringLiteral("err.windowsOnly"));
     return false;
 #endif
 }
@@ -222,7 +223,7 @@ bool remove(Hive hive, const QString &path, const QString &name, QString *error)
 #ifdef Q_OS_WIN
     HKEY root = nativeHive(hive);
     if (!root) {
-        if (error) *error = QStringLiteral("geçersiz kayıt kovanı");
+        if (error) *error = Locale::tr(QStringLiteral("err.badHive"));
         return false;
     }
 
@@ -244,7 +245,7 @@ bool remove(Hive hive, const QString &path, const QString &name, QString *error)
     return false;
 #else
     Q_UNUSED(hive); Q_UNUSED(path); Q_UNUSED(name);
-    if (error) *error = QStringLiteral("yalnızca Windows");
+    if (error) *error = Locale::tr(QStringLiteral("err.windowsOnly"));
     return false;
 #endif
 }
@@ -272,14 +273,14 @@ bool removeKey(Hive hive, const QString &path, QString *error)
 #ifdef Q_OS_WIN
     HKEY root = nativeHive(hive);
     if (!root) {
-        if (error) *error = QStringLiteral("geçersiz kayıt kovanı");
+        if (error) *error = Locale::tr(QStringLiteral("err.badHive"));
         return false;
     }
 
     // Refuse to delete a hive root: a catalogue typo must not be able to ask for it.
     const QString trimmed = path.trimmed();
     if (trimmed.isEmpty() || trimmed == QLatin1String("\\")) {
-        if (error) *error = QStringLiteral("kök anahtar silinemez");
+        if (error) *error = Locale::tr(QStringLiteral("err.noRootDelete"));
         return false;
     }
 
@@ -293,7 +294,7 @@ bool removeKey(Hive hive, const QString &path, QString *error)
     return false;
 #else
     Q_UNUSED(hive); Q_UNUSED(path);
-    if (error) *error = QStringLiteral("yalnızca Windows");
+    if (error) *error = Locale::tr(QStringLiteral("err.windowsOnly"));
     return false;
 #endif
 }

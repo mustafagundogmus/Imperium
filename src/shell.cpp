@@ -1,4 +1,5 @@
 #include "shell.h"
+#include "i18n.h"
 
 #include "catalog.h"
 
@@ -40,7 +41,7 @@ bool restartExplorer(QString *error)
                {QStringLiteral("/F"), QStringLiteral("/IM"), QStringLiteral("explorer.exe")});
     if (!kill.waitForFinished(8000)) {
         if (error)
-            *error = QStringLiteral("explorer.exe durdurulamadı");
+            *error = Locale::tr(QStringLiteral("err.explorerStop"));
         return false;
     }
 
@@ -52,7 +53,7 @@ bool restartExplorer(QString *error)
     return true;
 #else
     if (error)
-        *error = QStringLiteral("yalnızca Windows");
+        *error = Locale::tr(QStringLiteral("err.windowsOnly"));
     return false;
 #endif
 }

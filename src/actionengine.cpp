@@ -1,4 +1,5 @@
 #include "actionengine.h"
+#include "i18n.h"
 
 #include "action.h"
 
@@ -27,7 +28,7 @@ void ActionEngine::run(const Action &action)
     // one as the system codepage.
     QFile script(m_scriptPath);
     if (!script.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        Q_EMIT finished(action.id, false, QStringLiteral("betik dosyası yazılamadı"));
+        Q_EMIT finished(action.id, false, Locale::tr(QStringLiteral("err.scriptWrite")));
         return;
     }
     script.write("\xEF\xBB\xBF");

@@ -1,4 +1,5 @@
 #include "preset.h"
+#include "i18n.h"
 
 #include "catalog.h"
 #include "registry.h"
@@ -228,8 +229,8 @@ bool save(const QString &path, const QString &name,
             xml.writeAttribute(QStringLiteral("name"), t->name);
             const QString label = t->options.value(position).label;
             xml.writeAttribute(QStringLiteral("label"),
-                               label.isEmpty() ? (position == 0 ? QStringLiteral("kapalı")
-                                                                : QStringLiteral("açık"))
+                               label.isEmpty() ? (position == 0 ? Locale::tr(QStringLiteral("preset.off"))
+                                                                : Locale::tr(QStringLiteral("preset.on")))
                                                : label);
         }
     }
@@ -308,7 +309,7 @@ LoadResult load(const QString &path)
         return result;
     }
     if (!sawRoot) {
-        result.error = QStringLiteral("bu bir Arbitrium ön ayar dosyası değil");
+        result.error = Locale::tr(QStringLiteral("preset.notAPreset"));
         return result;
     }
 
