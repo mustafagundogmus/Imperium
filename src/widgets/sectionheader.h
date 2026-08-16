@@ -17,6 +17,7 @@ class SectionHeader : public QWidget
 public:
     explicit SectionHeader(const QString &title, QWidget *parent = nullptr);
 
+    void setTitle(const QString &title);
     void setCount(const QString &text);   ///< e.g. "4 öğe"; empty hides it
 
     QSize sizeHint() const override;

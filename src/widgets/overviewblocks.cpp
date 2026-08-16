@@ -1,19 +1,55 @@
 #include "overviewblocks.h"
-#include "sectionheader.h"
 #include "../css.h"
 #include "../theme.h"
 
 #include <QPainter>
+#include <QPainterPath>
 #include <QtMath>
 
 namespace {
+
 constexpr qreal TilePadX = 12.0;
 constexpr qreal TilePadY = 10.0;
 constexpr qreal TileGap = 3.0;
 
-constexpr qreal RowPadX = 6.0;
+constexpr qreal CardPadX = 12.0;   // InfoSection card
+constexpr qreal CardPadTop = 10.0;
+constexpr qreal CardPadBottom = 9.0;
+constexpr qreal TitleGap = 8.0;    // title baseline box → rule
+constexpr qreal RuleGap = 6.0;     // rule → first row
+
 constexpr qreal RowPadY = 5.0;
-constexpr qreal RowGap = 16.0;
+constexpr qreal RowGap = 16.0;     // label ↔ value
+
+constexpr qreal MeterHeight = 3.0;
+constexpr qreal MeterGap = 5.0;
+
+/// The bar both blocks draw: a rounded track with a rounded fill in the accent.
+void drawMeter(QPainter *p, const QRectF &box, qreal fraction)
+{
+    using namespace Theme;
+
+    const qreal radius = box.height() / 2.0;
+    p->setPen(Qt::NoPen);
+    p->setBrush(Color::ToggleOff());
+    p->drawRoundedRect(box, radius, radius);
+
+    const qreal width = box.width() * qBound(0.0, fraction, 1.0);
+    if (width <= 0.0)
+        return;
+
+    // Anything narrower than the cap would render as a lozenge rather than a bar, so a
+    // nearly-empty meter is clipped to the track instead of drawn short and fat.
+    QPainterPath clip;
+    clip.addRoundedRect(box, radius, radius);
+    p->save();
+    p->setClipPath(clip);
+    p->setBrush(accent());
+    p->drawRoundedRect(QRectF(box.left(), box.top(), qMax(width, box.height()), box.height()),
+                       radius, radius);
+    p->restore();
+}
+
 } // namespace
 
 // -------------------------------------------------------------------- StatTile ---
@@ -24,6 +60,19 @@ StatTile::StatTile(const QString &label, QWidget *parent)
 {
     setAttribute(Qt::WA_TransparentForMouseEvents);
     setFixedHeight(sizeHint().height());
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+        setFixedHeight(sizeHint().height());
+        update();
+    });
+}
+
+void StatTile::setLabel(const QString &label)
+{
+    const QString upper = Css::upperTr(label);
+    if (m_label == upper)
+        return;
+    m_label = upper;
+    update();
 }
 
 void StatTile::setValue(const QString &value)
@@ -42,11 +91,20 @@ void StatTile::setSub(const QString &sub)
     update();
 }
 
+void StatTile::setMeter(qreal fraction)
+{
+    if (qFuzzyCompare(m_meter + 2.0, fraction + 2.0))
+        return;
+    m_meter = fraction;
+    update();
+}
+
 QSize StatTile::sizeHint() const
 {
     const qreal h = 2 /*border*/ + 2 * TilePadY
                     + Css::normalLine(Theme::Font::tileLabel()) + TileGap
-                    + Css::normalLine(Theme::Font::tileValue()) + TileGap
+                    + Css::normalLine(Theme::Font::tileValue())
+                    + MeterGap + MeterHeight + MeterGap
                     + Css::normalLine(Theme::Font::tileSub());
     return {0, qRound(h)};
 }
@@ -80,7 +138,11 @@ void StatTile::paintEvent(QPaintEvent *)
     Css::drawText(&p, box, Css::baseline(valueFont, top, valueLine), valueFont,
                   Color::TextPrimary(), m_value, Qt::AlignLeft, true);
 
-    top += valueLine + TileGap;
+    top += valueLine + MeterGap;
+    if (m_meter >= 0.0)
+        drawMeter(&p, QRectF(box.left(), top, box.width(), MeterHeight), m_meter);
+
+    top += MeterHeight + MeterGap;
     const qreal subLine = Css::normalLine(subFont);
     Css::drawText(&p, box, Css::baseline(subFont, top, subLine), subFont,
                   Color::TextFaint(), m_sub, Qt::AlignLeft, true);
@@ -90,11 +152,26 @@ void StatTile::paintEvent(QPaintEvent *)
 
 InfoSection::InfoSection(const QString &title, QWidget *parent)
     : QWidget(parent)
+    , m_title(title)
 {
-    m_header = new SectionHeader(title, this);
+    setAttribute(Qt::WA_TransparentForMouseEvents);
+    // Grows to the tallest card in its grid row rather than stopping at its own content:
+    // three cards of three different heights side by side read as debris, and the rows
+    // are drawn from the top anyway, so the extra height is just the card breathing.
+    setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+        setMinimumHeight(sizeHint().height());
+        updateGeometry();
+        update();
+    });
 }
 
-qreal InfoSection::rowHeight()
+qreal InfoSection::headerHeight()
+{
+    return CardPadTop + Css::normalLine(Theme::Font::blockTitle()) + TitleGap + 1.0 + RuleGap;
+}
+
+qreal InfoSection::rowHeight(bool withMeter)
 {
     // `align-items:baseline`: the row is as tall as the deepest ascent plus the
     // deepest descent among its children, not the taller of the two line boxes.
@@ -105,13 +182,23 @@ qreal InfoSection::rowHeight()
     const qreal above = qMax(Css::ascent(labelFont), qMax(Css::ascent(monoFont), Css::ascent(textFont)));
     const qreal below = qMax(Css::descent(labelFont), qMax(Css::descent(monoFont), Css::descent(textFont)));
 
-    return 2 * RowPadY + above + below + 1.0 /*border-bottom*/;
+    const qreal meter = withMeter ? MeterGap + MeterHeight : 0.0;
+    return 2 * RowPadY + above + below + meter + 1.0 /*separator*/;
+}
+
+void InfoSection::setTitle(const QString &title)
+{
+    if (m_title == title)
+        return;
+    m_title = title;
+    update();
 }
 
 void InfoSection::setRows(const QVector<InfoRow> &rows)
 {
     m_rows = rows;
-    setFixedHeight(sizeHint().height());
+    setMinimumHeight(sizeHint().height());
+    updateGeometry();
     update();
 }
 
@@ -123,15 +210,25 @@ void InfoSection::setRowValue(int index, const QString &value)
     update();
 }
 
-QSize InfoSection::sizeHint() const
+void InfoSection::setNote(const QString &note)
 {
-    return {0, qRound(m_header->sizeHint().height() + m_rows.size() * rowHeight())};
+    if (m_note == note)
+        return;
+    m_note = note;
+    update();
 }
 
-void InfoSection::resizeEvent(QResizeEvent *e)
+qreal InfoSection::contentHeight() const
 {
-    QWidget::resizeEvent(e);
-    m_header->setGeometry(0, 0, width(), m_header->sizeHint().height());
+    qreal h = 0.0;
+    for (const InfoRow &row : m_rows)
+        h += rowHeight(row.meter >= 0.0);
+    return h;
+}
+
+QSize InfoSection::sizeHint() const
+{
+    return {0, qRound(headerHeight() + contentHeight() + CardPadBottom)};
 }
 
 void InfoSection::paintEvent(QPaintEvent *)
@@ -139,18 +236,45 @@ void InfoSection::paintEvent(QPaintEvent *)
     using namespace Theme;
 
     QPainter p(this);
+    p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::TextAntialiasing, true);
 
+    p.setPen(QPen(Color::TileBorder(), 1.0));
+    p.setBrush(Color::Tile());
+    p.drawRoundedRect(QRectF(0.5, 0.5, width() - 1.0, height() - 1.0),
+                      Metric::ControlRadius, Metric::ControlRadius);
+
+    const qreal left = CardPadX;
+    const qreal right = width() - CardPadX;
+
+    // --- title -----------------------------------------------------------------
+    const QFont &titleFont = Font::blockTitle();
+    const qreal titleLine = Css::normalLine(titleFont);
+    const QRectF titleBox(left, 0, right - left, titleLine);
+    Css::drawText(&p, titleBox, Css::baseline(titleFont, CardPadTop, titleLine),
+                  titleFont, Color::TextPrimary(), m_title, Qt::AlignLeft, true);
+
+    if (!m_note.isEmpty()) {
+        const QFont &noteFont = Font::sectionCount();
+        Css::drawText(&p, titleBox, Css::baseline(titleFont, CardPadTop, titleLine),
+                      noteFont, Color::TextFainter(), m_note, Qt::AlignRight);
+    }
+
+    Css::hairline(&p, QRectF(left, CardPadTop + titleLine + TitleGap, right - left, 1.0),
+                  Color::Divider());
+
+    // --- rows ------------------------------------------------------------------
     const QFont &labelFont = Font::infoLabel();
     const QFont &monoFont = Font::infoValueMono();
     const QFont &textFont = Font::infoValueText();
-
     const qreal above = qMax(Css::ascent(labelFont), qMax(Css::ascent(monoFont), Css::ascent(textFont)));
-    const qreal rh = rowHeight();
 
-    qreal y = m_header->sizeHint().height();
-    for (const InfoRow &row : m_rows) {
-        const QRectF box(RowPadX, y, width() - 2 * RowPadX, rh);
+    qreal y = headerHeight();
+    for (int i = 0; i < m_rows.size(); ++i) {
+        const InfoRow &row = m_rows.at(i);
+        const bool metered = row.meter >= 0.0;
+        const qreal rh = rowHeight(metered);
+        const QRectF box(left, y, right - left, rh);
         const qreal baseline = y + RowPadY + above;
 
         const QFont &valueFont = row.mono ? monoFont : textFont;
@@ -160,8 +284,14 @@ void InfoSection::paintEvent(QPaintEvent *)
                       baseline, labelFont, Color::TextDesc(), row.label, Qt::AlignLeft, true);
         Css::drawText(&p, box, baseline, valueFont, Color::TextMono(), row.value, Qt::AlignRight);
 
-        Css::hairline(&p, QRectF(RowPadX, y + rh - 1.0, width() - 2 * RowPadX, 1.0),
-                      Color::DividerSoft());
+        if (metered) {
+            const qreal meterTop = baseline + Css::descent(valueFont) + MeterGap;
+            drawMeter(&p, QRectF(left, meterTop, right - left, MeterHeight), row.meter);
+        }
+
+        // No separator under the last row: the card's own edge closes the list.
+        if (i + 1 < m_rows.size())
+            Css::hairline(&p, QRectF(left, y + rh - 1.0, right - left, 1.0), Color::DividerSoft());
         y += rh;
     }
 }

@@ -1,5 +1,6 @@
 #include "livechart.h"
 #include "../css.h"
+#include "../i18n.h"
 #include "../theme.h"
 
 #include <QLinearGradient>
@@ -35,6 +36,13 @@ LiveChart::LiveChart(QWidget *parent)
     setAttribute(Qt::WA_TransparentForMouseEvents);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     setFixedHeight(sizeHint().height());
+    // Every metric here comes out of the font, so the face changing means measuring again.
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+        setFixedHeight(sizeHint().height());
+        updateGeometry();
+        update();
+    });
+
     connect(Theme::notifier(), &Theme::Notifier::accentChanged, this, qOverload<>(&QWidget::update));
 }
 
@@ -119,8 +127,8 @@ void LiveChart::paintEvent(QPaintEvent *)
     };
     const QColor accent = Theme::accent();
     const Entry entries[] = {
-        {QStringLiteral("İşlemci"), accent, m_cpu.isEmpty() ? 0.0 : m_cpu.last()},
-        {QStringLiteral("Bellek"), MemoryColour, m_ram.isEmpty() ? 0.0 : m_ram.last()},
+        {Locale::tr(QStringLiteral("chart.islemci")), accent, m_cpu.isEmpty() ? 0.0 : m_cpu.last()},
+        {Locale::tr(QStringLiteral("chart.bellek")), MemoryColour, m_ram.isEmpty() ? 0.0 : m_ram.last()},
     };
 
     qreal x = inner.left();
@@ -145,7 +153,7 @@ void LiveChart::paintEvent(QPaintEvent *)
         x += Css::textWidth(valueFont, value) + EntryGap;
     }
 
-    const QString window = QStringLiteral("son %1 sn").arg(m_capacity);
+    const QString window = Locale::tr(QStringLiteral("chart.son")).arg(m_capacity);
     Css::drawText(&p, inner, Css::baseline(valueFont, inner.top(), legendLine), valueFont,
                   Color::TextFainter(), window, Qt::AlignRight);
 
@@ -172,5 +180,5 @@ void LiveChart::paintEvent(QPaintEvent *)
     // A single point cannot be drawn as a line; say so instead of showing a blank grid.
     if (m_cpu.size() < 2)
         Css::drawCentered(&p, plot, nameFont, Color::TextFainter(),
-                          QStringLiteral("veri toplanıyor…"), Qt::AlignHCenter);
+                          Locale::tr(QStringLiteral("chart.veriToplaniyor")), Qt::AlignHCenter);
 }

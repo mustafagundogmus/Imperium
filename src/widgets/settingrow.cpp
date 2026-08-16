@@ -42,6 +42,13 @@ SettingRow::SettingRow(const QString &name, const QString &desc, QWidget *contro
     if (m_control)
         m_control->setParent(this);
     setFixedHeight(sizeHint().height());
+    // Every metric here comes out of the font, so the face changing means measuring again.
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+        setFixedHeight(sizeHint().height());
+        updateGeometry();
+        update();
+    });
+
     positionControl();
     connect(Theme::notifier(), &Theme::Notifier::appearanceChanged, this, qOverload<>(&QWidget::update));
 }
@@ -57,6 +64,15 @@ QSize SettingRow::sizeHint() const
     if (m_control)
         h = qMax(h, int(m_control->sizeHint().height() + 2 * (BorderW + padY())));
     return {0, h};
+}
+
+void SettingRow::setName(const QString &name)
+{
+    if (m_name == name)
+        return;
+    m_name = name;
+    updateGeometry();
+    update();
 }
 
 void SettingRow::setDesc(const QString &desc)

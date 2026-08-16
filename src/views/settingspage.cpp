@@ -2,20 +2,25 @@
 
 #include "../appstate.h"
 #include "../catalog.h"
+#include "../i18n.h"
 #include "../preset.h"
 #include "../settings.h"
 #include "../theme.h"
-#include "../tweakengine.h"
 #include "../updater.h"
 #include "../widgets/accentpicker.h"
 #include "../widgets/buttons.h"
+#include "../widgets/languagepicker.h"
 #include "../widgets/sectionheader.h"
 #include "../widgets/segmentedcontrol.h"
+#include "../widgets/themeswitch.h"
+#include "../widgets/typefacepicker.h"
 #include "../widgets/settingrow.h"
 #include "../widgets/toggleswitch.h"
 
 #include <QCoreApplication>
 #include <QDesktopServices>
+
+#include <iterator>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -41,7 +46,7 @@ QWidget *makeSection(const QString &title, const QVector<QWidget *> &rows, QWidg
     layout->setSpacing(0);
 
     auto *header = new SectionHeader(title, block);
-    header->setCount(QStringLiteral("%1 öğe").arg(rows.size()));
+    header->setCount(Locale::tr(QStringLiteral("tweak.sectionCount")).arg(rows.size()));
     layout->addWidget(header);
 
     auto *list = new QWidget(block);
@@ -76,46 +81,100 @@ SettingsPage::SettingsPage(AppState *state, Updater *updater, QWidget *parent)
     , m_state(state)
     , m_updater(updater)
 {
-    auto *outer = new QVBoxLayout(this);
-    outer->setContentsMargins(PadLeft, PadTop, PadRight, PadBottom);
-    outer->setSpacing(Theme::Metric::SectionGap);
+    m_layout = new QVBoxLayout(this);
+    m_layout->setContentsMargins(PadLeft, PadTop, PadRight, PadBottom);
+    m_layout->setSpacing(Theme::Metric::SectionGap);
+    m_layout->addStretch(1);
 
-    outer->addWidget(buildAppearance());
-    outer->addWidget(buildPresets());
-    outer->addWidget(buildApplication());
-    outer->addWidget(buildSafety());
-    outer->addStretch(1);
+    rebuild();
 
     connect(m_updater, &Updater::finished, this,
             [this](bool available, const QString &version, const QString &url, const QString &error) {
                 m_updateButton->setEnabledLook(true);
                 if (!error.isEmpty()) {
-                    m_updateRow->setDesc(QStringLiteral("Denetlenemedi · %1").arg(error));
-                    Q_EMIT notice(QStringLiteral("güncelleme denetimi başarısız"));
+                    m_updateRow->setDesc(Locale::tr(QStringLiteral("settings.update.checkFailed")).arg(error));
+                    Q_EMIT notice(Locale::tr(QStringLiteral("settings.update.checkFailedNotice")));
                     return;
                 }
                 if (available) {
-                    m_updateRow->setDesc(QStringLiteral("Yeni sürüm var: %1 — indirmek için tıklayın.").arg(version));
-                    Q_EMIT notice(QStringLiteral("yeni sürüm: %1").arg(version));
+                    m_updateRow->setDesc(Locale::tr(QStringLiteral("settings.update.available")).arg(version));
+                    Q_EMIT notice(Locale::tr(QStringLiteral("settings.update.newVersionNotice")).arg(version));
                     QDesktopServices::openUrl(QUrl(url));
                 } else {
-                    m_updateRow->setDesc(QStringLiteral("Güncel: %1 sürümünü kullanıyorsunuz.")
+                    m_updateRow->setDesc(Locale::tr(QStringLiteral("settings.update.upToDate"))
                                              .arg(QCoreApplication::applicationVersion()));
-                    Q_EMIT notice(QStringLiteral("en güncel sürümdesiniz"));
+                    Q_EMIT notice(Locale::tr(QStringLiteral("settings.update.upToDateNotice")));
                 }
             });
+
+    connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, &SettingsPage::rebuild);
+}
+
+void SettingsPage::rebuild()
+{
+    // Everything from the stretch backward. The language row's own click is what gets
+    // here — its LanguagePicker is one of the widgets this loop is about to tear down —
+    // so the widgets are only hidden and unparented now, with the actual delete deferred
+    // to the next spin of the event loop. Deleting synchronously would destroy that
+    // picker while it is still unwinding its own mouseReleaseEvent, which is a
+    // use-after-free the moment control returns to it.
+    while (m_layout->count() > 1) {
+        QLayoutItem *item = m_layout->takeAt(0);
+        if (QWidget *w = item->widget()) {
+            w->hide();
+            w->deleteLater();
+        }
+        delete item;
+    }
+
+    m_rowCount = 0;
+    m_layout->insertWidget(0, buildAppearance());
+    m_layout->insertWidget(1, buildPresets());
+    m_layout->insertWidget(2, buildApplication());
+    m_layout->insertWidget(3, buildSafety());
+
+    // The restore-point probe runs once at startup; a rebuild would otherwise show
+    // "Aranıyor…" again for a result that already arrived.
+    if (m_restoreKnown)
+        setRestorePoint(m_restoreValue);
 }
 
 QWidget *SettingsPage::buildAppearance()
 {
-    auto *themePicker = new SegmentedControl({QStringLiteral("Koyu"), QStringLiteral("Açık")});
-    themePicker->setCurrentIndex(Theme::appearance() == Theme::Appearance::Light ? 1 : 0);
-    connect(themePicker, &SegmentedControl::currentIndexChanged, this, [](int index) {
-        Theme::setAppearance(index == 1 ? Theme::Appearance::Light : Theme::Appearance::Dark);
+    auto *themePicker = new ThemeSwitch;
+    connect(themePicker, &ThemeSwitch::picked, this, [](Theme::Appearance a) {
+        Theme::setAppearance(a);
+    });
+
+    auto *typeface = new TypefacePicker;
+    connect(typeface, &TypefacePicker::picked, this, [](const QString &id) {
+        Theme::setTypeface(id);
+    });
+
+    auto *language = new LanguagePicker;
+    connect(language, &LanguagePicker::picked, this, [](const QString &id) {
+        Locale::setLanguage(id);
     });
 
     auto *accent = new AccentPicker;
     connect(accent, &AccentPicker::picked, this, [](const QColor &c) { Theme::setAccent(c); });
+
+    static const char *const ScaleKeys[] = {
+        "settings.fontsize.small", "settings.fontsize.normal",
+        "settings.fontsize.large", "settings.fontsize.xlarge",
+    };
+    QStringList scaleLabels;
+    int scaleCurrent = 1;   // default to "Normal" when nothing matches
+    for (int i = 0; i < int(std::size(Theme::FontScaleSteps)); ++i) {
+        scaleLabels << Locale::tr(QString::fromLatin1(ScaleKeys[i]));
+        if (qFuzzyCompare(Theme::FontScaleSteps[i].value, Theme::fontScale()))
+            scaleCurrent = i;
+    }
+    auto *fontSize = new SegmentedControl(scaleLabels);
+    fontSize->setCurrentIndex(scaleCurrent);
+    connect(fontSize, &SegmentedControl::currentIndexChanged, this, [](int i) {
+        Theme::setFontScale(Theme::FontScaleSteps[i].value);
+    });
 
     auto *compact = new ToggleSwitch;
     compact->setChecked(Theme::compact(), false);
@@ -125,59 +184,81 @@ QWidget *SettingsPage::buildAppearance()
     smooth->setChecked(Settings::instance().smoothScroll(), false);
     connect(smooth, &ToggleSwitch::toggled, this, [](bool on) { Settings::instance().setSmoothScroll(on); });
 
+    auto *glow = new ToggleSwitch;
+    glow->setChecked(Settings::instance().borderGlow(), false);
+    connect(glow, &ToggleSwitch::toggled, this, [](bool on) { Settings::instance().setBorderGlow(on); });
+
     const QVector<QWidget *> rows{
-        new SettingRow(QStringLiteral("Tema"),
-                       QStringLiteral("Koyu palet tasarımın kendisidir; açık palet aynı ton ilişkileriyle türetilmiştir."),
+        new SettingRow(Locale::tr(QStringLiteral("settings.theme.label")),
+                       Locale::tr(QStringLiteral("settings.theme.desc")),
                        themePicker, SettingRow::Trailing),
-        new SettingRow(QStringLiteral("Vurgu rengi"),
-                       QStringLiteral("Anahtarlar, seçili kategori ve Uygula düğmesi bu rengi kullanır."),
+        new SettingRow(Locale::tr(QStringLiteral("settings.language.label")),
+                       Locale::tr(QStringLiteral("settings.language.desc")),
+                       language, SettingRow::Trailing),
+        new SettingRow(Locale::tr(QStringLiteral("settings.typeface.label")),
+                       Locale::tr(QStringLiteral("settings.typeface.desc")),
+                       typeface, SettingRow::Trailing),
+        new SettingRow(Locale::tr(QStringLiteral("settings.fontsize.label")),
+                       Locale::tr(QStringLiteral("settings.fontsize.desc")),
+                       fontSize, SettingRow::Trailing),
+        new SettingRow(Locale::tr(QStringLiteral("settings.accent.label")),
+                       Locale::tr(QStringLiteral("settings.accent.desc")),
                        accent, SettingRow::Trailing),
-        new SettingRow(QStringLiteral("Kompakt satırlar"),
-                       QStringLiteral("Tweak satırlarının iç boşluğunu 7px yerine 4px yapar."),
+        new SettingRow(Locale::tr(QStringLiteral("settings.compact.label")),
+                       Locale::tr(QStringLiteral("settings.compact.desc")),
                        compact, SettingRow::Leading),
-        new SettingRow(QStringLiteral("Akıcı kaydırma"),
-                       QStringLiteral("Tekerlek hareketini basamaklar yerine yumuşak geçişle uygular."),
+        new SettingRow(Locale::tr(QStringLiteral("settings.smoothscroll.label")),
+                       Locale::tr(QStringLiteral("settings.smoothscroll.desc")),
                        smooth, SettingRow::Leading),
+        new SettingRow(Locale::tr(QStringLiteral("settings.glow.label")),
+                       Locale::tr(QStringLiteral("settings.glow.desc")),
+                       glow, SettingRow::Leading),
     };
     m_rowCount += rows.size();
-    return makeSection(QStringLiteral("Görünüm"), rows, this);
+    return makeSection(Locale::tr(QStringLiteral("settings.section.appearance")), rows, this);
 }
 
 QWidget *SettingsPage::buildPresets()
 {
-    auto *save = new PillButton(PillButton::Ghost, QStringLiteral("Dışa aktar"));
-    auto *load = new PillButton(PillButton::Ghost, QStringLiteral("İçe aktar"));
+    auto *save = new PillButton(PillButton::Ghost, Locale::tr(QStringLiteral("settings.preset.export")));
+    auto *load = new PillButton(PillButton::Ghost, Locale::tr(QStringLiteral("settings.preset.import")));
     connect(save, &PillButton::clicked, this, &SettingsPage::onExportPreset);
     connect(load, &PillButton::clicked, this, &SettingsPage::onImportPreset);
 
-    auto *openFolder = new PillButton(PillButton::Ghost, QStringLiteral("Klasörü aç"));
+    auto *openFolder = new PillButton(PillButton::Ghost, Locale::tr(QStringLiteral("settings.presetFolder.open")));
     connect(openFolder, &PillButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl::fromLocalFile(Preset::directory()));
     });
 
+    auto *regExport = new PillButton(PillButton::Ghost, Locale::tr(QStringLiteral("settings.preset.export")));
+    connect(regExport, &PillButton::clicked, this, &SettingsPage::onExportReg);
+
     m_presetRow = new SettingRow(
-        QStringLiteral("Ön ayar dosyası"),
-        QStringLiteral("Anahtar seçimlerinizi XML olarak kaydeder ve geri yükler."),
+        Locale::tr(QStringLiteral("settings.preset.label")),
+        Locale::tr(QStringLiteral("settings.preset.desc")),
         makePair(save, load), SettingRow::Trailing);
 
     const QVector<QWidget *> rows{
         m_presetRow,
-        new SettingRow(QStringLiteral("Ön ayar klasörü"),
+        new SettingRow(Locale::tr(QStringLiteral("settings.reg.label")),
+                       Locale::tr(QStringLiteral("settings.reg.desc")),
+                       regExport, SettingRow::Trailing),
+        new SettingRow(Locale::tr(QStringLiteral("settings.presetFolder.label")),
                        QDir::toNativeSeparators(Preset::directory()),
                        openFolder, SettingRow::Trailing),
     };
     m_rowCount += rows.size();
-    return makeSection(QStringLiteral("Ön ayarlar"), rows, this);
+    return makeSection(Locale::tr(QStringLiteral("settings.section.presets")), rows, this);
 }
 
 QWidget *SettingsPage::buildApplication()
 {
-    m_updateButton = new PillButton(PillButton::Ghost, QStringLiteral("Denetle"));
+    m_updateButton = new PillButton(PillButton::Ghost, Locale::tr(QStringLiteral("settings.update.check")));
     connect(m_updateButton, &PillButton::clicked, this, &SettingsPage::onCheckUpdates);
 
     m_updateRow = new SettingRow(
-        QStringLiteral("Güncellemeleri denetle"),
-        QStringLiteral("%1 deposundaki en son sürümle karşılaştırır.").arg(Updater::repository()),
+        Locale::tr(QStringLiteral("settings.update.label")),
+        Locale::tr(QStringLiteral("settings.update.desc")).arg(Updater::repository()),
         m_updateButton, SettingRow::Trailing);
 
     auto *onLaunch = new ToggleSwitch;
@@ -185,23 +266,23 @@ QWidget *SettingsPage::buildApplication()
     connect(onLaunch, &ToggleSwitch::toggled, this,
             [](bool on) { Settings::instance().setCheckUpdatesOnLaunch(on); });
 
-    auto *openRepo = new PillButton(PillButton::Ghost, QStringLiteral("Depoyu aç"));
+    auto *openRepo = new PillButton(PillButton::Ghost, Locale::tr(QStringLiteral("settings.repo.open")));
     connect(openRepo, &PillButton::clicked, this,
             [] { QDesktopServices::openUrl(QUrl(Updater::releasesUrl())); });
 
     const QVector<QWidget *> rows{
         m_updateRow,
-        new SettingRow(QStringLiteral("Açılışta denetle"),
-                       QStringLiteral("Uygulama açılırken sessizce yeni sürüm arar."),
+        new SettingRow(Locale::tr(QStringLiteral("settings.update.onLaunch.label")),
+                       Locale::tr(QStringLiteral("settings.update.onLaunch.desc")),
                        onLaunch, SettingRow::Leading),
-        new SettingRow(QStringLiteral("Sürüm"),
-                       QStringLiteral("Arbitrium %1 · Qt %2 · %3 tweak")
+        new SettingRow(Locale::tr(QStringLiteral("settings.version.label")),
+                       Locale::tr(QStringLiteral("settings.version.value"))
                            .arg(QCoreApplication::applicationVersion(), QT_VERSION_STR)
                            .arg(Catalog::instance().totalTweaks()),
                        openRepo, SettingRow::Trailing),
     };
     m_rowCount += rows.size();
-    return makeSection(QStringLiteral("Uygulama"), rows, this);
+    return makeSection(Locale::tr(QStringLiteral("settings.section.application")), rows, this);
 }
 
 QWidget *SettingsPage::buildSafety()
@@ -211,44 +292,52 @@ QWidget *SettingsPage::buildSafety()
     connect(confirm, &ToggleSwitch::toggled, this,
             [](bool on) { Settings::instance().setConfirmBeforeApply(on); });
 
-    auto *openJournal = new PillButton(PillButton::Ghost, QStringLiteral("Günlüğü aç"));
+    auto *openJournal = new PillButton(PillButton::Ghost, Locale::tr(QStringLiteral("settings.journalRow.open")));
     connect(openJournal, &PillButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl::fromLocalFile(
             QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)));
     });
 
-    auto *restorePoint = new PillButton(PillButton::Ghost, QStringLiteral("Sistem koruması"));
+    auto *restorePoint = new PillButton(PillButton::Ghost, Locale::tr(QStringLiteral("settings.restore.button")));
     connect(restorePoint, &PillButton::clicked, this, [] {
+        // Creating a restore point changes the system, which this build deliberately does
+        // not do — so hand the user Windows' own System Protection dialog instead.
         if (!QProcess::startDetached(QStringLiteral("SystemPropertiesProtection.exe"), {}))
             QDesktopServices::openUrl(QUrl(QStringLiteral("ms-settings:about")));
     });
 
+    m_restoreRow = new SettingRow(
+        Locale::tr(QStringLiteral("settings.restore.label")),
+        Locale::tr(QStringLiteral("settings.restore.searching")),
+        restorePoint, SettingRow::Trailing);
+
     QVector<QWidget *> rows{
-        new SettingRow(QStringLiteral("Uygulamadan önce onay iste"),
-                       QStringLiteral("Uygula'ya basınca hangi anahtarların yazılacağını önce sorar."),
+        new SettingRow(Locale::tr(QStringLiteral("settings.confirm.label")),
+                       Locale::tr(QStringLiteral("settings.confirm.desc")),
                        confirm, SettingRow::Leading),
-        new SettingRow(QStringLiteral("Değişiklik günlüğü"),
-                       QStringLiteral("Her yazma öncesi eski değer kaydedilir; klasörü açar."),
+        new SettingRow(Locale::tr(QStringLiteral("settings.journalRow.label")),
+                       Locale::tr(QStringLiteral("settings.journalRow.desc")),
                        openJournal, SettingRow::Trailing),
-        new SettingRow(QStringLiteral("Geri yükleme noktası"),
-                       QStringLiteral("Windows'un kendi Sistem Koruması penceresini açar."),
-                       restorePoint, SettingRow::Trailing),
+        m_restoreRow,
     };
 
-    if (!TweakEngine::isElevated()) {
-        auto *elevate = new PillButton(PillButton::Ghost, QStringLiteral("Yeniden başlat"));
-        connect(elevate, &PillButton::clicked, this, [this] {
-            m_state->stashPending();
-            if (TweakEngine::relaunchElevated())
-                window()->close();
-        });
-        rows.append(new SettingRow(QStringLiteral("Yönetici olarak çalıştır"),
-                                   QStringLiteral("HKLM altındaki tweak'ler yönetici yetkisi ister."),
-                                   elevate, SettingRow::Trailing));
-    }
+    // No "run as administrator" row: the manifest asks for elevation at launch, so by the
+    // time this page is on screen the app already has the token, and a row offering to
+    // get what it has would be furniture.
 
     m_rowCount += rows.size();
-    return makeSection(QStringLiteral("Güvenlik"), rows, this);
+    return makeSection(Locale::tr(QStringLiteral("settings.section.safety")), rows, this);
+}
+
+void SettingsPage::setRestorePoint(const QString &value)
+{
+    m_restoreValue = value;
+    m_restoreKnown = true;
+    if (!m_restoreRow)
+        return;
+    m_restoreRow->setDesc(Locale::tr(QStringLiteral("settings.restore.point"))
+                              .arg(value.isEmpty() ? Locale::tr(QStringLiteral("settings.restore.none"))
+                                                   : value.toLower()));
 }
 
 void SettingsPage::onExportPreset()
@@ -256,45 +345,45 @@ void SettingsPage::onExportPreset()
     const QString suggested = QDir(Preset::directory())
                                   .filePath(Preset::fileNameFor(QStringLiteral("onayar")));
     const QString path = QFileDialog::getSaveFileName(
-        this, QStringLiteral("Ön ayarı dışa aktar"), suggested,
-        QStringLiteral("Arbitrium ön ayarı (*.xml)"));
+        this, Locale::tr(QStringLiteral("settings.preset.exportTitle")), suggested,
+        Locale::tr(QStringLiteral("settings.preset.filter")));
     if (path.isEmpty())
         return;
 
-    QHash<QString, bool> states;
+    QHash<QString, int> positions;
     for (const Category &c : Catalog::instance().categories())
         for (const Section &s : c.sections)
             for (const Tweak &t : s.tweaks)
-                states.insert(t.id, m_state->isOn(t.id));
+                positions.insert(t.id, m_state->selected(t.id));
 
     QString error;
     const QString name = QFileInfo(path).completeBaseName();
-    if (Preset::save(path, name, states, &error))
-        Q_EMIT notice(QStringLiteral("ön ayar kaydedildi · %1 tweak").arg(states.size()));
+    if (Preset::save(path, name, positions, &error))
+        Q_EMIT notice(Locale::tr(QStringLiteral("settings.preset.saved")).arg(positions.size()));
     else
-        Q_EMIT notice(QStringLiteral("kaydedilemedi · %1").arg(error));
+        Q_EMIT notice(Locale::tr(QStringLiteral("settings.preset.saveFailed")).arg(error));
 }
 
 void SettingsPage::onImportPreset()
 {
     const QString path = QFileDialog::getOpenFileName(
-        this, QStringLiteral("Ön ayar içe aktar"), Preset::directory(),
-        QStringLiteral("Arbitrium ön ayarı (*.xml)"));
+        this, Locale::tr(QStringLiteral("settings.preset.importTitle")), Preset::directory(),
+        Locale::tr(QStringLiteral("settings.preset.filter")));
     if (path.isEmpty())
         return;
 
     const Preset::LoadResult result = Preset::load(path);
     if (!result.ok) {
-        Q_EMIT notice(QStringLiteral("okunamadı · %1").arg(result.error));
+        Q_EMIT notice(Locale::tr(QStringLiteral("settings.preset.readFailed")).arg(result.error));
         return;
     }
 
-    // A preset only moves switches; nothing is written until the user presses Uygula.
+    // A preset only moves controls; nothing is written until the user presses Uygula.
     int changed = 0;
-    for (auto it = result.states.cbegin(); it != result.states.cend(); ++it) {
-        if (m_state->isOn(it.key()) == it.value())
+    for (auto it = result.positions.cbegin(); it != result.positions.cend(); ++it) {
+        if (m_state->selected(it.key()) == it.value())
             continue;
-        m_state->setOn(it.key(), it.value());
+        m_state->setSelected(it.key(), it.value());
         ++changed;
     }
 
@@ -303,9 +392,42 @@ void SettingsPage::onImportPreset()
                          changed, result.unknownIds);
 }
 
+void SettingsPage::onExportReg()
+{
+    const QList<QString> pending = m_state->pendingIds();
+    if (pending.isEmpty()) {
+        Q_EMIT notice(Locale::tr(QStringLiteral("settings.reg.none")));
+        return;
+    }
+
+    const QString suggested = QDir(Preset::directory())
+                                  .filePath(QStringLiteral("arbitrium-degisiklikler.reg"));
+    const QString path = QFileDialog::getSaveFileName(
+        this, Locale::tr(QStringLiteral("settings.reg.exportTitle")), suggested,
+        Locale::tr(QStringLiteral("settings.reg.filter")));
+    if (path.isEmpty())
+        return;
+
+    QHash<QString, int> positions;
+    QStringList ids;
+    for (const QString &id : pending) {
+        ids << id;
+        positions.insert(id, m_state->selected(id));
+    }
+    ids.sort();
+
+    QString error;
+    const int written = Preset::exportRegFile(path, ids, positions, &error);
+    if (written < 0)
+        Q_EMIT notice(Locale::tr(QStringLiteral("settings.reg.writeFailed")).arg(error));
+    else
+        Q_EMIT notice(Locale::tr(QStringLiteral("settings.reg.written"))
+                          .arg(ids.size()).arg(written));
+}
+
 void SettingsPage::onCheckUpdates()
 {
     m_updateButton->setEnabledLook(false);
-    m_updateRow->setDesc(QStringLiteral("Denetleniyor…"));
+    m_updateRow->setDesc(Locale::tr(QStringLiteral("settings.update.checking")));
     m_updater->check();
 }

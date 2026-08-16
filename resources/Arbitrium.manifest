@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Arbitrium writes under HKLM: services, policies, the graphics driver key. Half the
+  catalogue is unreachable from a standard token, so the app asks for the elevated one at
+  launch rather than discovering the problem on the first failed write and offering to
+  restart itself. That is why there is no "run as administrator" row in the settings.
+
+  Qt generates a manifest of its own for Windows executables, with asInvoker. It steps
+  aside when the target already carries a .manifest source file — this one — so the rest
+  of what Qt's manifest declared is repeated here: the Windows 10/11 compatibility GUID
+  and long path awareness, which the catalogue has a tweak for.
+-->
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"
+          xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+
+  <assemblyIdentity type="win32" name="Arbitrium.Arbitrium" version="0.9.4.0"
+                    processorArchitecture="*" />
+
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!-- Windows 10 and Windows 11 -->
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
+    </application>
+  </compatibility>
+
+  <asmv3:application>
+    <asmv3:windowsSettings xmlns:ws2="http://schemas.microsoft.com/SMI/2016/WindowsSettings">
+      <ws2:longPathAware>true</ws2:longPathAware>
+    </asmv3:windowsSettings>
+  </asmv3:application>
+
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+    <security>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <requestedExecutionLevel level="requireAdministrator" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+
+</assembly>

@@ -2,6 +2,7 @@
 
 #include "appstate.h"
 #include "catalog.h"
+#include "i18n.h"
 #include "theme.h"
 #include "tweakengine.h"
 #include "views/contentheader.h"
@@ -9,6 +10,10 @@
 #include "views/sidebar.h"
 #include "settings.h"
 #include "updater.h"
+#include "views/aboutpage.h"
+#include "views/actionpage.h"
+#include "views/debloatpage.h"
+#include "views/journalpage.h"
 #include "views/settingspage.h"
 #include "views/statusbar.h"
 #include "widgets/applyoverlay.h"
@@ -18,22 +23,24 @@
 #include "widgets/smoothscrollarea.h"
 
 #include <QCoreApplication>
-#include <QDesktopServices>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QHBoxLayout>
-#include <QProcess>
 #include <QShortcut>
 #include <QStackedWidget>
-#include <QUrl>
 #include <QVBoxLayout>
 
 namespace {
 
+// Searches what is on screen as well as what is in the file: a user typing a translated
+// word should find the row they can see, and one who knows the Turkish original (or is
+// reading a support answer written against it) should still find it too.
 bool matches(const Tweak &t, const QString &needle)
 {
     return t.name.contains(needle, Qt::CaseInsensitive)
-           || t.desc.contains(needle, Qt::CaseInsensitive);
+           || t.desc.contains(needle, Qt::CaseInsensitive)
+           || t.displayName().contains(needle, Qt::CaseInsensitive)
+           || t.displayDesc().contains(needle, Qt::CaseInsensitive);
 }
 
 } // namespace
@@ -55,11 +62,23 @@ MainWindow::MainWindow(QWidget *parent)
     setCardMinimumSize({Theme::Metric::WindowWidth, Theme::Metric::WindowHeight});
     resize(minimumSize());
 
-    const int total = Catalog::instance().totalTweaks();
-    m_titleBar->setSystemSummary(m_facts.titleBarSummary);
-    m_statusBar->setSummary(total > 0
-                                ? QStringLiteral("%1/%1 tweak yüklendi · profil: varsayılan").arg(total)
-                                : QStringLiteral("katalog boş · profil: varsayılan"));
+    m_titleBar->setSystemSummary(SysInfo::titleBarSummary(m_facts));
+
+    const auto refreshStatusSummary = [this] {
+        const int total = Catalog::instance().totalTweaks();
+        m_statusBar->setSummary(total > 0
+                                    ? Locale::tr(QStringLiteral("status.loaded")).arg(total)
+                                    : Locale::tr(QStringLiteral("status.emptyCatalog")));
+    };
+    refreshStatusSummary();
+    connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, refreshStatusSummary);
+    connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, &MainWindow::refreshView);
+    // The title bar carries "Yönetici"/"Standart", which is a word like any other.
+    connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, [this] {
+        m_titleBar->setSystemSummary(SysInfo::titleBarSummary(m_facts));
+        m_overview->setFacts(m_facts);
+    });
+
     m_overview->setFacts(m_facts);
     m_monitor->start();
 
@@ -76,8 +95,7 @@ MainWindow::MainWindow(QWidget *parent)
                 if (!hotfix.isEmpty())
                     m_facts.lastUpdate = hotfix;
                 m_overview->setFacts(m_facts);
-                m_sidebar->setRestorePoint(restorePoint.isEmpty() ? QStringLiteral("Yok")
-                                                                  : restorePoint);
+                m_settings->setRestorePoint(restorePoint);
             });
     m_probe->start();
 }
@@ -122,9 +140,29 @@ void MainWindow::buildUi()
     m_settings = new SettingsPage(m_state, m_updater, m_settingsScroll);
     m_settingsScroll->setWidget(m_settings);
 
+    m_actionScroll = new SmoothScrollArea(m_stack);
+    m_actions = new ActionPage(m_actionScroll);
+    m_actionScroll->setWidget(m_actions);
+
+    m_debloatScroll = new SmoothScrollArea(m_stack);
+    m_debloat = new DebloatPage(m_debloatScroll);
+    m_debloatScroll->setWidget(m_debloat);
+
+    m_journalScroll = new SmoothScrollArea(m_stack);
+    m_journal = new JournalPage(m_engine, m_state, m_journalScroll);
+    m_journalScroll->setWidget(m_journal);
+
+    m_aboutScroll = new SmoothScrollArea(m_stack);
+    m_about = new AboutPage(m_aboutScroll);
+    m_aboutScroll->setWidget(m_about);
+
     m_stack->addWidget(m_overviewScroll);
     m_stack->addWidget(m_tweakScroll);
     m_stack->addWidget(m_settingsScroll);
+    m_stack->addWidget(m_actionScroll);
+    m_stack->addWidget(m_debloatScroll);
+    m_stack->addWidget(m_journalScroll);
+    m_stack->addWidget(m_aboutScroll);
     main->addWidget(m_stack, 1);
 
     m_statusBar = new StatusBar(card());
@@ -144,7 +182,6 @@ void MainWindow::wire()
     connect(this, &FramelessWindow::maximizedChanged, m_titleBar, &TitleBar::setMaximized);
 
     connect(m_sidebar, &Sidebar::categoryActivated, this, &MainWindow::onCategoryActivated);
-    connect(m_sidebar, &Sidebar::restorePointRequested, this, &MainWindow::onRestorePointRequested);
     connect(m_sidebar->search(), &SearchField::textChanged, this, &MainWindow::onQueryChanged);
 
     connect(m_header, &ContentHeader::filterChanged, this, &MainWindow::onFilterChanged);
@@ -162,17 +199,40 @@ void MainWindow::wire()
     });
 
     connect(m_settings, &SettingsPage::notice, m_statusBar, &StatusBar::setNotice);
+    connect(m_actions, &ActionPage::notice, m_statusBar, &StatusBar::setNotice);
+    connect(m_debloat, &DebloatPage::notice, m_statusBar, &StatusBar::setNotice);
+    connect(m_journal, &JournalPage::notice, m_statusBar, &StatusBar::setNotice);
+    // The scan runs in the background from construction on; if it lands while this page
+    // happens to be the one on screen, the header's "N uygulama bulundu" needs a refresh.
+    connect(m_debloat, &DebloatPage::scanFinished, this, [this] {
+        // Every other sidebar row gets its count from the catalogue at build time; this
+        // one only has a number to show once the machine has answered.
+        const int found = m_debloat->rowCount();
+        m_sidebar->setCategoryCount(Sidebar::debloatId(),
+                                    found > 0 ? QString::number(found) : QString());
+        if (m_state->selectedCategory() == Sidebar::debloatId())
+            refreshView();
+    });
     connect(m_settings, &SettingsPage::presetApplied, this,
             [this](const QString &name, int changed, int unknown) {
-                QString text = QStringLiteral("“%1” yüklendi · %2 anahtar değişti")
+                QString text = Locale::tr(QStringLiteral("mw.preset.loaded"))
                                    .arg(name).arg(changed);
                 if (unknown > 0)
-                    text += QStringLiteral(" · %1 bilinmeyen atlandı").arg(unknown);
+                    text += Locale::tr(QStringLiteral("mw.preset.unknownSkipped")).arg(unknown);
                 m_statusBar->setNotice(text);
                 refreshView();
             });
 
-    // Every widget paints its own colours, so a palette swap means a full repaint.
+    // Every widget paints its own colours and measures its own text, so a palette swap
+    // or a change of interface face means a full repaint of the tree.
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+        const QList<QWidget *> all = findChildren<QWidget *>();
+        for (QWidget *w : all) {
+            w->updateGeometry();
+            w->update();
+        }
+        update();
+    });
     connect(Theme::notifier(), &Theme::Notifier::appearanceChanged, this, [this] {
         const QList<QWidget *> all = findChildren<QWidget *>();
         for (QWidget *w : all)
@@ -208,7 +268,7 @@ QVector<Section> MainWindow::visibleSections() const
         const QString needle = m_state->query().trimmed();
         for (const Category &c : catalog.categories()) {
             Section hits;
-            hits.title = c.name;
+            hits.title = Locale::tr(QStringLiteral("category.") + c.id);
             for (const Section &s : c.sections)
                 for (const Tweak &t : s.tweaks)
                     if (keep(t) && matches(t, needle))
@@ -247,13 +307,59 @@ void MainWindow::refreshView()
     const Category *category = catalog.category(m_state->selectedCategory());
     const bool searching = m_state->searching();
     const bool settings = !searching && m_state->selectedCategory() == Sidebar::settingsId();
+    const bool actions = !searching && m_state->selectedCategory() == Sidebar::actionsId();
+    const bool debloat = !searching && m_state->selectedCategory() == Sidebar::debloatId();
+    const bool journal = !searching && m_state->selectedCategory() == Sidebar::journalId();
+    const bool about = !searching && m_state->selectedCategory() == Sidebar::aboutId();
     const bool overview = !searching && category && category->isOverview();
 
-    m_header->setControlsVisible(!overview && !settings);
+    m_header->setControlsVisible(!overview && !settings && !about && !debloat);
+
+    if (about) {
+        m_header->setTitle(Locale::tr(QStringLiteral("sidebar.about")));
+        m_header->setSubtitle(Locale::tr(QStringLiteral("about.subtitle")));
+        m_header->setPendingLabel({});
+        m_stack->setCurrentWidget(m_aboutScroll);
+        return;
+    }
+
+    if (journal) {
+        // Re-read on every visit: an apply since the last one will have added to it.
+        m_journal->reload();
+        m_header->setTitle(Locale::tr(QStringLiteral("journal.title")));
+        m_header->setSubtitle(m_journal->rowCount() > 0
+                                  ? Locale::tr(QStringLiteral("journal.subtitle"))
+                                        .arg(m_journal->rowCount())
+                                  : Locale::tr(QStringLiteral("journal.empty.status")));
+        m_header->setPendingLabel({});
+        m_stack->setCurrentWidget(m_journalScroll);
+        return;
+    }
+
+    if (actions) {
+        m_header->setTitle(Locale::tr(QStringLiteral("actions.title")));
+        m_header->setSubtitle(Locale::tr(QStringLiteral("actions.subtitle"))
+                                  .arg(m_actions->rowCount()));
+        m_header->setPendingLabel({});
+        m_stack->setCurrentWidget(m_actionScroll);
+        return;
+    }
+
+    if (debloat) {
+        m_header->setTitle(Locale::tr(QStringLiteral("sidebar.debloat")));
+        m_header->setSubtitle(m_debloat->scanning()
+                                  ? Locale::tr(QStringLiteral("debloat.scanning"))
+                                  : Locale::tr(QStringLiteral("debloat.subtitle"))
+                                        .arg(m_debloat->rowCount())
+                                        .arg(m_debloat->removableCount()));
+        m_header->setPendingLabel({});
+        m_stack->setCurrentWidget(m_debloatScroll);
+        return;
+    }
 
     if (settings) {
-        m_header->setTitle(QStringLiteral("Ayarlar"));
-        m_header->setSubtitle(QStringLiteral("%1 seçenek · sürüm %2")
+        m_header->setTitle(Locale::tr(QStringLiteral("sidebar.settings")));
+        m_header->setSubtitle(Locale::tr(QStringLiteral("mw.page.settings.subtitle"))
                                   .arg(m_settings->rowCount())
                                   .arg(QCoreApplication::applicationVersion()));
         m_header->setPendingLabel({});
@@ -262,8 +368,8 @@ void MainWindow::refreshView()
     }
 
     if (overview) {
-        m_header->setTitle(category->name);
-        m_header->setSubtitle(QStringLiteral("%1 · son tarama: %2")
+        m_header->setTitle(Locale::tr(QStringLiteral("category.") + category->id));
+        m_header->setSubtitle(Locale::tr(QStringLiteral("mw.page.overview.subtitle"))
                                   .arg(m_facts.computerName,
                                        SysInfo::friendlyDateTime(m_scannedAt).toLower()));
         m_header->setPendingLabel({});
@@ -278,23 +384,39 @@ void MainWindow::refreshView()
         int hits = 0;
         for (const Section &s : sections)
             hits += s.tweaks.size();
-        m_header->setTitle(QStringLiteral("Arama"));
-        m_header->setSubtitle(QStringLiteral("“%1” · %2 sonuç ·").arg(m_state->query().trimmed()).arg(hits));
-        m_header->setPendingLabel(QStringLiteral("%1 bekliyor").arg(m_state->pendingCount()));
+        m_header->setTitle(Locale::tr(QStringLiteral("content.search.title")));
+        m_header->setSubtitle(Locale::tr(QStringLiteral("content.search.subtitle"))
+                                  .arg(m_state->query().trimmed()).arg(hits));
+        m_header->setPendingLabel(Locale::tr(QStringLiteral("content.pending")).arg(m_state->pendingCount()));
     } else if (category->tweakCount() == 0) {
         // The catalogue is being rebuilt one page at a time; an empty category says so
         // rather than offering filters over nothing.
-        m_header->setTitle(category->name);
-        m_header->setSubtitle(QStringLiteral("henüz tweak eklenmedi"));
+        m_header->setTitle(Locale::tr(QStringLiteral("category.") + category->id));
+        m_header->setSubtitle(Locale::tr(QStringLiteral("content.emptyCategory")));
         m_header->setPendingLabel({});
         m_header->setControlsVisible(false);
-        emptyMessage = QStringLiteral("Bu sayfa henüz doldurulmadı.");
+        emptyMessage = Locale::tr(QStringLiteral("content.emptyPage"));
     } else {
-        m_header->setTitle(category->name);
-        m_header->setSubtitle(QStringLiteral("%1 tweak · %2 etkin ·")
-                                  .arg(category->tweakCount())
-                                  .arg(m_state->appliedCount(*category)));
-        m_header->setPendingLabel(QStringLiteral("%1 bekliyor").arg(m_state->pendingCount(*category)));
+        // Tweaks this build ignores are counted out loud rather than quietly listed as
+        // if they worked — the rows say so too, but the header is where you look first.
+        int unsupported = 0;
+        for (const Section &section : category->sections)
+            for (const Tweak &tweak : section.tweaks)
+                if (!tweak.applicable)
+                    ++unsupported;
+
+        QString subtitle = Locale::tr(QStringLiteral("content.categorySubtitle"))
+                               .arg(category->tweakCount())
+                               .arg(m_state->appliedCount(*category));
+        if (unsupported > 0)
+            subtitle = Locale::tr(QStringLiteral("content.categorySubtitleIncompatible"))
+                           .arg(category->tweakCount())
+                           .arg(m_state->appliedCount(*category))
+                           .arg(unsupported);
+
+        m_header->setTitle(Locale::tr(QStringLiteral("category.") + category->id));
+        m_header->setSubtitle(subtitle);
+        m_header->setPendingLabel(Locale::tr(QStringLiteral("content.pending")).arg(m_state->pendingCount(*category)));
     }
 
     m_tweaks->setSections(sections, emptyMessage);
@@ -304,20 +426,55 @@ void MainWindow::refreshView()
 void MainWindow::refreshCounters()
 {
     m_statusBar->setPending(m_state->pendingCount());
+    refreshOverviewCatalog();
 
     const Category *category = Catalog::instance().category(m_state->selectedCategory());
-    if (m_state->selectedCategory() == Sidebar::settingsId())
+    if (m_state->selectedCategory() == Sidebar::settingsId()
+        || m_state->selectedCategory() == Sidebar::actionsId()
+        || m_state->selectedCategory() == Sidebar::debloatId()
+        || m_state->selectedCategory() == Sidebar::journalId()
+        || m_state->selectedCategory() == Sidebar::aboutId())
         m_header->setPendingLabel({});
     else if (m_state->searching())
-        m_header->setPendingLabel(QStringLiteral("%1 bekliyor").arg(m_state->pendingCount()));
+        m_header->setPendingLabel(Locale::tr(QStringLiteral("content.pending")).arg(m_state->pendingCount()));
     else if (category && !category->isOverview())
-        m_header->setPendingLabel(QStringLiteral("%1 bekliyor").arg(m_state->pendingCount(*category)));
+        m_header->setPendingLabel(Locale::tr(QStringLiteral("content.pending")).arg(m_state->pendingCount(*category)));
+}
+
+void MainWindow::refreshOverviewCatalog()
+{
+    const Catalog &catalog = Catalog::instance();
+
+    int applied = 0;
+    int best = 0;
+    QString busiest;
+    for (const Category &category : catalog.categories()) {
+        int here = 0;
+        for (const Section &section : category.sections)
+            for (const Tweak &tweak : section.tweaks)
+                if (m_state->isOn(tweak.id))
+                    ++here;
+        applied += here;
+        if (here > best) {
+            best = here;
+            busiest = QStringLiteral("%1 · %2").arg(category.name).arg(here);
+        }
+    }
+
+    m_overview->setCatalogState(catalog.totalTweaks(), applied, m_state->pendingCount(), busiest);
 }
 
 void MainWindow::showCategory(const QString &id)
 {
-    if (Catalog::instance().category(id) || id == Sidebar::settingsId())
+    if (Catalog::instance().category(id) || id == Sidebar::settingsId()
+        || id == Sidebar::actionsId() || id == Sidebar::debloatId()
+        || id == Sidebar::journalId() || id == Sidebar::aboutId())
         onCategoryActivated(id);
+}
+
+void MainWindow::showSearch(const QString &text)
+{
+    m_sidebar->search()->setText(text);
 }
 
 void MainWindow::onCategoryActivated(const QString &id)
@@ -379,7 +536,7 @@ void MainWindow::onApplyFinished(int succeeded, int failed, bool elevationRequir
 
     if (failed == 0) {
         if (succeeded > 0)
-            m_statusBar->setNotice(QStringLiteral("%1 tweak uygulandı").arg(succeeded));
+            m_statusBar->setNotice(Locale::tr(QStringLiteral("mw.notice.applied")).arg(succeeded));
         return;
     }
 
@@ -390,13 +547,11 @@ void MainWindow::onApplyFinished(int succeeded, int failed, bool elevationRequir
         QMessageBox box(this);
         box.setWindowTitle(QCoreApplication::applicationName());
         box.setIcon(QMessageBox::NoIcon);
-        box.setText(QStringLiteral("%1 tweak yönetici yetkisi gerektiriyor.").arg(report.failed));
-        box.setInformativeText(QStringLiteral(
-            "Uygulamayı yönetici olarak yeniden başlatayım mı? Beklemedeki anahtarlar "
-            "korunur ve yeniden başladıktan sonra yeniden uygulayabilirsiniz."));
-        QAbstractButton *restart = box.addButton(QStringLiteral("Yönetici olarak başlat"),
+        box.setText(Locale::tr(QStringLiteral("mw.elevate.title")).arg(report.failed));
+        box.setInformativeText(Locale::tr(QStringLiteral("mw.elevate.body")));
+        QAbstractButton *restart = box.addButton(Locale::tr(QStringLiteral("mw.elevate.restart")),
                                                  QMessageBox::AcceptRole);
-        box.addButton(QStringLiteral("Şimdilik kalsın"), QMessageBox::RejectRole);
+        box.addButton(Locale::tr(QStringLiteral("mw.elevate.later")), QMessageBox::RejectRole);
         box.exec();
 
         if (box.clickedButton() == restart) {
@@ -404,16 +559,16 @@ void MainWindow::onApplyFinished(int succeeded, int failed, bool elevationRequir
             if (TweakEngine::relaunchElevated())
                 close();
             else
-                m_statusBar->setNotice(QStringLiteral("yeniden başlatma iptal edildi"));
+                m_statusBar->setNotice(Locale::tr(QStringLiteral("mw.notice.restartCancelled")));
         } else {
-            m_statusBar->setNotice(QStringLiteral("%1 tweak yönetici yetkisi bekliyor").arg(report.failed));
+            m_statusBar->setNotice(Locale::tr(QStringLiteral("mw.notice.elevatePending")).arg(report.failed));
         }
         return;
     }
 
     m_statusBar->setNotice(report.firstError.isEmpty()
-                               ? QStringLiteral("%1 tweak uygulanamadı").arg(report.failed)
-                               : QStringLiteral("%1 tweak uygulanamadı · %2")
+                               ? Locale::tr(QStringLiteral("mw.notice.applyFailed")).arg(report.failed)
+                               : Locale::tr(QStringLiteral("mw.notice.applyFailedDetail"))
                                      .arg(report.failed).arg(report.firstError));
 }
 
@@ -423,13 +578,3 @@ void MainWindow::onRevert()
     refreshView();
 }
 
-void MainWindow::onRestorePointRequested()
-{
-    // Creating a restore point changes the system, which this build deliberately does
-    // not do — so hand the user Windows' own System Protection dialog instead.
-#ifdef Q_OS_WIN
-    if (QProcess::startDetached(QStringLiteral("SystemPropertiesProtection.exe"), {}))
-        return;
-#endif
-    QDesktopServices::openUrl(QUrl(QStringLiteral("ms-settings:about")));
-}

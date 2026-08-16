@@ -2,6 +2,8 @@
 
 #include <QStringList>
 
+#include <string>
+
 #ifdef Q_OS_WIN
 #  ifndef WIN32_LEAN_AND_MEAN
 #    define WIN32_LEAN_AND_MEAN
@@ -192,9 +194,14 @@ bool write(Hive hive, const QString &path, const QString &name,
                                 reinterpret_cast<const BYTE *>(bytes.constData()), DWORD(bytes.size()));
     } else {
         const DWORD kind = (upper == QLatin1String("EXPAND_SZ")) ? REG_EXPAND_SZ : REG_SZ;
-        const DWORD bytes = DWORD((data.size() + 1) * sizeof(wchar_t));
+        // Through std::wstring rather than QString::utf16(), which hands back a null
+        // pointer for a null string. An empty string is a value a catalogue entry may
+        // legitimately ask for — it is how the classic context menu is switched on — and
+        // a null pointer with a two-byte length is a crash, not a write.
+        const std::wstring text = data.toStdWString();
+        const DWORD bytes = DWORD((text.size() + 1) * sizeof(wchar_t));
         status = RegSetValueExW(key, wide(name), 0, kind,
-                                reinterpret_cast<const BYTE *>(wide(data)), bytes);
+                                reinterpret_cast<const BYTE *>(text.c_str()), bytes);
     }
 
     RegCloseKey(key);
@@ -237,6 +244,55 @@ bool remove(Hive hive, const QString &path, const QString &name, QString *error)
     return false;
 #else
     Q_UNUSED(hive); Q_UNUSED(path); Q_UNUSED(name);
+    if (error) *error = QStringLiteral("yalnızca Windows");
+    return false;
+#endif
+}
+
+bool keyExists(Hive hive, const QString &path)
+{
+#ifdef Q_OS_WIN
+    HKEY root = nativeHive(hive);
+    if (!root)
+        return false;
+
+    HKEY key = nullptr;
+    if (RegOpenKeyExW(root, wide(path), 0, KEY_READ, &key) != ERROR_SUCCESS)
+        return false;
+    RegCloseKey(key);
+    return true;
+#else
+    Q_UNUSED(hive); Q_UNUSED(path);
+    return false;
+#endif
+}
+
+bool removeKey(Hive hive, const QString &path, QString *error)
+{
+#ifdef Q_OS_WIN
+    HKEY root = nativeHive(hive);
+    if (!root) {
+        if (error) *error = QStringLiteral("geçersiz kayıt kovanı");
+        return false;
+    }
+
+    // Refuse to delete a hive root: a catalogue typo must not be able to ask for it.
+    const QString trimmed = path.trimmed();
+    if (trimmed.isEmpty() || trimmed == QLatin1String("\\")) {
+        if (error) *error = QStringLiteral("kök anahtar silinemez");
+        return false;
+    }
+
+    // RegDeleteTreeW takes the subkey down with everything under it, which is what the
+    // catalogue means by DELETE_KEY — the keys it applies to are ones the tweak created.
+    const LONG status = RegDeleteTreeW(root, wide(trimmed));
+    if (status == ERROR_SUCCESS || status == ERROR_FILE_NOT_FOUND)
+        return true;
+
+    if (error) *error = describe(status);
+    return false;
+#else
+    Q_UNUSED(hive); Q_UNUSED(path);
     if (error) *error = QStringLiteral("yalnızca Windows");
     return false;
 #endif

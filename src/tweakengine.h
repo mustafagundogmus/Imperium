@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <QDateTime>
 #include <QHash>
 #include <QObject>
 #include <QVector>
@@ -20,10 +21,15 @@ class TweakEngine : public QObject
 public:
     explicit TweakEngine(QObject *parent = nullptr);
 
-    /// Current state of every tweak in the catalogue, keyed by tweak id.
-    QHash<QString, bool> readAll() const;
+    /// Which option every tweak in the catalogue is sitting at, keyed by tweak id.
+    QHash<QString, int> readAll() const;
 
-    /// State of one tweak. Unknown data that matches neither side reads as off.
+    /// The option whose data the machine matches, or the tweak's default when it matches
+    /// none — a machine set to something the catalogue never offered reads as untouched
+    /// rather than as an arbitrary position.
+    int currentOption(const Tweak &tweak) const;
+
+    /// Convenience for the switch case: option 1 is "on".
     bool isApplied(const Tweak &tweak) const;
 
     struct Outcome
@@ -35,8 +41,33 @@ public:
         QString error;
     };
 
-    /// Writes each tweak to \a desired. Returns one outcome per request.
-    QVector<Outcome> apply(const QVector<QPair<const Tweak *, bool>> &requests);
+    /// Writes each tweak to the requested option index. One outcome per request.
+    QVector<Outcome> apply(const QVector<QPair<const Tweak *, int>> &requests);
+
+    /// One line of the journal: a value this app wrote, and what was there before.
+    struct JournalEntry
+    {
+        QDateTime at;
+        QString tweakId;
+        QString tweakName;
+        QString hive;
+        QString path;
+        QString value;
+        bool existed = false;      ///< the value was there before this write
+        bool keyExisted = false;
+        QString previousType;
+        QString previousData;
+        QString desired;           ///< what this app wrote
+    };
+
+    /// The journal, newest first. \a limit caps how many are returned, 0 for all.
+    QVector<JournalEntry> history(int limit = 0) const;
+
+    /// Puts one journal entry back: writes the previous data, or removes the value when
+    /// there was none. This is the only way back for a machine whose catalogue entry has
+    /// since changed — the journal remembers the value, the catalogue only remembers the
+    /// position it meant.
+    bool revert(const JournalEntry &entry, QString *error = nullptr);
 
     /// True when at least one of these tweaks lives outside HKCU.
     static bool needsElevation(const QVector<const Tweak *> &tweaks);
@@ -52,12 +83,14 @@ private:
     /// The value a tweak's key held the very first time this app touched it.
     struct Original
     {
-        bool existed = false;
+        bool existed = false;      ///< the value was there before this app first wrote it
+        bool keyExisted = false;   ///< …and so was the key holding it
         QString type;
         QString data;
     };
 
-    void journal(const Tweak &tweak, int index, const struct RegistryEntry &entry, bool desired);
+    void journal(const Tweak &tweak, int index, const struct RegistryEntry &entry,
+                 const QString &desired);
     void loadOriginals();
 
     QString m_journalPath;

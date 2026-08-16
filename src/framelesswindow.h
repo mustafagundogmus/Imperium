@@ -10,11 +10,16 @@
 // The shadow margin collapses to zero when the window is maximised, and also when the
 // screen is too short to afford it — an 820px card plus a literal 80px CSS blur does not
 // fit on a 960pt-tall desktop.
+//
+// A BorderGlow overlay rides on top of everything and walks a soft light around that
+// border; it is switched from the settings page and is purely decorative.
 
 #pragma once
 
 #include <QPixmap>
 #include <QWidget>
+
+class BorderGlow;
 
 class FramelessWindow : public QWidget
 {
@@ -44,14 +49,24 @@ protected:
     void mouseMoveEvent(QMouseEvent *) override;
     void mousePressEvent(QMouseEvent *) override;
     bool event(QEvent *) override;
+    bool eventFilter(QObject *watched, QEvent *e) override;
 
 private:
     QMargins shadowMargins() const;
     QRect cardRect() const;
     Qt::Edges edgeAt(const QPoint &pos) const;
     void rebuildShadow();
+    void layoutGlow();
+
+    /// Sets the resize cursor for \a edges, or puts it back to the arrow when \a edges is
+    /// empty. Driven from an application-wide event filter rather than this widget's own
+    /// mouseMoveEvent: that only fires while the pointer is directly over FramelessWindow's
+    /// own (mostly unclad) area, so the moment it crosses onto any child — a scrollbar, a
+    /// row, a button — nothing here would otherwise run again to put the cursor back.
+    void applyEdgeCursor(const QPoint &pos);
 
     QWidget *m_card = nullptr;
+    BorderGlow *m_glow = nullptr;
     QSize m_cardMinimum;
     QPixmap m_shadow;
     bool m_shadowEnabled = true;

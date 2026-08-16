@@ -37,9 +37,14 @@ protected:
     void resizeEvent(QResizeEvent *) override;
 
 private:
+    /// 36px at the design's own font scale; grows with it so a larger interface size
+    /// does not squeeze the pills against the bar's edge.
+    int preferredHeight() const;
+
     QString m_summary;
     QString m_notice;
     QString m_pendingText;
+    int m_pendingCount = 0;
     PillButton *m_revert = nullptr;
     PillButton *m_apply = nullptr;
     class QTimer *m_noticeTimer = nullptr;

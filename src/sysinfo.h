@@ -76,8 +76,15 @@ struct Facts
     QString coreIsolation   = QStringLiteral("—");
     QString virtualization  = QStringLiteral("—");
 
-    // Depolama — one row per fixed volume, "C:" → "953 GB · 378 GB boş"
-    QVector<QPair<QString, QString>> volumes;
+    // Depolama — one row per fixed volume. `used` is 0…1 so the row can draw a bar;
+    // everything the row shows as text is already in `detail`.
+    struct Volume
+    {
+        QString name;     ///< "C:"
+        QString detail;   ///< "NTFS · 953 GB · 378 GB boş"
+        qreal used = 0.0;
+    };
+    QVector<Volume> volumes;
 
     // Bellenim
     QString manufacturer    = QStringLiteral("—");
@@ -126,14 +133,30 @@ struct Facts
     QString gateway         = QStringLiteral("—");
     QString adapterCount    = QStringLiteral("—");
     QString profilePath     = QStringLiteral("—");
+    QString macAddress      = QStringLiteral("—");
+    QString windowsDir      = QStringLiteral("—");
+    QString systemDrive     = QStringLiteral("—");
 
-    // Title bar / header
-    QString titleBarSummary = QStringLiteral("—");   ///< "Windows 11 Pro · 26100.4202 · Yönetici"
+    // Title bar / header. Language-independent only — see titleBarSummary() below.
+    QString titleBarSummary = QStringLiteral("—");   ///< "Windows 11 Pro · 26100.4202"
     bool elevated = false;
 };
 
 /// Collects everything that is available synchronously. Cheap enough for startup.
 Facts collect();
+
+/// The title bar's line, with the elevation word in the language that is in use right now.
+/// Facts are probed once at startup and the language can change afterwards, so this is
+/// composed on demand rather than stored.
+QString titleBarSummary(const Facts &f);
+
+/// "Yönetici" / "Standart", in the current language.
+QString elevationLabel(bool elevated);
+
+/// This machine's Windows build, e.g. 26200. Read once, from the registry, because the
+/// catalogue needs it before anything else is up: a tweak that a given build ignores has
+/// no business offering itself as a switch.
+int buildNumber();
 
 /// Formats a timestamp the way the design does: "Bugün 08:03", "Dün 22:10",
 /// otherwise "12.03.2025 08:03". Pass \a withComma for the "Bugün, 14:32" variant.

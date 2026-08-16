@@ -1,5 +1,6 @@
 #include "statusbar.h"
 #include "../css.h"
+#include "../i18n.h"
 #include "../theme.h"
 #include "../widgets/buttons.h"
 
@@ -15,13 +16,26 @@ constexpr qreal Gap = 10.0;
 StatusBar::StatusBar(QWidget *parent)
     : QWidget(parent)
 {
-    setFixedHeight(Theme::Metric::StatusBarHeight);
+    m_revert = new PillButton(PillButton::Ghost, Locale::tr(QStringLiteral("status.revert")), this);
+    m_apply = new PillButton(PillButton::Accent, Locale::tr(QStringLiteral("status.apply")).arg(0), this);
 
-    m_revert = new PillButton(PillButton::Ghost, QStringLiteral("Geri al"), this);
-    m_apply = new PillButton(PillButton::Accent, QStringLiteral("Uygula (0)"), this);
+    setFixedHeight(preferredHeight());
 
     connect(m_revert, &PillButton::clicked, this, &StatusBar::revertRequested);
     connect(m_apply, &PillButton::clicked, this, &StatusBar::applyRequested);
+
+    // The pills resize themselves for the new font on this same signal; sizeHint() below
+    // reads their *computed* size rather than their current geometry, so it comes out
+    // right regardless of which of the two slots Qt happens to run first.
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+        setFixedHeight(preferredHeight());
+        updateGeometry();
+        resizeEvent(nullptr);
+    });
+    connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, [this] {
+        m_revert->setText(Locale::tr(QStringLiteral("status.revert")));
+        setPending(m_pendingCount);
+    });
 
     m_noticeTimer = new QTimer(this);
     m_noticeTimer->setSingleShot(true);
@@ -34,9 +48,18 @@ StatusBar::StatusBar(QWidget *parent)
     setPending(0);
 }
 
+int StatusBar::preferredHeight() const
+{
+    // 10px above and below the taller pill — the same breathing room the design gives
+    // it at the default scale, where this comes out to the original fixed 36px exactly.
+    constexpr int VerticalPad = 10;
+    const int tallest = qMax(m_apply->sizeHint().height(), m_revert->sizeHint().height());
+    return qMax(Theme::Metric::StatusBarHeight, tallest + VerticalPad);
+}
+
 QSize StatusBar::sizeHint() const
 {
-    return {0, Theme::Metric::StatusBarHeight};
+    return {0, preferredHeight()};
 }
 
 void StatusBar::setSummary(const QString &summary)
@@ -56,8 +79,9 @@ void StatusBar::setNotice(const QString &text)
 
 void StatusBar::setPending(int count)
 {
-    m_pendingText = QStringLiteral("%1 değişiklik bekliyor").arg(count);
-    m_apply->setText(QStringLiteral("Uygula (%1)").arg(count));
+    m_pendingCount = count;
+    m_pendingText = Locale::tr(QStringLiteral("status.pending")).arg(count);
+    m_apply->setText(Locale::tr(QStringLiteral("status.apply")).arg(count));
 
     const bool live = count > 0;
     m_revert->setEnabledLook(live);

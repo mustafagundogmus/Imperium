@@ -1,8 +1,13 @@
-// appstate.h — toggle state and view state.
+// appstate.h — tweak state and view state.
 //
-// `applied` is what the registry actually says right now, read once at startup through
-// TweakEngine. `on` is where each switch sits, and `pending` is the set where the two
-// disagree — that count drives the header, the status bar and the "Uygula (N)" label.
+// Every tweak is a position: `applied` is the option the registry actually sits at right
+// now, read once at startup through TweakEngine, `selected` is where the control sits,
+// and `pending` is the set where the two disagree — that count drives the header, the
+// status bar and the "Uygula (N)" label.
+//
+// A switch is a two-position tweak (0 off, 1 on) and a choice is an n-position one, so
+// the state here is an index rather than a bool; isOn() is the switch-shaped view of it.
+// "Etkin" means a tweak sits at anything other than the position Windows ships.
 //
 // Pending toggles survive a restart-as-administrator: they are stashed in QSettings
 // before the relaunch and picked back up here, so the user does not have to flip the
@@ -33,13 +38,22 @@ class AppState : public QObject
 public:
     explicit AppState(TweakEngine *engine, QObject *parent = nullptr);
 
-    // --- toggles ------------------------------------------------------------
+    // --- positions ----------------------------------------------------------
+    int selected(const QString &id) const;
+    int appliedOption(const QString &id) const;
+    void setSelected(const QString &id, int option);
+
+    /// True when the tweak sits anywhere other than the position Windows ships.
     bool isOn(const QString &id) const;
     bool isApplied(const QString &id) const;
-    bool isPending(const QString &id) const { return isOn(id) != isApplied(id); }
+    bool isPending(const QString &id) const { return selected(id) != appliedOption(id); }
 
     void setOn(const QString &id, bool on);
     void toggle(const QString &id);
+
+    /// Re-reads one tweak from the machine. Used after the journal writes a value back
+    /// behind the catalogue's back.
+    void refreshFromMachine(const QString &id);
 
     int pendingCount() const { return int(m_pending.size()); }
     int pendingCount(const Category &c) const;
@@ -91,6 +105,7 @@ public:
     bool searching() const { return !m_query.trimmed().isEmpty(); }
 
 Q_SIGNALS:
+    /// The control for \a id should redraw: its position changed under it.
     void tweakToggled(const QString &id);
     void pendingChanged();
     void selectionChanged();
@@ -102,8 +117,9 @@ private:
     void recomputePending();
 
     TweakEngine *m_engine = nullptr;
-    QHash<QString, bool> m_on;
-    QHash<QString, bool> m_applied;
+    QHash<QString, int> m_on;        ///< option index the control sits at
+    QHash<QString, int> m_applied;   ///< option index the registry sits at
+    QHash<QString, int> m_default;   ///< option index Windows ships, per tweak
     QSet<QString> m_pending;
     int m_appliedCount = 0;
 

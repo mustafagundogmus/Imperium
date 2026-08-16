@@ -23,6 +23,7 @@ public:
     bool isSelected() const { return m_selected; }
     void setSelected(bool on);
 
+    void setName(const QString &name);
     void setCount(const QString &count);
 
     QSize sizeHint() const override;

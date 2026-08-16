@@ -1,5 +1,7 @@
 #include "sysinfo.h"
 
+#include "i18n.h"
+
 #include <QDateTime>
 #include <QDir>
 #include <QJsonDocument>
@@ -417,6 +419,14 @@ void readNetwork(Facts &f)
         f.adapter = QString::fromWCharArray(a->FriendlyName).trimmed();
         f.ipv4 = QString::fromWCharArray(ip);
 
+        if (a->PhysicalAddressLength > 0) {
+            QStringList octets;
+            octets.reserve(int(a->PhysicalAddressLength));
+            for (ULONG i = 0; i < a->PhysicalAddressLength; ++i)
+                octets << QStringLiteral("%1").arg(a->PhysicalAddress[i], 2, 16, QLatin1Char('0')).toUpper();
+            f.macAddress = octets.join(QLatin1Char(':'));
+        }
+
         if (a->TransmitLinkSpeed > 0 && a->TransmitLinkSpeed != ULLONG_MAX) {
             const qreal mbps = a->TransmitLinkSpeed / 1000000.0;
             f.linkSpeed = mbps >= 1000
@@ -432,7 +442,7 @@ void readNetwork(Facts &f)
         }
 
         const QString suffix = a->DnsSuffix ? QString::fromWCharArray(a->DnsSuffix).trimmed() : QString();
-        f.domain = suffix.isEmpty() ? QStringLiteral("Çalışma grubu") : suffix;
+        f.domain = suffix.isEmpty() ? Locale::tr(QStringLiteral("sys.calismaGrubu")) : suffix;
         break;
     }
 }
@@ -441,16 +451,16 @@ void readPower(Facts &f)
 {
     SYSTEM_POWER_STATUS power{};
     if (GetSystemPowerStatus(&power)) {
-        f.powerSource = power.ACLineStatus == 1   ? QStringLiteral("Şebeke")
+        f.powerSource = power.ACLineStatus == 1   ? Locale::tr(QStringLiteral("sys.sebeke"))
                         : power.ACLineStatus == 0 ? QStringLiteral("Pil")
                                                   : Unknown;
 
         if (power.BatteryFlag == 128 || power.BatteryLifePercent == 255) {
             f.battery = QStringLiteral("Yok");
         } else {
-            const QString state = (power.BatteryFlag & 8)  ? QStringLiteral("şarj oluyor")
+            const QString state = (power.BatteryFlag & 8)  ? Locale::tr(QStringLiteral("sys.sarjOluyor"))
                                   : power.ACLineStatus == 1 ? QStringLiteral("dolu")
-                                                            : QStringLiteral("kullanımda");
+                                                            : Locale::tr(QStringLiteral("sys.kullanimda"));
             f.battery = QStringLiteral("%%1 · %2").arg(power.BatteryLifePercent).arg(state);
         }
     }
@@ -470,7 +480,7 @@ QString onOff(const QVariant &v, bool invert = false)
     if (!v.isValid())
         return Unknown;
     const bool on = invert ? v.toInt() == 0 : v.toInt() != 0;
-    return on ? QStringLiteral("Açık") : QStringLiteral("Kapalı");
+    return on ? Locale::tr(QStringLiteral("sys.acik")) : Locale::tr(QStringLiteral("sys.kapali"));
 }
 
 void readSecurity(Facts &f)
@@ -479,7 +489,7 @@ void readSecurity(Facts &f)
     const QVariant realtime = defender.value(QStringLiteral("DisableRealtimeMonitoring"));
     // On a healthy machine this key is unreadable without elevation, which is tamper
     // protection working as intended — report that instead of guessing "off".
-    f.defender = realtime.isValid() ? onOff(realtime, /*invert=*/true) : QStringLiteral("Korumalı");
+    f.defender = realtime.isValid() ? onOff(realtime, /*invert=*/true) : Locale::tr(QStringLiteral("sys.korumali"));
 
     QSettings firewall = hklm(QStringLiteral(
         "SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\StandardProfile"));
@@ -489,8 +499,8 @@ void readSecurity(Facts &f)
     const QString smart = explorer.value(QStringLiteral("SmartScreenEnabled")).toString();
     if (!smart.isEmpty())
         f.smartScreen = smart.compare(QStringLiteral("Off"), Qt::CaseInsensitive) == 0
-                            ? QStringLiteral("Kapalı")
-                            : QStringLiteral("Açık");
+                            ? Locale::tr(QStringLiteral("sys.kapali"))
+                            : Locale::tr(QStringLiteral("sys.acik"));
 
     QSettings hvci = hklm(QStringLiteral(
         "SYSTEM\\CurrentControlSet\\Control\\DeviceGuard\\Scenarios\\HypervisorEnforcedCodeIntegrity"));
@@ -513,9 +523,21 @@ void readVolumes(Facts &f)
         if (root.size() < 2 || root.at(1) != QLatin1Char(':'))
             continue;
 
-        f.volumes.append({root, QStringLiteral("%1 · %2 boş")
-                                    .arg(formatBytes(quint64(volume.bytesTotal())),
-                                         formatBytes(quint64(volume.bytesAvailable())))});
+        const qreal total = qreal(volume.bytesTotal());
+        const qreal free = qreal(volume.bytesAvailable());
+
+        Facts::Volume entry;
+        entry.name = root;
+        entry.used = total > 0.0 ? qBound(0.0, (total - free) / total, 1.0) : 0.0;
+
+        const QString fs = QString::fromLatin1(volume.fileSystemType()).toUpper();
+        entry.detail = Locale::tr(QStringLiteral("sys.bos"))
+                           .arg(formatBytes(quint64(volume.bytesTotal())),
+                                formatBytes(quint64(volume.bytesAvailable())));
+        if (!fs.isEmpty())
+            entry.detail.prepend(fs + QStringLiteral(" · "));
+
+        f.volumes.append(entry);
     }
 }
 
@@ -567,8 +589,8 @@ void readProcessorDetail(Facts &f)
 
     f.cpuArchitecture = QSysInfo::currentCpuArchitecture();
     f.cpuVirtualization = IsProcessorFeaturePresent(PF_VIRT_FIRMWARE_ENABLED)
-                              ? QStringLiteral("Açık")
-                              : QStringLiteral("Kapalı");
+                              ? Locale::tr(QStringLiteral("sys.acik"))
+                              : Locale::tr(QStringLiteral("sys.kapali"));
 }
 
 void readMemoryDetail(Facts &f)
@@ -648,13 +670,13 @@ void readSoftware(Facts &f)
         countInstalled(QStringLiteral("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"))
         + countInstalled(QStringLiteral("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall"))
         + countInstalled(QStringLiteral("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"));
-    f.installedPrograms = QStringLiteral("%1 kayıt").arg(installed);
+    f.installedPrograms = Locale::tr(QStringLiteral("sys.kayit")).arg(installed);
 
     const int startup =
         countRunEntries(QStringLiteral("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
         + countRunEntries(QStringLiteral("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
         + countRunEntries(QStringLiteral("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"));
-    f.startupEntries = QStringLiteral("%1 giriş").arg(startup);
+    f.startupEntries = Locale::tr(QStringLiteral("sys.giris")).arg(startup);
 
     QSettings ndp = hklm(QStringLiteral("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full"));
     const int release = ndp.value(QStringLiteral("Release")).toInt();
@@ -714,6 +736,11 @@ void readIdentity(Facts &f)
     f.editionId = orUnknown(cv.value(QStringLiteral("EditionID")).toString());
     f.profilePath = orUnknown(QDir::toNativeSeparators(qEnvironmentVariable("USERPROFILE")));
 
+    wchar_t windows[MAX_PATH] = {};
+    if (GetWindowsDirectoryW(windows, MAX_PATH) > 0)
+        f.windowsDir = QDir::toNativeSeparators(QString::fromWCharArray(windows));
+    f.systemDrive = orUnknown(qEnvironmentVariable("SystemDrive"));
+
     const int vw = GetSystemMetrics(SM_CXVIRTUALSCREEN);
     const int vh = GetSystemMetrics(SM_CYVIRTUALSCREEN);
     if (vw > 0 && vh > 0)
@@ -769,7 +796,7 @@ void readNetworkDetail(Facts &f)
         first = false;
     }
     if (adapters > 0)
-        f.adapterCount = QStringLiteral("%1 bağdaştırıcı").arg(adapters);
+        f.adapterCount = Locale::tr(QStringLiteral("sys.bagdastirici")).arg(adapters);
 }
 
 #endif // Q_OS_WIN
@@ -786,9 +813,9 @@ QString friendlyDateTime(const QDateTime &dt, bool withComma)
     const QString separator = withComma ? QStringLiteral(", ") : QStringLiteral(" ");
 
     if (dt.date() == today)
-        return QStringLiteral("Bugün") + separator + time;
+        return Locale::tr(QStringLiteral("sys.bugun")) + separator + time;
     if (dt.date() == today.addDays(-1))
-        return QStringLiteral("Dün") + separator + time;
+        return Locale::tr(QStringLiteral("sys.dun")) + separator + time;
     return dt.toString(QStringLiteral("dd.MM.yyyy")) + separator + time;
 }
 
@@ -828,6 +855,19 @@ LiveCounters liveCounters()
     return c;
 }
 
+int buildNumber()
+{
+    static const int build = [] {
+#ifdef Q_OS_WIN
+        QSettings cv = hklm(QStringLiteral("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion"));
+        return cv.value(QStringLiteral("CurrentBuildNumber")).toString().toInt();
+#else
+        return 0;
+#endif
+    }();
+    return build;
+}
+
 Facts collect()
 {
     Facts f;
@@ -856,7 +896,7 @@ Facts collect()
     QSettings secureBoot = hklm(QStringLiteral("SYSTEM\\CurrentControlSet\\Control\\SecureBoot\\State"));
     const QVariant sb = secureBoot.value(QStringLiteral("UEFISecureBootEnabled"));
     if (sb.isValid())
-        f.secureBoot = sb.toInt() ? QStringLiteral("Açık") : QStringLiteral("Kapalı");
+        f.secureBoot = sb.toInt() ? Locale::tr(QStringLiteral("sys.acik")) : Locale::tr(QStringLiteral("sys.kapali"));
 
     f.tpm = tpmVersion();
 
@@ -866,14 +906,12 @@ Facts collect()
     f.computerName = orUnknown(QSysInfo::machineHostName().toUpper());
 
     QSettings identity = hkcu(QStringLiteral("SOFTWARE\\Microsoft\\IdentityCRL\\UserExtendedProperties"));
-    f.microsoftAccount = identity.childGroups().isEmpty() ? QStringLiteral("Bağlı değil")
-                                                          : QStringLiteral("Bağlı");
+    f.microsoftAccount = identity.childGroups().isEmpty() ? Locale::tr(QStringLiteral("sys.bagliDegil"))
+                                                          : Locale::tr(QStringLiteral("sys.bagli"));
 
-    const QString scope = f.microsoftAccount == QStringLiteral("Bağlı") ? QStringLiteral("Microsoft")
-                                                                       : QStringLiteral("Yerel");
-    f.accountType = QStringLiteral("%1 · %2").arg(scope,
-                                                  f.elevated ? QStringLiteral("Yönetici")
-                                                             : QStringLiteral("Standart"));
+    const QString scope = f.microsoftAccount == Locale::tr(QStringLiteral("sys.bagli")) ? QStringLiteral("Microsoft")
+                                                                       : Locale::tr(QStringLiteral("sys.yerel"));
+    f.accountType = QStringLiteral("%1 · %2").arg(scope, elevationLabel(f.elevated));
 
     const int policies = countPolicyValues(QStringLiteral("HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies"))
                          + countPolicyValues(QStringLiteral("HKEY_CURRENT_USER\\Software\\Policies"));
@@ -906,7 +944,8 @@ Facts collect()
         if (storage.isValid()) {
             const QString bus = systemDriveBus();
             const QString size = formatBytes(quint64(storage.bytesTotal()));
-            const QString free = QStringLiteral("%1 boş").arg(formatBytes(quint64(storage.bytesAvailable())));
+            const QString free = Locale::tr(QStringLiteral("sys.bosTek"))
+                                     .arg(formatBytes(quint64(storage.bytesAvailable())));
             f.storage = bus.isEmpty() ? QStringLiteral("%1 · %2").arg(size, free)
                                       : QStringLiteral("%1 %2 · %3").arg(bus, size, free);
         }
@@ -950,15 +989,33 @@ Facts collect()
     f.computerName = QSysInfo::machineHostName().toUpper();
 #endif
 
+    // The elevation word is deliberately NOT baked in here: these facts are probed once at
+    // startup, while the interface language can change at any moment afterwards. Only the
+    // language-independent part is stored; SysInfo::titleBarSummary() adds the rest each
+    // time it is asked, so a language switch retranslates it like everything else.
     QStringList summary;
     if (f.osName != Unknown)
         summary << f.osName;
     if (f.version != Unknown)
         summary << f.version.section(QStringLiteral(" · "), -1);
-    summary << (f.elevated ? QStringLiteral("Yönetici") : QStringLiteral("Standart"));
     f.titleBarSummary = summary.join(QStringLiteral(" · "));
 
     return f;
+}
+
+QString elevationLabel(bool elevated)
+{
+    return Locale::tr(elevated ? QStringLiteral("sys.elevation.admin")
+                               : QStringLiteral("sys.elevation.standard"));
+}
+
+QString titleBarSummary(const Facts &f)
+{
+    QStringList parts;
+    if (f.titleBarSummary != QStringLiteral("—") && !f.titleBarSummary.isEmpty())
+        parts << f.titleBarSummary;
+    parts << elevationLabel(f.elevated);
+    return parts.join(QStringLiteral(" · "));
 }
 
 // ------------------------------------------------------------------- Probe ---
@@ -1007,12 +1064,12 @@ $qfe = Get-CimInstance Win32_QuickFixEngineering | Sort-Object InstalledOn -Desc
         if (license == 1) {
             const QString channel = o.value(QStringLiteral("channel")).toString();
             activation = channel.compare(QStringLiteral("Retail"), Qt::CaseInsensitive) == 0
-                             ? QStringLiteral("Perakende lisans")
+                             ? Locale::tr(QStringLiteral("sys.perakendeLisans"))
                          : channel.compare(QStringLiteral("OEM"), Qt::CaseInsensitive) == 0
-                             ? QStringLiteral("OEM lisans")
-                             : QStringLiteral("Dijital lisans");
+                             ? Locale::tr(QStringLiteral("sys.oemLisans"))
+                             : Locale::tr(QStringLiteral("sys.dijitalLisans"));
         } else if (license >= 0) {
-            activation = QStringLiteral("Etkinleştirilmemiş");
+            activation = Locale::tr(QStringLiteral("sys.etkinlestirilmemis"));
         }
 
         QString restore;

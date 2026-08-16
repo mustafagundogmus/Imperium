@@ -1,5 +1,11 @@
 #include "catalog.h"
+#include "i18n.h"
+#include "services.h"
+#include "startup.h"
+#include "sysinfo.h"
 
+#include <QCoreApplication>
+#include <QDir>
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -13,10 +19,44 @@ QString Tweak::targetSummary() const
     if (reg.isEmpty())
         return {};
     const RegistryEntry &first = reg.first();
-    QString text = first.hive + QLatin1String("\\") + first.path + QLatin1String("\\") + first.value;
+    // An empty value name is the key's default value, not a missing field.
+    const QString value = first.value.isEmpty() ? Locale::tr(QStringLiteral("tweak.defaultValue")) : first.value;
+    QString text = first.hive + QLatin1String("\\") + first.path + QLatin1String("\\") + value;
     if (reg.size() > 1)
         text += QStringLiteral("  (+%1)").arg(reg.size() - 1);
     return text;
+}
+
+QString TweakOption::displayLabel() const
+{
+    if (label.isEmpty())
+        return label;
+    // A range tweak's labels are numbers with a unit; there is nothing to translate and a
+    // lookup on every one of them would only add keys nobody writes.
+    if (label.at(0).isDigit())
+        return label;
+    return Locale::content(QStringLiteral("opt.") + label, label);
+}
+
+QString Tweak::displayName() const
+{
+    // Services and startup items are named by Windows, in the system's own language, so
+    // there is nothing here for this app's translation table to improve on.
+    if (id.startsWith(QLatin1String("svc-")) || id.startsWith(QLatin1String("boot-")))
+        return name;
+    return Locale::content(QStringLiteral("tweak.") + id + QStringLiteral(".name"), name);
+}
+
+QString Tweak::displayDesc() const
+{
+    if (id.startsWith(QLatin1String("svc-")) || id.startsWith(QLatin1String("boot-")))
+        return desc;
+    return Locale::content(QStringLiteral("tweak.") + id + QStringLiteral(".desc"), desc);
+}
+
+QString Section::displayTitle() const
+{
+    return Locale::content(QStringLiteral("section.") + title, title);
 }
 
 int Category::tweakCount() const
@@ -27,6 +67,55 @@ int Category::tweakCount() const
     return n;
 }
 
+namespace {
+
+/// Windows names its builds; the numbers alone tell a user nothing.
+QString buildLabel(int build)
+{
+    if (build >= 26100) return QStringLiteral("Windows 11 24H2");
+    if (build >= 22631) return QStringLiteral("Windows 11 23H2");
+    if (build >= 22621) return QStringLiteral("Windows 11 22H2");
+    if (build >= 22000) return QStringLiteral("Windows 11");
+    if (build >= 19041) return QStringLiteral("Windows 10 2004");
+    return QStringLiteral("derleme %1").arg(build);
+}
+
+/// Fills in the things a catalogue file cannot know when it is written.
+///
+/// %ARBITRIUM% is where this executable is sitting. A shell verb that has to run with an
+/// elevated token calls Arbitrium rather than a console tool, because the verb itself
+/// cannot elevate — and a portable build has no fixed install path to hard-code. Since
+/// the resolved path is also what the state is read back against, moving the exe makes
+/// those tweaks read as off, which is the honest answer: the menu entry is pointing at
+/// somewhere the program no longer is, and applying again repairs it.
+QString resolvePlaceholders(const QString &data)
+{
+    if (!data.contains(QLatin1String("%ARBITRIUM%")))
+        return data;
+    return QString(data).replace(QLatin1String("%ARBITRIUM%"),
+                                 QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
+}
+
+/// Decides whether a tweak means anything on this machine, and if not, says why in the
+/// same voice the rest of the catalogue is written in.
+void resolveApplicability(Tweak &t)
+{
+    const int build = SysInfo::buildNumber();
+    if (build <= 0)
+        return;   // unknown machine: assume everything applies rather than hide it all
+
+    if (t.minBuild > 0 && build < t.minBuild) {
+        t.applicable = false;
+        t.requirement = Locale::tr(QStringLiteral("tweak.req.min")).arg(buildLabel(t.minBuild));
+    } else if (t.maxBuild > 0 && build > t.maxBuild) {
+        t.applicable = false;
+        t.requirement = Locale::tr(QStringLiteral("tweak.req.max"))
+                            .arg(buildLabel(t.maxBuild));
+    }
+}
+
+} // namespace
+
 const Catalog &Catalog::instance()
 {
     static Catalog c;
@@ -36,6 +125,120 @@ const Catalog &Catalog::instance()
 Catalog::Catalog()
 {
     load();
+}
+
+
+void Catalog::appendServices()
+{
+    Category *category = nullptr;
+    for (Category &c : m_categories)
+        if (c.id == QLatin1String("svc"))
+            category = &c;
+    if (!category)
+        return;
+
+    const QVector<Services::Info> services = Services::enumerate();
+    if (services.isEmpty())
+        return;
+
+    Section section;
+    section.title = QStringLiteral("Windows hizmetleri");
+    section.tweaks.reserve(services.size());
+
+    for (const Services::Info &service : services) {
+        const QString path = QStringLiteral("SYSTEM\\CurrentControlSet\\Services\\") + service.key;
+
+        Tweak t;
+        t.id = QStringLiteral("svc-") + service.key;
+        t.name = service.displayName;
+        // Windows' own description, in the system language; the key name is a poor but
+        // honest substitute for the services that ship without one.
+        // The row says what the service *is* — its key and whether it is running — and
+        // keeps Windows' paragraph for the tooltip. A sentence elided at the row's edge
+        // tells you less than "Spooler · çalışıyor" does.
+        t.desc = QStringLiteral("%1 · %2").arg(service.key,
+                                               service.running ? Locale::tr(QStringLiteral("svc.running"))
+                                                               : QStringLiteral("durdu"));
+        // A warning belongs on the row, not only in a tooltip nobody hovers.
+        if (!service.riskNote.isEmpty())
+            t.desc += QStringLiteral(" · dikkat: ") + service.riskNote;
+        t.tooltip = service.description;
+        t.locked = service.locked;
+        t.lockReason = service.lockReason;
+        t.isChoice = true;
+        t.reg = {
+            {QStringLiteral("HKLM"), path, QStringLiteral("Start"), QStringLiteral("DWORD"), {}, {}},
+            {QStringLiteral("HKLM"), path, QStringLiteral("DelayedAutostart"), QStringLiteral("DWORD"), {}, {}},
+        };
+        t.options = {
+            {Locale::tr(QStringLiteral("svc.opt.auto")),      {QStringLiteral("2"), QStringLiteral("0")}},
+            {Locale::tr(QStringLiteral("svc.opt.delayed")),   {QStringLiteral("2"), QStringLiteral("1")}},
+            {Locale::tr(QStringLiteral("svc.opt.manual")),    {QStringLiteral("3"), QStringLiteral("0")}},
+            {Locale::tr(QStringLiteral("svc.opt.disabled")),  {QStringLiteral("4"), QStringLiteral("0")}},
+        };
+
+        // There is no universal default for a service, so "how this machine was found"
+        // is the baseline: "etkin" then means a service you have moved yourself.
+        if (service.start == 2)
+            t.defaultOption = service.delayed ? 1 : 0;
+        else
+            t.defaultOption = service.start == 3 ? 2 : 3;
+
+        section.tweaks.append(t);
+        ++m_total;
+    }
+
+    category->sections.append(section);
+}
+
+
+void Catalog::appendStartup()
+{
+    Category *category = nullptr;
+    for (Category &c : m_categories)
+        if (c.id == QLatin1String("boot"))
+            category = &c;
+    if (!category)
+        return;
+
+    const QVector<Startup::Entry> entries = Startup::enumerate();
+    if (entries.isEmpty())
+        return;
+
+    Section section;
+    section.title = Locale::tr(QStringLiteral("boot.sectionTitle"));
+    section.tweaks.reserve(entries.size());
+
+    for (const Startup::Entry &entry : entries) {
+        Tweak t;
+        t.id = QStringLiteral("startup-") + entry.approvedValue;
+        t.name = entry.name;
+        t.desc = QStringLiteral("%1 · %2").arg(entry.source, entry.command);
+        t.tooltip = entry.command;
+        t.reg = {
+            {entry.approvedHive, entry.approvedPath, entry.approvedValue,
+             QStringLiteral("BINARY"), {}, {}},
+        };
+
+        // The position that is true right now carries the blob that is actually there,
+        // because Windows stamps a timestamp into a disabled one and no fixed string
+        // would match it. The other position gets the canonical blob.
+        const QString enabled = entry.enabled && !entry.currentBlob.isEmpty()
+                                    ? entry.currentBlob : Startup::enabledBlob();
+        const QString disabled = !entry.enabled && !entry.currentBlob.isEmpty()
+                                     ? entry.currentBlob : Startup::disabledBlob();
+        t.options = {{Locale::tr(QStringLiteral("boot.opt.off")), {disabled}},
+                     {Locale::tr(QStringLiteral("boot.opt.on")), {enabled}}};
+
+        // Windows runs a startup entry unless something says otherwise, so "açık" is the
+        // default position and a disabled entry is the changed one.
+        t.defaultOption = 1;
+
+        section.tweaks.append(t);
+        ++m_total;
+    }
+
+    category->sections.append(section);
 }
 
 void Catalog::load()
@@ -90,12 +293,75 @@ void Catalog::load()
                     entry.path  = eo.value(QStringLiteral("path")).toString();
                     entry.value = eo.value(QStringLiteral("value")).toString();
                     entry.type  = eo.value(QStringLiteral("type")).toString();
-                    entry.on    = eo.value(QStringLiteral("on")).toString();
-                    entry.off   = eo.value(QStringLiteral("off")).toString();
+                    entry.on    = resolvePlaceholders(eo.value(QStringLiteral("on")).toString());
+                    entry.off   = resolvePlaceholders(eo.value(QStringLiteral("off")).toString());
                     if (!entry.hive.isEmpty() && !entry.path.isEmpty())
                         t.reg.append(entry);
                 }
-                t.source = to.value(QStringLiteral("source")).toString();
+
+                // A catalogue entry either lists its positions or is a switch, in which
+                // case the two positions are the off and on data already on each key.
+                const QJsonArray options = to.value(QStringLiteral("options")).toArray();
+                if (options.size() >= 2) {
+                    t.isChoice = true;
+                    for (const QJsonValue &ov : options) {
+                        const QJsonObject oo = ov.toObject();
+                        TweakOption option;
+                        option.label = oo.value(QStringLiteral("label")).toString();
+
+                        // "data" is one value per registry entry, or a bare string when
+                        // the tweak owns a single key.
+                        const QJsonValue data = oo.value(QStringLiteral("data"));
+                        if (data.isArray()) {
+                            const QJsonArray items = data.toArray();
+                            for (const QJsonValue &iv : items)
+                                option.data.append(iv.toString());
+                        } else {
+                            option.data.append(data.toString());
+                        }
+                        option.data.resize(t.reg.size());
+                        t.options.append(option);
+                    }
+                    t.defaultOption = qBound(0, to.value(QStringLiteral("default")).toInt(0),
+                                             int(t.options.size()) - 1);
+                } else if (to.contains(QStringLiteral("range"))) {
+                    // A range is a choice whose positions are generated rather than
+                    // listed: min to max in steps, so everything downstream still sees
+                    // an index and only the control knows it is a number line.
+                    const QJsonObject range = to.value(QStringLiteral("range")).toObject();
+                    const int from = range.value(QStringLiteral("min")).toInt();
+                    const int to_ = range.value(QStringLiteral("max")).toInt();
+                    const int step = qMax(1, range.value(QStringLiteral("step")).toInt(1));
+                    const QString unit = range.value(QStringLiteral("unit")).toString();
+                    const int fallback = range.value(QStringLiteral("default")).toInt(from);
+
+                    t.isRange = true;
+                    for (int v = from; v <= to_; v += step) {
+                        TweakOption option;
+                        option.label = unit.isEmpty() ? QString::number(v)
+                                                      : QStringLiteral("%1 %2").arg(v).arg(unit);
+                        option.data.append(QString::number(v));
+                        option.data.resize(t.reg.size());
+                        for (int i = 1; i < t.reg.size(); ++i)
+                            option.data[i] = QString::number(v);
+                        t.options.append(option);
+                        if (v == fallback)
+                            t.defaultOption = int(t.options.size()) - 1;
+                    }
+                } else {
+                    TweakOption off;
+                    TweakOption on;
+                    for (const RegistryEntry &entry : std::as_const(t.reg)) {
+                        off.data.append(entry.off);
+                        on.data.append(entry.on);
+                    }
+                    t.options = {off, on};
+                    t.defaultOption = 0;
+                }
+
+                t.minBuild = to.value(QStringLiteral("minBuild")).toInt(0);
+                t.maxBuild = to.value(QStringLiteral("maxBuild")).toInt(0);
+                resolveApplicability(t);
 
                 sec.tweaks.append(t);
                 ++m_total;
@@ -104,6 +370,9 @@ void Catalog::load()
         }
         m_categories.append(cat);
     }
+
+    appendServices();
+    appendStartup();
 
     // Index after the vectors have stopped growing so the pointers stay valid.
     for (const Category &c : std::as_const(m_categories))

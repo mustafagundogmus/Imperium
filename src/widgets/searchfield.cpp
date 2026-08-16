@@ -1,6 +1,7 @@
 #include "searchfield.h"
 #include "../css.h"
 #include "../icons.h"
+#include "../i18n.h"
 #include "../theme.h"
 
 #include <QEvent>
@@ -8,6 +9,7 @@
 #include <QLineEdit>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QtMath>
 
 namespace {
 
@@ -45,13 +47,13 @@ qreal drawnChevronWidth()
 SearchField::SearchField(QWidget *parent)
     : QWidget(parent)
 {
-    setFixedHeight(Theme::Metric::SearchHeight);
     setCursor(Qt::IBeamCursor);
+    setFixedHeight(preferredHeight());
 
     m_edit = new QLineEdit(this);
     m_edit->setFrame(false);
     m_edit->setFont(Theme::Font::searchText());
-    m_edit->setPlaceholderText(QStringLiteral("Tweak ara…"));
+    m_edit->setPlaceholderText(Locale::tr(QStringLiteral("sidebar.search.placeholder")));
     m_edit->setAttribute(Qt::WA_MacShowFocusRect, false);
     // Don't let the field claim focus just for being the first focusable widget — the
     // window should open with the placeholder showing, not a blinking caret. ⌃K and a
@@ -64,7 +66,29 @@ SearchField::SearchField(QWidget *parent)
     m_edit->installEventFilter(this);
     connect(m_edit, &QLineEdit::textChanged, this, &SearchField::textChanged);
 
+    // The line edit's font is set once above and otherwise never touched, so without
+    // this it stays pinned to whatever it was at launch — invisible when only the
+    // typeface changes (the faces are close in size), obvious once the interface scale
+    // does, since the field then reads smaller than the label right next to it.
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+        m_edit->setFont(Theme::Font::searchText());
+        setFixedHeight(preferredHeight());
+        updateGeometry();
+        layoutEditor();
+        update();
+    });
+    connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, [this] {
+        m_edit->setPlaceholderText(Locale::tr(QStringLiteral("sidebar.search.placeholder")));
+    });
+
     layoutEditor();
+}
+
+int SearchField::preferredHeight() const
+{
+    constexpr int VerticalPad = 8;
+    return qMax(Theme::Metric::SearchHeight,
+               qCeil(Css::normalLine(Theme::Font::searchText())) + VerticalPad);
 }
 
 void SearchField::applyStyle()
@@ -84,12 +108,17 @@ void SearchField::applyStyle()
 
 QSize SearchField::sizeHint() const
 {
-    return {0, Theme::Metric::SearchHeight};
+    return {0, preferredHeight()};
 }
 
 QString SearchField::text() const
 {
     return m_edit->text();
+}
+
+void SearchField::setText(const QString &text)
+{
+    m_edit->setText(text);
 }
 
 void SearchField::clearText()

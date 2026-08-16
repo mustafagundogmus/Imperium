@@ -4,6 +4,7 @@
 #include "../appstate.h"
 #include "../catalog.h"
 #include "../css.h"
+#include "../i18n.h"
 #include "../shell.h"
 #include "../theme.h"
 
@@ -76,17 +77,21 @@ ApplyOverlay::ApplyOverlay(AppState *state, QWidget *parent)
     });
 
     m_restartExplorer = new PillButton(PillButton::Accent,
-                                       QStringLiteral("Gezgini yeniden başlat"), this);
-    m_close = new PillButton(PillButton::Ghost, QStringLiteral("Kapat"), this);
+                                       Locale::tr(QStringLiteral("apply.restartExplorer")), this);
+    m_close = new PillButton(PillButton::Ghost, Locale::tr(QStringLiteral("apply.close")), this);
     m_restartExplorer->hide();
     m_close->hide();
+    connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, [this] {
+        m_restartExplorer->setText(Locale::tr(QStringLiteral("apply.restartExplorer")));
+        m_close->setText(Locale::tr(QStringLiteral("apply.close")));
+    });
 
     connect(m_restartExplorer, &PillButton::clicked, this, [this] {
         QString error;
         if (Shell::restartExplorer(&error))
-            Q_EMIT notice(QStringLiteral("Windows Gezgini yeniden başlatıldı"));
+            Q_EMIT notice(Locale::tr(QStringLiteral("apply.notice.explorerRestarted")));
         else
-            Q_EMIT notice(QStringLiteral("Gezgin yeniden başlatılamadı · %1").arg(error));
+            Q_EMIT notice(Locale::tr(QStringLiteral("apply.notice.explorerFailed")).arg(error));
         m_fade->setStartValue(m_opacity);
         m_fade->setEndValue(0.0);
         m_fade->start();
@@ -180,16 +185,16 @@ void ApplyOverlay::complete()
 
     QStringList parts;
     if (m_succeeded > 0)
-        parts << QStringLiteral("%1 uygulandı").arg(m_succeeded);
+        parts << Locale::tr(QStringLiteral("apply.applied")).arg(m_succeeded);
     if (m_failed > 0)
-        parts << QStringLiteral("%1 başarısız").arg(m_failed);
+        parts << Locale::tr(QStringLiteral("apply.failed")).arg(m_failed);
     if (m_elevationRequired)
-        parts << QStringLiteral("yönetici gerekli");
+        parts << Locale::tr(QStringLiteral("apply.elevationNeeded"));
     m_summary = parts.join(QStringLiteral(" · "));
 
     m_currentName = m_needsExplorer
-                        ? QStringLiteral("Bazı değişiklikler Gezgin yeniden başlayınca görünür.")
-                        : QStringLiteral("Tüm değişiklikler yürürlükte.");
+                        ? Locale::tr(QStringLiteral("apply.pendingExplorerRestart"))
+                        : Locale::tr(QStringLiteral("apply.allActive"));
     m_currentPath.clear();
 
     m_restartExplorer->setVisible(m_needsExplorer);
@@ -286,7 +291,8 @@ void ApplyOverlay::paintEvent(QPaintEvent *)
 
     Css::drawText(&p, inner, Css::baseline(labelFont, y, labelLine), labelFont,
                   Color::TextDim(),
-                  m_complete ? QStringLiteral("TAMAMLANDI") : QStringLiteral("UYGULANIYOR"));
+                  m_complete ? Locale::tr(QStringLiteral("apply.done"))
+                            : Locale::tr(QStringLiteral("apply.running")));
 
     const QFont &countFont = Font::sectionCount();
     Css::drawText(&p, inner, Css::baseline(countFont, y, labelLine), countFont,

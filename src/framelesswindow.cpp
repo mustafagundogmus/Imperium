@@ -1,6 +1,9 @@
 #include "framelesswindow.h"
+#include "settings.h"
 #include "theme.h"
+#include "widgets/borderglow.h"
 
+#include <QApplication>
 #include <QGuiApplication>
 #include <QMouseEvent>
 #include <QPainter>
@@ -75,6 +78,18 @@ FramelessWindow::FramelessWindow(QWidget *parent)
     m_card = new QWidget(this);
     m_card->setMouseTracking(true);
     m_card->setAttribute(Qt::WA_TranslucentBackground, true);
+
+    // Created after the card, so it stays above it in the stacking order.
+    m_glow = new BorderGlow(this);
+    m_glow->setVisible(Settings::instance().borderGlow());
+    connect(&Settings::instance(), &Settings::borderGlowChanged,
+            m_glow, &QWidget::setVisible);
+
+    // See applyEdgeCursor(): only a filter that sees every mouse move in the app, not just
+    // the ones landing on this widget, can reset the cursor once it leaves the edge band
+    // onto a child. Qt removes a destroyed object from the filter list on its own, so this
+    // needs no matching teardown.
+    qApp->installEventFilter(this);
 }
 
 QMargins FramelessWindow::shadowMargins() const
@@ -121,6 +136,12 @@ void FramelessWindow::toggleMaximize()
 void FramelessWindow::changeEvent(QEvent *e)
 {
     QWidget::changeEvent(e);
+
+    if (e->type() == QEvent::ActivationChange) {
+        m_glow->setActive(isActiveWindow());
+        return;
+    }
+
     if (e->type() != QEvent::WindowStateChange)
         return;
 
@@ -129,6 +150,8 @@ void FramelessWindow::changeEvent(QEvent *e)
                    m_cardMinimum.height() + m.top() + m.bottom());
     m_shadow = QPixmap();
     m_card->setGeometry(cardRect());
+    layoutGlow();
+    m_glow->setSuspended(isMinimized());
     update();
     Q_EMIT maximizedChanged(isMaximized());
 }
@@ -137,7 +160,18 @@ void FramelessWindow::resizeEvent(QResizeEvent *e)
 {
     QWidget::resizeEvent(e);
     m_card->setGeometry(cardRect());
+    layoutGlow();
     m_shadow = QPixmap();
+}
+
+void FramelessWindow::layoutGlow()
+{
+    // The same line paintEvent() strokes the border along, so the light sits exactly on
+    // it rather than a pixel to either side.
+    m_glow->setGeometry(rect());
+    m_glow->setTrack(QRectF(cardRect()).adjusted(0.5, 0.5, -0.5, -0.5),
+                     isMaximized() ? 0.0 : qreal(Theme::Metric::WindowRadius));
+    m_glow->raise();
 }
 
 void FramelessWindow::rebuildShadow()
@@ -207,9 +241,9 @@ Qt::Edges FramelessWindow::edgeAt(const QPoint &pos) const
     return edges;
 }
 
-void FramelessWindow::mouseMoveEvent(QMouseEvent *e)
+void FramelessWindow::applyEdgeCursor(const QPoint &pos)
 {
-    const Qt::Edges edges = edgeAt(e->pos());
+    const Qt::Edges edges = edgeAt(pos);
 
     Qt::CursorShape shape = Qt::ArrowCursor;
     if ((edges & Qt::LeftEdge && edges & Qt::TopEdge) || (edges & Qt::RightEdge && edges & Qt::BottomEdge))
@@ -223,8 +257,30 @@ void FramelessWindow::mouseMoveEvent(QMouseEvent *e)
 
     if (cursor().shape() != shape)
         setCursor(shape);
+}
 
+void FramelessWindow::mouseMoveEvent(QMouseEvent *e)
+{
+    // The event filter below already covers this exact case (a move landing directly on
+    // this widget is one it sees too); kept as a second path costs nothing and does not
+    // depend on the filter having run first.
+    applyEdgeCursor(e->pos());
     QWidget::mouseMoveEvent(e);
+}
+
+bool FramelessWindow::eventFilter(QObject *watched, QEvent *e)
+{
+    if (e->type() == QEvent::MouseMove) {
+        auto *w = qobject_cast<QWidget *>(watched);
+        // Scoped to this window's own tree: with the setup wizard and MainWindow both
+        // being a FramelessWindow, each one's filter must ignore the other's mouse moves
+        // rather than fight over a cursor shape neither of them currently owns.
+        if (w && w->window() == this) {
+            auto *me = static_cast<QMouseEvent *>(e);
+            applyEdgeCursor(mapFromGlobal(w->mapToGlobal(me->pos())));
+        }
+    }
+    return QWidget::eventFilter(watched, e);
 }
 
 void FramelessWindow::mousePressEvent(QMouseEvent *e)

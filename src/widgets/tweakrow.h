@@ -13,6 +13,8 @@
 #include <QWidget>
 
 class AppState;
+class RangeSlider;
+class SegmentedControl;
 class ToggleSwitch;
 struct Tweak;
 
@@ -23,8 +25,9 @@ class TweakRow : public QWidget
 public:
     TweakRow(const Tweak &tweak, AppState *state, QWidget *parent = nullptr);
 
-    /// Row height for the current compact setting, derived from the two line boxes.
-    static int rowHeight();
+    /// Row height for the current compact setting, derived from the two line boxes —
+    /// or from the segmented control, when the tweak is a choice and taller than them.
+    static int rowHeight(bool trailingControl = false);
 
     QSize sizeHint() const override;
 
@@ -38,6 +41,11 @@ private:
     QString m_id;
     QString m_name;
     QString m_desc;
-    ToggleSwitch *m_toggle = nullptr;
+    bool m_choice = false;
+    bool m_applicable = true;
+    QString m_requirement;
+    ToggleSwitch *m_toggle = nullptr;        ///< set for a switch
+    SegmentedControl *m_segments = nullptr;  ///< set for a choice
+    RangeSlider *m_slider = nullptr;         ///< set for a range
     AppState *m_state = nullptr;
 };

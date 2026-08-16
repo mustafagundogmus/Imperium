@@ -14,15 +14,17 @@ AppState::AppState(TweakEngine *engine, QObject *parent)
 {
     // The registry is the source of truth for `applied`; the catalogue's own flag is
     // only a fallback for entries the engine cannot read.
-    const QHash<QString, bool> live = m_engine ? m_engine->readAll() : QHash<QString, bool>();
+    const QHash<QString, int> live = m_engine ? m_engine->readAll() : QHash<QString, int>();
 
     for (const Category &c : Catalog::instance().categories()) {
         for (const Section &s : c.sections) {
             for (const Tweak &t : s.tweaks) {
-                const bool applied = live.contains(t.id) ? live.value(t.id) : t.applied;
+                const int fallback = t.applied ? 1 : t.defaultOption;
+                const int applied = live.contains(t.id) ? live.value(t.id) : fallback;
                 m_applied.insert(t.id, applied);
                 m_on.insert(t.id, applied);
-                if (applied)
+                m_default.insert(t.id, t.defaultOption);
+                if (applied != t.defaultOption)
                     ++m_appliedCount;
             }
         }
@@ -35,7 +37,10 @@ AppState::AppState(TweakEngine *engine, QObject *parent)
     for (const QString &id : stashed) {
         if (!m_on.contains(id))
             continue;
-        m_on[id] = settings.value(id).toBool();
+        // Stashes written before positions existed hold true/false.
+        const QVariant stashed = settings.value(id);
+        m_on[id] = stashed.typeId() == QMetaType::Bool ? (stashed.toBool() ? 1 : 0)
+                                                       : stashed.toInt();
     }
     settings.endGroup();
     if (!stashed.isEmpty()) {
@@ -52,29 +57,39 @@ void AppState::recomputePending()
 {
     m_pending.clear();
     for (auto it = m_on.cbegin(); it != m_on.cend(); ++it)
-        if (it.value() != m_applied.value(it.key(), false))
+        if (it.value() != m_applied.value(it.key(), 0))
             m_pending.insert(it.key());
+}
+
+int AppState::selected(const QString &id) const
+{
+    return m_on.value(id, 0);
+}
+
+int AppState::appliedOption(const QString &id) const
+{
+    return m_applied.value(id, 0);
 }
 
 bool AppState::isOn(const QString &id) const
 {
-    return m_on.value(id, false);
+    return selected(id) != m_default.value(id, 0);
 }
 
 bool AppState::isApplied(const QString &id) const
 {
-    return m_applied.value(id, false);
+    return appliedOption(id) != m_default.value(id, 0);
 }
 
-void AppState::setOn(const QString &id, bool on)
+void AppState::setSelected(const QString &id, int option)
 {
     const auto it = m_on.find(id);
-    if (it == m_on.end() || *it == on)
+    if (it == m_on.end() || *it == option)
         return;
-    *it = on;
+    *it = option;
 
     const int before = int(m_pending.size());
-    if (on != m_applied.value(id, false))
+    if (option != m_applied.value(id, 0))
         m_pending.insert(id);
     else
         m_pending.remove(id);
@@ -82,6 +97,36 @@ void AppState::setOn(const QString &id, bool on)
     Q_EMIT tweakToggled(id);
     if (int(m_pending.size()) != before)
         Q_EMIT pendingChanged();
+}
+
+void AppState::setOn(const QString &id, bool on)
+{
+    setSelected(id, on ? 1 : 0);
+}
+
+void AppState::refreshFromMachine(const QString &id)
+{
+    const Tweak *tweak = Catalog::instance().tweak(id);
+    if (!tweak || !m_engine || !m_applied.contains(id))
+        return;
+
+    const int now = m_engine->currentOption(*tweak);
+    const int fallback = m_default.value(id, 0);
+    const int was = m_applied.value(id, 0);
+    if (now == was && m_on.value(id, 0) == now)
+        return;
+
+    if (now != fallback && was == fallback)
+        ++m_appliedCount;
+    else if (now == fallback && was != fallback)
+        --m_appliedCount;
+
+    m_applied[id] = now;
+    m_on[id] = now;
+    m_pending.remove(id);
+
+    Q_EMIT tweakToggled(id);
+    Q_EMIT pendingChanged();
 }
 
 void AppState::toggle(const QString &id)
@@ -104,7 +149,7 @@ int AppState::appliedCount(const Category &c) const
     int n = 0;
     for (const Section &s : c.sections)
         for (const Tweak &t : s.tweaks)
-            if (m_applied.value(t.id, false))
+            if (m_applied.value(t.id, 0) != t.defaultOption)
                 ++n;
     return n;
 }
@@ -115,7 +160,7 @@ void AppState::stashPending() const
     settings.remove(StashGroup);
     settings.beginGroup(StashGroup);
     for (const QString &id : m_pending)
-        settings.setValue(id, m_on.value(id, false));
+        settings.setValue(id, m_on.value(id, 0));
     settings.endGroup();
 }
 
@@ -126,23 +171,24 @@ AppState::ApplyReport AppState::applyPending()
         return report;
 
     const Catalog &catalog = Catalog::instance();
-    QVector<QPair<const Tweak *, bool>> requests;
+    QVector<QPair<const Tweak *, int>> requests;
     requests.reserve(m_pending.size());
     for (const QString &id : std::as_const(m_pending)) {
         if (const Tweak *tweak = catalog.tweak(id))
-            requests.append({tweak, m_on.value(id, false)});
+            requests.append({tweak, m_on.value(id, 0)});
     }
 
     const QVector<TweakEngine::Outcome> outcomes = m_engine->apply(requests);
 
     for (const TweakEngine::Outcome &outcome : outcomes) {
         if (outcome.ok) {
-            const bool on = m_on.value(outcome.id, false);
-            const bool was = m_applied.value(outcome.id, false);
-            m_applied[outcome.id] = on;
-            if (on && !was)
+            const int fallback = m_default.value(outcome.id, 0);
+            const int now = m_on.value(outcome.id, 0);
+            const int was = m_applied.value(outcome.id, 0);
+            m_applied[outcome.id] = now;
+            if (now != fallback && was == fallback)
                 ++m_appliedCount;
-            else if (!on && was)
+            else if (now == fallback && was != fallback)
                 --m_appliedCount;
             m_pending.remove(outcome.id);
             ++report.succeeded;
@@ -176,7 +222,7 @@ AppState::StepOutcome AppState::applyOne(const QString &id)
     outcome.name = tweak->name;
     outcome.path = tweak->targetSummary();
 
-    const bool desired = m_on.value(id, false);
+    const int desired = m_on.value(id, 0);
     const QVector<TweakEngine::Outcome> results = m_engine->apply({{tweak, desired}});
     if (results.isEmpty())
         return outcome;
@@ -186,11 +232,12 @@ AppState::StepOutcome AppState::applyOne(const QString &id)
     outcome.elevationRequired = result.elevationRequired;
 
     if (result.ok) {
-        const bool was = m_applied.value(id, false);
+        const int fallback = m_default.value(id, 0);
+        const int was = m_applied.value(id, 0);
         m_applied[id] = desired;
-        if (desired && !was)
+        if (desired != fallback && was == fallback)
             ++m_appliedCount;
-        else if (!desired && was)
+        else if (desired == fallback && was != fallback)
             --m_appliedCount;
         m_pending.remove(id);
 
@@ -209,7 +256,7 @@ void AppState::revertPending()
 
     const QSet<QString> reverted = m_pending;
     for (const QString &id : reverted)
-        m_on[id] = m_applied.value(id, false);
+        m_on[id] = m_applied.value(id, 0);
     m_pending.clear();
 
     for (const QString &id : reverted)

@@ -1,6 +1,7 @@
 #include "tweakpage.h"
 #include "../appstate.h"
 #include "../catalog.h"
+#include "../i18n.h"
 #include "../theme.h"
 #include "../widgets/sectionheader.h"
 #include "../widgets/tweakrow.h"
@@ -58,8 +59,8 @@ void TweakPage::setSections(const QVector<Section> &sections, const QString &emp
         blockLayout->setContentsMargins(0, 0, 0, 0);
         blockLayout->setSpacing(0);
 
-        auto *header = new SectionHeader(s.title, block);
-        header->setCount(QStringLiteral("%1 öğe").arg(s.tweaks.size()));
+        auto *header = new SectionHeader(s.displayTitle(), block);
+        header->setCount(Locale::tr(QStringLiteral("tweak.sectionCount")).arg(s.tweaks.size()));
         blockLayout->addWidget(header);
 
         auto *rows = new QWidget(block);
@@ -74,7 +75,7 @@ void TweakPage::setSections(const QVector<Section> &sections, const QString &emp
     }
 
     if (total == 0) {
-        const QString message = emptyMessage.isEmpty() ? QStringLiteral("Eşleşen tweak yok.")
+        const QString message = emptyMessage.isEmpty() ? Locale::tr(QStringLiteral("tweak.noMatch"))
                                                        : emptyMessage;
         auto *empty = new QLabel(message, m_body);
         empty->setFont(Theme::Font::pageSub());

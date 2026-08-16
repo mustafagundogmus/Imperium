@@ -19,9 +19,21 @@ SegmentedControl::SegmentedControl(const QStringList &labels, QWidget *parent)
     setMouseTracking(true);
     setCursor(Qt::ArrowCursor);
 
-    const qreal h = 2 /*border*/ + 2 * PadY + Css::normalLine(Theme::Font::segment());
-    setFixedHeight(qRound(h));
+    setFixedHeight(qRound(controlHeight()));
+    // Every metric here comes out of the font, so the face changing means measuring again.
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+        setFixedHeight(qRound(controlHeight()));
+        setFixedWidth(sizeHint().width());
+        updateGeometry();
+        update();
+    });
+
     setFixedWidth(sizeHint().width());
+}
+
+qreal SegmentedControl::controlHeight()
+{
+    return 2 /*border*/ + 2 * PadY + Css::normalLine(Theme::Font::segment());
 }
 
 qreal SegmentedControl::segmentWidth(int index) const
@@ -35,6 +47,16 @@ QSize SegmentedControl::sizeHint() const
     for (int i = 0; i < m_labels.size(); ++i)
         w += segmentWidth(i) + (i > 0 ? 1.0 : 0.0);   // 1px rule between segments
     return {qCeil(w), height()};
+}
+
+void SegmentedControl::setLabels(const QStringList &labels)
+{
+    if (labels.size() != m_labels.size())
+        return;   // a language swap renames segments, it does not add or remove them
+    m_labels = labels;
+    setFixedWidth(sizeHint().width());
+    updateGeometry();
+    update();
 }
 
 void SegmentedControl::setCurrentIndex(int index)

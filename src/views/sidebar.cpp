@@ -2,10 +2,11 @@
 #include "../appstate.h"
 #include "../catalog.h"
 #include "../css.h"
+#include "../i18n.h"
 #include "../theme.h"
-#include "../widgets/buttons.h"
 #include "../widgets/categoryrow.h"
 #include "../widgets/searchfield.h"
+#include "../widgets/sectionheader.h"
 
 #include <QPainter>
 
@@ -16,20 +17,63 @@ constexpr qreal PadTop = 10.0;
 constexpr qreal SearchInset = 2.0;   // the search box's own 2px side margin
 constexpr qreal SearchGapBelow = 10.0;
 constexpr int RowGap = 1;
+constexpr qreal GroupGapAbove = 12.0;   // extra air before a group header (beyond RowGap)
 
-constexpr qreal BlockPadX = 8.0;     // bottom block padding 10px 8px 12px
-constexpr qreal BlockPadTop = 10.0;
-constexpr qreal BlockPadBottom = 12.0;
-constexpr qreal BlockGap = 3.0;
+constexpr qreal BlockPadBottom = 12.0;   // bottom block padding
 
-const QString RestoreLabel = QStringLiteral("Geri yükleme noktası");
-
-// Pinned below the divider, above the restore block: settings are not a tweak category,
-// so they get the list's row shape but sit outside the scrolling group.
+// Pinned below the divider: settings are not a tweak category, so they get the list's row
+// shape but sit outside the scrolling group. The restore point used to live under this
+// row; it is a setting, and it now says so — see SettingsPage's Güvenlik section.
 constexpr qreal SettingsGap = 6.0;
+constexpr int PinnedRows = 4;   // Günlük + Eylemler + Ayarlar + Hakkında
+
+const QString JournalIcon = QStringLiteral(
+    "M2.5 1.5h7v9h-7zM4.5 4h3M4.5 6h3M4.5 8h2");
+const QString ActionsIcon = QStringLiteral(
+    "M2 6h8M6 2v8M3.6 3.6l4.8 4.8M8.4 3.6L3.6 8.4");
+// A trash can: lid + tapered body + two ribs. Debloat removes installed packages, which
+// is closer to Eylemler's one-shot actions than to a reversible tweak position.
+const QString DebloatIcon = QStringLiteral(
+    "M2.3 3.4h7.4M4.3 3.4v-1a.7.7 0 01.7-.7h2a.7.7 0 01.7.7v1"
+    "M3 3.4l.5 6.3a.9.9 0 00.9.8h3.2a.9.9 0 00.9-.8l.5-6.3"
+    "M5 5.1v3.4M7 5.1v3.4");
+// A cog: a toothed ring around a hub. What was here before was a disc with eight detached
+// rays — the same drawing as the Görsel Efektler category, i.e. a brightness icon.
 const QString SettingsIcon = QStringLiteral(
-    "M6 4.3a1.7 1.7 0 100 3.4 1.7 1.7 0 000-3.4M6 1v1.5M6 9.5V11M1 6h1.5M9.5 6H11"
-    "M2.6 2.6l1.1 1.1M8.3 8.3l1.1 1.1M9.4 2.6L8.3 3.7M3.7 8.3L2.6 9.4");
+    "M6 2.7a3.3 3.3 0 100 6.6 3.3 3.3 0 000-6.6"
+    "M6 4.8a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4"
+    "M9.3 6H11M2.7 6H1"
+    "M7.65 8.86l.85 1.47M4.35 8.86l-.85 1.47"
+    "M4.35 3.14l-.85-1.47M7.65 3.14l.85-1.47");
+// An "i" in a circle — the conventional about/info mark. The dot is a near-zero-length
+// segment; drawn with round caps (like every other glyph in this set) it reads as one.
+const QString AboutIcon = QStringLiteral(
+    "M6 1.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9"
+    "M6 5.4v2.6M6 3.7v.1");
+
+struct GroupDef
+{
+    const char *labelKey;   ///< i18n key, or nullptr for the ungrouped row (Genel Bakış)
+    const char *ids[6];     ///< category ids, empty-string terminated
+};
+
+// Reuses whichever i18n key already carries the right word rather than adding a
+// near-duplicate: "Görünüm" is already settings.section.appearance, "Sistem" is already
+// category.sys, "Gelişmiş" is already category.adv. Only the two combined labels are new.
+//
+// "debloat" rides along in the Sistem group even though it is not a real catalogue
+// category (buildList() special-cases that one id) — it is a system-management page in
+// exactly the sense Sistem/Hizmetler/Başlangıç are, so it reads out of place anywhere
+// else, and it read especially oddly sitting in the pinned utility strip at the bottom
+// next to Günlük/Ayarlar/Hakkında, which are meta pages rather than things to act on.
+constexpr GroupDef Groups[] = {
+    { nullptr,                        {"ov", "", "", "", "", ""} },
+    { "settings.section.appearance",  {"vis", "", "", "", "", ""} },
+    { "category.sys",                 {"sys", "svc", "boot", "perf", "debloat", ""} },
+    { "sidebar.group.privacynet",     {"priv", "net", "", "", "", ""} },
+    { "sidebar.group.files",          {"exp", "ctx", "cln", "", "", ""} },
+    { "category.adv",                 {"adv", "", "", "", "", ""} },
+};
 
 } // namespace
 
@@ -41,23 +85,99 @@ Sidebar::Sidebar(AppState *state, QWidget *parent)
     m_search = new SearchField(this);
 
     m_list = new QWidget(this);
-    for (const Category &c : Catalog::instance().categories()) {
-        const int count = c.tweakCount();
-        auto *row = new CategoryRow(c.id, c.name, c.icon,
-                                    count > 0 ? QString::number(count) : QString(),
-                                    m_list);
-        connect(row, &CategoryRow::activated, this, &Sidebar::categoryActivated);
-        m_rows.append(row);
-    }
+    buildList();
 
-    m_settings = new CategoryRow(settingsId(), QStringLiteral("Ayarlar"), SettingsIcon,
+    m_journal = new CategoryRow(journalId(), Locale::tr(QStringLiteral("sidebar.journal")), JournalIcon,
+                                QString(), this);
+    connect(m_journal, &CategoryRow::activated, this, &Sidebar::categoryActivated);
+
+    m_actions = new CategoryRow(actionsId(), Locale::tr(QStringLiteral("sidebar.actions")), ActionsIcon,
+                                QString(), this);
+    connect(m_actions, &CategoryRow::activated, this, &Sidebar::categoryActivated);
+
+    m_settings = new CategoryRow(settingsId(), Locale::tr(QStringLiteral("sidebar.settings")), SettingsIcon,
                                  QString(), this);
     connect(m_settings, &CategoryRow::activated, this, &Sidebar::categoryActivated);
 
-    m_link = new LinkLabel(QStringLiteral("Yeni oluştur"), this);
-    connect(m_link, &LinkLabel::clicked, this, &Sidebar::restorePointRequested);
+    m_about = new CategoryRow(aboutId(), Locale::tr(QStringLiteral("sidebar.about")), AboutIcon,
+                              QString(), this);
+    connect(m_about, &CategoryRow::activated, this, &Sidebar::categoryActivated);
 
     setSelected(state->selectedCategory());
+
+    connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, [this] {
+        for (CategoryRow *row : std::as_const(m_rows)) {
+            row->setName(row->categoryId() == debloatId()
+                             ? Locale::tr(QStringLiteral("sidebar.debloat"))
+                             : Locale::tr(QStringLiteral("category.") + row->categoryId()));
+        }
+        retranslateGroups();
+        m_journal->setName(Locale::tr(QStringLiteral("sidebar.journal")));
+        m_actions->setName(Locale::tr(QStringLiteral("sidebar.actions")));
+        m_settings->setName(Locale::tr(QStringLiteral("sidebar.settings")));
+        m_about->setName(Locale::tr(QStringLiteral("sidebar.about")));
+    });
+
+    // The search field's own height grows with the interface scale (see SearchField);
+    // everything below it has to slide down to match, which means a full relayout.
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this,
+           [this] { resizeEvent(nullptr); });
+}
+
+void Sidebar::buildList()
+{
+    const Catalog &catalog = Catalog::instance();
+
+    for (const GroupDef &group : Groups) {
+        SectionHeader *header = nullptr;
+        if (group.labelKey) {
+            header = new SectionHeader(Locale::tr(QString::fromLatin1(group.labelKey)), m_list);
+            m_groupHeaders.append({header, QString::fromLatin1(group.labelKey)});
+            m_listItems.append(header);
+        }
+
+        for (const char *rawId : group.ids) {
+            if (!*rawId)
+                break;
+            const QString id = QString::fromLatin1(rawId);
+
+            CategoryRow *row = nullptr;
+            if (id == debloatId()) {
+                // Not a catalogue category — a live machine scan behind the same row
+                // shape, so it reads as part of the list instead of a special case.
+                row = new CategoryRow(id, Locale::tr(QStringLiteral("sidebar.debloat")),
+                                      DebloatIcon, QString(), m_list);
+            } else if (const Category *category = catalog.category(id)) {
+                const int count = category->tweakCount();
+                row = new CategoryRow(category->id,
+                                      Locale::tr(QStringLiteral("category.") + category->id),
+                                      category->icon,
+                                      count > 0 ? QString::number(count) : QString(), m_list);
+            } else {
+                continue;   // a build that trims a category should not crash over it
+            }
+
+            connect(row, &CategoryRow::activated, this, &Sidebar::categoryActivated);
+            m_rows.append(row);
+            m_listItems.append(row);
+        }
+    }
+}
+
+void Sidebar::setCategoryCount(const QString &categoryId, const QString &text)
+{
+    for (CategoryRow *row : std::as_const(m_rows)) {
+        if (row->categoryId() == categoryId) {
+            row->setCount(text);
+            return;
+        }
+    }
+}
+
+void Sidebar::retranslateGroups()
+{
+    for (const auto &entry : std::as_const(m_groupHeaders))
+        entry.first->setTitle(Locale::tr(entry.second));
 }
 
 void Sidebar::setSelected(const QString &categoryId)
@@ -65,79 +185,79 @@ void Sidebar::setSelected(const QString &categoryId)
     for (CategoryRow *row : std::as_const(m_rows))
         row->setSelected(row->categoryId() == categoryId);
     m_settings->setSelected(categoryId == settingsId());
+    m_actions->setSelected(categoryId == actionsId());
+    m_journal->setSelected(categoryId == journalId());
+    m_about->setSelected(categoryId == aboutId());
 }
 
-void Sidebar::setRestorePoint(const QString &value)
+qreal Sidebar::aboutRowTop() const
 {
-    if (m_restorePoint == value)
-        return;
-    m_restorePoint = value;
-    update();
-}
-
-// The value/link row is baseline aligned, so its height is the deepest ascent plus the
-// deepest descent — not the taller of the two line boxes. Every other measurement in the
-// bottom block is derived from this one so the paint and the layout can never drift.
-
-qreal Sidebar::restoreRowAscent()
-{
-    return qMax(Css::ascent(Theme::Font::restoreValue()), Css::ascent(Theme::Font::link()));
-}
-
-qreal Sidebar::restoreRowHeight()
-{
-    return restoreRowAscent()
-           + qMax(Css::descent(Theme::Font::restoreValue()), Css::descent(Theme::Font::link()));
-}
-
-qreal Sidebar::restoreRowTop() const
-{
-    return height() - BlockPadBottom - restoreRowHeight();
+    return height() - BlockPadBottom - Theme::Metric::CategoryHeight;
 }
 
 qreal Sidebar::settingsRowTop() const
 {
-    return restoreLabelTop() - BlockPadTop - SettingsGap - Theme::Metric::CategoryHeight;
+    return aboutRowTop() - RowGap - Theme::Metric::CategoryHeight;
 }
 
-qreal Sidebar::restoreLabelTop() const
+qreal Sidebar::actionsRowTop() const
 {
-    return restoreRowTop() - BlockGap - Css::normalLine(Theme::Font::upperLabel());
+    return settingsRowTop() - RowGap - Theme::Metric::CategoryHeight;
+}
+
+qreal Sidebar::journalRowTop() const
+{
+    return actionsRowTop() - RowGap - Theme::Metric::CategoryHeight;
 }
 
 int Sidebar::bottomBlockHeight() const
 {
-    return qRound(1.0 + SettingsGap + Theme::Metric::CategoryHeight + SettingsGap
-                  + BlockPadTop + Css::normalLine(Theme::Font::upperLabel())
-                  + BlockGap + restoreRowHeight() + BlockPadBottom);
+    return qRound(1.0 + SettingsGap
+                  + PinnedRows * Theme::Metric::CategoryHeight + (PinnedRows - 1) * RowGap
+                  + BlockPadBottom);
 }
 
 void Sidebar::resizeEvent(QResizeEvent *e)
 {
-    QWidget::resizeEvent(e);
+    if (e)
+        QWidget::resizeEvent(e);
 
     const int contentW = qRound(width() - 1 /*right border*/ - 2 * PadX);
 
+    // Height comes from the field itself rather than the metric constant, so a larger
+    // interface scale pushes the list down instead of the field's text overflowing it.
+    const int searchH = m_search->sizeHint().height();
     m_search->setGeometry(qRound(PadX + SearchInset), qRound(PadTop),
-                          qRound(contentW - 2 * SearchInset), Theme::Metric::SearchHeight);
+                          qRound(contentW - 2 * SearchInset), searchH);
 
-    const int listTop = qRound(PadTop + Theme::Metric::SearchHeight + SearchGapBelow);
+    const int listTop = qRound(PadTop + searchH + SearchGapBelow);
     const int blockH = bottomBlockHeight();
     const int listH = qMax(0, height() - blockH - listTop);
     m_list->setGeometry(qRound(PadX), listTop, contentW, listH);
 
+    // Group headers get extra air above them; an ordinary row just follows the last
+    // widget by RowGap, whatever it was.
     int y = 0;
-    for (CategoryRow *row : std::as_const(m_rows)) {
-        row->setGeometry(0, y, contentW, Theme::Metric::CategoryHeight);
-        y += Theme::Metric::CategoryHeight + RowGap;
+    bool first = true;
+    for (QWidget *item : std::as_const(m_listItems)) {
+        const bool isHeader = qobject_cast<SectionHeader *>(item) != nullptr;
+        if (!first)
+            y += isHeader ? qRound(GroupGapAbove) : RowGap;
+        first = false;
+
+        const int h = isHeader ? item->sizeHint().height() : Theme::Metric::CategoryHeight;
+        item->setGeometry(0, y, contentW, h);
+        y += h;
     }
 
+    m_journal->setGeometry(qRound(PadX), qRound(journalRowTop()),
+                           contentW, Theme::Metric::CategoryHeight);
+    m_actions->setGeometry(qRound(PadX), qRound(actionsRowTop()),
+                           contentW, Theme::Metric::CategoryHeight);
     m_settings->setGeometry(qRound(PadX), qRound(settingsRowTop()),
                             contentW, Theme::Metric::CategoryHeight);
-
-    // The link sits at the right of the value row, sharing its baseline.
-    const qreal linkTop = restoreRowTop() + restoreRowAscent() - Css::ascent(Theme::Font::link());
-    m_link->move(qRound(width() - 1 - PadX - BlockPadX - m_link->width()), qRound(linkTop));
+    m_about->setGeometry(qRound(PadX), qRound(aboutRowTop()),
+                         contentW, Theme::Metric::CategoryHeight);
 }
 
 void Sidebar::paintEvent(QPaintEvent *)
@@ -152,21 +272,7 @@ void Sidebar::paintEvent(QPaintEvent *)
     const qreal contentLeft = PadX;
     const qreal contentRight = width() - 1 - PadX;
 
-    const qreal labelTop = restoreLabelTop();
-    const qreal borderY = std::round(settingsRowTop() - SettingsGap - 1.0);
+    const qreal borderY = std::round(journalRowTop() - SettingsGap - 1.0);
     Css::hairline(&p, QRectF(contentLeft, borderY, contentRight - contentLeft, 1),
                   Color::Divider());
-
-    const QFont &labelFont = Font::upperLabel();
-    const QRectF inner(contentLeft + BlockPadX, 0,
-                       (contentRight - BlockPadX) - (contentLeft + BlockPadX), height());
-
-    Css::drawText(&p, inner, Css::baseline(labelFont, labelTop, Css::normalLine(labelFont)),
-                  labelFont, Color::TextFaint(), Css::upperTr(RestoreLabel));
-
-    // Leave room for the link so a long timestamp is elided instead of colliding.
-    const QRectF valueBox(inner.left(), 0,
-                          qMax(0.0, inner.width() - m_link->width() - 8.0), height());
-    Css::drawText(&p, valueBox, restoreRowTop() + restoreRowAscent(), Font::restoreValue(),
-                  Color::TextMono(), m_restorePoint, Qt::AlignLeft, true);
 }

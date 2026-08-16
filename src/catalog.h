@@ -25,6 +25,23 @@ struct RegistryEntry
     QString off;       // written when it is off; "DELETE" removes the value
 };
 
+/// One position of a tweak, carrying the data for every registry entry it owns.
+///
+/// A switch is a tweak with two of these — off, then on — synthesised from each entry's
+/// `off` and `on`. A choice spells them out in the catalogue instead. Everything past the
+/// parser works on the index, so the two kinds need no separate machinery.
+struct TweakOption
+{
+    QString label;           ///< shown on the segmented control; empty for a switch
+    QVector<QString> data;   ///< one per RegistryEntry, in order
+
+    /// The label in the interface language. Keyed by the Turkish text rather than by
+    /// position: the same word ("Varsayılan", "Asla") recurs across unrelated tweaks, and
+    /// one entry per distinct word is both fewer keys and a consistent translation.
+    /// Numeric labels from a range tweak ("8", "64 MB") pass straight through.
+    QString displayLabel() const;
+};
+
 struct Tweak
 {
     QString id;
@@ -33,16 +50,56 @@ struct Tweak
     bool applied = false;   ///< state already committed to the system
     bool on = false;        ///< state the switch starts in (differs → pending)
     QVector<RegistryEntry> reg;
-    QString source;         ///< where the definition came from, for auditing
+
+    QVector<TweakOption> options;   ///< always ≥ 2
+    int defaultOption = 0;          ///< what Windows ships; "etkin" means anything else
+    bool isChoice = false;          ///< drawn as a segmented control, not a switch
+    bool isRange = false;           ///< …or as a slider: the positions are a number line
+
+    // Windows keeps retiring the values it reads. TaskbarSi still writes cleanly on 26200
+    // and Windows ignores it completely — so a tweak can declare the builds it means
+    // something on, and one that does not apply here is shown greyed out with the reason
+    // rather than offered as a switch that quietly does nothing.
+    int minBuild = 0;               ///< 0 = no lower bound
+    int maxBuild = 0;               ///< 0 = no upper bound
+    bool applicable = true;         ///< resolved against this machine at load
+    QString requirement;            ///< "Windows 11 22H2 ve öncesi", when it does not apply
+
+    // Some things are writable and still must not be offered: a service the machine
+    // cannot start without is one registry value away from an unbootable Windows.
+    bool locked = false;
+    QString lockReason;
+
+    QString tooltip;                ///< long text that does not belong on a one-line row
+
+    /// The row may be operated: it applies here and it is not load-bearing.
+    bool editable() const { return applicable && !locked; }
+    /// Why not, in the voice the row shows it in.
+    QString blockReason() const { return locked ? lockReason : requirement; }
 
     /// Human-readable target, e.g. "HKCU\Software\…\Enabled" (+2 more).
     QString targetSummary() const;
+
+    /// The name and description in the interface language, falling back to the Turkish
+    /// text carried in catalog.json when this entry has not been translated yet. Every
+    /// place that shows a tweak to a human goes through these rather than reading `name`
+    /// and `desc` straight, so the catalogue can be translated a category at a time
+    /// without the untranslated half turning into raw lookup keys.
+    ///
+    /// Machine-generated tweaks (services, startup items) are skipped: their text is
+    /// Windows' own and already comes back in the system's language.
+    QString displayName() const;
+    QString displayDesc() const;
 };
 
 struct Section
 {
     QString title;
     QVector<Tweak> tweaks;
+
+    /// Section headings are keyed by their Turkish text rather than by position, so
+    /// reordering the catalogue cannot silently repoint a translation at another heading.
+    QString displayTitle() const;
 };
 
 struct Category
@@ -72,6 +129,15 @@ public:
 private:
     Catalog();
     void load();
+
+    /// Turns every Win32 service on this machine into a four-position choice tweak and
+    /// files them under the Hizmetler category. Synthesised rather than catalogued: the
+    /// list is the machine's, not ours.
+    void appendServices();
+
+    /// Every Run entry and Startup shortcut on this machine, as a switch that writes the
+    /// same StartupApproved blob Task Manager does.
+    void appendStartup();
 
     QVector<Category> m_categories;
     QHash<QString, const Tweak *> m_byId;

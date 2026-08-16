@@ -4,6 +4,12 @@
 // Windows shell picks it as the executable's icon.
 IDI_ICON1 ICON "resources/icons/tweaker.ico"
 
+// The elevation request. Listing the manifest as a CMake source is enough to stop Qt
+// generating its asInvoker one, but not enough to embed ours: that path is MSVC-only, and
+// this is a MinGW build. windres puts it where Windows actually looks — resource 1 of
+// type RT_MANIFEST, read before the process is created.
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "resources/Arbitrium.manifest"
+
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION     0,9,4,0
 PRODUCTVERSION  0,9,4,0
@@ -15,7 +21,8 @@ BEGIN
         BLOCK "040904B0"
         BEGIN
             VALUE "CompanyName",      "Arbitrium"
-            VALUE "FileDescription",  "Windows Tweaker"
+            // Task Manager's "Name" column shows this, not ProductName.
+            VALUE "FileDescription",  "Arbitrium"
             VALUE "FileVersion",      "0.9.4"
             VALUE "InternalName",     "Arbitrium"
             VALUE "OriginalFilename", "Arbitrium.exe"

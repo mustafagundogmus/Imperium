@@ -47,6 +47,13 @@ QSize PillButton::sizeHint() const
 void PillButton::refreshGeometry()
 {
     setFixedSize(sizeHint());
+    // Every metric here comes out of the font, so the face changing means measuring again.
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+        setFixedSize(sizeHint());
+        updateGeometry();
+        update();
+    });
+
 }
 
 void PillButton::setText(const QString &text)
@@ -161,6 +168,13 @@ LinkLabel::LinkLabel(const QString &text, QWidget *parent)
     setCursor(Qt::PointingHandCursor);
     setAttribute(Qt::WA_Hover, true);
     setFixedSize(sizeHint());
+    // Every metric here comes out of the font, so the face changing means measuring again.
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+        setFixedSize(sizeHint());
+        updateGeometry();
+        update();
+    });
+
     connect(Theme::notifier(), &Theme::Notifier::accentChanged, this, qOverload<>(&QWidget::update));
 }
 
@@ -222,6 +236,7 @@ WindowButton::WindowButton(Kind kind, QWidget *parent)
     setFixedSize(Theme::Metric::WindowButtonWidth, Theme::Metric::TitleBarHeight);
     setCursor(Qt::ArrowCursor);
     setAttribute(Qt::WA_Hover, true);
+    connect(Theme::notifier(), &Theme::Notifier::accentChanged, this, qOverload<>(&QWidget::update));
 }
 
 QSize WindowButton::sizeHint() const
@@ -304,10 +319,18 @@ QPixmap WindowButton::glyph() const
 void WindowButton::paintEvent(QPaintEvent *)
 {
     QPainter p(this);
-    if (m_hovered)
-        p.fillRect(rect(), m_kind == Close ? Theme::Color::CloseHover() : Theme::Color::SurfaceActive());
 
-    const QPixmap g = glyph();
+    // The close button reads as the accent colour on hover instead of the fixed red every
+    // other tweaker uses. The accent presets are all mid-light tones, so the usual neutral
+    // glyph stroke would nearly disappear on them — the X switches to a dark tone only for
+    // this state, just for that button.
+    const bool closeHovered = m_hovered && m_kind == Close;
+    if (m_hovered)
+        p.fillRect(rect(), closeHovered ? Theme::accent() : Theme::Color::SurfaceActive());
+
+    const QPixmap g = closeHovered
+                          ? Icons::windowClose(QColor(0x1A, 0x1A, 0x1E), devicePixelRatioF())
+                          : glyph();
     const QSizeF gs = g.deviceIndependentSize();
     p.drawPixmap(QPointF(std::round((width() - gs.width()) / 2.0),
                          std::round((height() - gs.height()) / 2.0)),

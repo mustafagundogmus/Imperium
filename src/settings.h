@@ -19,6 +19,9 @@ public:
     bool smoothScroll() const { return m_smoothScroll; }
     void setSmoothScroll(bool on);
 
+    bool borderGlow() const { return m_borderGlow; }
+    void setBorderGlow(bool on);
+
     bool checkUpdatesOnLaunch() const { return m_checkUpdatesOnLaunch; }
     void setCheckUpdatesOnLaunch(bool on);
 
@@ -27,12 +30,14 @@ public:
 
 Q_SIGNALS:
     void smoothScrollChanged(bool on);
+    void borderGlowChanged(bool on);
     void changed();
 
 private:
     Settings();
 
     bool m_smoothScroll = true;
+    bool m_borderGlow = true;
     bool m_checkUpdatesOnLaunch = false;
     bool m_confirmBeforeApply = true;
 };

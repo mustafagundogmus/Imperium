@@ -11,6 +11,8 @@
 #include <QJsonObject>
 #include <QStandardPaths>
 
+#include <algorithm>
+
 #ifdef Q_OS_WIN
 #  ifndef WIN32_LEAN_AND_MEAN
 #    define WIN32_LEAN_AND_MEAN
@@ -27,6 +29,11 @@ namespace {
 bool isDelete(const QString &data)
 {
     return data.compare(Registry::DeleteSentinel, Qt::CaseInsensitive) == 0;
+}
+
+bool isDeleteKey(const QString &data)
+{
+    return data.compare(Registry::DeleteKeySentinel, Qt::CaseInsensitive) == 0;
 }
 
 /// Key for one value of one tweak in the originals map.
@@ -65,51 +72,85 @@ void TweakEngine::loadOriginals()
 
         Original original;
         original.existed = entry.value(QStringLiteral("existed")).toBool();
+        // Journals written before this field existed carry no opinion; assuming the key
+        // was already there is the cautious reading, since it only ever prevents a delete.
+        original.keyExisted = entry.value(QStringLiteral("keyExisted")).toBool(true);
         original.type = entry.value(QStringLiteral("previousType")).toString();
         original.data = entry.value(QStringLiteral("previousData")).toString();
         m_originals.insert(key, original);
     }
 }
 
-bool TweakEngine::isApplied(const Tweak &tweak) const
-{
-    if (tweak.reg.isEmpty())
-        return tweak.applied;   // nothing to read; fall back to the catalogue's claim
+namespace {
 
-    // A tweak that owns several values is only "applied" when every one of them is at
-    // its on state — a half-written tweak is not in effect.
-    for (const RegistryEntry &entry : tweak.reg) {
+/// True when the machine's registry matches \a option for every key the tweak owns — a
+/// half-written tweak sits at no position at all.
+bool machineMatches(const Tweak &tweak, const TweakOption &option)
+{
+    for (int i = 0; i < tweak.reg.size(); ++i) {
+        const RegistryEntry &entry = tweak.reg.at(i);
+        const QString &want = option.data.value(i);
+
         const Registry::Hive hive = Registry::hiveFromString(entry.hive);
         if (hive == Registry::Hive::Invalid)
             return false;
 
-        const Registry::Value value = Registry::read(hive, entry.path, entry.value);
-
-        if (!value.exists) {
-            // Absence is a real state: it only counts as applied when the on state is
-            // itself expressed as "delete this value".
-            if (!isDelete(entry.on))
+        // A position expressed as a missing key is read by looking for the key, not for
+        // anything inside it.
+        if (isDeleteKey(want)) {
+            if (Registry::keyExists(hive, entry.path))
                 return false;
             continue;
         }
 
-        if (isDelete(entry.on) || value.data != entry.on)
+        const Registry::Value value = Registry::read(hive, entry.path, entry.value);
+
+        if (!value.exists) {
+            // Absence is a real state: it matches only a position that asks for it.
+            if (!isDelete(want))
+                return false;
+            continue;
+        }
+
+        if (isDelete(want) || value.data != want)
             return false;
     }
     return true;
 }
 
-QHash<QString, bool> TweakEngine::readAll() const
+} // namespace
+
+int TweakEngine::currentOption(const Tweak &tweak) const
 {
-    QHash<QString, bool> states;
+    if (tweak.reg.isEmpty() || tweak.options.isEmpty())
+        return tweak.applied ? 1 : 0;   // nothing to read; take the catalogue's claim
+
+    // Later positions win a tie: a switch whose off and on are both "value absent" would
+    // otherwise never read as on, and the on state is the one the user asked about.
+    for (int i = int(tweak.options.size()) - 1; i >= 0; --i)
+        if (machineMatches(tweak, tweak.options.at(i)))
+            return i;
+
+    return tweak.defaultOption;
+}
+
+bool TweakEngine::isApplied(const Tweak &tweak) const
+{
+    return currentOption(tweak) == 1;
+}
+
+QHash<QString, int> TweakEngine::readAll() const
+{
+    QHash<QString, int> states;
     for (const Category &category : Catalog::instance().categories())
         for (const Section &section : category.sections)
             for (const Tweak &tweak : section.tweaks)
-                states.insert(tweak.id, isApplied(tweak));
+                states.insert(tweak.id, currentOption(tweak));
     return states;
 }
 
-void TweakEngine::journal(const Tweak &tweak, int index, const RegistryEntry &entry, bool desired)
+void TweakEngine::journal(const Tweak &tweak, int index, const RegistryEntry &entry,
+                          const QString &desired)
 {
     const Registry::Hive hive = Registry::hiveFromString(entry.hive);
     const Registry::Value before = Registry::read(hive, entry.path, entry.value);
@@ -123,32 +164,48 @@ void TweakEngine::journal(const Tweak &tweak, int index, const RegistryEntry &en
     record.insert(QStringLiteral("path"), entry.path);
     record.insert(QStringLiteral("value"), entry.value);
     record.insert(QStringLiteral("existed"), before.exists);
+    record.insert(QStringLiteral("keyExisted"), Registry::keyExists(hive, entry.path));
     record.insert(QStringLiteral("previousType"), before.type);
     record.insert(QStringLiteral("previousData"), before.data);
-    record.insert(QStringLiteral("desired"), desired ? entry.on : entry.off);
+    record.insert(QStringLiteral("desired"), desired);
 
     QFile file(m_journalPath);
     if (file.open(QIODevice::Append | QIODevice::Text))
         file.write(QJsonDocument(record).toJson(QJsonDocument::Compact) + '\n');
 }
 
-QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak *, bool>> &requests)
+QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak *, int>> &requests)
 {
     QVector<Outcome> outcomes;
     outcomes.reserve(requests.size());
 
     for (const auto &request : requests) {
         const Tweak *tweak = request.first;
-        const bool desired = request.second;
+        const int wanted = qBound(0, request.second, int(tweak->options.size()) - 1);
 
         Outcome outcome;
         outcome.id = tweak->id;
 
-        if (tweak->reg.isEmpty()) {
+        if (tweak->reg.isEmpty() || tweak->options.isEmpty()) {
             outcome.error = QStringLiteral("kayıt tanımı eksik");
             outcomes.append(outcome);
             continue;
         }
+
+        // The rows for these cannot be operated, but a preset file can still name them,
+        // so the refusal lives here as well as in the UI.
+        if (!tweak->editable()) {
+            outcome.error = tweak->locked ? QStringLiteral("bu hizmet kilitli")
+                                          : QStringLiteral("bu Windows sürümünde geçersiz");
+            outcomes.append(outcome);
+            continue;
+        }
+
+        // Putting a tweak back to what Windows ships is the one direction that consults
+        // the journal: the catalogue's idea of the default and what this machine actually
+        // had before we touched it are not always the same value.
+        const bool restoring = wanted == tweak->defaultOption;
+        const TweakOption &option = tweak->options.at(wanted);
 
         // Elevation is decided for the whole tweak: writing half of a multi-value tweak
         // would leave the machine in a state neither side of the switch describes.
@@ -175,28 +232,42 @@ QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak
                 continue;
             }
 
-            journal(*tweak, i, entry, desired);
-
             QString type = entry.type;
-            QString target = desired ? entry.on : entry.off;
+            QString target = option.data.value(i);
 
-            // Turning a tweak off restores what this machine actually had, not the
-            // catalogue's idea of the Windows default — those differ whenever something
-            // else had already written the value.
-            if (!desired) {
+            journal(*tweak, i, entry, target);
+
+            // Restoring writes what this machine actually had, not the catalogue's idea
+            // of the Windows default — those differ whenever something else had already
+            // written the value.
+            if (restoring) {
                 const auto original = m_originals.constFind(originalKey(tweak->id, i));
                 if (original != m_originals.cend()) {
-                    target = original->existed ? original->data : Registry::DeleteSentinel;
-                    if (original->existed && !original->type.isEmpty())
-                        type = original->type;
+                    if (original->existed) {
+                        target = original->data;
+                        if (!original->type.isEmpty())
+                            type = original->type;
+                    } else {
+                        // The value was not there before we wrote it. Take the key with
+                        // it only when the catalogue says the key *is* the switch and the
+                        // key was not there either — otherwise an unrelated setting that
+                        // happens to live in the same key would go with it.
+                        target = (isDeleteKey(option.data.value(i)) && !original->keyExisted)
+                                     ? Registry::DeleteKeySentinel
+                                     : Registry::DeleteSentinel;
+                    }
                     outcome.restoredOriginal = true;
                 }
             }
 
             QString error;
-            const bool ok = isDelete(target)
-                                ? Registry::remove(hive, entry.path, entry.value, &error)
-                                : Registry::write(hive, entry.path, entry.value, type, target, &error);
+            bool ok;
+            if (isDeleteKey(target))
+                ok = Registry::removeKey(hive, entry.path, &error);
+            else if (isDelete(target))
+                ok = Registry::remove(hive, entry.path, entry.value, &error);
+            else
+                ok = Registry::write(hive, entry.path, entry.value, type, target, &error);
             if (!ok) {
                 allOk = false;
                 if (outcome.error.isEmpty())
@@ -209,6 +280,64 @@ QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak
     }
 
     return outcomes;
+}
+
+QVector<TweakEngine::JournalEntry> TweakEngine::history(int limit) const
+{
+    QVector<JournalEntry> entries;
+
+    QFile file(m_journalPath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return entries;
+
+    while (!file.atEnd()) {
+        const QJsonObject record = QJsonDocument::fromJson(file.readLine()).object();
+        if (record.isEmpty())
+            continue;
+
+        JournalEntry entry;
+        entry.at = QDateTime::fromString(record.value(QStringLiteral("at")).toString(), Qt::ISODate);
+        entry.tweakId = record.value(QStringLiteral("id")).toString();
+        entry.tweakName = record.value(QStringLiteral("name")).toString();
+        entry.hive = record.value(QStringLiteral("hive")).toString();
+        entry.path = record.value(QStringLiteral("path")).toString();
+        entry.value = record.value(QStringLiteral("value")).toString();
+        entry.existed = record.value(QStringLiteral("existed")).toBool();
+        entry.keyExisted = record.value(QStringLiteral("keyExisted")).toBool(true);
+        entry.previousType = record.value(QStringLiteral("previousType")).toString();
+        entry.previousData = record.value(QStringLiteral("previousData")).toString();
+        entry.desired = record.value(QStringLiteral("desired")).toString();
+
+        if (!entry.tweakId.isEmpty())
+            entries.append(entry);
+    }
+
+    // Newest first: the thing you want to undo is almost always the last thing you did.
+    std::reverse(entries.begin(), entries.end());
+    if (limit > 0 && entries.size() > limit)
+        entries.resize(limit);
+    return entries;
+}
+
+bool TweakEngine::revert(const JournalEntry &entry, QString *error)
+{
+    const Registry::Hive hive = Registry::hiveFromString(entry.hive);
+    if (hive == Registry::Hive::Invalid) {
+        if (error)
+            *error = QStringLiteral("geçersiz kayıt kovanı");
+        return false;
+    }
+
+    if (entry.existed) {
+        const QString type = entry.previousType.isEmpty() ? QStringLiteral("SZ")
+                                                          : entry.previousType;
+        return Registry::write(hive, entry.path, entry.value, type, entry.previousData, error);
+    }
+
+    // There was no value here before. Take the key with it only if we made that too.
+    if (!entry.keyExisted)
+        return Registry::removeKey(hive, entry.path, error);
+    return Registry::remove(hive, entry.path, entry.value, error);
 }
 
 bool TweakEngine::needsElevation(const QVector<const Tweak *> &tweaks)

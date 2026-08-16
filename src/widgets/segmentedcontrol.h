@@ -20,7 +20,15 @@ public:
     int currentIndex() const { return m_current; }
     void setCurrentIndex(int index);
 
+    /// Same segment count and order, new text — for a language switch. Reshapes and
+    /// repaints; the selection and hover state are left alone.
+    void setLabels(const QStringList &labels);
+
     QSize sizeHint() const override;
+
+    /// Height of the control at the current font, before one exists — a row that has to
+    /// reserve space for one needs the number without building it.
+    static qreal controlHeight();
 
 Q_SIGNALS:
     void currentIndexChanged(int index);

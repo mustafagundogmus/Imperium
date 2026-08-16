@@ -1,6 +1,7 @@
 #include "contentheader.h"
 #include "../css.h"
 #include "../icons.h"
+#include "../i18n.h"
 #include "../theme.h"
 #include "../widgets/segmentedcontrol.h"
 
@@ -21,14 +22,26 @@ ContentHeader::ContentHeader(QWidget *parent)
 {
     setMouseTracking(true);
 
-    m_filter = new SegmentedControl({QStringLiteral("Tümü"),
-                                     QStringLiteral("Etkin"),
-                                     QStringLiteral("Değişen")},
+    m_filter = new SegmentedControl({Locale::tr(QStringLiteral("segment.all")),
+                                     Locale::tr(QStringLiteral("segment.active")),
+                                     Locale::tr(QStringLiteral("segment.changed"))},
                                     this);
     connect(m_filter, &SegmentedControl::currentIndexChanged, this, &ContentHeader::filterChanged);
 
     connect(Theme::notifier(), &Theme::Notifier::accentChanged, this, qOverload<>(&QWidget::update));
+    connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, [this] {
+        m_filter->setLabels({Locale::tr(QStringLiteral("segment.all")),
+                             Locale::tr(QStringLiteral("segment.active")),
+                             Locale::tr(QStringLiteral("segment.changed"))});
+    });
     setFixedHeight(sizeHint().height());
+    // Every metric here comes out of the font, so the face changing means measuring again.
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+        setFixedHeight(sizeHint().height());
+        updateGeometry();
+        update();
+    });
+
 }
 
 qreal ContentHeader::contentHeight() const

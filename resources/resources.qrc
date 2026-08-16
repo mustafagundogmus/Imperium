@@ -7,11 +7,31 @@
         <file alias="IBMPlexSans-SemiBold.ttf">fonts/IBMPlexSans-SemiBold.ttf</file>
         <file alias="IBMPlexMono-Regular.ttf">fonts/IBMPlexMono-Regular.ttf</file>
         <file alias="IBMPlexMono-Medium.ttf">fonts/IBMPlexMono-Medium.ttf</file>
+
+        <!-- Alternative UI faces, offered under Ayarlar › Görünüm › Yazı tipi. Three
+             weights each — regular, medium, semibold — which is what the styles use.
+             Oxygen ships no medium or semibold, so it doubles up on regular and bold. -->
+        <file alias="Monda-Regular.ttf">fonts/Monda-Regular.ttf</file>
+        <file alias="Monda-Medium.ttf">fonts/Monda-Medium.ttf</file>
+        <file alias="Monda-SemiBold.ttf">fonts/Monda-SemiBold.ttf</file>
+        <file alias="OpenSans-Regular.ttf">fonts/OpenSans-Regular.ttf</file>
+        <file alias="OpenSans-Medium.ttf">fonts/OpenSans-Medium.ttf</file>
+        <file alias="OpenSans-SemiBold.ttf">fonts/OpenSans-SemiBold.ttf</file>
+        <file alias="Oxygen-Regular.ttf">fonts/Oxygen-Regular.ttf</file>
+        <file alias="Oxygen-Bold.ttf">fonts/Oxygen-Bold.ttf</file>
+        <file alias="RedHatText-Regular.ttf">fonts/RedHatText-Regular.ttf</file>
+        <file alias="RedHatText-Medium.ttf">fonts/RedHatText-Medium.ttf</file>
+        <file alias="RedHatText-SemiBold.ttf">fonts/RedHatText-SemiBold.ttf</file>
+        <file alias="Saira-Regular.ttf">fonts/Saira-Regular.ttf</file>
+        <file alias="Saira-Medium.ttf">fonts/Saira-Medium.ttf</file>
+        <file alias="Saira-SemiBold.ttf">fonts/Saira-SemiBold.ttf</file>
     </qresource>
     <qresource prefix="/icons">
         <file alias="tweaker.ico">icons/tweaker.ico</file>
     </qresource>
     <qresource prefix="/data">
         <file alias="catalog.json">data/catalog.json</file>
+        <file alias="actions.json">data/actions.json</file>
+        <file alias="i18n.json">data/i18n.json</file>
     </qresource>
 </RCC>

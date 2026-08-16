@@ -11,6 +11,7 @@
 #include <QFont>
 #include <QObject>
 #include <QString>
+#include <QVector>
 
 namespace Theme {
 
@@ -67,6 +68,10 @@ struct Palette
 
 const Palette &palette();
 
+/// A specific palette regardless of what is in use — the theme switch paints a preview
+/// of both at once, so it needs to ask for the one it is not currently wearing.
+const Palette &palette(Appearance a);
+
 Appearance appearance();
 void setAppearance(Appearance a);
 
@@ -103,7 +108,6 @@ inline const QColor &Placeholder()     { return palette().placeholder; }
 inline const QColor &IconStroke()      { return palette().iconStroke; }
 
 inline const QColor &OnAccent()        { return palette().onAccent; }
-inline const QColor &CloseHover()      { return palette().closeHover; }
 inline const QColor &LinkHover()       { return palette().linkHover; }
 inline const QColor &ScrollThumb()     { return palette().scrollThumb; }
 
@@ -166,8 +170,44 @@ inline constexpr int Medium   = 500;
 inline constexpr int SemiBold = 600;
 }
 
-/// Loads the embedded IBM Plex faces. Must be called once after QApplication.
+/// Loads the embedded faces and restores the saved appearance. Once, after QApplication.
 void initFonts();
+
+// ---------------------------------------------------------------- typeface ---
+//
+// The interface face is swappable. Everything the app draws goes through the styles in
+// Font::, so pointing those at another family is enough — the mono face does not change
+// with it, because the values it carries (versions, registry paths, byte counts) are
+// column-aligned technical text and belong in a monospace whatever the rest is set in.
+
+struct Typeface
+{
+    QString id;      ///< stored in QSettings
+    QString name;    ///< shown in the settings row
+    QString family;  ///< resolved family name, empty until the face is loaded
+};
+
+/// Every face the build carries, the default first.
+const QVector<Typeface> &typefaces();
+
+/// Registers a face with the font database if it is not there yet, and returns its
+/// resolved family name. Cheap to call repeatedly.
+QString loadTypeface(const QString &id);
+
+QString typeface();                    ///< id of the face in use
+void setTypeface(const QString &id);   ///< persists and rebuilds every style
+
+/// A multiplier over every text size in the app, 1.0 being the design's own sizes.
+/// Clamped to [0.85, 1.6]; persisted; rebuilds every style like a face swap does.
+qreal fontScale();
+void  setFontScale(qreal scale);
+
+/// The interface-scale steps the settings page offers, small to large. Kept next to the
+/// setter so the row and the clamp above cannot drift apart.
+struct FontScaleStep { const char *label; qreal value; };
+inline const FontScaleStep FontScaleSteps[] = {
+    {"Küçük", 0.9}, {"Normal", 1.0}, {"Büyük", 1.15}, {"Çok büyük", 1.3},
+};
 
 /// A font whose *pixel* size is exactly \a px, even when \a px is fractional.
 /// \a letterSpacingEm mirrors the CSS `letter-spacing: <n>em` values.
@@ -204,6 +244,7 @@ const QFont &pageSub();            ///< "31 tweak · 12 etkin ·" sans 11
 const QFont &segment();            ///< Tümü / Etkin / Değişen  sans 11
 const QFont &sectionTitle();       ///< "TELEMETRİ"             sans 10 / 500 / .09em
 const QFont &sectionCount();       ///< "4 öğe"                 mono 9.5
+const QFont &blockTitle();         ///< "Sistem" (genel bakış)  sans 12.5 / 600 / -.01em
 const QFont &tweakName();          ///< sans 12.5 / 450
 const QFont &tweakDesc();          ///< sans 10.5
 const QFont &tileLabel();          ///< sans 10 / .08em
@@ -229,6 +270,10 @@ Q_SIGNALS:
     void accentChanged();
     void compactChanged();
     void appearanceChanged();
+
+    /// Every metric in the app is derived from the fonts, so a listener has to relayout
+    /// as well as repaint.
+    void typefaceChanged();
 };
 
 /// Accent presets offered by the design (`accent` prop of the mockup).

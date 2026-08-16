@@ -1,11 +1,13 @@
 // overviewpage.h — the Genel Bakış screen.
 //
-//   stat tiles   4-column grid, gap 8px, 4px of space above
-//   live chart   section header + rolling CPU/memory plot
-//   info blocks  2-column grid, gap 18px vertical / 28px horizontal
+//   stat tiles   4-column grid of cards, gap 8px, each with a usage meter
+//   live chart   section header (carrying the 60-second peak and mean) + rolling plot
+//   info blocks  3-column grid of cards, gap 12px
 //
-// All four tiles and the chart are driven by SystemMonitor; the info blocks come from the
-// one-shot SysInfo read plus whatever the background probe fills in later.
+// The tiles and the chart are driven by SystemMonitor; the info blocks come from the
+// one-shot SysInfo read, whatever the background probe fills in later, and — for the
+// catalogue block — from AppState, because how much of the machine this app has actually
+// changed belongs on the page that describes the machine.
 
 #pragma once
 
@@ -16,6 +18,7 @@
 
 class InfoSection;
 class LiveChart;
+class SectionHeader;
 class StatTile;
 
 class OverviewPage : public QWidget
@@ -27,12 +30,16 @@ public:
 
     void setFacts(const SysInfo::Facts &facts);
 
+    /// Catalogue state, pushed by MainWindow whenever it changes.
+    void setCatalogState(int total, int applied, int pending, const QString &busiest);
+
 private Q_SLOTS:
     void onSampled(const Sample &sample);
 
 private:
     SystemMonitor *m_monitor = nullptr;
     SysInfo::Facts m_facts;
+    SectionHeader *m_chartHeader = nullptr;
 
     StatTile *m_tileCpu = nullptr;
     StatTile *m_tileRam = nullptr;
@@ -55,4 +62,5 @@ private:
     InfoSection *m_software = nullptr;
     InfoSection *m_locale = nullptr;
     InfoSection *m_processes = nullptr;
+    InfoSection *m_catalog = nullptr;
 };

@@ -1,0 +1,262 @@
+{
+ "version": 1,
+ "sections": [
+  {
+   "title": "Bileşen kaldırma",
+   "actions": [
+    {
+     "id": "act-remove-widgets",
+     "name": "Widget'ları kaldır",
+     "desc": "Görev çubuğundaki Widget paneli ve altındaki uygulama paketini kaldırır.",
+     "reversible": false,
+     "note": "Geri almak için paketleri Microsoft Store'dan yeniden kurmak gerekir.",
+     "run": [
+      "Get-Process *Widget* -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue",
+      "Get-AppxPackage Microsoft.WidgetsPlatformRuntime -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue",
+      "Get-AppxPackage MicrosoftWindows.Client.WebExperience -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue",
+      "Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue",
+      "Write-Output 'ARB|widgetsRemoved'"
+     ]
+    },
+    {
+     "id": "act-remove-onedrive",
+     "name": "OneDrive'ı kaldır",
+     "desc": "OneDrive kurulumunu kaldırır ve geride kalan klasörlerini siler.",
+     "reversible": false,
+     "note": "Buluta yüklenmemiş dosyalar varsa önce eşitlenmelerini bekleyin.",
+     "run": [
+      "$setup = Join-Path $Env:SystemRoot 'System32\\OneDriveSetup.exe'",
+      "if (-not (Test-Path $setup)) { $setup = Join-Path $Env:SystemRoot 'SysWOW64\\OneDriveSetup.exe' }",
+      "if (Test-Path $setup) { Start-Process -FilePath $setup -ArgumentList '/uninstall' -Wait } else { Write-Output 'ARB|onedriveSetupMissing' }",
+      "Stop-Process -Name FileCoAuth -Force -ErrorAction SilentlyContinue",
+      "Remove-Item \"$Env:LocalAppData\\Microsoft\\OneDrive\" -Recurse -Force -ErrorAction SilentlyContinue",
+      "Remove-Item \"$Env:ProgramData\\Microsoft OneDrive\" -Recurse -Force -ErrorAction SilentlyContinue",
+      "Write-Output 'ARB|onedriveRemoved'"
+     ]
+    },
+    {
+     "id": "act-remove-edge",
+     "name": "Microsoft Edge'i kaldır",
+     "desc": "Edge'in kendi kaldırıcısını sistem düzeyinde çalıştırır.",
+     "reversible": false,
+     "note": "Windows'un bazı bileşenleri Edge'i çağırır; kaldırdıktan sonra bu bağlantılar açılmayabilir.",
+     "run": [
+      "$path = Resolve-Path -Path \"$Env:ProgramFiles (x86)\\Microsoft\\Edge\\Application\\*\\Installer\\setup.exe\" -ErrorAction SilentlyContinue | Select-Object -Last 1",
+      "if ($path) {",
+      "  New-Item -Path \"$Env:SystemRoot\\SystemApps\\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\\MicrosoftEdge.exe\" -Force | Out-Null",
+      "  Start-Process -FilePath $path -ArgumentList '--uninstall --system-level --force-uninstall --delete-profile' -Wait",
+      "  Write-Output 'ARB|edgeRemoved'",
+      "} else { Write-Output 'ARB|edgeNotInstalled' }"
+     ]
+    }
+   ]
+  },
+  {
+   "title": "Temizlik",
+   "actions": [
+    {
+     "id": "act-temp-files",
+     "name": "Geçici dosyaları sil",
+     "desc": "Kullanıcı ve Windows geçici klasörlerinin içini boşaltır.",
+     "reversible": false,
+     "note": "Kullanımdaki dosyalar atlanır.",
+     "run": [
+      "$before = (Get-ChildItem $Env:Temp -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum",
+      "Remove-Item -Path \"$Env:Temp\\*\" -Recurse -Force -ErrorAction SilentlyContinue",
+      "Remove-Item -Path \"$Env:SystemRoot\\Temp\\*\" -Recurse -Force -ErrorAction SilentlyContinue",
+      "Write-Output ('ARB|tempCleaned|{0:N0}' -f ($before / 1MB))"
+     ]
+    },
+    {
+     "id": "act-disk-cleanup",
+     "name": "Disk temizleme ve bileşen deposu",
+     "desc": "cleanmgr'ı düşük disk profiliyle çalıştırır, ardından WinSxS bileşen deposunu sıkıştırır.",
+     "reversible": false,
+     "note": "Bileşen deposu sıkıştırıldıktan sonra yüklü güncellemeler kaldırılamaz. Uzun sürebilir.",
+     "run": [
+      "cleanmgr.exe /d C: /VERYLOWDISK",
+      "Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase",
+      "Write-Output 'ARB|diskCleanupDone'"
+     ]
+    },
+    {
+     "id": "act-flush-folder-views",
+     "name": "Gezgin klasör görünümlerini sıfırla",
+     "desc": "Gezgin'in klasör başına hatırladığı görünüm veritabanını siler ve tüm klasörleri genel görünüme alır.",
+     "reversible": false,
+     "note": "Klasörlere elle verdiğiniz görünüm ayarları kaybolur.",
+     "run": [
+      "$bags = 'HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\Bags'",
+      "$bagMRU = 'HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\BagMRU'",
+      "Remove-Item -Path $bags -Recurse -Force -ErrorAction SilentlyContinue",
+      "Remove-Item -Path $bagMRU -Recurse -Force -ErrorAction SilentlyContinue",
+      "$all = \"$bags\\AllFolders\\Shell\"",
+      "New-Item -Path $all -Force | Out-Null",
+      "New-ItemProperty -Path $all -Name 'FolderType' -Value 'NotSpecified' -PropertyType String -Force | Out-Null",
+      "Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue",
+      "Write-Output 'ARB|folderViewsReset'"
+     ]
+    },
+    {
+     "id": "act-icon-cache",
+     "name": "Simge önbelleğini sıfırla",
+     "desc": "Bozuk veya eski görünen simgeleri düzeltmek için Windows'un simge ve küçük resim önbelleğini siler ve Gezgin'i yeniden başlatır.",
+     "reversible": true,
+     "note": "Önbellek ilk kullanımda kendiliğinden yeniden oluşur; simgeler bir süre yavaş yüklenebilir.",
+     "run": [
+      "Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue",
+      "$cache = Join-Path $Env:LocalAppData 'Microsoft\\Windows\\Explorer'",
+      "Remove-Item (Join-Path $cache 'iconcache*.db') -Force -ErrorAction SilentlyContinue",
+      "Remove-Item (Join-Path $cache 'thumbcache*.db') -Force -ErrorAction SilentlyContinue",
+      "Remove-Item (Join-Path $Env:LocalAppData 'IconCache.db') -Force -ErrorAction SilentlyContinue",
+      "Start-Process explorer.exe",
+      "Write-Output 'ARB|iconCacheCleared'"
+     ]
+    }
+   ]
+  },
+  {
+   "title": "Sistem",
+   "actions": [
+    {
+     "id": "act-reserved-storage",
+     "name": "Ayrılmış depolamayı kapat",
+     "desc": "Windows'un güncellemeler için ayırdığı ~7 GB'lık alanı serbest bırakır.",
+     "reversible": true,
+     "note": "Aynı komutun /State:Enabled biçimiyle geri alınır.",
+     "run": [
+      "DISM.exe /Online /Set-ReservedStorageState /State:Disabled",
+      "Write-Output 'ARB|reservedStorageOff'"
+     ]
+    },
+    {
+     "id": "act-disable-bitlocker",
+     "name": "BitLocker'ı kapat",
+     "desc": "Sistem sürücüsünün şifresini çözer.",
+     "reversible": true,
+     "note": "Şifre çözme arka planda sürer ve saatler alabilir. Kurumsal cihazlarda ilke bunu geri açabilir.",
+     "run": [
+      "Disable-BitLocker -MountPoint $Env:SystemDrive",
+      "Write-Output 'ARB|bitlockerStarted'"
+     ]
+    },
+    {
+     "id": "act-svchost-threshold",
+     "name": "Hizmet gruplama eşiğini yükselt",
+     "desc": "svchost'un hizmetleri ayrı süreçlere bölme eşiğini makinenin RAM'ine eşitler; hizmetler tek süreçte toplanır, bellek kullanımı düşer.",
+     "reversible": true,
+     "note": "Değer makinenin bellek miktarından hesaplanır, sabit değildir.",
+     "run": [
+      "$memory = (Get-CimInstance Win32_PhysicalMemory | Measure-Object Capacity -Sum).Sum / 1KB",
+      "Set-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Control' -Name 'SvcHostSplitThresholdInKB' -Value $memory -Type DWord",
+      "Write-Output ('ARB|svchostThreshold|{0:N0}' -f $memory)"
+     ]
+    },
+    {
+     "id": "act-ultimate-perf-add",
+     "name": "Ultimate Performance güç planını ekle",
+     "desc": "Windows'un gizli en yüksek performans güç planını kopyalar ve etkinleştirir.",
+     "reversible": true,
+     "note": "Dizüstü bilgisayarlarda pil ömrünü belirgin biçimde kısaltır.",
+     "run": [
+      "powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61",
+      "$plan = (powercfg -list | Select-String 'Ultimate|Üstün').ToString()",
+      "if ($plan -match '([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})') { powercfg -setactive $Matches[1] }",
+      "Write-Output 'ARB|ultimatePerfAdded'"
+     ]
+    },
+    {
+     "id": "act-ultimate-perf-remove",
+     "name": "Ultimate Performance güç planını kaldır",
+     "desc": "Planı siler ve dengeli plana döner.",
+     "reversible": true,
+     "note": "",
+     "run": [
+      "powercfg -setactive 381b4222-f694-41f0-9685-ff5bb260df2e",
+      "$plan = (powercfg -list | Select-String 'Ultimate|Üstün')",
+      "if ($plan -and $plan.ToString() -match '([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})') { powercfg -delete $Matches[1] }",
+      "Write-Output 'ARB|ultimatePerfRemoved'"
+     ]
+    }
+   ]
+  },
+  {
+   "title": "Ağ",
+   "actions": [
+    {
+     "id": "act-dns-dhcp",
+     "name": "DNS'i otomatiğe (DHCP) al",
+     "desc": "Tüm etkin bağdaştırıcılarda elle verilmiş DNS sunucularını temizler.",
+     "reversible": true,
+     "note": "",
+     "run": [
+      "Get-NetAdapter -Physical | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ResetServerAddresses",
+      "Clear-DnsClientCache",
+      "Write-Output 'ARB|dnsAuto'"
+     ]
+    },
+    {
+     "id": "act-dns-cloudflare",
+     "name": "DNS: Cloudflare",
+     "desc": "1.1.1.1 ve 1.0.0.1 sunucularını tüm etkin bağdaştırıcılara yazar.",
+     "reversible": true,
+     "note": "",
+     "run": [
+      "Get-NetAdapter -Physical | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses ('1.1.1.1','1.0.0.1')",
+      "Clear-DnsClientCache",
+      "Write-Output 'ARB|dnsCloudflare'"
+     ]
+    },
+    {
+     "id": "act-dns-google",
+     "name": "DNS: Google",
+     "desc": "8.8.8.8 ve 8.8.4.4 sunucularını tüm etkin bağdaştırıcılara yazar.",
+     "reversible": true,
+     "note": "",
+     "run": [
+      "Get-NetAdapter -Physical | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses ('8.8.8.8','8.8.4.4')",
+      "Clear-DnsClientCache",
+      "Write-Output 'ARB|dnsGoogle'"
+     ]
+    },
+    {
+     "id": "act-dns-quad9",
+     "name": "DNS: Quad9",
+     "desc": "9.9.9.9 ve 149.112.112.112 sunucularını yazar; kötü amaçlı alan adlarını süzer.",
+     "reversible": true,
+     "note": "",
+     "run": [
+      "Get-NetAdapter -Physical | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses ('9.9.9.9','149.112.112.112')",
+      "Clear-DnsClientCache",
+      "Write-Output 'ARB|dnsQuad9'"
+     ]
+    },
+    {
+     "id": "act-block-adobe",
+     "name": "Adobe telemetri adreslerini engelle",
+     "desc": "Ruddernation listesindeki Adobe adreslerini hosts dosyasına ekler.",
+     "reversible": false,
+     "note": "İnternetten liste indirir ve hosts dosyanıza ekler; geri almak için hosts dosyasını elle düzenlemeniz gerekir.",
+     "run": [
+      "$url = 'https://raw.githubusercontent.com/Ruddernation-Designs/Adobe-URL-Block-List/master/hosts'",
+      "$list = Invoke-RestMethod -Uri $url",
+      "Add-Content -Path \"$Env:SystemRoot\\System32\\drivers\\etc\\hosts\" -Value $list",
+      "ipconfig /flushdns | Out-Null",
+      "Write-Output 'ARB|adobeBlocked'"
+     ]
+    },
+    {
+     "id": "act-store-search",
+     "name": "Store önerilen arama sonuçlarını kapat",
+     "desc": "Microsoft Store'un öneri veritabanına erişimi kapatarak arama önerilerini durdurur.",
+     "reversible": true,
+     "note": "icacls ile dosya izni değiştirir; geri almak için aynı dosyadan /remove:d Everyone yapılır.",
+     "run": [
+      "$db = \"$Env:LocalAppData\\Packages\\Microsoft.WindowsStore_8wekyb3d8bbwe\\LocalState\\store.db\"",
+      "if (Test-Path $db) { icacls $db /deny Everyone:F; Write-Output 'ARB|storeDbLocked' } else { Write-Output 'ARB|storeDbMissing' }"
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -24,6 +24,7 @@ public:
     /// Rows with a taller control (a swatch strip, a two-button pair) grow to fit it.
     static int rowHeight();
 
+    void setName(const QString &name);
     void setDesc(const QString &desc);
 
     QSize sizeHint() const override;

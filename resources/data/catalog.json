@@ -1,9 +1,5 @@
 {
- "version": 4,
- "sources": [
-  "https://www.elevenforum.com/tutorials/",
-  "https://github.com/christitustech/winutil"
- ],
+ "version": 11,
  "categories": [
   {
    "id": "ov",
@@ -33,7 +29,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.5206/",
        "applied": false,
        "on": false
       },
@@ -51,7 +46,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.5205/",
        "applied": false,
        "on": false
       },
@@ -69,7 +63,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.46609/",
        "applied": false,
        "on": false
       },
@@ -87,7 +80,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.27972/",
        "applied": false,
        "on": false
       },
@@ -105,7 +97,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.6489/",
        "applied": false,
        "on": false
       },
@@ -123,7 +114,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.3534/",
        "applied": false,
        "on": false
       },
@@ -141,7 +131,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.5665/",
        "applied": false,
        "on": false
       },
@@ -159,7 +148,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.7748/",
        "applied": false,
        "on": false
       }
@@ -182,7 +170,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.35166/",
        "applied": false,
        "on": false
       },
@@ -200,7 +187,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.39614/",
        "applied": false,
        "on": false
       },
@@ -218,7 +204,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.6407/",
        "applied": false,
        "on": false
       },
@@ -236,7 +221,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.2318/",
        "applied": false,
        "on": false
       },
@@ -254,7 +238,57 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.29671/",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-notepad-ai",
+       "name": "Not Defteri yapay zekâ özellikleri",
+       "desc": "Not Defteri'ndeki yazma yardımı gibi yapay zekâ özelliklerini ilkeyle kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\WindowsNotepad",
+         "value": "DisableAIFeatures",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ai-copilot-off",
+       "name": "Windows Copilot",
+       "desc": "Copilot'u ilke ile kapatır; görev çubuğu düğmesi ve kısayolu çalışmaz. Windows 11 içindir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Policies\\Microsoft\\Windows\\WindowsCopilot",
+         "value": "TurnOffWindowsCopilot",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ai-recall-off",
+       "name": "Recall (anlık görüntü geçmişi)",
+       "desc": "Windows'un ekran görüntüsü alıp geçmişi analiz etmesini ilke ile kapatır. Recall yalnız Copilot+ makinelerde bulunur; diğerlerinde ilkeyi önden yazmış olursunuz.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Policies\\Microsoft\\Windows\\WindowsAI",
+         "value": "DisableAIDataAnalysis",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
        "applied": false,
        "on": false
       }
@@ -277,7 +311,6 @@
          "off": "4"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.16757/",
        "applied": false,
        "on": false
       },
@@ -295,7 +328,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.10109/",
        "applied": false,
        "on": false
       },
@@ -313,7 +345,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.22666/",
        "applied": false,
        "on": false
       },
@@ -331,7 +362,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.2688/",
        "applied": false,
        "on": false
       }
@@ -354,7 +384,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.8283/",
        "applied": false,
        "on": false
       },
@@ -372,7 +401,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.520/",
        "applied": false,
        "on": false
       },
@@ -390,7 +418,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.7759/",
        "applied": false,
        "on": false
       },
@@ -408,7 +435,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.3150/",
        "applied": false,
        "on": false
       },
@@ -426,7 +452,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.6631/",
        "applied": false,
        "on": false
       },
@@ -444,7 +469,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.35345/",
        "applied": false,
        "on": false
       },
@@ -462,7 +486,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.973/",
        "applied": false,
        "on": false
       },
@@ -480,7 +503,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.83/",
        "applied": false,
        "on": false
       },
@@ -498,7 +520,129 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.8084/",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "rg-wheel-scroll",
+       "name": "Tekerlek satır sayısı",
+       "desc": "Fare tekerleğinin bir çentiğinde kaç satır kaydırılacağı.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Desktop",
+         "value": "WheelScrollLines",
+         "type": "SZ",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 1,
+        "max": 12,
+        "step": 1,
+        "unit": "satır",
+        "default": 3
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wa-downloads-blocking",
+       "name": "İndirilen dosyaların engellenmesi",
+       "desc": "İnternetten inen dosyalara eklenen bölge işaretini kaldırır; 'engeli kaldır' kutusuyla uğraşmazsınız.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Attachments",
+         "value": "SaveZoneInformation",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sys-clipboard-history",
+       "name": "Pano geçmişi",
+       "desc": "Win+V ile açılan pano geçmişini etkinleştirir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Clipboard",
+         "value": "EnableClipboardHistory",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sys-wheel-focus",
+       "name": "Yalnız odaktaki pencereyi kaydır",
+       "desc": "Fare tekerleğinin imlecin altındaki pencereyi değil, odaktaki pencereyi kaydırmasını sağlar.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Desktop",
+         "value": "MouseWheelRouting",
+         "type": "DWORD",
+         "on": "0",
+         "off": "2"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "rg-doubleclick",
+       "name": "Fare çift tıklama süresi",
+       "desc": "İki tıklamanın çift tıklama sayılması için aradaki en uzun süre.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Mouse",
+         "value": "DoubleClickSpeed",
+         "type": "SZ",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 200,
+        "max": 900,
+        "step": 100,
+        "unit": "ms",
+        "default": 500
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "rg-keyboard-speed",
+       "name": "Klavye yineleme hızı",
+       "desc": "Bir tuş basılı tutulduğunda karakterlerin ne hızda tekrarlanacağı; 31 en hızlı.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Keyboard",
+         "value": "KeyboardSpeed",
+         "type": "SZ",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 0,
+        "max": 31,
+        "step": 1,
+        "unit": "kademe",
+        "default": 31
+       },
        "applied": false,
        "on": false
       }
@@ -529,7 +673,6 @@
          "off": "1"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/darkmode",
        "applied": false,
        "on": false
       },
@@ -547,7 +690,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/batterypercentage",
        "applied": false,
        "on": false
       },
@@ -565,7 +707,6 @@
          "off": "1"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/scrollbars",
        "applied": false,
        "on": false
       },
@@ -583,7 +724,6 @@
          "off": "hide:home"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/hidesettingshome",
        "applied": false,
        "on": false
       },
@@ -601,7 +741,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/endtaskontaskbar",
        "applied": false,
        "on": false
       },
@@ -627,7 +766,6 @@
          "off": "1"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/disablenotifications",
        "applied": false,
        "on": false
       },
@@ -661,7 +799,6 @@
          "off": "0"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/mouseacceleration",
        "applied": false,
        "on": false
       },
@@ -679,7 +816,6 @@
          "off": "58"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/stickykeys",
        "applied": false,
        "on": false
       }
@@ -702,7 +838,6 @@
          "off": "0"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/utc",
        "applied": false,
        "on": false
       },
@@ -720,7 +855,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/s3sleep",
        "applied": false,
        "on": false
       },
@@ -738,7 +872,6 @@
          "off": "0"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/disablebgapps",
        "applied": false,
        "on": false
       },
@@ -756,7 +889,6 @@
          "off": "0"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/disablefso",
        "applied": false,
        "on": false
       },
@@ -774,7 +906,6 @@
          "off": "1440"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/restorepoint",
        "applied": false,
        "on": false
       },
@@ -800,7 +931,6 @@
          "off": "0"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/detailedbsod",
        "applied": false,
        "on": false
       }
@@ -823,7 +953,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/wpbt",
        "applied": false,
        "on": false
       },
@@ -841,14 +970,13 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/preventdevicemetadatafromnetwork",
        "applied": false,
        "on": false
       },
       {
        "id": "wu-WPFTweaksRazerBlock",
-       "name": "Razer yazılımı engelleme",
-       "desc": "Sürücüyle gelen Razer yazılımlarının otomatik kurulumunu engeller.",
+       "name": "Windows Update sürücü güncellemeleri",
+       "desc": "Windows Update'in donanım sürücülerini kendiliğinden kurmasını durdurur; Razer gibi üretici yazılımlarının cihaz takınca kendini kurması da böyle engellenir.",
        "reg": [
         {
          "hive": "HKLM",
@@ -865,9 +993,16 @@
          "type": "DWORD",
          "on": "1",
          "off": "0"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+         "value": "ExcludeWUDriversInQualityUpdate",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/razerblock",
        "applied": false,
        "on": false
       },
@@ -893,7 +1028,88 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/disablewarningforunsignedrdp",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wa-usb-write-protect",
+       "name": "USB yazma koruması",
+       "desc": "Takılan USB belleklere yazmayı engeller; sürücü salt okunur olur.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\StorageDevicePolicies",
+         "value": "WriteProtect",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wa-photo-viewer",
+       "name": "Windows Fotoğraf Görüntüleyicisi",
+       "desc": "Eski Fotoğraf Görüntüleyicisi'ni resim dosyaları için 'Birlikte aç' listesine geri getirir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows Photo Viewer\\Capabilities\\FileAssociations",
+         "value": ".jpg",
+         "type": "SZ",
+         "on": "PhotoViewer.FileAssoc.Tiff",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows Photo Viewer\\Capabilities\\FileAssociations",
+         "value": ".jpeg",
+         "type": "SZ",
+         "on": "PhotoViewer.FileAssoc.Tiff",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows Photo Viewer\\Capabilities\\FileAssociations",
+         "value": ".png",
+         "type": "SZ",
+         "on": "PhotoViewer.FileAssoc.Tiff",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows Photo Viewer\\Capabilities\\FileAssociations",
+         "value": ".gif",
+         "type": "SZ",
+         "on": "PhotoViewer.FileAssoc.Tiff",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows Photo Viewer\\Capabilities\\FileAssociations",
+         "value": ".bmp",
+         "type": "SZ",
+         "on": "PhotoViewer.FileAssoc.Tiff",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows Photo Viewer\\Capabilities\\FileAssociations",
+         "value": ".tif",
+         "type": "SZ",
+         "on": "PhotoViewer.FileAssoc.Tiff",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows Photo Viewer\\Capabilities\\FileAssociations",
+         "value": ".tiff",
+         "type": "SZ",
+         "on": "PhotoViewer.FileAssoc.Tiff",
+         "off": "DELETE"
+        }
+       ],
        "applied": false,
        "on": false
       }
@@ -1044,7 +1260,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/edgedebloat",
        "applied": false,
        "on": false
       },
@@ -1150,7 +1365,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/bravedebloat",
        "applied": false,
        "on": false
       },
@@ -1192,7 +1406,95 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/newoutlook",
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Sistem · GTweak",
+     "tweaks": [
+      {
+       "id": "gt-exe-warnings",
+       "name": "İnternetten inen dosya çalıştırma uyarısı",
+       "desc": "İnternetten indirilen exe, msi, bat, cmd gibi dosyaları çalıştırırken çıkan güvenlik uyarısını kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Internet Explorer\\Security",
+         "value": "DisableSecuritySettingsCheck",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\Zones\\3",
+         "value": "1806",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "gt-pchealthcheck",
+       "name": "PC Health Check gizle",
+       "desc": "Microsoft'un Windows Update üzerinden zorla kuran PC Health Check aracının kendini yeniden kurmasını engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\PCHC",
+         "value": "PreviousUninstall",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\PCHealthCheck",
+         "value": "installed",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "gt-largecache",
+       "name": "Büyük dosya sistemi önbelleği",
+       "desc": "Dosya sistemi önbelleğini büyütür; çok RAM'li sistemlerde dosya işlemlerini hızlandırabilir, az RAM'de tersine etki edebilir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management",
+         "value": "LargeSystemCache",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "gt-lockscreen-timeout",
+       "name": "Kilit ekranı zaman aşımı seçeneği",
+       "desc": "Güç seçeneklerinde gizli olan 'konsol kilidi ekran kapanma zaman aşımı' ayarını görünür yapar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Power\\PowerSettings\\7516b95f-f776-4464-8c53-06167f40cc99\\8EC4B3A5-6868-48c2-BE75-4F3044BE88A7",
+         "value": "Attributes",
+         "type": "DWORD",
+         "on": "1",
+         "off": "2"
+        }
+       ],
        "applied": false,
        "on": false
       }
@@ -1222,7 +1524,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.1110/",
        "applied": false,
        "on": false
       },
@@ -1240,7 +1541,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.6560/",
        "applied": false,
        "on": false
       },
@@ -1258,7 +1558,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.8420/",
        "applied": false,
        "on": false
       },
@@ -1276,7 +1575,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.26747/",
        "applied": false,
        "on": false
       },
@@ -1294,7 +1592,176 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.1149/",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "rg-menu-delay",
+       "name": "Menü açılma gecikmesi",
+       "desc": "Bir menünün açılmadan önce beklediği süre. Windows 400 ms ile gelir; 0 menüleri anında açar.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Desktop",
+         "value": "MenuShowDelay",
+         "type": "SZ",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 0,
+        "max": 400,
+        "step": 50,
+        "unit": "ms",
+        "default": 400
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-visual-minanimate",
+       "name": "Pencere küçültme animasyonu",
+       "desc": "Pencereleri küçültüp büyütürken oynatılan animasyonu kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Desktop\\WindowMetrics",
+         "value": "MinAnimate",
+         "type": "SZ",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-visual-taskbaranim",
+       "name": "Görev çubuğu animasyonları",
+       "desc": "Görev çubuğundaki simge ve önizleme animasyonlarını kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "TaskbarAnimations",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ch-visualfx",
+       "name": "Görsel efekt profili",
+       "desc": "Windows'un animasyon, gölge ve yumuşatma ayarlarını hangi profile göre seçeceğini belirler.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\VisualEffects",
+         "value": "VisualFXSetting",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Windows seçsin",
+         "data": "0"
+        },
+        {
+         "label": "Görünüm",
+         "data": "1"
+        },
+        {
+         "label": "Performans",
+         "data": "2"
+        },
+        {
+         "label": "Özel",
+         "data": "3"
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wa-alttab-classic",
+       "name": "Klasik Alt+Tab görünümü",
+       "desc": "Alt+Tab'de küçük resimli yeni pencere yerine Windows 2000 dönemindeki basit simge kutusunu gösterir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "AltTabSettings",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wa-aero-shake",
+       "name": "Aero Shake",
+       "desc": "Bir pencereyi sallayınca diğerlerinin küçülmesini engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "DisallowShaking",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wa-snap-assist",
+       "name": "Yapıştırma yardımcısı",
+       "desc": "Bir pencereyi kenara yapıştırınca kalan boşluk için pencere önerilmesini kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "SnapAssist",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wa-snap-fill",
+       "name": "Yapıştırınca boşluğu doldurma",
+       "desc": "Yapıştırılan pencerenin kalan alanı otomatik doldurmasını ve bitişik pencerelerin birlikte boyutlanmasını kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "SnapFill",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "JointResize",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
        "applied": false,
        "on": false
       }
@@ -1317,7 +1784,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.6545/",
        "applied": false,
        "on": false
       },
@@ -1335,7 +1801,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.6554/",
        "applied": false,
        "on": false
       },
@@ -1353,7 +1818,132 @@
          "off": "2"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.8476/",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wa-desktop-version",
+       "name": "Masaüstünde Windows sürümü",
+       "desc": "Masaüstünün sağ alt köşesinde sürüm ve derleme numarasını gösterir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Desktop",
+         "value": "PaintDesktopVersion",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wa-wallpaper-quality",
+       "name": "Duvar kağıdı JPEG kalitesi",
+       "desc": "Windows duvar kağıdını gösterirken yeniden sıkıştırır; 100 sıkıştırmayı kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Desktop",
+         "value": "JPEGImportQuality",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 60,
+        "max": 100,
+        "step": 5,
+        "unit": "kalite",
+        "default": 85
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "dt-icon-thispc",
+       "name": "Bu bilgisayar",
+       "desc": "Masaüstünde bu bilgisayar simgesini gösterir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\HideDesktopIcons\\NewStartPanel",
+         "value": "{20D04FE0-3AEA-1069-A2D8-08002B30309D}",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "dt-icon-user",
+       "name": "Kullanıcı klasörü",
+       "desc": "Masaüstünde kullanıcı klasörü simgesini gösterir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\HideDesktopIcons\\NewStartPanel",
+         "value": "{59031a47-3f72-44a7-89c5-5595fe6b30ee}",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "dt-icon-network",
+       "name": "Ağ",
+       "desc": "Masaüstünde ağ simgesini gösterir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\HideDesktopIcons\\NewStartPanel",
+         "value": "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "dt-icon-control",
+       "name": "Denetim Masası",
+       "desc": "Masaüstünde denetim masası simgesini gösterir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\HideDesktopIcons\\NewStartPanel",
+         "value": "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "dt-icon-bin",
+       "name": "Geri Dönüşüm Kutusu",
+       "desc": "Masaüstünde geri dönüşüm kutusu simgesini gösterir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\HideDesktopIcons\\NewStartPanel",
+         "value": "{645FF040-5081-101B-9F08-00AA002F954E}",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
        "applied": false,
        "on": false
       }
@@ -1376,7 +1966,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.40485/",
        "applied": false,
        "on": false
       },
@@ -1394,7 +1983,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.16017/",
        "applied": false,
        "on": false
       },
@@ -1412,7 +2000,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.14613/",
        "applied": false,
        "on": false
       },
@@ -1430,7 +2017,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.1526/",
        "applied": false,
        "on": false
       },
@@ -1448,7 +2034,6 @@
          "off": "prop:*System.PercentFull;System.Computer.DecoratedFreeSpace;System.Volume.FileSystem"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.10840/",
        "applied": false,
        "on": false
       }
@@ -1471,7 +2056,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.15151/",
        "applied": false,
        "on": false
       },
@@ -1489,7 +2073,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.2878/",
        "applied": false,
        "on": false
       },
@@ -1507,7 +2090,87 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.45963/",
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Görünüm · GTweak",
+     "tweaks": [
+      {
+       "id": "gt-cabc",
+       "name": "Uyarlanır ekran parlaklığı (CABC)",
+       "desc": "Bazı dizüstülerde ekranın içeriğe göre kendiliğinden koyulaşıp açılmasına yol açan İçerik Uyarlamalı Parlaklık Denetimi'ni kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\GraphicsDrivers",
+         "value": "DisableCABC",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "gt-caption-size",
+       "name": "Başlık düğmelerini küçült",
+       "desc": "Simge durumuna küçült / büyüt / kapat düğmelerini ve başlık çubuğunu daha küçük yapar. Tüm pencerelerde geçerlidir; oturumu yeniden açmak gerekir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Desktop\\WindowMetrics",
+         "value": "CaptionHeight",
+         "type": "SZ",
+         "on": "-270",
+         "off": "-330"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Desktop\\WindowMetrics",
+         "value": "CaptionWidth",
+         "type": "SZ",
+         "on": "-270",
+         "off": "-330"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "gt-cursor-blink",
+       "name": "İmleç yanıp sönme hızını artır",
+       "desc": "Metin imlecinin yanıp sönme sıklığını artırır; varsayılan 530 ms yerine 200 ms'de bir yanıp söner.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Desktop",
+         "value": "CursorBlinkRate",
+         "type": "SZ",
+         "on": "200",
+         "off": "530"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "gt-preview-delay",
+       "name": "Görev çubuğu önizleme gecikmesini kısalt",
+       "desc": "Görev çubuğunda çalışan uygulamaların önizlemesinin açılmasını hızlandırır; varsayılan gecikmeyi 400 ms'den 20 ms'ye indirir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Mouse",
+         "value": "MouseHoverTime",
+         "type": "SZ",
+         "on": "20",
+         "off": "400"
+        }
+       ],
        "applied": false,
        "on": false
       }
@@ -1537,7 +2200,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.2621/",
        "applied": false,
        "on": false
       },
@@ -1555,7 +2217,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.7810/",
        "applied": false,
        "on": false
       },
@@ -1571,9 +2232,16 @@
          "type": "DWORD",
          "on": "0",
          "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+         "value": "EnableActivityFeed",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.7812/",
        "applied": false,
        "on": false
       },
@@ -1591,7 +2259,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.7554/",
        "applied": false,
        "on": false
       },
@@ -1609,7 +2276,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.7575/",
        "applied": false,
        "on": false
       },
@@ -1627,7 +2293,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.3727/",
        "applied": false,
        "on": false
       },
@@ -1645,7 +2310,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.3730/",
        "applied": false,
        "on": false
       },
@@ -1663,7 +2327,107 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.3733/",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-telemetry-speech",
+       "name": "Çevrimiçi konuşma tanıma",
+       "desc": "Konuşma verisinin Microsoft'a gönderilerek işlenmesini durdurur.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Speech_OneCore\\Settings\\OnlineSpeechPrivacy",
+         "value": "HasAccepted",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-telemetry-inking",
+       "name": "Mürekkep ve yazım verisi",
+       "desc": "Kalem ve klavye girdisinden kişiselleştirme verisi toplanmasını engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\InputPersonalization",
+         "value": "RestrictImplicitInkCollection",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\InputPersonalization",
+         "value": "RestrictImplicitTextCollection",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\InputPersonalization\\TrainedDataStore",
+         "value": "HarvestContacts",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-telemetry-personalization",
+       "name": "Kişiselleştirme gizlilik onayı",
+       "desc": "Kişiselleştirme için verilen gizlilik onayını geri çeker.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Personalization\\Settings",
+         "value": "AcceptedPrivacyPolicy",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-telemetry-policy",
+       "name": "Telemetri düzeyi ilkesi",
+       "desc": "Tanılama verisi düzeyini ilke anahtarı üzerinden en aza indirir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\DataCollection",
+         "value": "AllowTelemetry",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-telemetry-siuf",
+       "name": "Geri bildirim sıklığı",
+       "desc": "Windows'un geri bildirim istemesini kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Siuf\\Rules",
+         "value": "NumberOfSIUFInPeriod",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
        "applied": false,
        "on": false
       }
@@ -1686,7 +2450,6 @@
          "off": "Allow"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.26022/",
        "applied": false,
        "on": false
       },
@@ -1704,7 +2467,6 @@
          "off": "Allow"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.17140/",
        "applied": false,
        "on": false
       },
@@ -1722,7 +2484,6 @@
          "off": "Allow"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.17117/",
        "applied": false,
        "on": false
       },
@@ -1740,7 +2501,6 @@
          "off": "Allow"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.3017/",
        "applied": false,
        "on": false
       },
@@ -1758,7 +2518,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.18578/",
        "applied": false,
        "on": false
       },
@@ -1776,7 +2535,31 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.3861/",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-location-machine",
+       "name": "Konum erişimi · makine geneli",
+       "desc": "Konum servisini yalnız kullanıcı için değil, makine genelinde reddeder.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\location",
+         "value": "Value",
+         "type": "SZ",
+         "on": "Deny",
+         "off": "Allow"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Sensor\\Overrides\\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}",
+         "value": "SensorPermissionState",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
        "applied": false,
        "on": false
       }
@@ -1799,7 +2582,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.47667/",
        "applied": false,
        "on": false
       },
@@ -1817,7 +2599,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.35409/",
        "applied": false,
        "on": false
       },
@@ -1835,7 +2616,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.5378/",
        "applied": false,
        "on": false
       },
@@ -1853,7 +2633,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.5395/",
        "applied": false,
        "on": false
       },
@@ -1871,7 +2650,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.48551/",
        "applied": false,
        "on": false
       },
@@ -1889,7 +2667,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.2960/",
        "applied": false,
        "on": false
       }
@@ -1912,7 +2689,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.25835/",
        "applied": false,
        "on": false
       },
@@ -1930,7 +2706,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.10185/",
        "applied": false,
        "on": false
       },
@@ -1948,7 +2723,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.10521/",
        "applied": false,
        "on": false
       },
@@ -1966,7 +2740,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.10491/",
        "applied": false,
        "on": false
       },
@@ -1984,7 +2757,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.10467/",
        "applied": false,
        "on": false
       }
@@ -2007,7 +2779,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.4010/",
        "applied": false,
        "on": false
       },
@@ -2025,7 +2796,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.4013/",
        "applied": false,
        "on": false
       }
@@ -2048,7 +2818,200 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/consumerfeatures",
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Gizlilik · GTweak",
+     "tweaks": [
+      {
+       "id": "gt-settingsync",
+       "name": "Ayar eşitlemesi",
+       "desc": "Yerel hesapta bile Windows'un temaları, parolaları, dili ve kişiselleştirmeyi Microsoft sunucularıyla eşitlemesini kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SettingSync\\Groups\\BrowserSettings",
+         "value": "Enabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SettingSync\\Groups\\Credentials",
+         "value": "Enabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SettingSync\\Groups\\Language",
+         "value": "Enabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SettingSync\\Groups\\Personalization",
+         "value": "Enabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SettingSync\\Groups\\Windows",
+         "value": "Enabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\SettingSync\\Groups\\Accessibility",
+         "value": "Enabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "gt-appcompat-inventory",
+       "name": "Yüklü uygulama envanteri",
+       "desc": "Microsoft'un yüklü yazılımlarınız hakkında uyumluluk verisi toplamasını (Application Impact Telemetry) kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+         "value": "DisableInventory",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "gt-ceip",
+       "name": "Müşteri Deneyimi Programı (CEIP)",
+       "desc": "Donanım yapılandırmanız ve kullanım biçiminiz hakkında veri toplayıp gönderen Yazılım Kalitesini İyileştirme Programı'nı kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\SQMClient\\Windows",
+         "value": "CEIPEnable",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "gt-speech-update",
+       "name": "Konuşma modeli arka plan güncellemesi",
+       "desc": "Cortana veya erişilebilirlik kullanmasanız bile arka planda çalışan konuşma tanıma/sentez modeli güncellemelerini kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Speech",
+         "value": "AllowSpeechModelUpdate",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "gt-experimentation",
+       "name": "Windows deneyleri",
+       "desc": "Microsoft'un sisteminizde bir özelliği yaygın kullanılıp kullanılmadığını ölçmek için yürüttüğü A/B deneylerini kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\PolicyManager\\current\\device\\System",
+         "value": "AllowExperimentation",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "gt-uar",
+       "name": "Kullanıcı etkinlik kaydı (UAR)",
+       "desc": "Bilgisayarda yaptığınız her işlemi sırayla kaydeden Kullanıcı Etkinlik Kaydı'nı kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+         "value": "DisableUAR",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Personalization",
+         "value": "NoLockScreenCamera",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Üretici telemetrisi · GTweak",
+     "tweaks": [
+      {
+       "id": "gt-nvidia-telemetry",
+       "name": "NVIDIA telemetrisi",
+       "desc": "NVIDIA sürücüsünün sistem ve kullanım verisi toplayıp gönderen NvTelemetryContainer hizmetini devre dışı bırakır. Yalnız NVIDIA ekran kartı varsa anlamlıdır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\NvTelemetryContainer",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "4",
+         "off": "2"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "gt-intel-telemetry",
+       "name": "Intel telemetrisi",
+       "desc": "Intel'in arka planda veri toplayıp ileten Telemetry hizmetini devre dışı bırakır. Yalnız ilgili Intel bileşeni varsa anlamlıdır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\Telemetry",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "4",
+         "off": "2"
+        }
+       ],
        "applied": false,
        "on": false
       }
@@ -2078,7 +3041,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.3859/",
        "applied": false,
        "on": false
       },
@@ -2096,7 +3058,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.3286/",
        "applied": false,
        "on": false
       },
@@ -2114,7 +3075,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.8117/",
        "applied": false,
        "on": false
       },
@@ -2132,7 +3092,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.3573/",
        "applied": false,
        "on": false
       }
@@ -2155,7 +3114,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.2236/",
        "applied": false,
        "on": false
       },
@@ -2173,7 +3131,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.14242/",
        "applied": false,
        "on": false
       },
@@ -2191,7 +3148,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.5897/",
        "applied": false,
        "on": false
       },
@@ -2209,7 +3165,6 @@
          "off": "2"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.15985/",
        "applied": false,
        "on": false
       },
@@ -2227,7 +3182,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.16002/",
        "applied": false,
        "on": false
       }
@@ -2250,7 +3204,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.14237/",
        "applied": false,
        "on": false
       },
@@ -2268,7 +3221,6 @@
          "off": "2"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.8616/",
        "applied": false,
        "on": false
       },
@@ -2286,7 +3238,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.8603/",
        "applied": false,
        "on": false
       },
@@ -2304,7 +3255,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.43608/",
        "applied": false,
        "on": false
       }
@@ -2327,7 +3277,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.31919/",
        "applied": false,
        "on": false
       },
@@ -2345,7 +3294,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.19242/",
        "applied": false,
        "on": false
       }
@@ -2368,7 +3316,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/deliveryoptimization",
        "applied": false,
        "on": false
       }
@@ -2378,20 +3325,38 @@
      "title": "IPv6 ayarları · WinUtil",
      "tweaks": [
       {
-       "id": "wu-WPFTweaksIPv46",
-       "name": "IPv4 önceliği",
-       "desc": "İnternet bağlantılarında IPv6 önceliğini devre dışı bırakır.",
+       "id": "ch-ipv6",
+       "name": "IPv6 davranışı",
+       "desc": "IPv6 yığınının hangi bileşenlerinin kapatılacağını seçer. Tek bir kayıt değeri olduğu için bunlar birbirini dışlar.",
        "reg": [
         {
          "hive": "HKLM",
          "path": "SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters",
          "value": "DisabledComponents",
          "type": "DWORD",
-         "on": "32",
-         "off": "0"
+         "on": "",
+         "off": ""
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/z--advanced-tweaks---caution/ipv46",
+       "options": [
+        {
+         "label": "Varsayılan",
+         "data": "DELETE"
+        },
+        {
+         "label": "IPv4 öncelikli",
+         "data": "32"
+        },
+        {
+         "label": "Teredo kapalı",
+         "data": "1"
+        },
+        {
+         "label": "IPv6 kapalı",
+         "data": "255"
+        }
+       ],
+       "default": 0,
        "applied": false,
        "on": false
       }
@@ -2414,7 +3379,6 @@
          "off": "0"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/standbyfix",
        "applied": false,
        "on": false
       }
@@ -2426,63 +3390,7 @@
    "id": "svc",
    "name": "Hizmetler",
    "icon": "M6 4.2a1.8 1.8 0 100 3.6 1.8 1.8 0 000-3.6M6 1v1.6M6 9.4V11M1.7 3.5l1.4.8M8.9 7.7l1.4.8M1.7 8.5l1.4-.8M8.9 4.3l1.4-.8",
-   "sections": [
-    {
-     "title": "Arka plan hizmetleri · WinUtil",
-     "tweaks": [
-      {
-       "id": "wu-WPFTweaksServices",
-       "name": "Hizmetleri elle başlatmaya al",
-       "desc": "Telemetri, çevrimdışı dosya ve bağlantı paylaşımı hizmetlerini kapatır.",
-       "reg": [
-        {
-         "hive": "HKLM",
-         "path": "SYSTEM\\CurrentControlSet\\Services\\CscService",
-         "value": "Start",
-         "type": "DWORD",
-         "on": "4",
-         "off": "3"
-        },
-        {
-         "hive": "HKLM",
-         "path": "SYSTEM\\CurrentControlSet\\Services\\DiagTrack",
-         "value": "Start",
-         "type": "DWORD",
-         "on": "4",
-         "off": "2"
-        },
-        {
-         "hive": "HKLM",
-         "path": "SYSTEM\\CurrentControlSet\\Services\\MapsBroker",
-         "value": "Start",
-         "type": "DWORD",
-         "on": "3",
-         "off": "2"
-        },
-        {
-         "hive": "HKLM",
-         "path": "SYSTEM\\CurrentControlSet\\Services\\StorSvc",
-         "value": "Start",
-         "type": "DWORD",
-         "on": "3",
-         "off": "2"
-        },
-        {
-         "hive": "HKLM",
-         "path": "SYSTEM\\CurrentControlSet\\Services\\SharedAccess",
-         "value": "Start",
-         "type": "DWORD",
-         "on": "4",
-         "off": "2"
-        }
-       ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/services",
-       "applied": false,
-       "on": false
-      }
-     ]
-    }
-   ]
+   "sections": []
   },
   {
    "id": "boot",
@@ -2506,7 +3414,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.85/",
        "applied": false,
        "on": false
       },
@@ -2524,7 +3431,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.1212/",
        "applied": false,
        "on": false
       },
@@ -2542,7 +3448,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.3324/",
        "applied": false,
        "on": false
       },
@@ -2560,7 +3465,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.3657/",
        "applied": false,
        "on": false
       }
@@ -2583,7 +3487,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.9995/",
        "applied": false,
        "on": false
       },
@@ -2601,7 +3504,23 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.5176/",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "boot-startup-delay",
+       "name": "Başlangıç uygulamaları gecikmesi",
+       "desc": "Windows'un oturum açıldıktan sonra başlangıç uygulamalarını başlatmak için beklediği ~10 saniyelik gecikmeyi kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Serialize",
+         "value": "StartupDelayInMSec",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
        "applied": false,
        "on": false
       }
@@ -2624,7 +3543,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.823/",
        "applied": false,
        "on": false
       },
@@ -2642,7 +3560,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.47882/",
        "applied": false,
        "on": false
       },
@@ -2660,7 +3577,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.13708/",
        "applied": false,
        "on": false
       }
@@ -2683,7 +3599,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.927/",
        "applied": false,
        "on": false
       },
@@ -2701,7 +3616,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.1117/",
        "applied": false,
        "on": false
       },
@@ -2719,7 +3633,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.17256/",
        "applied": false,
        "on": false
       },
@@ -2737,7 +3650,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.9031/",
        "applied": false,
        "on": false
       },
@@ -2755,7 +3667,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.9113/",
        "applied": false,
        "on": false
       },
@@ -2773,7 +3684,6 @@
          "off": "15"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.3313/",
        "applied": false,
        "on": false
       }
@@ -2796,7 +3706,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/disablelockscreen",
        "applied": false,
        "on": false
       },
@@ -2814,7 +3723,6 @@
          "off": "0"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/verboselogon",
        "applied": false,
        "on": false
       }
@@ -2845,7 +3753,30 @@
          "off": "0"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/numlock",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "rg-keyboard-delay",
+       "name": "Klavye yineleme gecikmesi",
+       "desc": "Bir tuşu basılı tutunca yinelemenin başlaması için beklenen süre. 0 en kısa, 3 en uzun.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Keyboard",
+         "value": "KeyboardDelay",
+         "type": "SZ",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 0,
+        "max": 3,
+        "step": 1,
+        "unit": "kademe",
+        "default": 1
+       },
        "applied": false,
        "on": false
       }
@@ -2875,7 +3806,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.898/",
        "applied": false,
        "on": false
       },
@@ -2893,7 +3823,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.896/",
        "applied": false,
        "on": false
       },
@@ -2911,7 +3840,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.7643/",
        "applied": false,
        "on": false
       },
@@ -2929,7 +3857,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.5004/",
        "applied": false,
        "on": false
       },
@@ -2947,7 +3874,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.764/",
        "applied": false,
        "on": false
       },
@@ -2965,7 +3891,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.10616/",
        "applied": false,
        "on": false
       },
@@ -2983,7 +3908,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.22506/",
        "applied": false,
        "on": false
       },
@@ -3001,7 +3925,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.5177/",
        "applied": false,
        "on": false
       },
@@ -3019,7 +3942,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.10080/",
        "applied": false,
        "on": false
       },
@@ -3037,7 +3959,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.45222/",
        "applied": false,
        "on": false
       },
@@ -3055,7 +3976,123 @@
          "off": "no"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.15050/",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ch-launchto",
+       "name": "Gezgin'in açılış konumu",
+       "desc": "Dosya Gezgini yeni pencerede hangi görünümle açılsın.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "LaunchTo",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Giriş",
+         "data": "3"
+        },
+        {
+         "label": "Bu bilgisayar",
+         "data": "1"
+        },
+        {
+         "label": "Hızlı erişim",
+         "data": "2"
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-explorer-foldertype",
+       "name": "Klasör türü otomatik algılama",
+       "desc": "Gezgin'in klasör içeriğine bakıp görünümü kendiliğinden değiştirmesini durdurur; daha önce algılanmış klasörler etkilenmez.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\Bags\\AllFolders\\Shell",
+         "value": "FolderType",
+         "type": "SZ",
+         "on": "NotSpecified",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wa-shortcut-suffix",
+       "name": "Kısayol adına '- Kısayol' eklenmesi",
+       "desc": "Yeni kısayolların adına eklenen '- Kısayol' ekini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
+         "value": "link",
+         "type": "BINARY",
+         "on": "00,00,00,00",
+         "off": "1E,00,00,00"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "exp-super-hidden",
+       "name": "Korumalı sistem dosyaları",
+       "desc": "Gezgin'de gizli işletim sistemi dosyalarını da gösterir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "ShowSuperHidden",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "exp-drive-letters",
+       "name": "Sürücü harfini başta göster",
+       "desc": "Gezgin'de 'Yerel Disk (C:)' yerine 'C: Yerel Disk' yazar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer",
+         "value": "ShowDriveLettersFirst",
+         "type": "DWORD",
+         "on": "4",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "exp-copy-details",
+       "name": "Kopyalama ayrıntıları açık",
+       "desc": "Dosya kopyalama penceresini hız grafiği açık hâlde başlatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\OperationStatusManager",
+         "value": "EnthusiastMode",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
        "applied": false,
        "on": false
       }
@@ -3078,7 +4115,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.5200/",
        "applied": false,
        "on": false
       },
@@ -3096,7 +4132,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.6886/",
        "applied": false,
        "on": false
       },
@@ -3114,7 +4149,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.6825/",
        "applied": false,
        "on": false
       },
@@ -3132,7 +4166,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.6858/",
        "applied": false,
        "on": false
       },
@@ -3150,7 +4183,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.1161/",
        "applied": false,
        "on": false
       }
@@ -3173,7 +4205,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.2535/",
        "applied": false,
        "on": false
       },
@@ -3191,7 +4222,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.2544/",
        "applied": false,
        "on": false
       },
@@ -3209,9 +4239,9 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.14178/",
        "applied": false,
-       "on": false
+       "on": false,
+       "minBuild": 22621
       },
       {
        "id": "exp-04-2478",
@@ -3227,7 +4257,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.2478/",
        "applied": false,
        "on": false
       },
@@ -3245,7 +4274,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.7272/",
        "applied": false,
        "on": false
       },
@@ -3263,7 +4291,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.6255/",
        "applied": false,
        "on": false
       },
@@ -3281,9 +4308,26 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.5953/",
        "applied": false,
        "on": false
+      },
+      {
+       "id": "wu-explorer-home",
+       "name": "Giriş (Home) girdisi",
+       "desc": "Dosya Gezgini gezinti bölmesindeki Giriş öğesini kaldırır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Classes\\CLSID\\{f874310e-b6b7-47dc-bc84-b9e6b38f5903}",
+         "value": "System.IsPinnedToNameSpaceTree",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false,
+       "minBuild": 22621
       }
      ]
     },
@@ -3304,7 +4348,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.1778/",
        "applied": false,
        "on": false
       },
@@ -3322,7 +4365,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.11209/",
        "applied": false,
        "on": false
       },
@@ -3340,7 +4382,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.1690/",
        "applied": false,
        "on": false
       },
@@ -3358,7 +4399,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.26916/",
        "applied": false,
        "on": false
       },
@@ -3376,7 +4416,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.36440/",
        "applied": false,
        "on": false
       },
@@ -3394,7 +4433,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.6795/",
        "applied": false,
        "on": false
       },
@@ -3412,7 +4450,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.40663/",
        "applied": false,
        "on": false
       },
@@ -3430,7 +4467,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.40665/",
        "applied": false,
        "on": false
       },
@@ -3448,7 +4484,109 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.5292/",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-classic-context-menu",
+       "name": "Klasik sağ tık menüsü",
+       "desc": "Windows 11'in kısaltılmış sağ tık menüsü yerine Windows 10 menüsünü getirir; etkili olması için Gezgin'in yeniden başlatılması gerekir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Classes\\CLSID\\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\\InprocServer32",
+         "value": "",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE_KEY"
+        }
+       ],
+       "applied": false,
+       "on": false,
+       "minBuild": 22000
+      },
+      {
+       "id": "wa-new-bat",
+       "name": "Yeni menüsü · Toplu iş dosyası (.bat)",
+       "desc": "Gezgin'in Yeni menüsüne .bat dosyası ekler.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": ".bat\\ShellNew",
+         "value": "NullFile",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE_KEY"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wa-new-cmd",
+       "name": "Yeni menüsü · Komut dosyası (.cmd)",
+       "desc": "Gezgin'in Yeni menüsüne .cmd dosyası ekler.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": ".cmd\\ShellNew",
+         "value": "NullFile",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE_KEY"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wa-new-vbs",
+       "name": "Yeni menüsü · VBScript (.vbs)",
+       "desc": "Gezgin'in Yeni menüsüne .vbs dosyası ekler.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": ".vbs\\ShellNew",
+         "value": "NullFile",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE_KEY"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wa-new-ps1",
+       "name": "Yeni menüsü · PowerShell betiği (.ps1)",
+       "desc": "Gezgin'in Yeni menüsüne .ps1 dosyası ekler.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": ".ps1\\ShellNew",
+         "value": "NullFile",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE_KEY"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wa-new-reg",
+       "name": "Yeni menüsü · Kayıt defteri dosyası (.reg)",
+       "desc": "Gezgin'in Yeni menüsüne .reg dosyası ekler.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": ".reg\\ShellNew",
+         "value": "NullFile",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE_KEY"
+        }
+       ],
        "applied": false,
        "on": false
       }
@@ -3471,7 +4609,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/revertstartmenu",
        "applied": false,
        "on": false
       },
@@ -3505,7 +4642,6 @@
          "off": "1"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/startmenurecommendations",
        "applied": false,
        "on": false
       },
@@ -3523,7 +4659,6 @@
          "off": "0"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/bingsearch",
        "applied": false,
        "on": false
       }
@@ -3546,9 +4681,9 @@
          "off": "0"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/taskbaralignment",
        "applied": false,
-       "on": false
+       "on": false,
+       "minBuild": 22000
       },
       {
        "id": "wu-WPFToggleTaskbarSearch",
@@ -3564,7 +4699,6 @@
          "off": "0"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/taskbarsearch",
        "applied": false,
        "on": false
       },
@@ -3582,7 +4716,125 @@
          "off": "0"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/taskview",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-taskbar-chat",
+       "name": "Sohbet (Chat) simgesi",
+       "desc": "Görev çubuğundaki Sohbet / Meet Now simgesini gizler.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "TaskbarMn",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false,
+       "minBuild": 22000,
+       "maxBuild": 22621
+      },
+      {
+       "id": "ch-taskbar-size",
+       "name": "Görev çubuğu boyutu",
+       "desc": "Görev çubuğunun ve simgelerinin yüksekliği. Değişiklik Gezgin yeniden başlayınca görünür.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "TaskbarSi",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Küçük",
+         "data": "0"
+        },
+        {
+         "label": "Orta",
+         "data": "1"
+        },
+        {
+         "label": "Büyük",
+         "data": "2"
+        }
+       ],
+       "default": 1,
+       "applied": false,
+       "on": false,
+       "minBuild": 22000,
+       "maxBuild": 22621
+      },
+      {
+       "id": "wa-clock-seconds",
+       "name": "Saatte saniye göster",
+       "desc": "Görev çubuğu saatinde saniyeyi de gösterir; biraz daha güç harcar.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "ShowSecondsInSystemClock",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ch-taskbar-glom",
+       "name": "Görev çubuğu düğmelerini birleştir",
+       "desc": "Aynı uygulamanın pencerelerinin tek düğmede toplanıp toplanmayacağı. Windows 11'de yalnız 23H2 ve sonrasında etkilidir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "TaskbarGlomLevel",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        },
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "MMTaskbarGlomLevel",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Her zaman",
+         "data": [
+          "0",
+          "0"
+         ]
+        },
+        {
+         "label": "Dolunca",
+         "data": [
+          "1",
+          "1"
+         ]
+        },
+        {
+         "label": "Asla",
+         "data": [
+          "2",
+          "2"
+         ]
+        }
+       ],
+       "default": 0,
        "applied": false,
        "on": false
       }
@@ -3605,7 +4857,6 @@
          "off": "0"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/hiddenfiles",
        "applied": false,
        "on": false
       },
@@ -3623,7 +4874,536 @@
          "off": "0"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/customize-preferences/windowsnapping",
+       "applied": false,
+       "on": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ctx",
+   "name": "Menü ekleri",
+   "icon": "M2 2l3.2 8 1.3-3.5L10 5.2 2 2M7.5 7.5L10.5 10.5",
+   "sections": [
+    {
+     "title": "Masaüstü menüsü",
+     "tweaks": [
+      {
+       "id": "ctx-power",
+       "name": "Güç planı alt menüsü",
+       "desc": "Masaüstü sağ tık menüsüne güç planlarını listeleyen bir alt menü ekler; seçileni doğrudan etkinleştirir. Ultimate Performance Windows'ta hazır gelmez — Eylemler sayfasındaki 'Ultimate Performance güç planını ekle' önce çalıştırılmalı.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumPowerPlan",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Güç planı",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumPowerPlan",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "powercpl.dll,0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumPowerPlan",
+         "value": "Position",
+         "type": "SZ",
+         "on": "Bottom",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumPowerPlan",
+         "value": "ExtendedSubCommandsKey",
+         "type": "SZ",
+         "on": "DesktopBackground\\Shell\\ArbitriumPowerPlan",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumPowerPlan\\shell\\01Balanced",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Dengeli",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumPowerPlan\\shell\\01Balanced\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "powercfg.exe /setactive 381b4222-f694-41f0-9685-ff5bb260df2e",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumPowerPlan\\shell\\02HighPerf",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Yüksek performans",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumPowerPlan\\shell\\02HighPerf\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "powercfg.exe /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumPowerPlan\\shell\\03Saver",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Güç tasarrufu",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumPowerPlan\\shell\\03Saver\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "powercfg.exe /setactive a1841308-3541-4fab-bc81-f71556f20b4a",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumPowerPlan\\shell\\04Ultimate",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Ultimate Performance",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumPowerPlan\\shell\\04Ultimate\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "powercfg.exe /setactive e9a42b02-d5df-448d-aa00-03f14749eb61",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumPowerPlan\\shell\\05Options",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Güç seçenekleri…",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumPowerPlan\\shell\\05Options\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "control.exe powercfg.cpl",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ctx-control",
+       "name": "Denetim Masası",
+       "desc": "Masaüstü sağ tık menüsüne klasik Denetim Masası girişi ekler.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumControlPanel",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Denetim Masası",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumControlPanel",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "control.exe,0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumControlPanel",
+         "value": "Position",
+         "type": "SZ",
+         "on": "Bottom",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumControlPanel\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "control.exe",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ctx-services",
+       "name": "Hizmetler",
+       "desc": "Masaüstü sağ tık menüsüne hizmetler konsolunu ekler.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumServices",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Hizmetler",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumServices",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "mmc.exe,0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumServices",
+         "value": "Position",
+         "type": "SZ",
+         "on": "Bottom",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumServices\\command",
+         "value": "",
+         "type": "EXPAND_SZ",
+         "on": "mmc.exe %SystemRoot%\\System32\\services.msc",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ctx-regedit",
+       "name": "Kayıt Defteri Düzenleyicisi",
+       "desc": "Masaüstü sağ tık menüsüne regedit girişi ekler.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumRegedit",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Kayıt Defteri Düzenleyicisi",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumRegedit",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "regedit.exe,0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumRegedit",
+         "value": "Position",
+         "type": "SZ",
+         "on": "Bottom",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumRegedit\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "regedit.exe",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ctx-restart-explorer",
+       "name": "Gezgin'i yeniden başlat",
+       "desc": "Masaüstü sağ tık menüsüne Gezgin'i kapatıp yeniden başlatan bir giriş ekler; kabuk ayarları değiştikten sonra işe yarar.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumRestartExplorer",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Gezgin'i yeniden başlat",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumRestartExplorer",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "explorer.exe,0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumRestartExplorer",
+         "value": "Position",
+         "type": "SZ",
+         "on": "Bottom",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumRestartExplorer\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "cmd.exe /c taskkill /f /im explorer.exe & start explorer.exe",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ctx-godmode",
+       "name": "Tüm görevler (God Mode)",
+       "desc": "Windows'un bütün denetim görevlerini tek listede toplayan gizli klasörü açar.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumAllTasks",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Tüm görevler",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumAllTasks",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "imageres.dll,109",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumAllTasks",
+         "value": "Position",
+         "type": "SZ",
+         "on": "Bottom",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\Shell\\ArbitriumAllTasks\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "explorer.exe shell:::{ED7BA470-8E54-465E-825C-99712043E01C}",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Dosya ve klasör menüsü",
+     "tweaks": [
+      {
+       "id": "ctx-takeownership",
+       "name": "Sahipliği al",
+       "desc": "Dosya ve klasör menüsüne, sahipliği Yöneticiler grubuna alıp tam yetki veren bir giriş ekler; TrustedInstaller korumalı dosyalarda da çalışır. Windows 11'de 'Daha fazla seçenek göster' altında görünür. Giriş Arbitrium'un bulunduğu yeri gösterdiği için exe'yi taşırsanız bu tweak'i yeniden uygulayın.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumTakeOwnership",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Sahipliği al",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumTakeOwnership",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "imageres.dll,77",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumTakeOwnership",
+         "value": "NoWorkingDirectory",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumTakeOwnership\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "\"%ARBITRIUM%\" --own \"%1\"",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\shell\\ArbitriumTakeOwnership",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Sahipliği al",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\shell\\ArbitriumTakeOwnership",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "imageres.dll,77",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\shell\\ArbitriumTakeOwnership",
+         "value": "NoWorkingDirectory",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\shell\\ArbitriumTakeOwnership\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "\"%ARBITRIUM%\" --own \"%1\"",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ctx-giveownership",
+       "name": "Sahipliği TrustedInstaller'a geri ver",
+       "desc": "Sahipliğini aldığınız sistem dosyasını Windows'a geri verir; servis ve güncelleme mekanizmalarının o dosyaya yeniden dokunabilmesi için gerekir.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumGiveBack",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Sahipliği TrustedInstaller'a ver",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumGiveBack",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "imageres.dll,73",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumGiveBack",
+         "value": "NoWorkingDirectory",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumGiveBack\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "\"%ARBITRIUM%\" --disown \"%1\"",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\shell\\ArbitriumGiveBack",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Sahipliği TrustedInstaller'a ver",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\shell\\ArbitriumGiveBack",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "imageres.dll,73",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\shell\\ArbitriumGiveBack",
+         "value": "NoWorkingDirectory",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\shell\\ArbitriumGiveBack\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "\"%ARBITRIUM%\" --disown \"%1\"",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ctx-cmd-here",
+       "name": "Burada komut istemi aç",
+       "desc": "Bir klasörün içinde boş alana sağ tıklayınca o dizinde komut istemi açar.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "Directory\\Background\\shell\\ArbitriumCmdHere",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Burada komut istemi aç",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\Background\\shell\\ArbitriumCmdHere",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "cmd.exe,0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\Background\\shell\\ArbitriumCmdHere",
+         "value": "Position",
+         "type": "SZ",
+         "on": "Bottom",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\Background\\shell\\ArbitriumCmdHere\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "cmd.exe /s /k pushd \"%V\"",
+         "off": "DELETE"
+        }
+       ],
        "applied": false,
        "on": false
       }
@@ -3653,7 +5433,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.8637/",
        "applied": false,
        "on": false
       },
@@ -3671,7 +5450,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.20226/",
        "applied": false,
        "on": false
       }
@@ -3694,7 +5472,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.17611/",
        "applied": false,
        "on": false
       },
@@ -3710,9 +5487,16 @@
          "type": "DWORD",
          "on": "0",
          "off": "1"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\GameBar",
+         "value": "AllowAutoGameMode",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.1447/",
        "applied": false,
        "on": false
       }
@@ -3735,7 +5519,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.852/",
        "applied": false,
        "on": false
       },
@@ -3753,7 +5536,31 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.46210/",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-mpo",
+       "name": "Multiplane Overlay (MPO)",
+       "desc": "Katman birleştirmeyi kapatır; bazı ekran kartlarında görülen titreme ve siyah ekran sorunlarını giderir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\Dwm",
+         "value": "OverlayTestMode",
+         "type": "DWORD",
+         "on": "5",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\GraphicsDrivers",
+         "value": "DisableOverlays",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
        "applied": false,
        "on": false
       }
@@ -3784,7 +5591,28 @@
          "off": "1"
         }
        ],
-       "source": "https://winutil.christitus.com/code-reference/tweaks/essential-tweaks/hiber",
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Disk · GTweak",
+     "tweaks": [
+      {
+       "id": "gt-defrag",
+       "name": "Disk birleştirme ve önyükleme iyileştirmesi",
+       "desc": "Yalnız sabit disk (HDD) için işe yarayan disk birleştirme ve önyükleme dosyası iyileştirmesini kapatır; SSD'de ömrü uzatır. HDD kullanıyorsanız açık bırakın.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Dfrg\\BootOptimizeFunction",
+         "value": "Enable",
+         "type": "SZ",
+         "on": "N",
+         "off": "Y"
+        }
+       ],
        "applied": false,
        "on": false
       }
@@ -3814,7 +5642,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.1236/",
        "applied": false,
        "on": false
       },
@@ -3832,7 +5659,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.1238/",
        "applied": false,
        "on": false
       }
@@ -3855,7 +5681,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.2050/",
        "applied": false,
        "on": false
       }
@@ -3885,7 +5710,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.38860/",
        "applied": false,
        "on": false
       },
@@ -3903,7 +5727,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.928/",
        "applied": false,
        "on": false
       },
@@ -3921,7 +5744,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.9742/",
        "applied": false,
        "on": false
       }
@@ -3944,7 +5766,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.41838/",
        "applied": false,
        "on": false
       },
@@ -3962,7 +5783,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.3531/",
        "applied": false,
        "on": false
       }
@@ -3985,7 +5805,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.48624/",
        "applied": false,
        "on": false
       },
@@ -4003,7 +5822,6 @@
          "off": "1"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.29115/",
        "applied": false,
        "on": false
       },
@@ -4021,7 +5839,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.12970/",
        "applied": false,
        "on": false
       },
@@ -4039,7 +5856,62 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.14750/",
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ch-uac",
+       "name": "Kullanıcı hesabı denetimi (UAC)",
+       "desc": "Yükseltme istendiğinde Windows'un ne yapacağı. İki kayıt değeri birlikte yazılır: istem davranışı ve güvenli masaüstü.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+         "value": "ConsentPromptBehaviorAdmin",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+         "value": "PromptOnSecureDesktop",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Her zaman",
+         "data": [
+          "2",
+          "1"
+         ]
+        },
+        {
+         "label": "Varsayılan",
+         "data": [
+          "5",
+          "1"
+         ]
+        },
+        {
+         "label": "Kısılmadan",
+         "data": [
+          "5",
+          "0"
+         ]
+        },
+        {
+         "label": "Hiç",
+         "data": [
+          "0",
+          "0"
+         ]
+        }
+       ],
+       "default": 1,
        "applied": false,
        "on": false
       }
@@ -4062,7 +5934,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.1395/",
        "applied": false,
        "on": false
       },
@@ -4080,7 +5951,6 @@
          "off": "DELETE"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.15866/",
        "applied": false,
        "on": false
       },
@@ -4098,7 +5968,6 @@
          "off": "0"
         }
        ],
-       "source": "https://www.elevenforum.com/t/x.42394/",
        "applied": false,
        "on": false
       }

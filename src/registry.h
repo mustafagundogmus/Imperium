@@ -20,6 +20,12 @@ QString hiveToString(Hive hive);
 /// The sentinel a catalogue entry uses when a state is expressed by the value's absence.
 inline const QString DeleteSentinel = QStringLiteral("DELETE");
 
+/// …and when it is the whole key that must be absent. A handful of Windows behaviours
+/// are switched by a key's existence rather than by anything inside it — the classic
+/// context menu is the well-known one — and for those, deleting the value is not enough:
+/// the empty key left behind still overrides what it shadows.
+inline const QString DeleteKeySentinel = QStringLiteral("DELETE_KEY");
+
 struct Value
 {
     bool exists = false;
@@ -38,6 +44,16 @@ bool write(Hive hive, const QString &path, const QString &name,
 
 /// Deletes a single value. Succeeds when the value is already absent.
 bool remove(Hive hive, const QString &path, const QString &name, QString *error = nullptr);
+
+/// True when the key itself is there, whatever it does or does not contain.
+bool keyExists(Hive hive, const QString &path);
+
+/// Deletes a key and everything under it. Succeeds when the key is already absent.
+///
+/// Only ever called for a key this app created: TweakEngine records whether the key was
+/// there before it wrote, and undoes a tweak by deleting the value instead whenever the
+/// key predates us. Otherwise turning a tweak off could take unrelated settings with it.
+bool removeKey(Hive hive, const QString &path, QString *error = nullptr);
 
 /// True when writing to \a hive needs an elevated token on this machine.
 bool requiresElevation(Hive hive);

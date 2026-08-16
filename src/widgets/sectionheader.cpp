@@ -19,6 +19,22 @@ SectionHeader::SectionHeader(const QString &title, QWidget *parent)
     // explicitly keeps a QVBoxLayout from collapsing it to nothing.
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     setFixedHeight(sizeHint().height());
+    // Every metric here comes out of the font, so the face changing means measuring again.
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+        setFixedHeight(sizeHint().height());
+        updateGeometry();
+        update();
+    });
+
+}
+
+void SectionHeader::setTitle(const QString &title)
+{
+    const QString upper = Css::upperTr(title);
+    if (m_title == upper)
+        return;
+    m_title = upper;
+    update();
 }
 
 void SectionHeader::setCount(const QString &text)

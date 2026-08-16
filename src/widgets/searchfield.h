@@ -21,6 +21,7 @@ public:
     explicit SearchField(QWidget *parent = nullptr);
 
     QString text() const;
+    void setText(const QString &text);
     void clearText();
     void focusField();
 
@@ -43,6 +44,7 @@ protected:
 private:
     qreal badgeWidth() const;
     void layoutEditor();
+    int preferredHeight() const;
 
     QLineEdit *m_edit = nullptr;
     bool m_focused = false;

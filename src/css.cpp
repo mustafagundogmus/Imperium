@@ -1,4 +1,5 @@
 #include "css.h"
+#include "i18n.h"
 #include "theme.h"
 
 #include <QColor>
@@ -81,9 +82,15 @@ void drawCentered(QPainter *p, const QRectF &box, const QFont &f, const QColor &
 
 QString upperTr(const QString &s)
 {
+    // Only Turkish needs the dotted/dotless pair done by hand — QString::toUpper() is
+    // locale independent and would turn "i" into "I" and leave "ı" alone, both wrong for
+    // Turkish. Applying that substitution to any other language is its own bug: English
+    // "Firmware" has an "i" too, and the same rule would capitalise it as "FİRMWARE"
+    // with a Turkish dotted İ instead of the plain "FIRMWARE" every other language wants.
+    if (Locale::language() != QLatin1String("tr"))
+        return s.toUpper();
+
     QString out = s;
-    // Do the dotted/dotless pair by hand: QString::toUpper() is locale independent
-    // and would turn "i" into "I" and leave "ı" alone, both wrong for Turkish.
     out.replace(QChar(u'i'), QChar(u'İ'));
     out.replace(QChar(u'ı'), QChar(u'I'));
     return out.toUpper();

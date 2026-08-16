@@ -40,6 +40,15 @@ void CategoryRow::setSelected(bool on)
     update();
 }
 
+void CategoryRow::setName(const QString &name)
+{
+    if (m_name == name)
+        return;
+    m_name = name;
+    updateGeometry();
+    update();
+}
+
 void CategoryRow::setCount(const QString &count)
 {
     if (m_count == count)
