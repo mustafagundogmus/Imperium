@@ -211,7 +211,14 @@ void Catalog::appendStartup()
 
     for (const Startup::Entry &entry : entries) {
         Tweak t;
-        t.id = QStringLiteral("startup-") + entry.approvedValue;
+        // Hive and approval key are part of the id because the name on its own is not
+        // unique: OneDrive, the audio tray and half the vendor updaters exist under both
+        // HKCU and HKLM, and two rows sharing an id share a switch — flipping one would
+        // move the other's control and write neither.
+        t.id = QStringLiteral("startup-%1-%2-%3")
+                   .arg(entry.approvedHive,
+                        entry.approvedPath.section(QLatin1Char('\\'), -1),
+                        entry.approvedValue);
         t.name = entry.name;
         t.desc = QStringLiteral("%1 · %2").arg(entry.source, entry.command);
         t.tooltip = entry.command;
@@ -233,6 +240,10 @@ void Catalog::appendStartup()
         // Windows runs a startup entry unless something says otherwise, so "açık" is the
         // default position and a disabled entry is the changed one.
         t.defaultOption = 1;
+
+        // …but "put it back to the default" here means "write the enabled blob", not
+        // "write whatever was there before we touched it" — see Tweak::literal.
+        t.literal = true;
 
         section.tweaks.append(t);
         ++m_total;

@@ -47,6 +47,8 @@ QString describe(LONG status)
     return QStringLiteral("Windows hata kodu %1").arg(status);
 }
 
+#endif // Q_OS_WIN
+
 QByteArray parseBinary(const QString &data)
 {
     QByteArray bytes;
@@ -65,8 +67,6 @@ QString formatBinary(const QByteArray &bytes)
         parts << QStringLiteral("%1").arg(b, 2, 16, QLatin1Char('0'));
     return parts.join(QLatin1Char(','));
 }
-
-#endif // Q_OS_WIN
 
 } // namespace
 
@@ -98,6 +98,11 @@ bool requiresElevation(Hive hive)
 {
     // HKCU is the user's own hive; the machine-wide ones are not writable unelevated.
     return hive != Hive::HKCU;
+}
+
+QString canonicalBinary(const QString &data)
+{
+    return formatBinary(parseBinary(data));
 }
 
 Value read(Hive hive, const QString &path, const QString &name)

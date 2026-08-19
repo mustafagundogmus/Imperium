@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(Arbitrium VERSION 0.9.6 LANGUAGES CXX)
+project(Arbitrium VERSION 0.9.7 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -80,6 +80,24 @@ set(PROJECT_SOURCES
 # own asInvoker one — see the comment in the file.
 if(WIN32)
     list(APPEND PROJECT_SOURCES app.rc resources/Arbitrium.manifest)
+
+    # app.rc and the manifest each keep their own copy of the version, because neither
+    # windres nor the manifest can be handed one portably. A copy that nothing checks is
+    # a copy that drifts — all three were on different numbers at 0.9.6 — so check them
+    # here and stop the build rather than ship an executable that disagrees with itself.
+    file(READ "${CMAKE_CURRENT_SOURCE_DIR}/app.rc" ARBITRIUM_RC)
+    if(NOT ARBITRIUM_RC MATCHES "\"FileVersion\",[^\"]*\"${PROJECT_VERSION}\"")
+        message(FATAL_ERROR
+            "app.rc does not carry version ${PROJECT_VERSION}. "
+            "Update FILEVERSION, PRODUCTVERSION, FileVersion and ProductVersion in app.rc.")
+    endif()
+
+    file(READ "${CMAKE_CURRENT_SOURCE_DIR}/resources/Arbitrium.manifest" ARBITRIUM_MANIFEST)
+    if(NOT ARBITRIUM_MANIFEST MATCHES "version=\"${PROJECT_VERSION}\\.0\"")
+        message(FATAL_ERROR
+            "resources/Arbitrium.manifest does not carry version ${PROJECT_VERSION}.0. "
+            "Update the assemblyIdentity version.")
+    endif()
 endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -92,6 +110,12 @@ else()
 endif()
 
 target_include_directories(Arbitrium PRIVATE src)
+
+# The version the running app reports — the About page, the --version switch, and the
+# update check's "is there anything newer than me" comparison — comes from project()
+# above and nowhere else. It used to be typed out again in main.cpp, which is how a
+# 0.9.6 build spent its life announcing that 0.9.6 was available to it.
+target_compile_definitions(Arbitrium PRIVATE ARBITRIUM_VERSION="${PROJECT_VERSION}")
 
 # Which kind of Qt are we against? Everything below — deployment, runtime linkage,
 # stripping — turns on this one answer.

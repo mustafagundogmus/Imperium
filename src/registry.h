@@ -58,4 +58,11 @@ bool removeKey(Hive hive, const QString &path, QString *error = nullptr);
 /// True when writing to \a hive needs an elevated token on this machine.
 bool requiresElevation(Hive hive);
 
+/// Binary data in one spelling: two lower-case digits a byte, comma separated, nothing
+/// else. The same twelve bytes reach a comparison written half a dozen ways — upper case
+/// from one source, single digits from another, stray spaces from a hand-authored
+/// catalogue entry — and comparing two blobs as text only means anything once both have
+/// been through this. Pure string work, so it is there off Windows too.
+QString canonicalBinary(const QString &data);
+
 } // namespace Registry

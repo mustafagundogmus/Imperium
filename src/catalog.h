@@ -56,6 +56,15 @@ struct Tweak
     bool isChoice = false;          ///< drawn as a segmented control, not a switch
     bool isRange = false;           ///< …or as a slider: the positions are a number line
 
+    // Putting a normal tweak back to `defaultOption` writes what this machine held before
+    // the app first touched it, not the catalogue's value — the two differ whenever
+    // something else got there first. A literal tweak opts out: its positions are the
+    // actual bytes, not a stand-in for "the Windows default". Startup entries are the
+    // case that needs it. Their default position is "runs at login", and the value the
+    // machine held before was the blob that said it does not — restoring that would
+    // switch an entry back on by writing the bytes that keep it off.
+    bool literal = false;
+
     // Windows keeps retiring the values it reads. TaskbarSi still writes cleanly on 26200
     // and Windows ignores it completely — so a tweak can declare the builds it means
     // something on, and one that does not apply here is shown greyed out with the reason

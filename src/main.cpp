@@ -365,11 +365,18 @@ void runSelfTest(MainWindow &window, const QString &path)
 
 } // namespace
 
+// CMake defines this from project(... VERSION ...); the fallback is only for a build that
+// bypasses it. Never type a version here — the update check compares against this string,
+// so a stale one makes the app announce its own release as an upgrade.
+#ifndef ARBITRIUM_VERSION
+#  define ARBITRIUM_VERSION "0.0.0"
+#endif
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QApplication::setApplicationName(QStringLiteral("Arbitrium"));
-    QApplication::setApplicationVersion(QStringLiteral("0.9.4"));
+    QApplication::setApplicationVersion(QStringLiteral(ARBITRIUM_VERSION));
     QApplication::setOrganizationName(QStringLiteral("Arbitrium"));
     QApplication::setOrganizationDomain(QStringLiteral("arbitrium.local"));
     QApplication::setWindowIcon(QIcon(QStringLiteral(":/icons/tweaker.ico")));

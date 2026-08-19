@@ -1,5 +1,6 @@
 #include "startup.h"
 #include "i18n.h"
+#include "registry.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -23,21 +24,35 @@ QSettings openKey(const QString &hive, const QString &path)
                      QSettings::NativeFormat);
 }
 
-/// Binary data the way the catalogue and Registry::write() spell it: "02,00,00,…".
-QString toHex(const QByteArray &bytes)
+/// The approval blob for one entry, in the spelling the catalogue and the tweak engine
+/// both use.
+///
+/// Read through Registry rather than through the QSettings above, because QSettings
+/// decodes a REG_BINARY as UTF-16 text: twelve bytes come back as six, and any byte pair
+/// that is not a plain ASCII character comes back as something else entirely. These
+/// blobs are twelve bytes with a FILETIME in the tail, which is exactly the shape that
+/// destroys — and a blob that reads back wrong never matches the registry again, so
+/// every entry the user disabled reappears switched on the next time the app starts.
+QString approvedBlob(const QString &hive, const QString &path, const QString &name)
 {
-    QStringList parts;
-    parts.reserve(bytes.size());
-    for (uchar b : bytes)
-        parts << QStringLiteral("%1").arg(b, 2, 16, QLatin1Char('0')).toUpper();
-    return parts.join(QLatin1Char(','));
+    const Registry::Value value = Registry::read(Registry::hiveFromString(hive), path, name);
+    return value.exists ? value.data : QString();
+}
+
+/// Windows disables an entry by setting bit 0 of the blob's first byte — 2 is enabled,
+/// 3 is disabled. No blob at all means nothing has an opinion, and Windows runs it.
+bool blobSaysEnabled(const QString &blob)
+{
+    if (blob.isEmpty())
+        return true;
+    const QString first = blob.section(QLatin1Char(','), 0, 0).trimmed();
+    return (first.toUShort(nullptr, 16) & 1) == 0;
 }
 
 void collectRun(const QString &hive, const QString &runPath, const QString &approvedKey,
                 const QString &source, QVector<Entry> *out)
 {
     QSettings run = openKey(hive, runPath);
-    QSettings approved = openKey(hive, ApprovedBase + approvedKey);
 
     const QStringList names = run.childKeys();
     for (const QString &name : names) {
@@ -49,12 +64,8 @@ void collectRun(const QString &hive, const QString &runPath, const QString &appr
         entry.approvedPath = ApprovedBase + approvedKey;
         entry.approvedValue = name;
 
-        const QByteArray blob = approved.value(name).toByteArray();
-        if (!blob.isEmpty()) {
-            entry.currentBlob = toHex(blob);
-            // Anything with bit 0 set is one of the disabled states Windows writes.
-            entry.enabled = (uchar(blob.at(0)) & 1) == 0;
-        }
+        entry.currentBlob = approvedBlob(hive, entry.approvedPath, name);
+        entry.enabled = blobSaysEnabled(entry.currentBlob);
 
         out->append(entry);
     }
@@ -63,8 +74,6 @@ void collectRun(const QString &hive, const QString &runPath, const QString &appr
 void collectFolder(const QString &hive, const QString &folder, const QString &source,
                    QVector<Entry> *out)
 {
-    QSettings approved = openKey(hive, ApprovedBase + QStringLiteral("StartupFolder"));
-
     const QFileInfoList files = QDir(folder).entryInfoList(
         {QStringLiteral("*.lnk"), QStringLiteral("*.exe"), QStringLiteral("*.bat"),
          QStringLiteral("*.cmd")},
@@ -79,11 +88,8 @@ void collectFolder(const QString &hive, const QString &folder, const QString &so
         entry.approvedPath = ApprovedBase + QStringLiteral("StartupFolder");
         entry.approvedValue = file.fileName();
 
-        const QByteArray blob = approved.value(file.fileName()).toByteArray();
-        if (!blob.isEmpty()) {
-            entry.currentBlob = toHex(blob);
-            entry.enabled = (uchar(blob.at(0)) & 1) == 0;
-        }
+        entry.currentBlob = approvedBlob(hive, entry.approvedPath, entry.approvedValue);
+        entry.enabled = blobSaysEnabled(entry.currentBlob);
 
         out->append(entry);
     }

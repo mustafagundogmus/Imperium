@@ -113,7 +113,16 @@ bool machineMatches(const Tweak &tweak, const TweakOption &option)
             continue;
         }
 
-        if (isDelete(want) || value.data != want)
+        // Binary is compared through the canonical spelling: Windows writes the tail of a
+        // startup blob as a timestamp, and the same bytes reach here upper case from one
+        // source and lower case from another. Text values keep their case — for those the
+        // difference is the setting.
+        const bool binary = entry.type.compare(QLatin1String("BINARY"), Qt::CaseInsensitive) == 0;
+        const bool same = binary
+                              ? Registry::canonicalBinary(value.data)
+                                    == Registry::canonicalBinary(want)
+                              : value.data == want;
+        if (isDelete(want) || !same)
             return false;
     }
     return true;
@@ -205,7 +214,7 @@ QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak
         // Putting a tweak back to what Windows ships is the one direction that consults
         // the journal: the catalogue's idea of the default and what this machine actually
         // had before we touched it are not always the same value.
-        const bool restoring = wanted == tweak->defaultOption;
+        const bool restoring = wanted == tweak->defaultOption && !tweak->literal;
         const TweakOption &option = tweak->options.at(wanted);
 
         // Elevation is decided for the whole tweak: writing half of a multi-value tweak
