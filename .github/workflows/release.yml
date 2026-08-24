@@ -83,20 +83,6 @@ jobs:
             exit 1
           fi
 
-      - name: Create the tag if it is not there yet
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          tag="${{ steps.resolve.outputs.tag }}"
-          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
-            echo "$tag already exists"
-          else
-            git tag -a "$tag" -m "$tag"
-            git push origin "$tag"
-          fi
-
       - name: Publish the release
         shell: bash
         env:
@@ -105,11 +91,18 @@ jobs:
           set -euo pipefail
           tag="${{ steps.resolve.outputs.tag }}"
           version="${{ steps.resolve.outputs.version }}"
+
+          # gh creates the tag itself from --target, which is one less thing to get wrong:
+          # `git tag` on a runner needs a committer identity nobody has configured, and
+          # this needs no working tree at all.
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release edit "$tag" --title "Arbitrium $version" --notes-file notes.md
             echo "updated the notes on the existing release"
           else
-            gh release create "$tag" --title "Arbitrium $version" --notes-file notes.md
+            gh release create "$tag" \
+              --target "${{ github.sha }}" \
+              --title "Arbitrium $version" \
+              --notes-file notes.md
           fi
 
   build:
