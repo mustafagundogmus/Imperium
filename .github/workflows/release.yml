@@ -1,0 +1,164 @@
+# Cuts a release: the tag, the notes, and a Windows build to hang off it.
+#
+# Two jobs on purpose. `publish` only needs the repository, so the release and its notes
+# exist within seconds and do not depend on a Qt install succeeding on a runner. `build`
+# then attaches the executable to that release; if the toolchain has a bad day the release
+# is still there, and re-running the job attaches the binary without republishing anything.
+#
+# The notes come from docs/release-notes/<tag>.md when that file exists and from the
+# matching section of CHANGELOG.md when it does not, so a release never has to be written
+# twice.
+
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release, e.g. v0.9.8. Created from the default branch if it does not exist."
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.resolve.outputs.tag }}
+      version: ${{ steps.resolve.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve the tag and check the version agrees with it
+        id: resolve
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${{ inputs.tag || github.ref_name }}"
+          version="${tag#v}"
+          echo "tag=$tag"         >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+          # The same guard CMake applies on a Windows configure. Catching a mismatch here
+          # is cheaper than shipping an executable that disagrees with its own tag.
+          project=$(sed -n 's/^project(Arbitrium VERSION \([0-9.]*\).*/\1/p' CMakeLists.txt)
+          if [ "$project" != "$version" ]; then
+            echo "::error::CMakeLists.txt says $project, the tag says $version"
+            exit 1
+          fi
+          grep -q "\"FileVersion\",[^\"]*\"$version\"" app.rc \
+            || { echo "::error::app.rc does not carry $version"; exit 1; }
+          grep -q "version=\"$version\.0\"" resources/Arbitrium.manifest \
+            || { echo "::error::the manifest does not carry $version.0"; exit 1; }
+          echo "version $version checks out in all three files"
+
+      - name: Collect the notes
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${{ steps.resolve.outputs.tag }}"
+          version="${{ steps.resolve.outputs.version }}"
+
+          if [ -f "docs/release-notes/$tag.md" ]; then
+            cp "docs/release-notes/$tag.md" notes.md
+            echo "notes taken from docs/release-notes/$tag.md"
+          else
+            # Everything between this version's heading and the next one.
+            awk -v v="$version" '
+              $0 ~ "^## \\[" v "\\]" { on = 1; next }
+              on && /^## \[/         { exit }
+              on                     { print }
+            ' CHANGELOG.md > notes.md
+            echo "notes extracted from CHANGELOG.md"
+          fi
+
+          if [ ! -s notes.md ]; then
+            echo "::error::no release notes found for $tag"
+            exit 1
+          fi
+
+      - name: Create the tag if it is not there yet
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${{ steps.resolve.outputs.tag }}"
+          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+            echo "$tag already exists"
+          else
+            git tag -a "$tag" -m "$tag"
+            git push origin "$tag"
+          fi
+
+      - name: Publish the release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${{ steps.resolve.outputs.tag }}"
+          version="${{ steps.resolve.outputs.version }}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release edit "$tag" --title "Arbitrium $version" --notes-file notes.md
+            echo "updated the notes on the existing release"
+          else
+            gh release create "$tag" --title "Arbitrium $version" --notes-file notes.md
+          fi
+
+  build:
+    needs: publish
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.publish.outputs.tag }}
+
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.8.*"
+          host: windows
+          target: desktop
+          arch: win64_msvc2022_64
+          modules: qtsvg
+          cache: true
+
+      - name: Build
+        shell: cmd
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --config Release
+
+      - name: Package
+        shell: pwsh
+        run: |
+          $version = "${{ needs.publish.outputs.version }}"
+          # CMakeLists already runs windeployqt after the link, so the build directory is
+          # the payload — minus the CMake bookkeeping nobody downloading this wants.
+          New-Item -ItemType Directory -Force -Path stage | Out-Null
+          Copy-Item build\Arbitrium.exe stage\
+          Get-ChildItem build -Directory |
+            Where-Object { $_.Name -notin @('CMakeFiles','.cmake','Arbitrium_autogen') } |
+            ForEach-Object { Copy-Item $_.FullName stage\ -Recurse }
+          Get-ChildItem build -File -Filter *.dll | Copy-Item -Destination stage\
+          Copy-Item README.md stage\
+          Copy-Item CHANGELOG.md stage\
+          Compress-Archive -Path stage\* -DestinationPath "Arbitrium-v$version-win64.zip"
+
+      - name: Attach it to the release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release upload "${{ needs.publish.outputs.tag }}" \
+            "Arbitrium-v${{ needs.publish.outputs.version }}-win64.zip" --clobber
