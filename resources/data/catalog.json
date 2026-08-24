@@ -1499,6 +1499,956 @@
        "on": false
       }
      ]
+    },
+    {
+     "title": "Ses ve çevre birimleri",
+     "tweaks": [
+      {
+       "id": "aud-ducking",
+       "name": "İletişimde diğer sesleri kıs",
+       "desc": "Windows bir aramayı algıladığında diğer seslere ne yapacağı. Oyun ve müzik dinlerken sesin kendiliğinden kısılmasının sebebi budur.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Multimedia\\Audio",
+         "value": "UserDuckingPreference",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "%80 kıs",
+         "data": "0"
+        },
+        {
+         "label": "%50 kıs",
+         "data": "1"
+        },
+        {
+         "label": "Tamamen sustur",
+         "data": "2"
+        },
+        {
+         "label": "Hiçbir şey yapma",
+         "data": "3"
+        }
+       ],
+       "default": 3,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "aud-exclusive-mode",
+       "name": "Uygulamaların özel denetimi",
+       "desc": "Bir uygulamanın ses aygıtını tek başına devralmasına izin verir. Bit-perfect ses için gerekir; kapatmak sistem seslerinin kesilmesini önler.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\MMDevices\\Audio",
+         "value": "DisableProtectedAudioDG",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "aud-enhancements",
+       "name": "Ses geliştirmeleri",
+       "desc": "Sürücünün eklediği bas artırma, sanal surround ve benzeri efektleri kapatır. Bazı kartlarda çatırtı ve gecikmenin kaynağıdır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Internet Explorer\\LowRegistry\\Audio\\PolicyConfig\\PropertyStore",
+         "value": "DisableAudioEnhancements",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "aud-startup-sound",
+       "name": "Başlangıç sesi denetimi",
+       "desc": "Windows açılış sesinin Ayarlar'dan değiştirilebilir olmasını sağlar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Authentication\\LogonUI\\BootAnimation",
+         "value": "DisableStartupSound",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "aud-notification-volume",
+       "name": "Bildirim sesi seviyesi",
+       "desc": "Sistem bildirim seslerinin ana ses seviyesine oranı.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Multimedia\\Audio\\DeviceCpl",
+         "value": "NotificationVolume",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 0,
+        "max": 100,
+        "step": 10,
+        "unit": "%",
+        "default": 100
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "aud-touchpad-delay",
+       "name": "Dokunmatik yüzey gecikmesi",
+       "desc": "Yazarken dokunmatik yüzeyin ne kadar süre yok sayılacağı. Kapatmak imleci anında tepki verir hâle getirir; yazarken imleç kaymalarına yol açabilir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PrecisionTouchPad",
+         "value": "AAPThreshold",
+         "type": "DWORD",
+         "on": "0",
+         "off": "2"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "upd",
+   "name": "Windows Update",
+   "icon": "M10.4 6a4.4 4.4 0 11-1.3-3.1M10.6 1.6v2.6H8",
+   "sections": [
+    {
+     "title": "Güncelleme denetimi",
+     "tweaks": [
+      {
+       "id": "upd-autoreboot",
+       "name": "Oturum açıkken otomatik yeniden başlatma",
+       "desc": "Windows'un, oturumu açık bir kullanıcı varken güncelleme için kendiliğinden yeniden başlatmasını engeller. Güncellemeler yine kurulur, yeniden başlatmayı siz seçersiniz.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU",
+         "value": "NoAutoRebootWithLoggedOnUsers",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-auoptions",
+       "name": "Otomatik güncelleme davranışı",
+       "desc": "Windows Update'in indirme ve kurma sırasında ne kadar kendi başına hareket edeceğini seçer. Varsayılan dışındaki her konum, güncellemenin kurulacağı anı size bırakır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU",
+         "value": "AUOptions",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU",
+         "value": "NoAutoUpdate",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Varsayılan",
+         "data": [
+          "DELETE",
+          "DELETE"
+         ]
+        },
+        {
+         "label": "İndirmeden önce bildir",
+         "data": [
+          "2",
+          "0"
+         ]
+        },
+        {
+         "label": "İndir, kurmadan önce bildir",
+         "data": [
+          "3",
+          "0"
+         ]
+        },
+        {
+         "label": "İndir ve zamanla",
+         "data": [
+          "4",
+          "0"
+         ]
+        },
+        {
+         "label": "Tamamen kapalı",
+         "data": [
+          "DELETE",
+          "1"
+         ]
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-defer-feature",
+       "name": "Özellik güncellemesini ertele",
+       "desc": "Yeni bir Windows sürümünün bu makineye kaç gün sonra teklif edileceği. Sürümün ilk haftalarındaki hataları beklemek isteyenler için.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+         "value": "DeferFeatureUpdatesPeriodInDays",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 0,
+        "max": 365,
+        "step": 30,
+        "unit": "gün",
+        "default": 0
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-defer-quality",
+       "name": "Kalite güncellemesini ertele",
+       "desc": "Aylık güvenlik ve düzeltme paketlerinin kaç gün geciktirileceği. En fazla 30 gün; güvenlik yamaları da bu süre boyunca gelmez.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+         "value": "DeferQualityUpdatesPeriodInDays",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 0,
+        "max": 30,
+        "step": 5,
+        "unit": "gün",
+        "default": 0
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-target-version",
+       "name": "Sürümü sabitle",
+       "desc": "Makineyi belirli bir Windows sürümünde tutar; sabitlenen sürümün desteği bitene kadar yeni bir özellik güncellemesi teklif edilmez. Destek bitince sabitleme kendiliğinden düşer.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+         "value": "TargetReleaseVersion",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+         "value": "TargetReleaseVersionInfo",
+         "type": "SZ",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Sabitleme yok",
+         "data": [
+          "DELETE",
+          "DELETE"
+         ]
+        },
+        {
+         "label": "22H2",
+         "data": [
+          "1",
+          "22H2"
+         ]
+        },
+        {
+         "label": "23H2",
+         "data": [
+          "1",
+          "23H2"
+         ]
+        },
+        {
+         "label": "24H2",
+         "data": [
+          "1",
+          "24H2"
+         ]
+        },
+        {
+         "label": "25H2",
+         "data": [
+          "1",
+          "25H2"
+         ]
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-drivers",
+       "name": "Sürücüleri Windows Update'ten alma",
+       "desc": "Windows Update'in aylık paketlerle birlikte sürücü göndermesini durdurur ve üretici sürücüsünün üzerine yazmasını engeller. Sürücüleri kendiniz kurmayı tercih ediyorsanız.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+         "value": "ExcludeWUDriversInQualityUpdate",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\DriverSearching",
+         "value": "SearchOrderConfig",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-ms-products",
+       "name": "Diğer Microsoft ürünlerini güncelle",
+       "desc": "Office ve diğer Microsoft yazılımlarının da Windows Update üzerinden güncellenmesini açar. Kapalıyken bu ürünler kendi güncelleyicilerine kalır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU",
+         "value": "AllowMUUpdateService",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-restart-notify",
+       "name": "Yeniden başlatma bildirimleri",
+       "desc": "Güncelleme sonrası yeniden başlatmayı hatırlatan bildirimleri kapatır. Yeniden başlatmanın kendisi engellenmez, yalnızca uyarı susar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+         "value": "SetAutoRestartNotificationDisable",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+         "value": "AutoRestartNotificationDisable",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-notification-level",
+       "name": "Güncelleme bildirimleri",
+       "desc": "Windows Update'in kaç bildirim göstereceği. En kısıtlı konumda yalnızca yeniden başlatma uyarıları kalır — güncellemeler yine iner ve kurulur.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+         "value": "SetUpdateNotificationLevel",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+         "value": "UpdateNotificationLevel",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Varsayılan",
+         "data": [
+          "DELETE",
+          "DELETE"
+         ]
+        },
+        {
+         "label": "Yalnızca yeniden başlatma uyarıları",
+         "data": [
+          "1",
+          "1"
+         ]
+        },
+        {
+         "label": "Tüm bildirimler kapalı",
+         "data": [
+          "1",
+          "2"
+         ]
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-active-start",
+       "name": "Etkin saat başlangıcı",
+       "desc": "Windows'un güncelleme için yeniden başlatmayacağı aralığın başladığı saat. Bu aralıkta makineyi kullandığınızı varsayar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\WindowsUpdate\\UX\\Settings",
+         "value": "ActiveHoursStart",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 0,
+        "max": 23,
+        "step": 1,
+        "unit": ":00",
+        "default": 8
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-active-end",
+       "name": "Etkin saat bitişi",
+       "desc": "Etkin saat aralığının bittiği saat. Windows bu aralığın en fazla 18 saat olmasına izin verir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\WindowsUpdate\\UX\\Settings",
+         "value": "ActiveHoursEnd",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 0,
+        "max": 23,
+        "step": 1,
+        "unit": ":00",
+        "default": 17
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-insider",
+       "name": "Insider Preview derlemeleri",
+       "desc": "Windows Insider kanallarından önizleme derlemesi gelmesini engeller. Zaten Insider'a kayıtlı bir makinede yeni derleme teklifini keser.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+         "value": "ManagePreviewBuilds",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+         "value": "ManagePreviewBuildsPolicyValue",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-do-mode",
+       "name": "Teslim iyileştirme modu",
+       "desc": "Windows'un güncelleme parçalarını başka makinelerden indirip indirmeyeceğini ve kendi bağlantınızdan başkalarına dağıtıp dağıtmayacağını seçer.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization",
+         "value": "DODownloadMode",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Varsayılan",
+         "data": "DELETE"
+        },
+        {
+         "label": "Kapalı · yalnızca HTTP",
+         "data": "0"
+        },
+        {
+         "label": "Yerel ağ",
+         "data": "1"
+        },
+        {
+         "label": "Yerel ağ ve grup",
+         "data": "2"
+        },
+        {
+         "label": "İnternet dahil",
+         "data": "3"
+        },
+        {
+         "label": "Yalnızca önbellek sunucusu",
+         "data": "99"
+        },
+        {
+         "label": "Basit · eş yok",
+         "data": "100"
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-hide-pause",
+       "name": "Duraklatma seçeneğini gizle",
+       "desc": "Ayarlar'daki 'Güncellemeleri duraklat' düğmesini kaldırır. Ortak kullanılan bir makinede güncellemelerin sessizce durdurulmasını engellemek için.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+         "value": "SetDisablePauseUXAccess",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+         "value": "DisablePauseUXAccess",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-no-auto",
+       "name": "Otomatik güncelleme indirme",
+       "desc": "Windows Update'in kendiliğinden güncelleme aramasını ve indirmesini tamamen durdurur. Güvenlik yamaları da durur — bunu kapatan, güncellemeyi elle çalıştırmayı üstlenmiş olur.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU",
+         "value": "NoAutoUpdate",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Zamanlanmış görevler",
+     "tweaks": [
+      {
+       "id": "upd-task-appcompat",
+       "name": "Uygulama uyumluluk değerlendiricisi",
+       "desc": "Microsoft Compatibility Appraiser görevinin topladığı uygulama uyumluluk verisini keser. Bu görev, yükseltme öncesi uyumluluk raporunu Microsoft'a gönderen bileşendir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+         "value": "AITEnable",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-task-diagnostics",
+       "name": "Zamanlanmış tanılama görevleri",
+       "desc": "Disk tanılama, bellek tanılama ve benzeri zamanlanmış sorun gidericilerin arka planda kendiliğinden çalışmasını durdurur.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\ScheduledDiagnostics",
+         "value": "EnabledExecution",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-task-msdt",
+       "name": "Sorun giderme sihirbazları",
+       "desc": "Microsoft Destek Tanılama Aracı'nı (MSDT) kapatır. Aynı bileşen bir dönem uzaktan kod çalıştırma açığının (Follina) taşıyıcısıydı.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\ScriptedDiagnosticsProvider\\Policy",
+         "value": "EnableQueryRemoteServer",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\ScriptedDiagnosticsProvider\\Policy",
+         "value": "DisableQueryRemoteServer",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-task-xbox",
+       "name": "Xbox oyun kaydetme görevi",
+       "desc": "Xbox Live oyun kaydetme hizmetini ve zamanlanmış görevini durdurur. Xbox uygulaması ve Game Pass oyunları bulut kaydını kaybeder.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\XblGameSave",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "4",
+         "off": "3"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Hata raporlama ve tanılama",
+     "tweaks": [
+      {
+       "id": "upd-wer",
+       "name": "Windows Hata Raporlama",
+       "desc": "Çöken bir programın ayrıntılarını Microsoft'a gönderen bileşeni kapatır. Yerel kilitlenme dökümleri yazılmaya devam eder.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\Windows Error Reporting",
+         "value": "Disabled",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-wer-ui",
+       "name": "Hata iletişim kutuları",
+       "desc": "Bir program çöktüğünde çıkan 'Program çalışmayı durdurdu' penceresini gizler. Çökme yine kaydedilir, yalnızca pencere gelmez.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\Windows Error Reporting",
+         "value": "DontShowUI",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-crashdump",
+       "name": "Kilitlenme dökümü türü",
+       "desc": "Mavi ekranda diske ne kadar bellek yazılacağı. Küçük döküm birkaç yüz kilobayt, tam döküm takılı bellek kadar yer kaplar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\CrashControl",
+         "value": "CrashDumpEnabled",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Döküm yazma",
+         "data": "0"
+        },
+        {
+         "label": "Tam bellek dökümü",
+         "data": "1"
+        },
+        {
+         "label": "Çekirdek bellek dökümü",
+         "data": "2"
+        },
+        {
+         "label": "Küçük döküm (minidump)",
+         "data": "3"
+        },
+        {
+         "label": "Otomatik",
+         "data": "7"
+        }
+       ],
+       "default": 4,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-diagtrack",
+       "name": "Bağlı Kullanıcı Deneyimleri ve Telemetri",
+       "desc": "DiagTrack hizmetini devre dışı bırakır — telemetri verisini toplayıp gönderen ana hizmet. Bazı Ayarlar sayfaları ve Geri Bildirim Merkezi bu hizmete bağlıdır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\DiagTrack",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "4",
+         "off": "2"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-diag-viewer",
+       "name": "Tanılama veri görüntüleyici",
+       "desc": "Gönderilen telemetriyi yerel olarak kaydeden görüntüleyiciyi kapatır. Açık bırakmak, verinin kendisini değil yalnızca kopyasını diskte tutar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+         "value": "DisableDiagnosticDataViewer",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-feedback",
+       "name": "Geri bildirim istekleri",
+       "desc": "Windows'un 'Bu özelliği nasıl buldunuz?' anketlerini göstermesini engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Siuf\\Rules",
+         "value": "NumberOfSIUFInPeriod",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+         "value": "DoNotShowFeedbackNotifications",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Depolama ve yedekleme",
+     "tweaks": [
+      {
+       "id": "upd-reserved-storage",
+       "name": "Ayrılmış depolama",
+       "desc": "Windows'un güncellemeler için ayırdığı ~7 GB'lık alanı serbest bırakır. Kapalıyken büyük bir güncelleme diskte yeterli boş alan bulamayabilir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\ReserveManager",
+         "value": "ShippedWithReserves",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-restore-freq",
+       "name": "Geri yükleme noktası sıklık sınırı",
+       "desc": "Windows normalde 24 saat içinde ikinci bir geri yükleme noktası oluşturmaz. Bu sınırı kaldırır — Arbitrium'un her uygulamadan önce nokta oluşturabilmesi için gerekir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\SystemRestore",
+         "value": "SystemRestorePointCreationFrequency",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-storagesense-freq",
+       "name": "Depolama Duyarlığı sıklığı",
+       "desc": "Depolama Duyarlığı'nın hangi aralıkla çalışacağı. 'Boş alan azalınca' Windows'un varsayılanıdır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\StorageSense\\Parameters\\StoragePolicy",
+         "value": "2048",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Boş alan azalınca",
+         "data": "0"
+        },
+        {
+         "label": "Her gün",
+         "data": "1"
+        },
+        {
+         "label": "Her hafta",
+         "data": "7"
+        },
+        {
+         "label": "Her ay",
+         "data": "30"
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-storagesense-recycle",
+       "name": "Geri dönüşüm kutusu temizleme aralığı",
+       "desc": "Geri dönüşüm kutusundaki dosyaların kaç gün sonra kalıcı olarak silineceği. 0 = hiç silme.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\StorageSense\\Parameters\\StoragePolicy",
+         "value": "256",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 0,
+        "max": 60,
+        "step": 15,
+        "unit": "gün",
+        "default": 30
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-confirm-delete",
+       "name": "Silme onayı iletişim kutusu",
+       "desc": "Bir dosyayı geri dönüşüm kutusuna gönderirken onay isteyen pencereyi geri getirir. Windows 10'dan beri varsayılan olarak kapalıdır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+         "value": "ConfirmFileDelete",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
     }
    ]
   },
@@ -3020,6 +3970,506 @@
    ]
   },
   {
+   "id": "sec",
+   "name": "Güvenlik sertleştirme",
+   "icon": "M3 5.4V4a3 3 0 016 0v1.4M2.4 5.4h7.2v5.1H2.4z",
+   "sections": [
+    {
+     "title": "Yürütme denetimi",
+     "tweaks": [
+      {
+       "id": "sec-smartscreen-apps",
+       "name": "SmartScreen · uygulamalar",
+       "desc": "İnternetten inen tanınmayan bir programı çalıştırmadan önce Windows'un ne yapacağı. 'Engelle' onay bile sormaz.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+         "value": "SmartScreenEnabled",
+         "type": "SZ",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Uyar",
+         "data": "Warn"
+        },
+        {
+         "label": "Engelle",
+         "data": "Block"
+        },
+        {
+         "label": "Kapalı",
+         "data": "Off"
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-smartscreen-edge",
+       "name": "SmartScreen · Edge",
+       "desc": "Edge'in zararlı site ve indirme denetimini açar. Ziyaret edilen adresler Microsoft'un itibar hizmetine sorulur.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Edge",
+         "value": "SmartScreenEnabled",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-smartscreen-store",
+       "name": "SmartScreen · Mağaza uygulamaları",
+       "desc": "Mağaza uygulamalarının açtığı web içeriğinin de SmartScreen'den geçmesini sağlar.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\AppHost",
+         "value": "EnableWebContentEvaluation",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-autorun",
+       "name": "AutoRun ve AutoPlay",
+       "desc": "Takılan her sürücü türü için otomatik çalıştırmayı kapatır. USB üzerinden yayılan zararlıların en eski ve hâlâ işleyen yolu budur.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+         "value": "NoDriveTypeAutoRun",
+         "type": "DWORD",
+         "on": "255",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+         "value": "NoAutorun",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-wsh",
+       "name": "Windows Script Host",
+       "desc": ".vbs ve .js dosyalarının çift tıklamayla çalışmasını engeller. Kendi betiklerinizi kullanıyorsanız onlar da çalışmaz.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows Script Host\\Settings",
+         "value": "Enabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-powershell-v2",
+       "name": "PowerShell 2.0 motoru",
+       "desc": "Betik blok kaydını ve dil kısıtlamalarını atlatmak için kullanılan eski PowerShell motorunu kapatır. Modern PowerShell etkilenmez.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\PowerShell",
+         "value": "EnableScripts",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Hesap ve kimlik",
+     "tweaks": [
+      {
+       "id": "sec-lsa-ppl",
+       "name": "LSA korumalı süreç",
+       "desc": "Oturum açma sürecini (LSASS) korumalı süreç olarak çalıştırır; parola karmalarının bellekten okunmasını zorlaştırır. Bazı eski kimlik doğrulama eklentileri yüklenemez.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Lsa",
+         "value": "RunAsPPL",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-anonymous-sid",
+       "name": "Anonim SID sayımı",
+       "desc": "Kimliği doğrulanmamış bir bağlantının makinedeki hesapları ve paylaşımları listelemesini engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Lsa",
+         "value": "RestrictAnonymous",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Lsa",
+         "value": "RestrictAnonymousSAM",
+         "type": "DWORD",
+         "on": "1",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-lm-hash",
+       "name": "LM parola karması saklama",
+       "desc": "Kırılması saniyeler süren eski LM karmasının diske yazılmasını engeller. Parolanızı bir kez değiştirmeniz gerekir ki mevcut karma temizlensin.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Lsa",
+         "value": "NoLMHash",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-wdigest",
+       "name": "WDigest düz metin parola",
+       "desc": "WDigest'in parolayı bellekte düz metin tutmasını engeller. Modern Windows'ta varsayılan zaten kapalı, ama yükseltilmiş makinelerde açık kalabilir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\SecurityProviders\\WDigest",
+         "value": "UseLogonCredential",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-remote-registry",
+       "name": "Uzaktan kayıt defteri erişimi",
+       "desc": "Ağ üzerinden bu makinenin kayıt defterine bağlanılmasını kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\RemoteRegistry",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "4",
+         "off": "3"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-rdp-nla",
+       "name": "RDP ağ düzeyi kimlik doğrulama",
+       "desc": "Uzak masaüstü bağlantısında kimlik doğrulamayı oturum açılmadan önceye alır. Çok eski RDP istemcileri bağlanamaz.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp",
+         "value": "UserAuthentication",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Ağ yüzeyi",
+     "tweaks": [
+      {
+       "id": "sec-smb1-client",
+       "name": "SMBv1 istemcisi",
+       "desc": "1980'lerden kalma ve WannaCry'ın yayılma yolu olan dosya paylaşım protokolünün sürücüsünü devre dışı bırakır. Çok eski NAS cihazlarına erişim kesilebilir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\mrxsmb10",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "4",
+         "off": "2"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-smb-signing",
+       "name": "SMB imzalama zorunluluğu",
+       "desc": "Dosya paylaşım trafiğinin imzalanmasını zorunlu kılar; ortadaki adam saldırılarını engeller. Yoğun kopyalamada verim biraz düşer.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\LanmanWorkstation\\Parameters",
+         "value": "RequireSecuritySignature",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-wpad",
+       "name": "WPAD otomatik proxy bulma",
+       "desc": "Tarayıcıların ağdan proxy yapılandırması istemesini kapatır. WPAD, sahte bir proxy'nin tüm trafiği dinlemesine izin verebilen bir protokoldür.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\Wpad",
+         "value": "WpadOverride",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\WinHttpAutoProxySvc",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "4",
+         "off": "3"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-ip-source-routing",
+       "name": "IP kaynak yönlendirme",
+       "desc": "Paketin izleyeceği yolu gönderenin belirlemesine izin veren eski IP özelliğini kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters",
+         "value": "DisableIPSourceRouting",
+         "type": "DWORD",
+         "on": "2",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters",
+         "value": "DisableIPSourceRouting",
+         "type": "DWORD",
+         "on": "2",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-icmp-redirect",
+       "name": "ICMP yönlendirme",
+       "desc": "ICMP yönlendirme paketlerinin yönlendirme tablosunu değiştirmesini engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters",
+         "value": "EnableICMPRedirect",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Defender ve yazdırma",
+     "tweaks": [
+      {
+       "id": "sec-defender-cloud",
+       "name": "Defender bulut koruması",
+       "desc": "Şüpheli bir dosyanın Microsoft'un bulut hizmetine sorulmasını açar. Yeni zararlıları belirgin biçimde daha hızlı yakalar; dosya örneği gönderir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Spynet",
+         "value": "SpynetReporting",
+         "type": "DWORD",
+         "on": "2",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-defender-pua",
+       "name": "İstenmeyen uygulama koruması",
+       "desc": "Zararlı sayılmayan ama reklam yazılımı, tarayıcı ele geçirici ve paket kurulum aracı türünden programlara karşı koruma.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows Defender",
+         "value": "PUAProtection",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Varsayılan",
+         "data": "DELETE"
+        },
+        {
+         "label": "Engelle",
+         "data": "1"
+        },
+        {
+         "label": "Yalnızca denetle",
+         "data": "2"
+        },
+        {
+         "label": "Kapalı",
+         "data": "0"
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-defender-network",
+       "name": "Ağ koruması",
+       "desc": "Zararlı adreslere yapılan bağlantıları engeller. Defender'ın gerçek zamanlı korumasının açık olması gerekir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Windows Defender Exploit Guard\\Network Protection",
+         "value": "EnableNetworkProtection",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-print-spooler-remote",
+       "name": "Yazdırma biriktiricisi uzaktan bağlantı",
+       "desc": "Spooler'ın ağdan yazdırma isteği kabul etmesini kapatır. PrintNightmare açık ailesinin kapatıldığı yer burasıdır; yerel yazdırma çalışmaya devam eder.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows NT\\Printers",
+         "value": "RegisterSpoolerRemoteRpcEndPoint",
+         "type": "DWORD",
+         "on": "2",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-point-and-print",
+       "name": "Point and Print sürücü kurulumu",
+       "desc": "Ağ yazıcısı eklerken sürücünün yönetici onayı olmadan kurulmasını engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows NT\\Printers\\PointAndPrint",
+         "value": "RestrictDriverInstallationToAdministrators",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sec-office-macros",
+       "name": "İnternetten inen Office makroları",
+       "desc": "İnternetten gelen belgelerdeki makroları engeller. Office 2016 ve sonrası için; Office kurulu değilse hiçbir etkisi olmaz.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Office\\16.0\\Word\\Security",
+         "value": "BlockContentExecutionFromInternet",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Office\\16.0\\Excel\\Security",
+         "value": "BlockContentExecutionFromInternet",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Office\\16.0\\PowerPoint\\Security",
+         "value": "BlockContentExecutionFromInternet",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    }
+   ]
+  },
+  {
    "id": "net",
    "name": "Ağ & İnternet",
    "icon": "M6 1a5 5 0 100 10A5 5 0 006 1zM1 6h10M6 1C4.5 2.5 4.5 9.5 6 11M6 1c1.5 1.5 1.5 8.5 0 10",
@@ -3377,6 +4827,272 @@
          "type": "DWORD",
          "on": "1",
          "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Ağ yığını",
+     "tweaks": [
+      {
+       "id": "net-autotuning",
+       "name": "TCP otomatik ayarlama",
+       "desc": "Windows'un TCP alma penceresini bağlantıya göre büyütmesi. Kısıtlamak eski yönlendiricilerdeki tıkanmaları giderir, hızlı bağlantılarda verimi düşürür.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters",
+         "value": "TcpAutotuning",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Normal",
+         "data": "DELETE"
+        },
+        {
+         "label": "Kısıtlı",
+         "data": "1"
+        },
+        {
+         "label": "Yüksek kısıtlı",
+         "data": "2"
+        },
+        {
+         "label": "Devre dışı",
+         "data": "0"
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "net-nagle",
+       "name": "Nagle algoritması",
+       "desc": "Küçük paketlerin biriktirilip birlikte gönderilmesini kapatır. Çevrimiçi oyunlarda gecikmeyi düşürür; çok sayıda küçük paket üreten uygulamalarda bant genişliği israfı yapar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\Interfaces",
+         "value": "TcpAckFrequency",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\Interfaces",
+         "value": "TCPNoDelay",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "net-qos-bandwidth",
+       "name": "QoS ayrılmış bant genişliği",
+       "desc": "Windows'un QoS için ayırdığı bant genişliği yüzdesi. Varsayılan %20'dir ve yalnızca QoS kullanan bir uygulama varken devreye girer.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Psched",
+         "value": "NonBestEffortLimit",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 0,
+        "max": 20,
+        "step": 5,
+        "unit": "%",
+        "default": 20
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "net-llmnr",
+       "name": "LLMNR ad çözümlemesi",
+       "desc": "Yerel ağda ad sormak için kullanılan LLMNR'yi kapatır. Kimlik bilgisi çalmak için sahte yanıt gönderen saldırıların ana yoludur.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows NT\\DNSClient",
+         "value": "EnableMulticast",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "net-netbios",
+       "name": "NetBIOS over TCP/IP",
+       "desc": "Eski ad çözümleme protokolünü kapatır. LLMNR ile aynı saldırı ailesine açıktır; çok eski ağ paylaşımlarına erişim kesilebilir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\NetBT\\Parameters",
+         "value": "NodeType",
+         "type": "DWORD",
+         "on": "2",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "net-mdns",
+       "name": "mDNS (Bonjour) çözümlemesi",
+       "desc": "Windows'un çok noktaya yayınla ad sormasını kapatır. Yazıcı ve akış cihazı keşfi bu protokole dayanır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\Dnscache\\Parameters",
+         "value": "EnableMDNS",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "net-wifi-sense",
+       "name": "Wi-Fi Sense",
+       "desc": "Kablosuz ağ parolalarının kişilerle paylaşılmasını ve açık ağlara kendiliğinden bağlanılmasını kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\WcmSvc\\wifinetworkmanager\\config",
+         "value": "AutoConnectAllowedOEM",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\PolicyManager\\default\\WiFi\\AllowAutoConnectToWiFiSenseHotspots",
+         "value": "value",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "net-network-discovery",
+       "name": "Ağ bulma",
+       "desc": "Bu makinenin ağdaki diğer cihazlara görünmesini ve onları listelemesini kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\FDResPub",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "4",
+         "off": "3"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\fdPHost",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "4",
+         "off": "3"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "net-ics",
+       "name": "İnternet bağlantısı paylaşımı",
+       "desc": "Bu makinenin bağlantısını başka cihazlarla paylaşan hizmeti kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\SharedAccess",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "4",
+         "off": "3"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "net-tcp-timedwait",
+       "name": "TCP TIME_WAIT süresi",
+       "desc": "Kapanan bir bağlantının portunun kaç saniye bekletileceği. Çok bağlantı açan sunucularda düşürmek port tükenmesini önler.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters",
+         "value": "TcpTimedWaitDelay",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 30,
+        "max": 240,
+        "step": 30,
+        "unit": "sn",
+        "default": 240
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "net-lmhosts",
+       "name": "LMHOSTS arama",
+       "desc": "Ad çözümlemede eski LMHOSTS dosyasına bakılmasını kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\NetBT\\Parameters",
+         "value": "EnableLMHOSTS",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "net-teredo-full",
+       "name": "Teredo tünelleme",
+       "desc": "IPv4 ağı üzerinden IPv6 taşıyan Teredo tünelini tamamen kapatır. Bazı eşler arası uygulamalar ve Xbox ağ özellikleri buna dayanır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters",
+         "value": "DisabledComponents",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
         }
        ],
        "applied": false,
@@ -5406,6 +7122,443 @@
        ],
        "applied": false,
        "on": false
+      },
+      {
+       "id": "ctx-copy-path",
+       "name": "Yol olarak kopyala",
+       "desc": "Seçili dosya veya klasörün tam yolunu tırnak içinde panoya kopyalar. Windows'ta Shift+sağ tık ile zaten var; bu, menüde her zaman görünür olanı ekler.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumCopyPath",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Yol olarak kopyala",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumCopyPath",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "imageres.dll,-5302",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumCopyPath",
+         "value": "Position",
+         "type": "SZ",
+         "on": "Bottom",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumCopyPath\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "cmd.exe /c echo \"%1\"| clip",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ctx-hash",
+       "name": "Dosya karması (SHA256)",
+       "desc": "Seçili dosyanın SHA256 karmasını hesaplayıp bir pencerede gösterir. İndirilen bir dosyanın bütünlüğünü doğrulamak için.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumHash",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "SHA256 karması",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumHash",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "imageres.dll,-5306",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumHash",
+         "value": "Position",
+         "type": "SZ",
+         "on": "Bottom",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumHash\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "powershell.exe -NoProfile -NoExit -Command \"Get-FileHash -Algorithm SHA256 -LiteralPath '%1' | Format-List\"",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ctx-unblock",
+       "name": "Engellemeyi kaldır",
+       "desc": "İnternetten indiği için işaretlenmiş dosyanın engelini kaldırır — Özellikler penceresindeki 'Engellemeyi kaldır' kutucuğunun menüdeki hâli.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumUnblock",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Engellemeyi kaldır",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumUnblock",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "imageres.dll,-1401",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumUnblock",
+         "value": "Position",
+         "type": "SZ",
+         "on": "Bottom",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "*\\shell\\ArbitriumUnblock\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "powershell.exe -NoProfile -Command \"Unblock-File -LiteralPath '%1'\"",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ctx-runas-user",
+       "name": "Farklı kullanıcı olarak çalıştır",
+       "desc": "Seçili programı başka bir hesabın kimlik bilgileriyle başlatır. İkincil oturum açma (seclogon) hizmetinin çalışması gerekir.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "exefile\\shell\\ArbitriumRunAsUser",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Farklı kullanıcı olarak çalıştır",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "exefile\\shell\\ArbitriumRunAsUser",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "imageres.dll,-5203",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "exefile\\shell\\ArbitriumRunAsUser\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "runas.exe /netonly /user:%%USERNAME%% \"%1\"",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Klasör ve masaüstü menüsü",
+     "tweaks": [
+      {
+       "id": "ctx-powershell-here",
+       "name": "Burada PowerShell aç",
+       "desc": "Klasörün boş alanına sağ tıklayınca o klasörde açılan bir PowerShell penceresi ekler.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "Directory\\Background\\shell\\ArbitriumPowerShellHere",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Burada PowerShell aç",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\Background\\shell\\ArbitriumPowerShellHere",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "powershell.exe,0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\Background\\shell\\ArbitriumPowerShellHere",
+         "value": "Position",
+         "type": "SZ",
+         "on": "Bottom",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\Background\\shell\\ArbitriumPowerShellHere\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "powershell.exe -NoExit -Command \"Set-Location -LiteralPath '%V'\"",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ctx-terminal-here",
+       "name": "Burada Windows Terminal aç",
+       "desc": "Aynısını Windows Terminal ile yapar. Terminal kurulu değilse menü girdisi görünür ama açılmaz.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "Directory\\Background\\shell\\ArbitriumTerminalHere",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Burada Terminal aç",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\Background\\shell\\ArbitriumTerminalHere",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe,0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\Background\\shell\\ArbitriumTerminalHere",
+         "value": "Position",
+         "type": "SZ",
+         "on": "Bottom",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Directory\\Background\\shell\\ArbitriumTerminalHere\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "wt.exe -d \"%V\"",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ctx-empty-bin",
+       "name": "Geri dönüşüm kutusunu boşalt",
+       "desc": "Masaüstü menüsüne, kutuyu tek adımda boşaltan bir girdi ekler. Onay sorar.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\shell\\ArbitriumEmptyBin",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Geri dönüşüm kutusunu boşalt",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\shell\\ArbitriumEmptyBin",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "imageres.dll,-5320",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\shell\\ArbitriumEmptyBin",
+         "value": "Position",
+         "type": "SZ",
+         "on": "Bottom",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\shell\\ArbitriumEmptyBin\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "powershell.exe -NoProfile -Command \"Clear-RecycleBin -Force\"",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ctx-kill-notresponding",
+       "name": "Yanıt vermeyen görevleri sonlandır",
+       "desc": "Yanıt vermeyen tüm pencereleri tek adımda kapatır. Kaydedilmemiş veriler kaybolur.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\shell\\ArbitriumKillHung",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Yanıt vermeyen görevleri sonlandır",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\shell\\ArbitriumKillHung",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "taskmgr.exe,0",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\shell\\ArbitriumKillHung",
+         "value": "Position",
+         "type": "SZ",
+         "on": "Bottom",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\shell\\ArbitriumKillHung\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "cmd.exe /c taskkill /f /fi \"status eq NOT RESPONDING\"",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ctx-turn-off-display",
+       "name": "Ekranı kapat",
+       "desc": "Ekranı uyutur; makine çalışmaya devam eder. Fare veya klavye ile uyanır.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\shell\\ArbitriumDisplayOff",
+         "value": "MUIVerb",
+         "type": "SZ",
+         "on": "Ekranı kapat",
+         "off": "DELETE_KEY"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\shell\\ArbitriumDisplayOff",
+         "value": "Icon",
+         "type": "SZ",
+         "on": "imageres.dll,-5350",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\shell\\ArbitriumDisplayOff",
+         "value": "Position",
+         "type": "SZ",
+         "on": "Bottom",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "DesktopBackground\\shell\\ArbitriumDisplayOff\\command",
+         "value": "",
+         "type": "SZ",
+         "on": "powershell.exe -NoProfile -WindowStyle Hidden -Command \"(Add-Type '[DllImport(\\\"user32.dll\\\")]public static extern int SendMessage(int a,int b,int c,int d);' -Name W -PassThru)::SendMessage(-1,0x0112,0xF170,2)\"",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Menü girdisi kaldırma",
+     "tweaks": [
+      {
+       "id": "ctx-remove-bitlocker",
+       "name": "BitLocker menü girdisi",
+       "desc": "Sürücülerin sağ tık menüsündeki BitLocker girdisini kaldırır. BitLocker'ın kendisi etkilenmez, yalnızca menü girdisi gider.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "Drive\\shell\\encrypt-bde",
+         "value": "ProgrammaticAccessOnly",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Drive\\shell\\encrypt-bde-elev",
+         "value": "ProgrammaticAccessOnly",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Drive\\shell\\manage-bde",
+         "value": "ProgrammaticAccessOnly",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Drive\\shell\\resume-bde",
+         "value": "ProgrammaticAccessOnly",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKCR",
+         "path": "Drive\\shell\\unlock-bde",
+         "value": "ProgrammaticAccessOnly",
+         "type": "SZ",
+         "on": "",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ctx-remove-pintostart",
+       "name": "Başlat'a sabitle girdisi",
+       "desc": "Dosya ve klasör menüsündeki 'Başlat'a sabitle' girdisini gizler.",
+       "reg": [
+        {
+         "hive": "HKCR",
+         "path": "Folder\\shellex\\ContextMenuHandlers\\PintoStartScreen",
+         "value": "",
+         "type": "SZ",
+         "on": "",
+         "off": "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
+        }
+       ],
+       "applied": false,
+       "on": false
       }
      ]
     }
@@ -5617,6 +7770,837 @@
        "on": false
       }
      ]
+    },
+    {
+     "title": "Çekirdek performans",
+     "tweaks": [
+      {
+       "id": "perf-responsiveness",
+       "name": "Multimedya sistem yanıt payı",
+       "desc": "Windows'un ses ve video için ayırdığı CPU yüzdesi. Varsayılan 20; düşürmek bu payı ön plandaki uygulamaya bırakır, sıfırlamak ses kesilmelerine yol açabilir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile",
+         "value": "SystemResponsiveness",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 0,
+        "max": 20,
+        "step": 2,
+        "unit": "%",
+        "default": 20
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-network-throttling",
+       "name": "Ağ kısıtlama dizini",
+       "desc": "Multimedya çalarken ağ paketlerinin kısıtlanması. Varsayılan saniyede 10 000 paketle sınırlar; kapatmak yüksek hızlı bağlantılarda gerçek fark yaratır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile",
+         "value": "NetworkThrottlingIndex",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Varsayılan (10)",
+         "data": "10"
+        },
+        {
+         "label": "Gevşek (70)",
+         "data": "70"
+        },
+        {
+         "label": "Kapalı",
+         "data": "4294967295"
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-priority-separation",
+       "name": "Ön plan önceliği",
+       "desc": "İşlemci zamanının ön plandaki pencere ile arka plan arasında nasıl bölüşüleceği. Sunucu ayarı arka plan işlerini, masaüstü ayarı öndeki pencereyi kayırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\PriorityControl",
+         "value": "Win32PrioritySeparation",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Masaüstü · varsayılan (2)",
+         "data": "2"
+        },
+        {
+         "label": "Ön plana ağırlık (26)",
+         "data": "26"
+        },
+        {
+         "label": "Ön plana en yüksek (38)",
+         "data": "38"
+        },
+        {
+         "label": "Sunucu · eşit (24)",
+         "data": "24"
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-paging-executive",
+       "name": "Çekirdeği bellekte tut",
+       "desc": "Çekirdek kodunun ve sürücülerin sayfa dosyasına taşınmasını engeller. Bol bellekli makinelerde ölçülebilir; 8 GB altında ters teper.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management",
+         "value": "DisablePagingExecutive",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-memory-compression",
+       "name": "Bellek sıkıştırma",
+       "desc": "Windows'un sayfa dosyasına yazmak yerine belleği sıkıştırmasını denetler. Kapatmak CPU'yu rahatlatır, karşılığında disk daha çok kullanılır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management",
+         "value": "DisablePagingCombining",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-svchost-split",
+       "name": "svchost gruplama eşiği",
+       "desc": "Bu değerin altındaki bellekli makinelerde hizmetler tek bir svchost sürecinde toplanır. Sistem belleğinin üstüne çıkarmak süreç sayısını belirgin düşürür.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control",
+         "value": "SvcHostSplitThresholdInKB",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 380000,
+        "max": 16000000,
+        "step": 1000000,
+        "unit": "KB",
+        "default": 380000
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-core-parking",
+       "name": "Çekirdek park etme",
+       "desc": "Windows'un boştaki CPU çekirdeklerini uyutmasını kapatır. Ani yük artışlarında uyanma gecikmesini yok eder, karşılığında güç tüketimi artar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Power\\PowerSettings\\54533251-82be-4824-96c1-47b60b740d00\\0cc5b647-c1df-4637-891a-dec35c318583",
+         "value": "ValueMax",
+         "type": "DWORD",
+         "on": "0",
+         "off": "100"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-power-throttling",
+       "name": "İşlemci güç kısma",
+       "desc": "Arka plan uygulamalarının CPU hızını düşüren güç kısmayı devre dışı bırakır. Dizüstüde pil ömrünü kısaltır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Power\\PowerThrottling",
+         "value": "PowerThrottlingOff",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-game-mmcss",
+       "name": "Oyunlar için MMCSS profili",
+       "desc": "Oyunların multimedya zamanlayıcısından yüksek öncelik almasını sağlar. GPU ve CPU önceliğini birlikte yükseltir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games",
+         "value": "GPU Priority",
+         "type": "DWORD",
+         "on": "8",
+         "off": "8"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games",
+         "value": "Priority",
+         "type": "DWORD",
+         "on": "6",
+         "off": "2"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games",
+         "value": "Scheduling Category",
+         "type": "SZ",
+         "on": "High",
+         "off": "Medium"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games",
+         "value": "SFIO Priority",
+         "type": "SZ",
+         "on": "High",
+         "off": "Normal"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-superfetch",
+       "name": "SysMain (SuperFetch)",
+       "desc": "Sık kullandığınız uygulamaları önceden belleğe alan hizmeti kapatır. SSD'li makinelerde kazancı küçüktür, disk etkinliğini gözle görülür azaltır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\SysMain",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "4",
+         "off": "2"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-io-page-lock",
+       "name": "G/Ç sayfa kilit sınırı",
+       "desc": "Bir sürücünün tek seferde kilitleyebileceği bellek miktarı. Büyük dosya aktarımlarında verimi artırır; 0 Windows'un kendi kararıdır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management",
+         "value": "IoPageLockLimit",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 0,
+        "max": 65536,
+        "step": 8192,
+        "unit": "KB",
+        "default": 0
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-hpet-timer",
+       "name": "Dinamik zamanlayıcı düzeltmesi",
+       "desc": "Platform zamanlayıcısının çözünürlüğünü sabitler; bazı oyunlarda kare süresi dalgalanmasını azaltır. Etkisi donanıma göre değişir, ölçmeden açmayın.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\kernel",
+         "value": "GlobalTimerResolutionRequests",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "NTFS ve dosya sistemi",
+     "tweaks": [
+      {
+       "id": "perf-ntfs-lastaccess",
+       "name": "Son erişim zaman damgası",
+       "desc": "NTFS'in her okumada dosyanın 'son erişim' zamanını güncellemesini durdurur. Çok dosyalı işlemlerde ölçülebilir bir fark; yedekleme yazılımları bu damgayı kullanabilir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\FileSystem",
+         "value": "NtfsDisableLastAccessUpdate",
+         "type": "DWORD",
+         "on": "1",
+         "off": "2"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-ntfs-8dot3",
+       "name": "8.3 kısa ad oluşturma",
+       "desc": "Her dosya için ayrıca eski MS-DOS uyumlu kısa ad üretilmesini durdurur. Çok dosyalı klasörlerde yazma hızını artırır; çok eski programlar bu adı arayabilir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\FileSystem",
+         "value": "NtfsDisable8dot3NameCreation",
+         "type": "DWORD",
+         "on": "1",
+         "off": "2"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-ntfs-memory",
+       "name": "NTFS bellek kullanımı",
+       "desc": "NTFS'in ayırdığı sayfalanabilir bellek havuzunu büyütür. Çok sayıda dosyayla çalışan makinelerde önbellek isabetini artırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\FileSystem",
+         "value": "NtfsMemoryUsage",
+         "type": "DWORD",
+         "on": "2",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-ntfs-compression",
+       "name": "NTFS sıkıştırma",
+       "desc": "Dosya sistemi düzeyinde sıkıştırmayı kapatır. Sıkıştırılmış bir klasörle çalışırken CPU kullanımını düşürür, karşılığında disk daha çok dolar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\FileSystem",
+         "value": "NtfsDisableCompression",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-ntfs-encryption",
+       "name": "NTFS şifreleme (EFS)",
+       "desc": "Dosya düzeyi şifrelemeyi (EFS) devre dışı bırakır. BitLocker'dan bağımsızdır; EFS ile şifrelenmiş mevcut dosyalar açılamaz hâle gelir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\FileSystem",
+         "value": "NtfsDisableEncryption",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-trim",
+       "name": "TRIM komutu",
+       "desc": "Silinen blokların SSD'ye bildirilmesini denetler. Açık tutmak SSD'nin uzun vadeli yazma hızını korur — kapatmak için çok özel bir sebebiniz olmalı.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\FileSystem",
+         "value": "DisableDeleteNotification",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-defrag-boot",
+       "name": "Önyükleme dosyalarını iyileştirme",
+       "desc": "Windows'un açılışta okunan dosyaları diskte yan yana toplamasını denetler. SSD'de anlamsızdır, sabit diskte açılışı kısaltır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Dfrg\\BootOptimizeFunction",
+         "value": "Enable",
+         "type": "SZ",
+         "on": "N",
+         "off": "Y"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Oyun",
+     "tweaks": [
+      {
+       "id": "perf-gamedvr-full",
+       "name": "GameDVR arka plan kaydı",
+       "desc": "Oyun sırasında sürekli arka planda kayıt tutan bileşeni tamamen kapatır — üç ayrı anahtar birlikte yazılır. Kare süresi dalgalanmasını azalttığı ölçülmüştür.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "System\\GameConfigStore",
+         "value": "GameDVR_Enabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        },
+        {
+         "hive": "HKCU",
+         "path": "System\\GameConfigStore",
+         "value": "GameDVR_FSEBehaviorMode",
+         "type": "DWORD",
+         "on": "2",
+         "off": "0"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\GameDVR",
+         "value": "AllowGameDVR",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-gamebar",
+       "name": "Xbox Game Bar",
+       "desc": "Win+G ile açılan Game Bar katmanını kapatır. Ekran kaydı, performans göstergesi ve arkadaş listesi bu katmanla gelir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\GameDVR",
+         "value": "AppCaptureEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        },
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\GameBar",
+         "value": "UseNexusForGameBarEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-gamebar-shortcuts",
+       "name": "Game Bar klavye kısayolları",
+       "desc": "Win+Alt+R gibi Game Bar kısayollarını kapatır. Oyun içinde başka bir işlev için kullanılan tuş birleşimlerinin çakışmasını önler.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\GameBar",
+         "value": "ShowStartupPanel",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        },
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\GameBar",
+         "value": "GamePanelStartupTipIndex",
+         "type": "DWORD",
+         "on": "3",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-gamebar-tips",
+       "name": "Oyun açılışında Game Bar ipucu",
+       "desc": "Bir oyun ilk açıldığında beliren 'Game Bar'ı denemek ister misiniz' bildirimini kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\GameBar",
+         "value": "AutoGameModeEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-autohdr",
+       "name": "Otomatik HDR",
+       "desc": "SDR oyunları HDR'a çeviren katmanı açar. HDR destekli ekran gerekir; bazı oyunlarda renkleri bozar.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\DirectX\\UserGpuPreferences",
+         "value": "AutoHDREnable",
+         "type": "SZ",
+         "on": "2270",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-vrr",
+       "name": "Değişken yenileme hızı",
+       "desc": "Pencereli oyunlar için değişken yenileme hızını açar. Ekranın ve sürücünün desteklemesi gerekir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\DirectX\\UserGpuPreferences",
+         "value": "DirectXUserGlobalSettings",
+         "type": "SZ",
+         "on": "VRROptimizeEnable=1;",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-fso-global",
+       "name": "Tam ekran optimizasyonları · genel",
+       "desc": "Windows'un tam ekran oyunları kenarlıksız pencereye çevirmesini kapatır. Gerçek tam ekranda giriş gecikmesi bir kare azalır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "System\\GameConfigStore",
+         "value": "GameDVR_DXGIHonorFSEWindowsCompatible",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        },
+        {
+         "hive": "HKCU",
+         "path": "System\\GameConfigStore",
+         "value": "GameDVR_HonorUserFSEBehaviorMode",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "perf-mouse-precision",
+       "name": "Gelişmiş imleç hassasiyeti",
+       "desc": "Fare ivmelenmesini kapatır — aynı fiziksel hareket her zaman aynı imleç yolunu üretir. Nişan alınan oyunlarda kas hafızası için gerekli.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Mouse",
+         "value": "MouseSpeed",
+         "type": "SZ",
+         "on": "0",
+         "off": "1"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Mouse",
+         "value": "MouseThreshold1",
+         "type": "SZ",
+         "on": "0",
+         "off": "6"
+        },
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Mouse",
+         "value": "MouseThreshold2",
+         "type": "SZ",
+         "on": "0",
+         "off": "10"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pwr",
+   "name": "Güç yönetimi",
+   "icon": "M1.5 3.5h7v5h-7zM8.5 5.2h1.4v1.6H8.5M4.2 4.6l-1 2.2h1.6l-1 2.2",
+   "sections": [
+    {
+     "title": "Aygıt gücü",
+     "tweaks": [
+      {
+       "id": "pwr-usb-suspend",
+       "name": "USB seçmeli askıya alma",
+       "desc": "Boştaki USB aygıtlarının uyutulmasını kapatır. Uyanırken takılan fare, ses kesen USB kulaklık ve kopan harici disk sorunlarının en sık sebebi budur.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\USB",
+         "value": "DisableSelectiveSuspend",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "pwr-usb-power-off",
+       "name": "USB denetleyicilerini uyutma",
+       "desc": "Windows'un güç tasarrufu için USB kök hub'larını kapatmasını engeller. Aygıt Yöneticisi'ndeki kutucuğun kayıt defterindeki karşılığı.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Class\\{36fc9e60-c465-11cf-8056-444553540000}",
+         "value": "EnhancedPowerManagementEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "pwr-pcie-aspm",
+       "name": "PCIe bağlantı güç yönetimi",
+       "desc": "PCIe bağlantılarının etkin güç durumu yönetimini (ASPM) kapatır. Bazı NVMe disklerdeki ani gecikme sıçramalarını giderir, güç tüketimini artırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Power\\PowerSettings\\501a4d13-42af-4429-9fd1-a8218c268e20\\ee12f906-d277-404b-b6da-e5fa1a576df5",
+         "value": "Attributes",
+         "type": "DWORD",
+         "on": "2",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "pwr-modern-standby",
+       "name": "Modern bekleme (S0)",
+       "desc": "Modern bekleme yerine klasik S3 uykuyu tercih eder. Çantada ısınan ve pili biten dizüstülerin bilinen çözümü; makinenin S3 desteklemesi gerekir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Power",
+         "value": "PlatformAoAcOverride",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "pwr-hibernate-file",
+       "name": "Hazırda bekletme dosyası",
+       "desc": "hiberfil.sys dosyasını kaldırır ve hazırda bekletmeyi kapatır. Takılı belleğin yaklaşık %40'ı kadar disk alanı boşalır; hızlı başlatma da kapanır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Power",
+         "value": "HibernateEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "pwr-hibernate-size",
+       "name": "Hazırda bekletme dosyası boyutu",
+       "desc": "hiberfil.sys'in takılı belleğe oranı. %40 Windows'un varsayılanıdır; %20'ye düşürmek hazırda bekletmeyi çalışır tutup yer kazandırır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Power",
+         "value": "HiberFileSizePercent",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 20,
+        "max": 100,
+        "step": 10,
+        "unit": "%",
+        "default": 40
+       },
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Davranış",
+     "tweaks": [
+      {
+       "id": "pwr-lid-close",
+       "name": "Kapak kapanınca",
+       "desc": "Dizüstü kapağı kapandığında ne yapılacağı. Şebekeye takılı ve pilde farklı davranış istiyorsanız bunu Denetim Masası'ndan ayarlamanız gerekir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Power\\PowerSettings\\4f971e89-eebd-4455-a8de-9e59040e7347\\5ca83367-6e45-459f-a27b-476b1d01c936",
+         "value": "Attributes",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Varsayılan",
+         "data": "DELETE"
+        },
+        {
+         "label": "Seçeneği göster",
+         "data": "2"
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "pwr-fast-startup-menu",
+       "name": "Kapatma menüsünde hızlı başlatma",
+       "desc": "Denetim Masası'ndaki hızlı başlatma kutucuğunu görünür kılar. Hazırda bekletme kapalıyken bu seçenek gizlenir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Power",
+         "value": "HiberbootEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "pwr-sleep-button",
+       "name": "Uyku düğmesini göster",
+       "desc": "Başlat menüsünün güç düğmesinde Uyku seçeneğini görünür yapar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Power\\PowerSettings\\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\\7bc4a2f9-d8fc-4469-b07b-33eb785aaca0",
+         "value": "Attributes",
+         "type": "DWORD",
+         "on": "2",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "pwr-battery-saver-threshold",
+       "name": "Pil tasarrufu eşiği",
+       "desc": "Pil tasarrufunun devreye gireceği yüzdeyi Ayarlar'da düzenlenebilir yapar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Power\\EnergySaverPolicy",
+         "value": "EsBattThresholdPct",
+         "type": "DWORD",
+         "on": "30",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "pwr-adaptive-brightness",
+       "name": "Uyarlanır parlaklık",
+       "desc": "Ortam ışığı sensörüne göre ekran parlaklığının kendiliğinden değişmesini kapatır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Power\\PowerSettings\\7516b95f-f776-4464-8c53-06167f40cc99\\FBD9AA66-9553-4097-BA44-ED6E9D65EAB8",
+         "value": "Attributes",
+         "type": "DWORD",
+         "on": "2",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
     }
    ]
   },
@@ -5681,6 +8665,543 @@
          "off": "DELETE"
         }
        ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Geçmiş kaydı",
+     "tweaks": [
+      {
+       "id": "cln-no-recentdocs",
+       "name": "Son belgeler geçmişi",
+       "desc": "Windows'un açtığınız belgeleri kaydetmesini tamamen durdurur. Atlama listeleri ve Başlat'ın 'son kullanılanlar' bölümü boş kalır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+         "value": "NoRecentDocsHistory",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-clear-recentdocs",
+       "name": "Çıkışta son belgeleri temizle",
+       "desc": "Oturumu kapatırken son belge listesini boşaltır. Geçmiş oturum boyunca tutulur, kapanışta silinir — kaydı hiç tutmamakla hiç silmemek arasındaki orta yol.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+         "value": "ClearRecentDocsOnExit",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-no-instrumentation",
+       "name": "Program kullanım takibi",
+       "desc": "Windows'un hangi programı ne sıklıkla açtığınızı saymasını durdurur. Başlat menüsünün 'en çok kullanılan' sıralaması bu sayıma dayanır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+         "value": "NoInstrumentation",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-track-docs",
+       "name": "Atlama listelerinde son öğeler",
+       "desc": "Görev çubuğu ve Başlat menüsündeki atlama listelerinin son açılan dosyaları göstermesini kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "Start_TrackDocs",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-track-progs",
+       "name": "Başlat menüsünde son eklenen uygulamalar",
+       "desc": "Yeni kurulan bir uygulamanın Başlat menüsünde vurgulanmasını ve en çok kullanılanlar listesinin oluşmasını engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+         "value": "Start_TrackProgs",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-search-history",
+       "name": "Cihaz arama geçmişi",
+       "desc": "Başlat ve Gezgin'de yaptığınız aramaların bu makinede saklanmasını kapatır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\SearchSettings",
+         "value": "IsDeviceSearchHistoryEnabled",
+         "type": "DWORD",
+         "on": "0",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-autocomplete-history",
+       "name": "Adres çubuğu geçmişi önerileri",
+       "desc": "Gezgin ve Çalıştır kutusunun daha önce yazdığınız yolları önermesini kapatır. Yollar yine kaydedilir; yalnızca öneri olarak sunulmaz.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\AutoComplete",
+         "value": "Append Completion",
+         "type": "SZ",
+         "on": "no",
+         "off": "yes"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Önbellek denetimi",
+     "tweaks": [
+      {
+       "id": "cln-thumbnail-cache",
+       "name": "Küçük resim önbelleği",
+       "desc": "Gezgin'in küçük resimleri diske yazmasını durdurur. Klasörler her açılışta yeniden üretir — biraz yavaş, karşılığında thumbcache dosyaları büyümez.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+         "value": "DisableThumbnailCache",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-thumbs-network",
+       "name": "Ağ klasörlerinde Thumbs.db",
+       "desc": "Ağ paylaşımlarında Windows'un Thumbs.db dosyaları bırakmasını engeller.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+         "value": "DisableThumbsDBOnNetworkFolders",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-prefetch",
+       "name": "Prefetch davranışı",
+       "desc": "Windows'un hangi dosyaların önceden okunacağını öğrenmesi. SSD'de kazancı küçüktür ama sıfır değildir; kapatmak Prefetch klasörünün büyümesini durdurur.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management\\PrefetchParameters",
+         "value": "EnablePrefetcher",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Kapalı",
+         "data": "0"
+        },
+        {
+         "label": "Yalnızca uygulama",
+         "data": "1"
+        },
+        {
+         "label": "Yalnızca önyükleme",
+         "data": "2"
+        },
+        {
+         "label": "Uygulama ve önyükleme",
+         "data": "3"
+        }
+       ],
+       "default": 3,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-dns-cache-ttl",
+       "name": "DNS önbellek yaşam süresi",
+       "desc": "Çözülen bir adresin önbellekte kaç saniye tutulacağı. Yükseltmek tekrarlanan sorguları azaltır, düşürmek IP değişikliklerini daha çabuk fark ettirir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\Dnscache\\Parameters",
+         "value": "MaxCacheTtl",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 3600,
+        "max": 86400,
+        "step": 3600,
+        "unit": "sn",
+        "default": 86400
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-dns-negative-ttl",
+       "name": "Başarısız DNS sorgusu önbelleği",
+       "desc": "Çözülemeyen bir adın kaç saniye 'çözülemez' olarak hatırlanacağı. Düşük tutmak, yeni yayına alınan bir adresin daha çabuk bulunmasını sağlar.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\Dnscache\\Parameters",
+         "value": "MaxNegativeCacheTtl",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 0,
+        "max": 300,
+        "step": 30,
+        "unit": "sn",
+        "default": 5
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-do-cache-size",
+       "name": "Teslim iyileştirme önbellek boyutu",
+       "desc": "Windows'un güncelleme parçalarını başkalarına dağıtmak için ayırdığı disk yüzdesi.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization",
+         "value": "DOPercentageMaxForegroundBandwidth",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 5,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "default": 100
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-do-cache-age",
+       "name": "Teslim iyileştirme önbellek ömrü",
+       "desc": "İndirilen güncelleme parçalarının önbellekte kaç gün tutulacağı.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization",
+         "value": "DOMaxCacheAge",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 1,
+        "max": 30,
+        "step": 1,
+        "unit": "gün",
+        "default": 7
+       },
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Olay günlüğü",
+     "tweaks": [
+      {
+       "id": "cln-evt-application",
+       "name": "Uygulama günlüğü boyutu",
+       "desc": "Uygulama olay günlüğünün en fazla ne kadar yer kaplayacağı. Dolunca en eski kayıtların üzerine yazılır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application",
+         "value": "MaxSize",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "20 MB",
+         "data": "20971520"
+        },
+        {
+         "label": "50 MB",
+         "data": "52428800"
+        },
+        {
+         "label": "100 MB",
+         "data": "104857600"
+        },
+        {
+         "label": "200 MB",
+         "data": "209715200"
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-evt-system",
+       "name": "Sistem günlüğü boyutu",
+       "desc": "Sistem olay günlüğünün üst sınırı. Genel Bakış'taki 'kritik olay' satırı bu günlüğü okur, yani küçük tutmak geçmişi kısaltır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\EventLog\\System",
+         "value": "MaxSize",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "20 MB",
+         "data": "20971520"
+        },
+        {
+         "label": "50 MB",
+         "data": "52428800"
+        },
+        {
+         "label": "100 MB",
+         "data": "104857600"
+        },
+        {
+         "label": "200 MB",
+         "data": "209715200"
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-evt-security",
+       "name": "Güvenlik günlüğü boyutu",
+       "desc": "Güvenlik denetim günlüğünün üst sınırı. Oturum açma ve yetki olaylarını tutar; bir olayı sonradan araştırmak isteyen için büyük tutmak değerlidir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\EventLog\\Security",
+         "value": "MaxSize",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "20 MB",
+         "data": "20971520"
+        },
+        {
+         "label": "50 MB",
+         "data": "52428800"
+        },
+        {
+         "label": "100 MB",
+         "data": "104857600"
+        },
+        {
+         "label": "200 MB",
+         "data": "209715200"
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-evt-autobackup",
+       "name": "Günlük dolunca arşivle",
+       "desc": "Bir olay günlüğü dolduğunda üzerine yazmak yerine dosyayı arşivleyip yenisini açar. Hiçbir kayıt kaybolmaz — karşılığında disk kullanımı sınırsızdır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application",
+         "value": "AutoBackupLogFiles",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\EventLog\\System",
+         "value": "AutoBackupLogFiles",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-powershell-logging",
+       "name": "PowerShell betik blok kaydı",
+       "desc": "Çalıştırılan her PowerShell komutunu olay günlüğüne yazar. Bir olaydan sonra ne çalıştığını görebilmenin en güvenilir yolu; günlük hızlı büyür.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\PowerShell\\ScriptBlockLogging",
+         "value": "EnableScriptBlockLogging",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      }
+     ]
+    },
+    {
+     "title": "Kapanış",
+     "tweaks": [
+      {
+       "id": "cln-shutdown-clear-mru",
+       "name": "Kapanışta ağ sürücüsü geçmişi",
+       "desc": "Oturum kapanırken eşlenmiş ağ sürücüsü listesini temizler.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+         "value": "NoRecentDocsNetHood",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-shutdown-tempprofile",
+       "name": "Geçici profil verisini sil",
+       "desc": "Geçici bir profille açılan oturumun verisini oturum kapanınca siler. Ortak kullanılan makinelerde profil klasörünün büyümesini engeller.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon",
+         "value": "DeleteRoamingCache",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-shutdown-timeout",
+       "name": "Hizmet kapanma süresi",
+       "desc": "Windows'un kapanırken bir hizmetin durmasını kaç milisaniye bekleyeceği. Kısaltmak kapanışı hızlandırır; çok kısaltmak veri yazan bir hizmeti yarıda keser.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control",
+         "value": "WaitToKillServiceTimeout",
+         "type": "SZ",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 2000,
+        "max": 20000,
+        "step": 1000,
+        "unit": "ms",
+        "default": 5000
+       },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "cln-shutdown-app-timeout",
+       "name": "Uygulama kapanma süresi",
+       "desc": "Yanıt vermeyen bir uygulamanın kapanışta kaç milisaniye bekleneceği.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Desktop",
+         "value": "WaitToKillAppTimeout",
+         "type": "SZ",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "range": {
+        "min": 2000,
+        "max": 20000,
+        "step": 1000,
+        "unit": "ms",
+        "default": 5000
+       },
        "applied": false,
        "on": false
       }

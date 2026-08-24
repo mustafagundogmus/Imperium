@@ -30,6 +30,7 @@ class CategoryRow;
 class LinkLabel;
 class SearchField;
 class SectionHeader;
+class SmoothScrollArea;
 
 class Sidebar : public QWidget
 {
@@ -92,6 +93,7 @@ private:
     int bottomBlockHeight() const;
 
     SearchField *m_search = nullptr;
+    SmoothScrollArea *m_listScroll = nullptr;
     QWidget *m_list = nullptr;
     CategoryRow *m_settings = nullptr;
     CategoryRow *m_actions = nullptr;

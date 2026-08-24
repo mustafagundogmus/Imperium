@@ -7,6 +7,7 @@
 #include "../widgets/categoryrow.h"
 #include "../widgets/searchfield.h"
 #include "../widgets/sectionheader.h"
+#include "../widgets/smoothscrollarea.h"
 
 #include <QPainter>
 
@@ -54,7 +55,7 @@ const QString AboutIcon = QStringLiteral(
 struct GroupDef
 {
     const char *labelKey;   ///< i18n key, or nullptr for the ungrouped row (Genel Bakış)
-    const char *ids[6];     ///< category ids, empty-string terminated
+    const char *ids[8];     ///< category ids, empty-string terminated
 };
 
 // Reuses whichever i18n key already carries the right word rather than adding a
@@ -67,12 +68,15 @@ struct GroupDef
 // else, and it read especially oddly sitting in the pinned utility strip at the bottom
 // next to Günlük/Ayarlar/Hakkında, which are meta pages rather than things to act on.
 constexpr GroupDef Groups[] = {
-    { nullptr,                        {"ov", "", "", "", "", ""} },
-    { "settings.section.appearance",  {"vis", "", "", "", "", ""} },
-    { "category.sys",                 {"sys", "svc", "boot", "perf", "debloat", ""} },
-    { "sidebar.group.privacynet",     {"priv", "net", "", "", "", ""} },
-    { "sidebar.group.files",          {"exp", "ctx", "cln", "", "", ""} },
-    { "category.adv",                 {"adv", "", "", "", "", ""} },
+    { nullptr,                        {"ov", "", "", "", "", "", "", ""} },
+    { "settings.section.appearance",  {"vis", "", "", "", "", "", "", ""} },
+    // Windows Update sits next to Sistem because that is what it is; Güç yönetimi next
+    // to Bellek & CPU because the two are read together.
+    { "category.sys",                 {"sys", "upd", "svc", "boot", "perf", "pwr", "debloat", ""} },
+    // Güvenlik sertleştirme belongs beside Gizlilik: the same page of a user's mind.
+    { "sidebar.group.privacynet",     {"priv", "sec", "net", "", "", "", "", ""} },
+    { "sidebar.group.files",          {"exp", "ctx", "cln", "", "", "", "", ""} },
+    { "category.adv",                 {"adv", "", "", "", "", "", "", ""} },
 };
 
 } // namespace
@@ -84,8 +88,19 @@ Sidebar::Sidebar(AppState *state, QWidget *parent)
 
     m_search = new SearchField(this);
 
-    m_list = new QWidget(this);
+    // Inside a scroll area rather than laid straight on the sidebar. The list was a plain
+    // widget clipped to whatever height was left over, so a row past the bottom edge did
+    // not scroll into view — it just was not there. Three more categories would have taken
+    // Gelişmiş off the end of it, and a large interface scale did the same thing already.
+    m_listScroll = new SmoothScrollArea(this);
+    m_listScroll->setFrameShape(QFrame::NoFrame);
+    m_listScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_listScroll->viewport()->setAutoFillBackground(false);
+
+    m_list = new QWidget(m_listScroll);
+    m_list->setAutoFillBackground(false);
     buildList();
+    m_listScroll->setWidget(m_list);
 
     m_journal = new CategoryRow(journalId(), Locale::tr(QStringLiteral("sidebar.journal")), JournalIcon,
                                 QString(), this);
@@ -233,22 +248,36 @@ void Sidebar::resizeEvent(QResizeEvent *e)
     const int listTop = qRound(PadTop + searchH + SearchGapBelow);
     const int blockH = bottomBlockHeight();
     const int listH = qMax(0, height() - blockH - listTop);
-    m_list->setGeometry(qRound(PadX), listTop, contentW, listH);
+    m_listScroll->setGeometry(qRound(PadX), listTop, contentW, listH);
 
     // Group headers get extra air above them; an ordinary row just follows the last
-    // widget by RowGap, whatever it was.
-    int y = 0;
-    bool first = true;
-    for (QWidget *item : std::as_const(m_listItems)) {
-        const bool isHeader = qobject_cast<SectionHeader *>(item) != nullptr;
-        if (!first)
-            y += isHeader ? qRound(GroupGapAbove) : RowGap;
-        first = false;
+    // widget by RowGap, whatever it was. Returns the height the stack came to.
+    const auto layoutRows = [this](int rowW) {
+        int y = 0;
+        bool first = true;
+        for (QWidget *item : std::as_const(m_listItems)) {
+            const bool isHeader = qobject_cast<SectionHeader *>(item) != nullptr;
+            if (!first)
+                y += isHeader ? qRound(GroupGapAbove) : RowGap;
+            first = false;
 
-        const int h = isHeader ? item->sizeHint().height() : Theme::Metric::CategoryHeight;
-        item->setGeometry(0, y, contentW, h);
-        y += h;
+            const int h = isHeader ? item->sizeHint().height() : Theme::Metric::CategoryHeight;
+            item->setGeometry(0, y, rowW, h);
+            y += h;
+        }
+        return y;
+    };
+
+    // Measured at full width first, and laid out again 8px narrower only if the result
+    // does not fit — asking the viewport for its width instead would answer with whatever
+    // it was before this geometry was set, which on the first pass is nothing like right.
+    int rowW = contentW;
+    int listContentH = layoutRows(rowW);
+    if (listContentH > listH) {
+        rowW = qMax(0, contentW - Theme::Metric::ScrollBarWidth);
+        listContentH = layoutRows(rowW);
     }
+    m_list->setFixedSize(rowW, listContentH);
 
     m_journal->setGeometry(qRound(PadX), qRound(journalRowTop()),
                            contentW, Theme::Metric::CategoryHeight);

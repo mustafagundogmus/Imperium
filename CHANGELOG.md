@@ -51,6 +51,67 @@ sayfayı tazeler:
 
 Yeni blokların yüz çeviri anahtarı on dilin tamamına eklendi.
 
+#### 143 yeni tweak, üç yeni kategori
+
+Katalog **268'den 411 tweak'e** çıktı. Kaynaklar aktif olarak bakımı yapılan projeler
+üzerinden tarandı: WinUtil'in 66 tweak'inin neredeyse tamamı katalogda zaten vardı,
+Optimizer Ocak 2026'da arşivlenmişti, privacy.sexy'nin geçmiş kaydı tarafı ise tümüyle
+eksikti. Eklenenler bu boşluklardan seçildi.
+
+**Windows Update** — yeni kategori, 30 tweak. Katalogda bu konuda tek bir tweak bile
+yoktu. Otomatik yeniden başlatma, güncelleme davranışı (5 konumlu), özellik ve kalite
+güncellemesi erteleme, sürüm sabitleme (24H2'de kal), sürücüleri WU'dan almama, etkin
+saatler, bildirim düzeyi, Insider derlemeleri, teslim iyileştirme modu (7 konumlu);
+Windows Hata Raporlama, kilitlenme dökümü türü, DiagTrack; ayrılmış depolama, geri
+yükleme noktası sıklık sınırı, Depolama Duyarlığı.
+
+**Güvenlik sertleştirme** — yeni kategori, 23 tweak. SmartScreen'in üç ayrı yüzü,
+AutoRun/AutoPlay, Windows Script Host, PowerShell 2.0 motoru, LSA korumalı süreç,
+anonim SID sayımı, LM karması, WDigest, uzaktan kayıt defteri, RDP NLA, SMBv1,
+SMB imzalama, WPAD, IP kaynak yönlendirme, ICMP yönlendirme, Defender bulut/PUA/ağ
+koruması, PrintNightmare'in kapatıldığı spooler ayarı, Point and Print, Office makroları.
+
+**Güç yönetimi** — yeni kategori, 11 tweak. USB seçmeli askıya alma, USB denetleyici
+uyutma, PCIe ASPM, modern bekleme (S0) yerine S3, hazırda bekletme dosyası ve boyutu,
+kapak kapanma eylemi, uyku düğmesi, pil tasarrufu eşiği, uyarlanır parlaklık.
+
+**Temizlik** 3'ten 26'ya. Geçmiş kaydı (son belgeler, program kullanım takibi, atlama
+listeleri, arama geçmişi, adres çubuğu önerileri), önbellek denetimi (küçük resim,
+Prefetch, DNS TTL, teslim iyileştirme), olay günlüğü boyutları ve PowerShell betik blok
+kaydı, kapanış zaman aşımları.
+
+**Bellek & CPU** 9'dan 36'ya. MMCSS yanıt payı, ağ kısıtlama dizini,
+Win32PrioritySeparation, DisablePagingExecutive, svchost gruplama eşiği, çekirdek park
+etme, güç kısma, SysMain; NTFS son erişim damgası ve 8.3 kısa ad; GameDVR'ın üç anahtarı,
+Game Bar, Auto HDR, VRR, tam ekran optimizasyonları, fare ivmelenmesi.
+
+**Ağ & İnternet** 18'den 30'a — yığın ayarı: TCP otomatik ayarlama, Nagle, QoS ayrılmış
+bant genişliği, LLMNR, NetBIOS, mDNS, Wi-Fi Sense, ağ bulma, TIME_WAIT süresi, Teredo.
+
+**Menü ekleri** 9'dan 20'ye. Yol olarak kopyala, SHA256 karması, engellemeyi kaldır,
+farklı kullanıcı olarak çalıştır, burada PowerShell/Terminal aç, geri dönüşüm kutusunu
+boşalt, yanıt vermeyen görevleri sonlandır, ekranı kapat, BitLocker menü girdisini kaldır.
+
+**Ses ve çevre birimleri** — Sistem altında yeni bölüm, 6 tweak.
+
+Yeni tweak'lerin 143'ünün de adı ve açıklaması **on dilin tamamına** çevrildi; yeni
+kategori, bölüm ve seçenek etiketleriyle birlikte 302 yeni anahtar. Çeviri tablosu artık
+1533 anahtar taşıyor ve hiçbiri eksik dil içermiyor.
+
+Bir not: seçilen gruplardan ikisi kayıt defteriyle temsil edilemiyordu ve o şekilde
+eklenmedi. Zamanlanmış görevlerin tek tek açık/kapalı durumu kayıt defterinde geri
+alınabilir biçimde durmaz — bunun yerine ilke anahtarı olan dördü (uygulama uyumluluk
+değerlendiricisi, zamanlanmış tanılama, MSDT, Xbox oyun kaydetme) tweak olarak eklendi.
+Aynı şekilde "son kullanılan izleri" listelerinin çoğu bir anahtarla kapatılmaz,
+temizlenir; kaydın kendisini durduran yedi anahtar tweak olarak eklendi.
+
+### Düzeltildi
+
+- **Kenar çubuğu listesi kaydırılabilir hâle geldi.** Liste sabit yükseklikte düz bir
+  widget'tı ve alta taşan satır görünmüyordu — kaydırmıyor, hiç çizilmiyordu. Üç yeni
+  kategori Gelişmiş'i listenin dışına itecekti; büyük arayüz ölçeğinde aynısı zaten
+  oluyordu.
+
 #### Bilgi satırlarında iki satırlı düzen
 
 `InfoRow` artık `stacked` taşıyor: etiket üstte, değer altında, ikisi de kartın tam
