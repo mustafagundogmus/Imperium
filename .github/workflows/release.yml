@@ -156,6 +156,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          gh release upload "${{ needs.publish.outputs.tag }}" \
-            "Arbitrium-v${{ needs.publish.outputs.version }}-win64.zip" --clobber
-          echo "attached Arbitrium-v${{ needs.publish.outputs.version }}-win64.zip"
+          tag="${{ needs.publish.outputs.tag }}"
+          zip="Arbitrium-v${{ needs.publish.outputs.version }}-win64.zip"
+          gh release upload "$tag" "$zip" --clobber
+
+          # Read it back off the release rather than trusting the upload's exit code. The
+          # release notes name this file too, so anything that greps the release for the
+          # name finds a match whether or not the asset is there — asking for the asset
+          # list by name is the only answer that means what it looks like it means.
+          gh release view "$tag" --json assets --jq '.assets[].name' | grep -Fxq "$zip"
+          echo "$zip is on the release"
