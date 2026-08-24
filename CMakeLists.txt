@@ -80,7 +80,17 @@ set(PROJECT_SOURCES
 # token at launch. Listing the manifest as a source is also what stops Qt generating its
 # own asInvoker one — see the comment in the file.
 if(WIN32)
-    list(APPEND PROJECT_SOURCES app.rc resources/Arbitrium.manifest)
+    list(APPEND PROJECT_SOURCES app.rc)
+
+    # The manifest reaches the executable through app.rc's RT_MANIFEST resource on every
+    # toolchain, and only through that. Handing it to CMake as a source as well makes the
+    # MSVC link feed it to mt.exe, which then has two manifests to merge: ours, asking for
+    # requireAdministrator, and the linker's own UAC fragment, which says asInvoker. mt.exe
+    # refuses — "Values of attribute level not equal in different manifest snippets" — and
+    # the link fails. /MANIFEST:NO below keeps the linker out of it entirely.
+    if(NOT MSVC)
+        list(APPEND PROJECT_SOURCES resources/Arbitrium.manifest)
+    endif()
 
     # app.rc and the manifest each keep their own copy of the version, because neither
     # windres nor the manifest can be handed one portably. A copy that nothing checks is
@@ -154,6 +164,12 @@ if(MINGW)
             -static -static-libgcc -static-libstdc++ -Wl,--gc-sections)
     endif()
     target_link_options(Arbitrium PRIVATE $<$<CONFIG:Release>:-s>)
+endif()
+
+# See the manifest note above: app.rc already embeds it, so the linker must not embed a
+# second one. Without this the MSVC build cannot link at all.
+if(MSVC)
+    target_link_options(Arbitrium PRIVATE /MANIFEST:NO)
 endif()
 
 # The UI is Turkish; keep the source and execution charsets on UTF-8 so ı/İ/ş/ğ survive.
