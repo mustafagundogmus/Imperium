@@ -4,7 +4,7 @@ Bu dosya sürümler arasındaki dikkate değer değişiklikleri listeler.
 Biçim [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) temellidir ve
 proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
-## [Yayımlanmadı]
+## [0.9.8] — 2026-08-24
 
 ### Eklendi
 
@@ -198,3 +198,8 @@ satırdan geniş bir değer sol kenardan taşarak çiziliyordu.
 - Değişken gölgeleme giderildi (`appstate.cpp` `stashed`, `main.cpp` `path`);
   `-Wshadow` ile derleme artık uyarısız.
 - `ApplyOverlay::m_dryRun` kaldırıldı — hiç okunmayan bir üye.
+
+---
+
+[0.9.8]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.8
+[0.9.7]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.7
