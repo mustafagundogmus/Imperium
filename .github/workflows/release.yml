@@ -58,6 +58,27 @@ jobs:
             || { echo "::error::the manifest does not carry $version.0"; exit 1; }
           echo "version $version checks out in all three files"
 
+      - name: Point the tag at this commit
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${{ steps.resolve.outputs.tag }}"
+
+          # On a tag push this is already true and the call is a no-op. On a dispatch it is
+          # the whole point: the tag was created by an earlier run and does not move on its
+          # own, so `build` would keep checking out the commit that first carried the tag
+          # and keep failing on a bug fixed on the branch. Re-running the workflow has to
+          # mean re-running it against what the branch says now.
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$tag" >/dev/null 2>&1; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/$tag" \
+              -f sha="$GITHUB_SHA" -F force=true >/dev/null
+            echo "$tag now points at $GITHUB_SHA"
+          else
+            echo "$tag does not exist yet; the release step creates it"
+          fi
+
       - name: Collect the notes
         shell: bash
         run: |

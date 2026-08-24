@@ -168,8 +168,16 @@ endif()
 
 # See the manifest note above: app.rc already embeds it, so the linker must not embed a
 # second one. Without this the MSVC build cannot link at all.
+#
+# Both flags, because they fail differently. /MANIFEST:NO is the one that matters, and it
+# only holds while nothing appends /MANIFEST:EMBED after it — CMake does exactly that for
+# a target with a .manifest source, and link.exe takes the last flag it is given, which is
+# how this was failing. /MANIFESTUAC:NO removes the reason the merge could not succeed:
+# the linker's own asInvoker fragment, which cannot be reconciled with app.rc's
+# requireAdministrator. If anything ever puts manifest generation back, it now generates
+# something mt.exe can merge instead of stopping the link.
 if(MSVC)
-    target_link_options(Arbitrium PRIVATE /MANIFEST:NO)
+    target_link_options(Arbitrium PRIVATE /MANIFEST:NO /MANIFESTUAC:NO)
 endif()
 
 # The UI is Turkish; keep the source and execution charsets on UTF-8 so ı/İ/ş/ğ survive.
