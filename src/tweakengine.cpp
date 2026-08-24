@@ -191,22 +191,25 @@ QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak
 
     for (const auto &request : requests) {
         const Tweak *tweak = request.first;
-        const int wanted = qBound(0, request.second, int(tweak->options.size()) - 1);
 
         Outcome outcome;
         outcome.id = tweak->id;
 
+        // Before the clamp below, not after: qBound requires min <= max, and a tweak with
+        // no options makes the max -1.
         if (tweak->reg.isEmpty() || tweak->options.isEmpty()) {
             outcome.error = Locale::tr(QStringLiteral("err.noRegDef"));
             outcomes.append(outcome);
             continue;
         }
 
+        const int wanted = qBound(0, request.second, int(tweak->options.size()) - 1);
+
         // The rows for these cannot be operated, but a preset file can still name them,
         // so the refusal lives here as well as in the UI.
         if (!tweak->editable()) {
-            outcome.error = tweak->locked ? QStringLiteral("bu hizmet kilitli")
-                                          : Locale::tr(QStringLiteral("err.notOnThisBuild"));
+            outcome.error = Locale::tr(tweak->locked ? QStringLiteral("err.serviceLocked")
+                                                     : QStringLiteral("err.notOnThisBuild"));
             outcomes.append(outcome);
             continue;
         }
@@ -245,8 +248,6 @@ QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak
             QString type = entry.type;
             QString target = option.data.value(i);
 
-            journal(*tweak, i, entry, target);
-
             // Restoring writes what this machine actually had, not the catalogue's idea
             // of the Windows default — those differ whenever something else had already
             // written the value.
@@ -269,6 +270,12 @@ QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak
                     outcome.restoredOriginal = true;
                 }
             }
+
+            // Journalled after `target` has settled, so the record names the value this
+            // write actually puts there. Journalling the catalogue's target first meant
+            // a restore recorded — and the Log page then offered to undo — a value that
+            // was never written.
+            journal(*tweak, i, entry, target);
 
             QString error;
             bool ok;

@@ -1,5 +1,4 @@
 #include "startup.h"
-#include "i18n.h"
 #include "registry.h"
 
 #include <QDir>
@@ -71,7 +70,7 @@ void collectRun(const QString &hive, const QString &runPath, const QString &appr
     }
 }
 
-void collectFolder(const QString &hive, const QString &folder, const QString &source,
+void collectFolder(const QString &hive, const QString &folder, const QString &sourceKey,
                    QVector<Entry> *out)
 {
     const QFileInfoList files = QDir(folder).entryInfoList(
@@ -83,7 +82,7 @@ void collectFolder(const QString &hive, const QString &folder, const QString &so
         Entry entry;
         entry.name = file.completeBaseName();
         entry.command = QDir::toNativeSeparators(file.absoluteFilePath());
-        entry.source = source;
+        entry.sourceKey = sourceKey;
         entry.approvedHive = hive;
         entry.approvedPath = ApprovedBase + QStringLiteral("StartupFolder");
         entry.approvedValue = file.fileName();
@@ -125,12 +124,12 @@ QVector<Entry> enumerate()
         QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)
         + QStringLiteral("/Startup");
     collectFolder(QStringLiteral("HKCU"), userStartup,
-                  Locale::tr(QStringLiteral("startup.baslangicKlasoru")), &entries);
+                  QStringLiteral("startup.baslangicKlasoru"), &entries);
 
     const QString commonStartup = qEnvironmentVariable("ProgramData")
                                   + QStringLiteral("/Microsoft/Windows/Start Menu/Programs/StartUp");
     collectFolder(QStringLiteral("HKLM"), commonStartup,
-                  Locale::tr(QStringLiteral("startup.baslangicKlasoruTumKullanicilar")), &entries);
+                  QStringLiteral("startup.baslangicKlasoruTumKullanicilar"), &entries);
 #endif
 
     return entries;

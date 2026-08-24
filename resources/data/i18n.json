@@ -1883,6 +1883,30 @@
   "ru": "не удалось записать файл сценария",
   "tr": "betik dosyası yazılamadı"
  },
+ "err.serviceLocked": {
+  "ar": "هذه الخدمة مقفلة",
+  "de": "dieser Dienst ist gesperrt",
+  "en": "this service is locked",
+  "es": "este servicio está bloqueado",
+  "fr": "ce service est verrouillé",
+  "it": "questo servizio è bloccato",
+  "pl": "ta usługa jest zablokowana",
+  "pt": "este serviço está bloqueado",
+  "ru": "эта служба заблокирована",
+  "tr": "bu hizmet kilitli"
+ },
+ "err.windowsCode": {
+  "ar": "رمز خطأ Windows %1",
+  "de": "Windows-Fehlercode %1",
+  "en": "Windows error code %1",
+  "es": "código de error de Windows %1",
+  "fr": "code d'erreur Windows %1",
+  "it": "codice di errore di Windows %1",
+  "pl": "kod błędu systemu Windows %1",
+  "pt": "código de erro do Windows %1",
+  "ru": "код ошибки Windows %1",
+  "tr": "Windows hata kodu %1"
+ },
  "err.windowsOnly": {
   "ar": "لنظام Windows فقط",
   "de": "nur unter Windows",
@@ -2074,6 +2098,54 @@
   "pt": "chave eliminada",
   "ru": "ключ удалён",
   "tr": "anahtar silindi"
+ },
+ "mw.confirm.apply": {
+  "ar": "تطبيق",
+  "de": "Übernehmen",
+  "en": "Apply",
+  "es": "Aplicar",
+  "fr": "Appliquer",
+  "it": "Applica",
+  "pl": "Zastosuj",
+  "pt": "Aplicar",
+  "ru": "Применить",
+  "tr": "Uygula"
+ },
+ "mw.confirm.body": {
+  "ar": "يتم تسجيل القيمة السابقة قبل كل عملية كتابة؛ ويمكنك التراجع عن كل منها على حدة من صفحة السجل.",
+  "de": "Vor jedem Schreibvorgang wird der vorherige Wert protokolliert; auf der Protokollseite lässt sich jeder einzeln zurücknehmen.",
+  "en": "The previous value is journalled before every write; you can revert each one individually from the Log page.",
+  "es": "El valor anterior se registra antes de cada escritura; puedes revertir cada uno por separado desde la página Registro.",
+  "fr": "La valeur précédente est journalisée avant chaque écriture ; vous pouvez annuler chacune individuellement depuis la page Journal.",
+  "it": "Il valore precedente viene registrato prima di ogni scrittura; puoi annullarli singolarmente dalla pagina Registro.",
+  "pl": "Poprzednia wartość jest zapisywana w dzienniku przed każdym zapisem; każdą można cofnąć osobno na stronie Dziennik.",
+  "pt": "O valor anterior é registado antes de cada escrita; pode reverter cada um individualmente na página Registo.",
+  "ru": "Прежнее значение записывается в журнал перед каждой записью; каждое можно отменить по отдельности на странице «Журнал».",
+  "tr": "Her yazma öncesinde eski değer günlüğe kaydedilir; Günlük sayfasından tek tek geri alabilirsiniz."
+ },
+ "mw.confirm.cancel": {
+  "ar": "إلغاء",
+  "de": "Abbrechen",
+  "en": "Cancel",
+  "es": "Cancelar",
+  "fr": "Annuler",
+  "it": "Annulla",
+  "pl": "Anuluj",
+  "pt": "Cancelar",
+  "ru": "Отмена",
+  "tr": "Vazgeç"
+ },
+ "mw.confirm.title": {
+  "ar": "سيتم تطبيق %1 تغييرًا",
+  "de": "%1 Änderungen werden übernommen",
+  "en": "%1 changes will be applied",
+  "es": "Se aplicarán %1 cambios",
+  "fr": "%1 modifications vont être appliquées",
+  "it": "Verranno applicate %1 modifiche",
+  "pl": "Zostanie zastosowanych zmian: %1",
+  "pt": "Serão aplicadas %1 alterações",
+  "ru": "Будет применено изменений: %1",
+  "tr": "%1 değişiklik uygulanacak"
  },
  "mw.elevate.body": {
   "ar": "هل تريد إعادة تشغيل التطبيق كمسؤول؟ سيتم الاحتفاظ بالمفاتيح المعلّقة ويمكنك تطبيقها مرة أخرى بعد إعادة التشغيل.",
@@ -3742,6 +3814,30 @@
   "pt": "Não foi possível obter a propriedade: %1",
   "ru": "Не удалось получить владение: %1",
   "tr": "Sahiplik alınamadı: %1"
+ },
+ "own.gaveBack": {
+  "ar": "تم إرجاع الملكية إلى TrustedInstaller: %1",
+  "de": "Besitz an TrustedInstaller zurückgegeben: %1",
+  "en": "Ownership handed back to TrustedInstaller: %1",
+  "es": "Propiedad devuelta a TrustedInstaller: %1",
+  "fr": "Propriété rendue à TrustedInstaller : %1",
+  "it": "Proprietà restituita a TrustedInstaller: %1",
+  "pl": "Własność zwrócona do TrustedInstaller: %1",
+  "pt": "Propriedade devolvida ao TrustedInstaller: %1",
+  "ru": "Владение возвращено TrustedInstaller: %1",
+  "tr": "Sahiplik TrustedInstaller'a verildi: %1"
+ },
+ "own.giveBackFailed": {
+  "ar": "تعذّر إرجاع الملكية: %1",
+  "de": "Besitz konnte nicht zurückgegeben werden: %1",
+  "en": "Ownership could not be handed back: %1",
+  "es": "No se pudo devolver la propiedad: %1",
+  "fr": "Impossible de rendre la propriété : %1",
+  "it": "Impossibile restituire la proprietà: %1",
+  "pl": "Nie udało się zwrócić własności: %1",
+  "pt": "Não foi possível devolver a propriedade: %1",
+  "ru": "Не удалось вернуть владение: %1",
+  "tr": "Sahiplik geri verilemedi: %1"
  },
  "own.notFound": {
   "ar": "لم يُعثر عليه: %1",
@@ -5819,6 +5915,18 @@
   "ru": "Отменить",
   "tr": "Geri al"
  },
+ "svc.lockReason": {
+  "ar": "يعتمد Windows على هذه الخدمة للعمل؛ لا يمكن تغيير نوع بدء تشغيلها من هنا",
+  "de": "Windows ist auf diesen Dienst angewiesen; der Starttyp kann hier nicht geändert werden",
+  "en": "Windows depends on this service to run; its start type cannot be changed here",
+  "es": "Windows depende de este servicio para funcionar; su tipo de inicio no se puede cambiar aquí",
+  "fr": "Windows dépend de ce service pour fonctionner ; son type de démarrage ne peut pas être modifié ici",
+  "it": "Windows dipende da questo servizio per funzionare; il tipo di avvio non può essere modificato qui",
+  "pl": "Działanie systemu Windows zależy od tej usługi; typu uruchamiania nie można tu zmienić",
+  "pt": "O Windows depende deste serviço para funcionar; o tipo de arranque não pode ser alterado aqui",
+  "ru": "Работа Windows зависит от этой службы; тип запуска здесь изменить нельзя",
+  "tr": "Windows'un çalışması bu hizmete bağlı; başlatma türü buradan değiştirilemez"
+ },
  "svc.opt.auto": {
   "ar": "تلقائي",
   "de": "Automatisch",
@@ -5867,6 +5975,18 @@
   "ru": "Вручную",
   "tr": "Elle"
  },
+ "svc.riskPrefix": {
+  "ar": "تنبيه: ",
+  "de": "Achtung: ",
+  "en": "caution: ",
+  "es": "atención: ",
+  "fr": "attention : ",
+  "it": "attenzione: ",
+  "pl": "uwaga: ",
+  "pt": "atenção: ",
+  "ru": "внимание: ",
+  "tr": "dikkat: "
+ },
  "svc.running": {
   "ar": "قيد التشغيل",
   "de": "wird ausgeführt",
@@ -5878,6 +5998,30 @@
   "pt": "em execução",
   "ru": "выполняется",
   "tr": "çalışıyor"
+ },
+ "svc.sectionTitle": {
+  "ar": "خدمات Windows",
+  "de": "Windows-Dienste",
+  "en": "Windows services",
+  "es": "Servicios de Windows",
+  "fr": "Services Windows",
+  "it": "Servizi di Windows",
+  "pl": "Usługi systemu Windows",
+  "pt": "Serviços do Windows",
+  "ru": "Службы Windows",
+  "tr": "Windows hizmetleri"
+ },
+ "svc.stopped": {
+  "ar": "متوقفة",
+  "de": "beendet",
+  "en": "stopped",
+  "es": "detenido",
+  "fr": "arrêté",
+  "it": "arrestato",
+  "pl": "zatrzymana",
+  "pt": "parado",
+  "ru": "остановлена",
+  "tr": "durdu"
  },
  "sys.acik": {
   "ar": "مفعّل",
@@ -9994,6 +10138,18 @@
   "pt": "Lista de idiomas para sites",
   "ru": "Список языков для веб-сайтов",
   "tr": "Web sitelerine dil listesi"
+ },
+ "tweak.req.build": {
+  "ar": "الإصدار %1",
+  "de": "Build %1",
+  "en": "build %1",
+  "es": "compilación %1",
+  "fr": "build %1",
+  "it": "build %1",
+  "pl": "kompilacja %1",
+  "pt": "compilação %1",
+  "ru": "сборка %1",
+  "tr": "derleme %1"
  },
  "tweak.req.max": {
   "ar": "كان ساريًا في %1 وما قبله؛ يُتجاهل في هذا الإصدار",

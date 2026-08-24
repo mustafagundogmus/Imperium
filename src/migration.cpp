@@ -48,11 +48,25 @@ bool contextMenuRework()
 /// to put the entry that hands ownership back, and on an .exe the shell picks its own
 /// "Run as administrator" over ours. Both entries now call Arbitrium, which elevates by
 /// manifest. The keys under the old name are no longer named by any tweak.
+///
+/// `runas` is a name Windows itself defines, though, and it is one any other program is
+/// free to register — a plain "Run as administrator on every file type" entry is one of
+/// the most widely copied registry tweaks there is. Deleting the key because 0.9.4 might
+/// have written it would take that entry with it on every machine that never ran 0.9.4
+/// at all. So the command is read first, and the key goes only when it is ours: the verb
+/// this app wrote invokes this executable with --own or --disown, and nothing else does.
 bool ownershipVerbs()
 {
     bool ok = true;
     for (const QString &path : {QStringLiteral("*\\shell\\runas"),
                                 QStringLiteral("Directory\\shell\\runas")}) {
+        const Registry::Value command =
+            Registry::read(Registry::Hive::HKCR, path + QStringLiteral("\\command"), QString());
+        if (!command.exists)
+            continue;   // nothing there, or somebody else's verb with no command
+        if (!command.data.contains(QLatin1String("--own"))
+            && !command.data.contains(QLatin1String("--disown")))
+            continue;   // somebody else's "Run as administrator" — not ours to delete
         ok = Registry::removeKey(Registry::Hive::HKCR, path) && ok;
     }
     return ok;

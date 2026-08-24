@@ -16,34 +16,30 @@ AppState::AppState(TweakEngine *engine, QObject *parent)
     // only a fallback for entries the engine cannot read.
     const QHash<QString, int> live = m_engine ? m_engine->readAll() : QHash<QString, int>();
 
-    for (const Category &c : Catalog::instance().categories()) {
-        for (const Section &s : c.sections) {
-            for (const Tweak &t : s.tweaks) {
-                const int fallback = t.applied ? 1 : t.defaultOption;
-                const int applied = live.contains(t.id) ? live.value(t.id) : fallback;
-                m_applied.insert(t.id, applied);
-                m_on.insert(t.id, applied);
-                m_default.insert(t.id, t.defaultOption);
-                if (applied != t.defaultOption)
-                    ++m_appliedCount;
-            }
-        }
-    }
+    forEachTweak(Catalog::instance(), [&](const Tweak &t) {
+        const int fallback = t.applied ? 1 : t.defaultOption;
+        const int applied = live.contains(t.id) ? live.value(t.id) : fallback;
+        m_applied.insert(t.id, applied);
+        m_on.insert(t.id, applied);
+        m_default.insert(t.id, t.defaultOption);
+        if (applied != t.defaultOption)
+            ++m_appliedCount;
+    });
 
     // Pick up anything stashed before an elevated relaunch.
     QSettings settings;
     settings.beginGroup(StashGroup);
-    const QStringList stashed = settings.childKeys();
-    for (const QString &id : stashed) {
+    const QStringList stashedIds = settings.childKeys();
+    for (const QString &id : stashedIds) {
         if (!m_on.contains(id))
             continue;
         // Stashes written before positions existed hold true/false.
-        const QVariant stashed = settings.value(id);
-        m_on[id] = stashed.typeId() == QMetaType::Bool ? (stashed.toBool() ? 1 : 0)
-                                                       : stashed.toInt();
+        const QVariant value = settings.value(id);
+        m_on[id] = value.typeId() == QMetaType::Bool ? (value.toBool() ? 1 : 0)
+                                                     : value.toInt();
     }
     settings.endGroup();
-    if (!stashed.isEmpty()) {
+    if (!stashedIds.isEmpty()) {
         settings.remove(StashGroup);
         recomputePending();
     }
@@ -51,6 +47,19 @@ AppState::AppState(TweakEngine *engine, QObject *parent)
     const QVariant stamp = settings.value(QStringLiteral("state/lastApplied"));
     if (stamp.isValid())
         m_lastApplied = stamp.toDateTime();
+}
+
+void AppState::noteAppliedMove(const QString &id, int was, int now)
+{
+    // "Applied" counts the tweaks sitting anywhere other than the position Windows ships,
+    // so a move only changes the total when it crosses that position — in one direction
+    // or the other. The same six lines were copied into applyPending(), applyOne() and
+    // refreshFromMachine(), which is three chances for the two arms to drift apart.
+    const int fallback = m_default.value(id, 0);
+    if (now != fallback && was == fallback)
+        ++m_appliedCount;
+    else if (now == fallback && was != fallback)
+        --m_appliedCount;
 }
 
 void AppState::recomputePending()
@@ -111,15 +120,11 @@ void AppState::refreshFromMachine(const QString &id)
         return;
 
     const int now = m_engine->currentOption(*tweak);
-    const int fallback = m_default.value(id, 0);
     const int was = m_applied.value(id, 0);
     if (now == was && m_on.value(id, 0) == now)
         return;
 
-    if (now != fallback && was == fallback)
-        ++m_appliedCount;
-    else if (now == fallback && was != fallback)
-        --m_appliedCount;
+    noteAppliedMove(id, was, now);
 
     m_applied[id] = now;
     m_on[id] = now;
@@ -182,14 +187,10 @@ AppState::ApplyReport AppState::applyPending()
 
     for (const TweakEngine::Outcome &outcome : outcomes) {
         if (outcome.ok) {
-            const int fallback = m_default.value(outcome.id, 0);
             const int now = m_on.value(outcome.id, 0);
             const int was = m_applied.value(outcome.id, 0);
             m_applied[outcome.id] = now;
-            if (now != fallback && was == fallback)
-                ++m_appliedCount;
-            else if (now == fallback && was != fallback)
-                --m_appliedCount;
+            noteAppliedMove(outcome.id, was, now);
             m_pending.remove(outcome.id);
             ++report.succeeded;
         } else {
@@ -230,15 +231,12 @@ AppState::StepOutcome AppState::applyOne(const QString &id)
     const TweakEngine::Outcome &result = results.first();
     outcome.ok = result.ok;
     outcome.elevationRequired = result.elevationRequired;
+    outcome.error = result.error;
 
     if (result.ok) {
-        const int fallback = m_default.value(id, 0);
         const int was = m_applied.value(id, 0);
         m_applied[id] = desired;
-        if (desired != fallback && was == fallback)
-            ++m_appliedCount;
-        else if (desired == fallback && was != fallback)
-            --m_appliedCount;
+        noteAppliedMove(id, was, desired);
         m_pending.remove(id);
 
         m_lastApplied = QDateTime::currentDateTime();

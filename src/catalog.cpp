@@ -29,6 +29,10 @@ QString Tweak::targetSummary() const
 
 QString TweakOption::displayLabel() const
 {
+    // A synthesised position names itself by key, so it follows the interface language
+    // instead of freezing in whichever one the catalogue was built in.
+    if (!labelKey.isEmpty())
+        return Locale::tr(labelKey);
     if (label.isEmpty())
         return label;
     // A range tweak's labels are numbers with a unit; there is nothing to translate and a
@@ -38,24 +42,54 @@ QString TweakOption::displayLabel() const
     return Locale::content(QStringLiteral("opt.") + label, label);
 }
 
+QString LiveDescription::text() const
+{
+    QStringList parts;
+    if (!leadKey.isEmpty())
+        parts << Locale::tr(leadKey);
+    else if (!lead.isEmpty())
+        parts << lead;
+    if (!detail.isEmpty())
+        parts << detail;
+    if (!stateKey.isEmpty())
+        parts << Locale::tr(stateKey);
+    if (!note.isEmpty())
+        parts << Locale::tr(QStringLiteral("svc.riskPrefix")) + note;
+    return parts.join(QStringLiteral(" · "));
+}
+
+/// True for a row this app synthesised from the machine rather than read from
+/// catalog.json. Their names are Windows' own, already in the system's language, so
+/// there is nothing here for this app's translation table to improve on.
+///
+/// The startup half used to be spelled "boot-", which is the *category* id — no tweak id
+/// has ever started with it, so every startup row was taking the catalogue lookup path
+/// and only the fallback saved it from showing a raw key.
+static bool isSynthesised(const QString &id)
+{
+    return id.startsWith(QLatin1String("svc-")) || id.startsWith(QLatin1String("startup-"));
+}
+
 QString Tweak::displayName() const
 {
-    // Services and startup items are named by Windows, in the system's own language, so
-    // there is nothing here for this app's translation table to improve on.
-    if (id.startsWith(QLatin1String("svc-")) || id.startsWith(QLatin1String("boot-")))
+    if (isSynthesised(id))
         return name;
     return Locale::content(QStringLiteral("tweak.") + id + QStringLiteral(".name"), name);
 }
 
 QString Tweak::displayDesc() const
 {
-    if (id.startsWith(QLatin1String("svc-")) || id.startsWith(QLatin1String("boot-")))
+    if (live.active)
+        return live.text();
+    if (isSynthesised(id))
         return desc;
     return Locale::content(QStringLiteral("tweak.") + id + QStringLiteral(".desc"), desc);
 }
 
 QString Section::displayTitle() const
 {
+    if (!titleKey.isEmpty())
+        return Locale::tr(titleKey);
     return Locale::content(QStringLiteral("section.") + title, title);
 }
 
@@ -77,7 +111,7 @@ QString buildLabel(int build)
     if (build >= 22621) return QStringLiteral("Windows 11 22H2");
     if (build >= 22000) return QStringLiteral("Windows 11");
     if (build >= 19041) return QStringLiteral("Windows 10 2004");
-    return QStringLiteral("derleme %1").arg(build);
+    return Locale::tr(QStringLiteral("tweak.req.build")).arg(build);
 }
 
 /// Fills in the things a catalogue file cannot know when it is written.
@@ -128,12 +162,17 @@ Catalog::Catalog()
 }
 
 
+Category *Catalog::mutableCategory(const QString &id)
+{
+    for (Category &c : m_categories)
+        if (c.id == id)
+            return &c;
+    return nullptr;
+}
+
 void Catalog::appendServices()
 {
-    Category *category = nullptr;
-    for (Category &c : m_categories)
-        if (c.id == QLatin1String("svc"))
-            category = &c;
+    Category *category = mutableCategory(QStringLiteral("svc"));
     if (!category)
         return;
 
@@ -142,7 +181,7 @@ void Catalog::appendServices()
         return;
 
     Section section;
-    section.title = QStringLiteral("Windows hizmetleri");
+    section.titleKey = QStringLiteral("svc.sectionTitle");
     section.tweaks.reserve(services.size());
 
     for (const Services::Info &service : services) {
@@ -156,12 +195,16 @@ void Catalog::appendServices()
         // The row says what the service *is* — its key and whether it is running — and
         // keeps Windows' paragraph for the tooltip. A sentence elided at the row's edge
         // tells you less than "Spooler · çalışıyor" does.
-        t.desc = QStringLiteral("%1 · %2").arg(service.key,
-                                               service.running ? Locale::tr(QStringLiteral("svc.running"))
-                                                               : QStringLiteral("durdu"));
+        // Assembled at draw time rather than here: the catalogue is built once, so a
+        // sentence joined now would keep the language the app started in for the rest of
+        // the session. "durdu" and the "dikkat:" prefix were also the only two words in
+        // it that had never been given a key at all.
+        t.live.active = true;
+        t.live.lead = service.key;
+        t.live.stateKey = service.running ? QStringLiteral("svc.running")
+                                          : QStringLiteral("svc.stopped");
         // A warning belongs on the row, not only in a tooltip nobody hovers.
-        if (!service.riskNote.isEmpty())
-            t.desc += QStringLiteral(" · dikkat: ") + service.riskNote;
+        t.live.note = service.riskNote;
         t.tooltip = service.description;
         t.locked = service.locked;
         t.lockReason = service.lockReason;
@@ -170,11 +213,12 @@ void Catalog::appendServices()
             {QStringLiteral("HKLM"), path, QStringLiteral("Start"), QStringLiteral("DWORD"), {}, {}},
             {QStringLiteral("HKLM"), path, QStringLiteral("DelayedAutostart"), QStringLiteral("DWORD"), {}, {}},
         };
+        // Named by key, not by resolved text — see TweakOption::labelKey.
         t.options = {
-            {Locale::tr(QStringLiteral("svc.opt.auto")),      {QStringLiteral("2"), QStringLiteral("0")}},
-            {Locale::tr(QStringLiteral("svc.opt.delayed")),   {QStringLiteral("2"), QStringLiteral("1")}},
-            {Locale::tr(QStringLiteral("svc.opt.manual")),    {QStringLiteral("3"), QStringLiteral("0")}},
-            {Locale::tr(QStringLiteral("svc.opt.disabled")),  {QStringLiteral("4"), QStringLiteral("0")}},
+            {{}, {QStringLiteral("2"), QStringLiteral("0")}, QStringLiteral("svc.opt.auto")},
+            {{}, {QStringLiteral("2"), QStringLiteral("1")}, QStringLiteral("svc.opt.delayed")},
+            {{}, {QStringLiteral("3"), QStringLiteral("0")}, QStringLiteral("svc.opt.manual")},
+            {{}, {QStringLiteral("4"), QStringLiteral("0")}, QStringLiteral("svc.opt.disabled")},
         };
 
         // There is no universal default for a service, so "how this machine was found"
@@ -194,10 +238,7 @@ void Catalog::appendServices()
 
 void Catalog::appendStartup()
 {
-    Category *category = nullptr;
-    for (Category &c : m_categories)
-        if (c.id == QLatin1String("boot"))
-            category = &c;
+    Category *category = mutableCategory(QStringLiteral("boot"));
     if (!category)
         return;
 
@@ -206,7 +247,7 @@ void Catalog::appendStartup()
         return;
 
     Section section;
-    section.title = Locale::tr(QStringLiteral("boot.sectionTitle"));
+    section.titleKey = QStringLiteral("boot.sectionTitle");
     section.tweaks.reserve(entries.size());
 
     for (const Startup::Entry &entry : entries) {
@@ -220,7 +261,12 @@ void Catalog::appendStartup()
                         entry.approvedPath.section(QLatin1Char('\\'), -1),
                         entry.approvedValue);
         t.name = entry.name;
-        t.desc = QStringLiteral("%1 · %2").arg(entry.source, entry.command);
+        // The two folder sources are words this app chose, so they follow the interface
+        // language; the hive names are not.
+        t.live.active = true;
+        t.live.leadKey = entry.sourceKey;
+        t.live.lead = entry.source;
+        t.live.detail = entry.command;
         t.tooltip = entry.command;
         t.reg = {
             {entry.approvedHive, entry.approvedPath, entry.approvedValue,
@@ -234,8 +280,8 @@ void Catalog::appendStartup()
                                     ? entry.currentBlob : Startup::enabledBlob();
         const QString disabled = !entry.enabled && !entry.currentBlob.isEmpty()
                                      ? entry.currentBlob : Startup::disabledBlob();
-        t.options = {{Locale::tr(QStringLiteral("boot.opt.off")), {disabled}},
-                     {Locale::tr(QStringLiteral("boot.opt.on")), {enabled}}};
+        t.options = {{{}, {disabled}, QStringLiteral("boot.opt.off")},
+                     {{}, {enabled}, QStringLiteral("boot.opt.on")}};
 
         // Windows runs a startup entry unless something says otherwise, so "açık" is the
         // default position and a disabled entry is the changed one.
@@ -386,10 +432,7 @@ void Catalog::load()
     appendStartup();
 
     // Index after the vectors have stopped growing so the pointers stay valid.
-    for (const Category &c : std::as_const(m_categories))
-        for (const Section &s : c.sections)
-            for (const Tweak &t : s.tweaks)
-                m_byId.insert(t.id, &t);
+    forEachTweak(*this, [this](const Tweak &t) { m_byId.insert(t.id, &t); });
 
     qCInfo(lcCatalog) << "loaded" << m_categories.size() << "categories," << m_total << "tweaks";
 }

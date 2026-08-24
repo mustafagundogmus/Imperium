@@ -57,7 +57,8 @@ private Q_SLOTS:
     void onFilterChanged(int index);
     void onSortToggled(bool alphabetical);
     void onApply();
-    void onApplyFinished(int succeeded, int failed, bool elevationRequired);
+    void onApplyFinished(int succeeded, int failed, bool elevationRequired,
+                         const QString &firstError);
     void onRevert();
 
 private:

@@ -34,7 +34,10 @@ public:
     bool running() const { return m_running; }
 
 Q_SIGNALS:
-    void finished(int succeeded, int failed, bool elevationRequired);
+    /// \a firstError is the message from the first tweak that failed, empty when none
+    /// did. Without it MainWindow had nothing to put in its detailed failure notice, so
+    /// the only thing a failed apply could ever say was how many had failed.
+    void finished(int succeeded, int failed, bool elevationRequired, const QString &firstError);
     void notice(const QString &text);
 
 protected:
@@ -63,6 +66,7 @@ private:
     int m_failed = 0;
     bool m_elevationRequired = false;
     bool m_needsExplorer = false;
+    QString m_firstError;
 
     QString m_currentName;
     QString m_currentPath;
@@ -73,7 +77,6 @@ private:
     qreal m_shimmerPos = 0.0;
     bool m_running = false;
     bool m_complete = false;
-    bool m_dryRun = false;
 
     PillButton *m_restartExplorer = nullptr;
     PillButton *m_close = nullptr;

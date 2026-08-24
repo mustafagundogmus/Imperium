@@ -35,11 +35,39 @@ struct TweakOption
     QString label;           ///< shown on the segmented control; empty for a switch
     QVector<QString> data;   ///< one per RegistryEntry, in order
 
+    /// Set instead of \a label by the synthesised tweaks, whose positions are named by
+    /// this app rather than by catalog.json. Looking the text up at draw time is what
+    /// keeps it following the interface language: the catalogue is built once, in
+    /// whatever language the app started in, so a label resolved during construction
+    /// stays in that language for the rest of the session.
+    QString labelKey;
+
     /// The label in the interface language. Keyed by the Turkish text rather than by
     /// position: the same word ("Varsayılan", "Asla") recurs across unrelated tweaks, and
     /// one entry per distinct word is both fewer keys and a consistent translation.
     /// Numeric labels from a range tweak ("8", "64 MB") pass straight through.
     QString displayLabel() const;
+};
+
+/// How a machine-generated row describes itself.
+///
+/// A service row says "Spooler · çalışıyor"; a startup row says
+/// "Başlangıç klasörü · C:\…\thing.lnk". Neither sentence comes from catalog.json, so
+/// neither can go through the catalogue's own translation table — and assembling it at
+/// load time froze it in the language the app happened to start in. The pieces are kept
+/// apart here and joined at draw time instead.
+struct LiveDescription
+{
+    bool active = false;   ///< false for an ordinary catalogued tweak
+
+    QString leadKey;       ///< i18n key for the first part…
+    QString lead;          ///< …or its literal text, when it has no key
+    QString detail;        ///< the machine's own words: a command line, a service key
+    QString stateKey;      ///< i18n key for a trailing state word, e.g. "svc.running"
+    QString note;          ///< a warning, shown behind the "dikkat:" prefix
+
+    /// The assembled sentence, in the interface language.
+    QString text() const;
 };
 
 struct Tweak
@@ -81,6 +109,10 @@ struct Tweak
 
     QString tooltip;                ///< long text that does not belong on a one-line row
 
+    /// Set for services and startup entries; see LiveDescription. When it is active,
+    /// displayDesc() builds the row's description from it rather than from `desc`.
+    LiveDescription live;
+
     /// The row may be operated: it applies here and it is not load-bearing.
     bool editable() const { return applicable && !locked; }
     /// Why not, in the voice the row shows it in.
@@ -104,10 +136,13 @@ struct Tweak
 struct Section
 {
     QString title;
+    QString titleKey;   ///< set instead of \a title by the synthesised sections
     QVector<Tweak> tweaks;
 
     /// Section headings are keyed by their Turkish text rather than by position, so
     /// reordering the catalogue cannot silently repoint a translation at another heading.
+    /// A synthesised section carries a titleKey instead, for the same reason
+    /// TweakOption::labelKey exists.
     QString displayTitle() const;
 };
 
@@ -148,7 +183,36 @@ private:
     /// same StartupApproved blob Task Manager does.
     void appendStartup();
 
+    /// The category \a id, or nullptr. The mutable counterpart of category() below,
+    /// used by the two synthesisers while the catalogue is still being built.
+    Category *mutableCategory(const QString &id);
+
     QVector<Category> m_categories;
     QHash<QString, const Tweak *> m_byId;
     int m_total = 0;
 };
+
+/// Walks every tweak in the catalogue.
+///
+/// The triple-nested category/section/tweak loop was written out eight times across the
+/// app — counting applied tweaks, counting incompatible ones, indexing, searching. Each
+/// copy is three lines of scaffolding around one line of actual work, and each one is a
+/// place to get the nesting subtly wrong.
+template <typename F>
+void forEachTweak(const Catalog &catalog, F &&fn)
+{
+    for (const Category &category : catalog.categories())
+        for (const Section &section : category.sections)
+            for (const Tweak &tweak : section.tweaks)
+                fn(tweak);
+}
+
+/// Same, with the category each tweak came from.
+template <typename F>
+void forEachTweakInCategory(const Catalog &catalog, F &&fn)
+{
+    for (const Category &category : catalog.categories())
+        for (const Section &section : category.sections)
+            for (const Tweak &tweak : section.tweaks)
+                fn(category, tweak);
+}

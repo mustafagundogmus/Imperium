@@ -213,8 +213,7 @@ Ownership::Result Ownership::giveBack(const QString &path)
 
     result.detail = describe(QStringLiteral("icacls /setowner"), restored);
     result.ok = ownerSid(path) == TrustedInstallerSid;
-    result.summary = result.ok
-                         ? QStringLiteral("Sahiplik TrustedInstaller'a verildi: %1").arg(native)
-                         : QStringLiteral("Sahiplik geri verilemedi: %1").arg(native);
+    result.summary = Locale::tr(result.ok ? QStringLiteral("own.gaveBack")
+                                          : QStringLiteral("own.giveBackFailed")).arg(native);
     return result;
 }

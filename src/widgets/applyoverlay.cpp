@@ -120,6 +120,7 @@ void ApplyOverlay::start()
 {
     m_total = int(m_queue.size());
     m_done = m_succeeded = m_failed = 0;
+    m_firstError.clear();
     m_elevationRequired = false;
     m_needsExplorer = false;
     m_complete = false;
@@ -163,6 +164,8 @@ void ApplyOverlay::step()
     } else {
         ++m_failed;
         m_elevationRequired = m_elevationRequired || outcome.elevationRequired;
+        if (m_firstError.isEmpty())
+            m_firstError = outcome.error;
     }
 
     m_currentName = outcome.name;
@@ -202,7 +205,7 @@ void ApplyOverlay::complete()
     layoutButtons();
     update();
 
-    Q_EMIT finished(m_succeeded, m_failed, m_elevationRequired);
+    Q_EMIT finished(m_succeeded, m_failed, m_elevationRequired, m_firstError);
 }
 
 QRectF ApplyOverlay::cardRect() const

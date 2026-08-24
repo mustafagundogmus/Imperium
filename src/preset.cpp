@@ -112,8 +112,8 @@ int exportRegFile(const QString &path, const QStringList &ids,
         }
 
         text += QStringLiteral("; %1").arg(tweak->name);
-        if (!option.label.isEmpty())
-            text += QStringLiteral(" — %1").arg(option.label);
+        if (!option.displayLabel().isEmpty())
+            text += QStringLiteral(" — %1").arg(option.displayLabel());
         text += QStringLiteral("\r\n");
 
         for (int i = 0; i < tweak->reg.size(); ++i) {
@@ -227,7 +227,10 @@ bool save(const QString &path, const QString &name,
         // applied. A switch has no labels, so it says on/off instead.
         if (const Tweak *t = catalog.tweak(id)) {
             xml.writeAttribute(QStringLiteral("name"), t->name);
-            const QString label = t->options.value(position).label;
+            // displayLabel(), not the raw field: a synthesised position (a service's
+            // "Devre dışı", a startup entry's "Açık") names itself by key and carries no
+            // literal label at all, so reading `label` wrote every one of them as on/off.
+            const QString label = t->options.value(position).displayLabel();
             xml.writeAttribute(QStringLiteral("label"),
                                label.isEmpty() ? (position == 0 ? Locale::tr(QStringLiteral("preset.off"))
                                                                 : Locale::tr(QStringLiteral("preset.on")))
@@ -280,11 +283,11 @@ LoadResult load(const QString &path)
             const QString id = a.value(QStringLiteral("id")).toString();
             if (id.isEmpty())
                 continue;
-            if (!catalog.tweak(id)) {
+            const Tweak *tweak = catalog.tweak(id);
+            if (!tweak) {
                 ++result.unknownIds;   // an older preset, or a tweak that was removed
                 continue;
             }
-            const Tweak *tweak = catalog.tweak(id);
             int position = 0;
             if (a.hasAttribute(QStringLiteral("position"))) {
                 position = a.value(QStringLiteral("position")).toInt();

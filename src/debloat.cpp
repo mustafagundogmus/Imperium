@@ -282,7 +282,12 @@ void DebloatScanner::start()
                              QStringLiteral("-File"), QDir::toNativeSeparators(scriptPath)});
 
     connect(m_process, &QProcess::finished, this, [this](int, QProcess::ExitStatus) {
+        // A crashed process emits errorOccurred *and* finished, and the handler below
+        // has already cleared and deleted it by the time this runs. Reading the output
+        // off a null pointer is how a failed scan turned into a crash.
         QProcess *proc = m_process;
+        if (!proc)
+            return;
         m_process = nullptr;
 
         const QByteArray raw = proc->readAllStandardOutput();
@@ -355,10 +360,11 @@ void DebloatScanner::start()
         Q_EMIT finished(found);
     });
     connect(m_process, &QProcess::errorOccurred, this, [this](QProcess::ProcessError) {
-        if (!m_process)
+        QProcess *proc = m_process;
+        if (!proc)
             return;
-        m_process->deleteLater();
         m_process = nullptr;
+        proc->deleteLater();
         Q_EMIT finished({});
     });
 

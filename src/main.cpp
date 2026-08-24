@@ -106,21 +106,24 @@ void runSelfTest(MainWindow &window, const QString &path)
     // than a real tweak, so verifying the write path never changes a user setting.
     {
         using namespace Registry;
-        const QString path = QStringLiteral("Software\\Arbitrium\\SelfTest");
+        // Not `path` — that is this function's own parameter, the file the report goes
+        // to, and shadowing it here made the flush lambda above read like it wrote to
+        // the registry key.
+        const QString scratch = QStringLiteral("Software\\Arbitrium\\SelfTest");
         const QString name = QStringLiteral("Probe");
         QString error;
 
-        const bool wrote = write(Hive::HKCU, path, name, QStringLiteral("DWORD"),
+        const bool wrote = write(Hive::HKCU, scratch, name, QStringLiteral("DWORD"),
                                  QStringLiteral("4242"), &error);
-        const Value readBack = read(Hive::HKCU, path, name);
-        const bool removed = remove(Hive::HKCU, path, name, &error);
-        const Value afterRemove = read(Hive::HKCU, path, name);
+        const Value readBack = read(Hive::HKCU, scratch, name);
+        const bool removed = remove(Hive::HKCU, scratch, name, &error);
+        const Value afterRemove = read(Hive::HKCU, scratch, name);
 
         // The key-shaped switch: an empty default value written into a key that did not
         // exist, undone by deleting the key rather than the value. Both halves are easy
         // to get subtly wrong — a null buffer on the way in, a hollow key left behind on
         // the way out — so the scratch key exercises them for real.
-        const QString keyPath = path + QStringLiteral("\\KeyShaped");
+        const QString keyPath = scratch + QStringLiteral("\\KeyShaped");
         const bool madeKey = write(Hive::HKCU, keyPath, QString(), QStringLiteral("SZ"),
                                    QString(), &error);
         const Value defaultValue = read(Hive::HKCU, keyPath, QString());
@@ -128,11 +131,19 @@ void runSelfTest(MainWindow &window, const QString &path)
         // Binary, which the startup entries write: twelve bytes through the catalogue's
         // comma-separated hex and back again.
         const QString blob = Startup::enabledBlob();
-        const bool wroteBlob = write(Hive::HKCU, path, QStringLiteral("Blob"),
+        const bool wroteBlob = write(Hive::HKCU, scratch, QStringLiteral("Blob"),
                                      QStringLiteral("BINARY"), blob, &error);
-        const Value blobBack = read(Hive::HKCU, path, QStringLiteral("Blob"));
-        remove(Hive::HKCU, path, QStringLiteral("Blob"), &error);
+        const Value blobBack = read(Hive::HKCU, scratch, QStringLiteral("Blob"));
+        remove(Hive::HKCU, scratch, QStringLiteral("Blob"), &error);
         const bool droppedKey = removeKey(Hive::HKCU, keyPath, &error);
+
+        // MULTI_SZ, which used to be written as a plain REG_SZ: a list read back as a
+        // single string is the shape a journalled revert would have restored wrong.
+        const QString list = QStringLiteral("bir") + QChar(u'\0') + QStringLiteral("iki");
+        const bool wroteList = write(Hive::HKCU, scratch, QStringLiteral("List"),
+                                     QStringLiteral("MULTI_SZ"), list, &error);
+        const Value listBack = read(Hive::HKCU, scratch, QStringLiteral("List"));
+        remove(Hive::HKCU, scratch, QStringLiteral("List"), &error);
 
         lines << QStringLiteral("registry write   -> %1").arg(wrote)
               << QStringLiteral("registry read    -> exists=%1 type=%2 data=%3")
@@ -146,27 +157,25 @@ void runSelfTest(MainWindow &window, const QString &path)
                      .arg(wroteBlob).arg(blobBack.data.compare(blob, Qt::CaseInsensitive) == 0)
               << QStringLiteral("key delete       -> %1 (gone=%2)")
                      .arg(droppedKey).arg(!keyExists(Hive::HKCU, keyPath))
+              << QStringLiteral("multi_sz round   -> wrote=%1 type=%2 eşit=%3")
+                     .arg(wroteList).arg(listBack.type).arg(listBack.data == list)
               << QStringLiteral("elevated         -> %1").arg(TweakEngine::isElevated());
     }
 
     // Build-bound tweaks: which ones this machine cannot use, and why.
     {
         int total = 0;
-        QStringList named;
-        for (const Category &c : Catalog::instance().categories())
-            for (const Section &s : c.sections)
-                for (const Tweak &t : s.tweaks)
-                    if (!t.applicable) {
-                        ++total;
-                        if (named.size() < 3)
-                            named << QStringLiteral("%1 (%2)").arg(t.name, t.requirement);
-                    }
         int locked = 0;
-        for (const Category &c : Catalog::instance().categories())
-            for (const Section &s : c.sections)
-                for (const Tweak &t : s.tweaks)
-                    if (t.locked)
-                        ++locked;
+        QStringList named;
+        forEachTweak(Catalog::instance(), [&](const Tweak &t) {
+            if (t.locked)
+                ++locked;
+            if (t.applicable)
+                return;
+            ++total;
+            if (named.size() < 3)
+                named << QStringLiteral("%1 (%2)").arg(t.name, t.requirement);
+        });
 
         lines << QStringLiteral("build            -> %1").arg(SysInfo::buildNumber())
               << QStringLiteral("uyumsuz tweak    -> %1 · %2").arg(total).arg(named.join(QStringLiteral(" | ")))
@@ -221,14 +230,12 @@ void runSelfTest(MainWindow &window, const QString &path)
     {
         const Tweak *service = nullptr;
         const Tweak *choice = nullptr;
-        for (const Category &c : Catalog::instance().categories())
-            for (const Section &s : c.sections)
-                for (const Tweak &t : s.tweaks) {
-                    if (!service && t.id.startsWith(QLatin1String("svc-")) && t.editable())
-                        service = &t;
-                    if (!choice && t.id == QLatin1String("ch-ipv6"))
-                        choice = &t;
-                }
+        forEachTweak(Catalog::instance(), [&](const Tweak &t) {
+            if (!service && t.id.startsWith(QLatin1String("svc-")) && t.editable())
+                service = &t;
+            if (!choice && t.id == QLatin1String("ch-ipv6"))
+                choice = &t;
+        });
 
         const QString file = QDir(Preset::directory()).filePath(QStringLiteral("self-test.xml"));
         QHash<QString, int> written;
@@ -354,12 +361,7 @@ void runSelfTest(MainWindow &window, const QString &path)
         lines << QStringLiteral("close    -> isVisible=%1").arg(window.isVisible());
     }
 
-    QFile file(path);
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&file);
-        for (const QString &line : std::as_const(lines))
-            out << line << '\n';
-    }
+    flush();
     QCoreApplication::quit();
 }
 

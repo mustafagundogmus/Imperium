@@ -54,6 +54,16 @@ public:
     /// …and the write history, which is not a category either.
     static QString journalId() { return QStringLiteral("journal"); }
 
+    /// True for any of the pinned rows above: pages of their own, none of which the
+    /// catalogue knows about. The five comparisons were written out at three separate
+    /// call sites in MainWindow, which is three places to forget one when a sixth
+    /// pinned row shows up.
+    static bool isPinnedPage(const QString &id)
+    {
+        return id == settingsId() || id == actionsId() || id == debloatId()
+               || id == journalId() || id == aboutId();
+    }
+
     /// …and who built it, which is not a category, a setting, or anything you would come
     /// back to twice — it lives last, past everything you would actually use daily.
     static QString aboutId() { return QStringLiteral("about"); }

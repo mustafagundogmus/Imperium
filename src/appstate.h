@@ -80,6 +80,7 @@ public:
         QString path;    ///< "HKCU\Software\..." — shown while the write happens
         bool ok = false;
         bool elevationRequired = false;
+        QString error;   ///< why not, when ok is false
     };
 
     /// Writes exactly one pending tweak, so an apply can be driven a step at a time.
@@ -115,6 +116,9 @@ Q_SIGNALS:
 
 private:
     void recomputePending();
+
+    /// Folds one tweak's move from \a was to \a now into the applied total.
+    void noteAppliedMove(const QString &id, int was, int now);
 
     TweakEngine *m_engine = nullptr;
     QHash<QString, int> m_on;        ///< option index the control sits at

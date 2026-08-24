@@ -1,4 +1,5 @@
 #include "services.h"
+#include "i18n.h"
 
 #include <QCollator>
 #include <QHash>
@@ -43,8 +44,14 @@ QString readString(HKEY key, const wchar_t *name)
                          reinterpret_cast<BYTE *>(buffer.data()), &size) != ERROR_SUCCESS)
         return {};
 
-    return QString::fromWCharArray(reinterpret_cast<const wchar_t *>(buffer.constData()))
-        .trimmed();
+    // With an explicit length: nothing obliges a registry string to be null-terminated,
+    // and letting fromWCharArray look for the terminator itself reads past the buffer on
+    // the ones that are not.
+    int chars = int(size / sizeof(wchar_t));
+    const auto *text = reinterpret_cast<const wchar_t *>(buffer.constData());
+    while (chars > 0 && text[chars - 1] == L'\0')
+        --chars;
+    return QString::fromWCharArray(text, chars).trimmed();
 }
 
 bool readDword(HKEY key, const wchar_t *name, DWORD *out)
@@ -265,8 +272,7 @@ QVector<Info> enumerate()
         info.riskNote = risky.value(id);
         if (locked.contains(id)) {
             info.locked = true;
-            info.lockReason = QStringLiteral("Windows'un çalışması bu hizmete bağlı; "
-                                             "başlatma türü buradan değiştirilemez");
+            info.lockReason = Locale::tr(QStringLiteral("svc.lockReason"));
         }
     }
 

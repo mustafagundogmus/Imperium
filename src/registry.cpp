@@ -4,6 +4,7 @@
 #include <QStringList>
 
 #include <string>
+#include <vector>
 
 #ifdef Q_OS_WIN
 #  ifndef WIN32_LEAN_AND_MEAN
@@ -44,7 +45,7 @@ QString describe(LONG status)
         return Locale::tr(QStringLiteral("err.needAdmin"));
     if (status == ERROR_FILE_NOT_FOUND)
         return Locale::tr(QStringLiteral("err.keyNotFound"));
-    return QStringLiteral("Windows hata kodu %1").arg(status);
+    return Locale::tr(QStringLiteral("err.windowsCode")).arg(status);
 }
 
 #endif // Q_OS_WIN
@@ -134,11 +135,24 @@ Value read(Hive hive, const QString &path, const QString &name)
 
     out.exists = true;
     switch (type) {
+    // Nothing stops a value being written with the wrong width for its type, and a
+    // REG_DWORD carrying two bytes would be read four bytes past the buffer. A value
+    // that does not fit its own type is reported as the bytes it actually holds.
     case REG_DWORD:
+        if (size < sizeof(quint32)) {
+            out.type = QStringLiteral("BINARY");
+            out.data = formatBinary(buffer);
+            break;
+        }
         out.type = QStringLiteral("DWORD");
         out.data = QString::number(*reinterpret_cast<const quint32 *>(buffer.constData()));
         break;
     case REG_QWORD:
+        if (size < sizeof(quint64)) {
+            out.type = QStringLiteral("BINARY");
+            out.data = formatBinary(buffer);
+            break;
+        }
         out.type = QStringLiteral("QWORD");
         out.data = QString::number(*reinterpret_cast<const quint64 *>(buffer.constData()));
         break;
@@ -149,7 +163,12 @@ Value read(Hive hive, const QString &path, const QString &name)
                  : type == REG_EXPAND_SZ ? QStringLiteral("EXPAND_SZ")
                                          : QStringLiteral("MULTI_SZ");
         const int chars = int(size / sizeof(wchar_t));
+        // Through fromWCharArray with an explicit length, not up to the first null: a
+        // MULTI_SZ is several strings separated by nulls, and stopping at the first one
+        // would read back a single element and write that back over the whole list.
         QString text = QString::fromWCharArray(reinterpret_cast<const wchar_t *>(buffer.constData()), chars);
+        // Only the terminator goes; the separators between a MULTI_SZ's elements stay,
+        // and write() puts the terminator back.
         while (text.endsWith(QChar(u'\0')))
             text.chop(1);
         out.data = text;
@@ -198,6 +217,25 @@ bool write(Hive hive, const QString &path, const QString &name,
         const QByteArray bytes = parseBinary(data);
         status = RegSetValueExW(key, wide(name), 0, REG_BINARY,
                                 reinterpret_cast<const BYTE *>(bytes.constData()), DWORD(bytes.size()));
+    } else if (upper == QLatin1String("MULTI_SZ")) {
+        // A MULTI_SZ is several strings, each null-terminated, with a second null closing
+        // the list. Writing one as REG_SZ — which is what the fall-through below used to
+        // do — changes the value's type behind the caller's back, and reverting a
+        // journalled MULTI_SZ that way leaves Windows reading a list as a single string.
+        //
+        // Built by hand rather than through std::wstring, whose c_str() stops at the
+        // first embedded null and would hand over only the first element.
+        std::vector<wchar_t> text;
+        text.reserve(size_t(data.size()) + 2);
+        for (QChar c : data)
+            text.push_back(wchar_t(c.unicode()));
+        while (!text.empty() && text.back() == L'\0')
+            text.pop_back();
+        text.push_back(L'\0');   // terminates the last element
+        text.push_back(L'\0');   // …and the list
+        status = RegSetValueExW(key, wide(name), 0, REG_MULTI_SZ,
+                                reinterpret_cast<const BYTE *>(text.data()),
+                                DWORD(text.size() * sizeof(wchar_t)));
     } else {
         const DWORD kind = (upper == QLatin1String("EXPAND_SZ")) ? REG_EXPAND_SZ : REG_SZ;
         // Through std::wstring rather than QString::utf16(), which hands back a null

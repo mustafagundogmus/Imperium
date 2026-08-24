@@ -21,7 +21,11 @@ struct Entry
 {
     QString name;       ///< the Run value's name, or the shortcut's file name
     QString command;    ///< what it runs
-    QString source;     ///< "HKCU", "HKLM", "HKLM · 32 bit", "Başlangıç klasörü"
+    QString source;     ///< "HKCU", "HKLM", "HKLM · 32 bit" — a hive name, not a word
+    /// …or, for the two Startup folders, the i18n key naming them. Those are words this
+    /// app chose rather than names Windows gave, so they follow the interface language —
+    /// and resolving them here would freeze them, since the catalogue is built once.
+    QString sourceKey;
     bool enabled = true;
 
     // Where the on/off state is written.

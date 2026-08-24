@@ -27,6 +27,7 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QShortcut>
+#include <QTimer>
 #include <QStackedWidget>
 #include <QVBoxLayout>
 
@@ -98,6 +99,12 @@ MainWindow::MainWindow(QWidget *parent)
                 m_settings->setRestorePoint(restorePoint);
             });
     m_probe->start();
+
+    // The Settings switch for this was stored and never consulted: Updater::check() had
+    // exactly one caller, the manual button on the settings page. A little after the
+    // window is up, so the first paint is not waiting on a network round trip.
+    if (Settings::instance().checkUpdatesOnLaunch())
+        QTimer::singleShot(2500, m_updater, [this] { m_updater->check(); });
 }
 
 void MainWindow::buildUi()
@@ -293,8 +300,11 @@ QVector<Section> MainWindow::visibleSections() const
 
     if (m_alphabetical) {
         for (Section &s : result)
+            // By what the row actually says, not by the Turkish in catalog.json: sorting
+            // an English interface by its Turkish names puts the list in an order with no
+            // relation to anything on screen.
             std::sort(s.tweaks.begin(), s.tweaks.end(), [](const Tweak &a, const Tweak &b) {
-                return a.name.localeAwareCompare(b.name) < 0;
+                return a.displayName().localeAwareCompare(b.displayName()) < 0;
             });
     }
 
@@ -306,11 +316,12 @@ void MainWindow::refreshView()
     const Catalog &catalog = Catalog::instance();
     const Category *category = catalog.category(m_state->selectedCategory());
     const bool searching = m_state->searching();
-    const bool settings = !searching && m_state->selectedCategory() == Sidebar::settingsId();
-    const bool actions = !searching && m_state->selectedCategory() == Sidebar::actionsId();
-    const bool debloat = !searching && m_state->selectedCategory() == Sidebar::debloatId();
-    const bool journal = !searching && m_state->selectedCategory() == Sidebar::journalId();
-    const bool about = !searching && m_state->selectedCategory() == Sidebar::aboutId();
+    const QString current = m_state->selectedCategory();
+    const bool settings = !searching && current == Sidebar::settingsId();
+    const bool actions = !searching && current == Sidebar::actionsId();
+    const bool debloat = !searching && current == Sidebar::debloatId();
+    const bool journal = !searching && current == Sidebar::journalId();
+    const bool about = !searching && current == Sidebar::aboutId();
     const bool overview = !searching && category && category->isOverview();
 
     m_header->setControlsVisible(!overview && !settings && !about && !debloat);
@@ -388,6 +399,15 @@ void MainWindow::refreshView()
         m_header->setSubtitle(Locale::tr(QStringLiteral("content.search.subtitle"))
                                   .arg(m_state->query().trimmed()).arg(hits));
         m_header->setPendingLabel(Locale::tr(QStringLiteral("content.pending")).arg(m_state->pendingCount()));
+    } else if (!category) {
+        // Every pinned page returned above and the overview did too, so getting here with
+        // no category means an id nothing knows — the --category switch is the way in.
+        // Dereferencing it was an outright crash.
+        m_header->setTitle(Locale::tr(QStringLiteral("content.search.title")));
+        m_header->setSubtitle(Locale::tr(QStringLiteral("content.emptyCategory")));
+        m_header->setPendingLabel({});
+        m_header->setControlsVisible(false);
+        emptyMessage = Locale::tr(QStringLiteral("content.emptyPage"));
     } else if (category->tweakCount() == 0) {
         // The catalogue is being rebuilt one page at a time; an empty category says so
         // rather than offering filters over nothing.
@@ -429,11 +449,7 @@ void MainWindow::refreshCounters()
     refreshOverviewCatalog();
 
     const Category *category = Catalog::instance().category(m_state->selectedCategory());
-    if (m_state->selectedCategory() == Sidebar::settingsId()
-        || m_state->selectedCategory() == Sidebar::actionsId()
-        || m_state->selectedCategory() == Sidebar::debloatId()
-        || m_state->selectedCategory() == Sidebar::journalId()
-        || m_state->selectedCategory() == Sidebar::aboutId())
+    if (Sidebar::isPinnedPage(m_state->selectedCategory()))
         m_header->setPendingLabel({});
     else if (m_state->searching())
         m_header->setPendingLabel(Locale::tr(QStringLiteral("content.pending")).arg(m_state->pendingCount()));
@@ -457,7 +473,12 @@ void MainWindow::refreshOverviewCatalog()
         applied += here;
         if (here > best) {
             best = here;
-            busiest = QStringLiteral("%1 · %2").arg(category.name).arg(here);
+            // The category name in the interface language: every other place that shows
+            // one goes through this lookup, and this tile was the one reading the raw
+            // Turkish out of catalog.json.
+            busiest = QStringLiteral("%1 · %2")
+                          .arg(Locale::tr(QStringLiteral("category.") + category.id))
+                          .arg(here);
         }
     }
 
@@ -466,9 +487,7 @@ void MainWindow::refreshOverviewCatalog()
 
 void MainWindow::showCategory(const QString &id)
 {
-    if (Catalog::instance().category(id) || id == Sidebar::settingsId()
-        || id == Sidebar::actionsId() || id == Sidebar::debloatId()
-        || id == Sidebar::journalId() || id == Sidebar::aboutId())
+    if (Catalog::instance().category(id) || Sidebar::isPinnedPage(id))
         onCategoryActivated(id);
 }
 
@@ -524,12 +543,30 @@ void MainWindow::onApply()
     if (m_state->pendingCount() == 0 || m_applyOverlay->running())
         return;
 
+    // Settings offers this switch and nothing used to read it, so the confirmation it
+    // promises never appeared — Uygula went straight to the writes whichever way it was
+    // set. It defaults to on, which is why this is the path most users were missing.
+    if (Settings::instance().confirmBeforeApply()) {
+        QMessageBox box(this);
+        box.setWindowTitle(QCoreApplication::applicationName());
+        box.setIcon(QMessageBox::NoIcon);
+        box.setText(Locale::tr(QStringLiteral("mw.confirm.title")).arg(m_state->pendingCount()));
+        box.setInformativeText(Locale::tr(QStringLiteral("mw.confirm.body")));
+        QAbstractButton *go = box.addButton(Locale::tr(QStringLiteral("mw.confirm.apply")),
+                                            QMessageBox::AcceptRole);
+        box.addButton(Locale::tr(QStringLiteral("mw.confirm.cancel")), QMessageBox::RejectRole);
+        box.exec();
+        if (box.clickedButton() != go)
+            return;
+    }
+
     // The overlay drives the writes itself, one per tick, and reports back when done.
     m_applyOverlay->setGeometry(overlayRect());
     m_applyOverlay->run();
 }
 
-void MainWindow::onApplyFinished(int succeeded, int failed, bool elevationRequired)
+void MainWindow::onApplyFinished(int succeeded, int failed, bool elevationRequired,
+                                 const QString &firstError)
 {
     refreshCounters();
     refreshView();
@@ -540,7 +577,7 @@ void MainWindow::onApplyFinished(int succeeded, int failed, bool elevationRequir
         return;
     }
 
-    const AppState::ApplyReport report{succeeded, failed, elevationRequired, QString()};
+    const AppState::ApplyReport report{succeeded, failed, elevationRequired, firstError};
 
     if (report.elevationRequired && !TweakEngine::isElevated()) {
         // These tweaks live outside HKCU, so they cannot be written by a standard token.
