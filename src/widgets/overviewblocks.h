@@ -50,6 +50,15 @@ struct InfoRow
     QString value;
     bool mono = false;    ///< technical values (version, date, time, BIOS) use the mono face
     qreal meter = -1.0;   ///< 0…1 draws a usage bar under the row
+
+    /// Label above the value instead of beside it, both on the card's full width.
+    ///
+    /// The side-by-side row gives the value whatever it asks for and leaves the label the
+    /// remainder, which is right for "Sürüm 24H2 · 26100" and wrong for a row naming a
+    /// physical disk: "Samsung SSD 990 PRO 2TB" against "İyi · %97 ömür · 4.218 saat"
+    /// leaves the label about four characters and elides the rest. Stacking gives each
+    /// the whole width.
+    bool stacked = false;
 };
 
 class InfoSection : public QWidget
@@ -70,7 +79,7 @@ public:
 
     QSize sizeHint() const override;
 
-    static qreal rowHeight(bool withMeter = false);
+    static qreal rowHeight(bool withMeter = false, bool stacked = false);
     static qreal headerHeight();
 
 protected:

@@ -2,6 +2,7 @@
 
 #include "appstate.h"
 #include "catalog.h"
+#include "deepinfo.h"
 #include "i18n.h"
 #include "theme.h"
 #include "tweakengine.h"
@@ -99,6 +100,13 @@ MainWindow::MainWindow(QWidget *parent)
                 m_settings->setRestorePoint(restorePoint);
             });
     m_probe->start();
+
+    // The twelve blocks SysInfo cannot answer in one frame. Three stages, each repainting
+    // the page as it lands, so the page is never waiting on the slowest of them.
+    m_deepProbe = new DeepInfo::Probe(this);
+    connect(m_deepProbe, &DeepInfo::Probe::updated, this,
+            [this](DeepInfo::Probe::Stage) { m_overview->setDeepFacts(m_deepProbe->facts()); });
+    m_deepProbe->start();
 
     // The Settings switch for this was stored and never consulted: Updater::check() had
     // exactly one caller, the manual button on the settings page. A little after the

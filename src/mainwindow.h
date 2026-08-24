@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "deepinfo.h"
 #include "framelesswindow.h"
 #include "monitor.h"
 #include "sysinfo.h"
@@ -74,6 +75,7 @@ private:
     AppState *m_state = nullptr;
     SysInfo::Facts m_facts;
     SysInfo::Probe *m_probe = nullptr;
+    DeepInfo::Probe *m_deepProbe = nullptr;
     SystemMonitor *m_monitor = nullptr;
     QDateTime m_scannedAt;
 

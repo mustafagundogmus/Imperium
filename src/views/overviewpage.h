@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "../deepinfo.h"
 #include "../monitor.h"
 #include "../sysinfo.h"
 
@@ -29,6 +30,11 @@ public:
     explicit OverviewPage(SystemMonitor *monitor, QWidget *parent = nullptr);
 
     void setFacts(const SysInfo::Facts &facts);
+
+    /// The blocks the deep probe feeds. Called once per stage as each lands, so the
+    /// twelve cards below fill in behind the ones SysInfo could answer immediately
+    /// rather than all appearing at once several seconds in.
+    void setDeepFacts(const DeepInfo::Facts &facts);
 
     /// Catalogue state, pushed by MainWindow whenever it changes.
     void setCatalogState(int total, int applied, int pending, const QString &busiest);
@@ -63,4 +69,20 @@ private:
     InfoSection *m_locale = nullptr;
     InfoSection *m_processes = nullptr;
     InfoSection *m_catalog = nullptr;
+
+    // Fed by DeepInfo::Probe rather than by SysInfo::collect().
+    InfoSection *m_update = nullptr;
+    InfoSection *m_integrity = nullptr;
+    InfoSection *m_tasks = nullptr;
+    InfoSection *m_drivers = nullptr;
+    InfoSection *m_privacy = nullptr;
+    InfoSection *m_encryption = nullptr;
+    InfoSection *m_accounts = nullptr;
+    InfoSection *m_virtualisation = nullptr;
+    InfoSection *m_diskHealth = nullptr;
+    InfoSection *m_performance = nullptr;
+    InfoSection *m_connection = nullptr;
+    InfoSection *m_sensors = nullptr;
+
+    DeepInfo::Facts m_deep;
 };

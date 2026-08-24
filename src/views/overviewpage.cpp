@@ -1,4 +1,5 @@
 #include "overviewpage.h"
+#include "../deepinfo.h"
 #include "../i18n.h"
 #include "../theme.h"
 #include "../widgets/livechart.h"
@@ -149,15 +150,35 @@ OverviewPage::OverviewPage(SystemMonitor *monitor, QWidget *parent)
     m_processes = new InfoSection(Locale::tr(QStringLiteral("overview.section.processes")), sections);
     m_catalog = new InfoSection(Locale::tr(QStringLiteral("overview.section.catalog")), sections);
 
+    m_update = new InfoSection(Locale::tr(QStringLiteral("overview.section.update")), sections);
+    m_integrity = new InfoSection(Locale::tr(QStringLiteral("overview.section.integrity")), sections);
+    m_tasks = new InfoSection(Locale::tr(QStringLiteral("overview.section.tasks")), sections);
+    m_drivers = new InfoSection(Locale::tr(QStringLiteral("overview.section.drivers")), sections);
+    m_privacy = new InfoSection(Locale::tr(QStringLiteral("overview.section.privacy")), sections);
+    m_encryption = new InfoSection(Locale::tr(QStringLiteral("overview.section.encryption")), sections);
+    m_accounts = new InfoSection(Locale::tr(QStringLiteral("overview.section.accounts")), sections);
+    m_virtualisation = new InfoSection(Locale::tr(QStringLiteral("overview.section.virtualisation")), sections);
+    m_diskHealth = new InfoSection(Locale::tr(QStringLiteral("overview.section.diskhealth")), sections);
+    m_performance = new InfoSection(Locale::tr(QStringLiteral("overview.section.performance")), sections);
+    m_connection = new InfoSection(Locale::tr(QStringLiteral("overview.section.connection")), sections);
+    m_sensors = new InfoSection(Locale::tr(QStringLiteral("overview.section.sensors")), sections);
+
     // Three columns rather than the handoff's two: there is a lot to show and the window
     // is wide enough that a third column costs nothing but gains a whole screen of
     // vertical space. Ordered so related blocks sit near each other.
+    // Ordered by what a reader is most likely to have come for, three to a row and
+    // related blocks side by side: the machine's identity first, then what it is doing,
+    // then the things you go looking for when something is wrong.
     const QVector<InfoSection *> order{
-        m_system,    m_hardware,  m_processor,
-        m_user,      m_memory,    m_firmware,
-        m_display,   m_storage,   m_network,
-        m_security,  m_power,     m_software,
-        m_session,   m_processes, m_locale,
+        m_system,      m_hardware,       m_processor,
+        m_user,        m_memory,         m_firmware,
+        m_display,     m_storage,        m_network,
+        m_security,    m_privacy,        m_accounts,
+        m_update,      m_integrity,      m_drivers,
+        m_encryption,  m_virtualisation, m_tasks,
+        m_diskHealth,  m_performance,    m_connection,
+        m_power,       m_sensors,        m_software,
+        m_session,     m_processes,      m_locale,
         m_catalog,
     };
     for (int i = 0; i < order.size(); ++i)
@@ -171,6 +192,7 @@ OverviewPage::OverviewPage(SystemMonitor *monitor, QWidget *parent)
     connect(m_monitor, &SystemMonitor::sampled, this, &OverviewPage::onSampled);
     onSampled(m_monitor->latest());
     setFacts(m_facts);
+    setDeepFacts(m_deep);   // every row at "—" until the probe reports
     setCatalogState(0, 0, 0, QString());   // until MainWindow reports the real numbers
 
     // The per-second tick in onSampled() already keeps values current; only the static
@@ -197,6 +219,22 @@ OverviewPage::OverviewPage(SystemMonitor *monitor, QWidget *parent)
         m_locale->setTitle(Locale::tr(QStringLiteral("overview.section.locale")));
         m_processes->setTitle(Locale::tr(QStringLiteral("overview.section.processes")));
         m_catalog->setTitle(Locale::tr(QStringLiteral("overview.section.catalog")));
+        m_update->setTitle(Locale::tr(QStringLiteral("overview.section.update")));
+        m_integrity->setTitle(Locale::tr(QStringLiteral("overview.section.integrity")));
+        m_tasks->setTitle(Locale::tr(QStringLiteral("overview.section.tasks")));
+        m_drivers->setTitle(Locale::tr(QStringLiteral("overview.section.drivers")));
+        m_privacy->setTitle(Locale::tr(QStringLiteral("overview.section.privacy")));
+        m_encryption->setTitle(Locale::tr(QStringLiteral("overview.section.encryption")));
+        m_accounts->setTitle(Locale::tr(QStringLiteral("overview.section.accounts")));
+        m_virtualisation->setTitle(Locale::tr(QStringLiteral("overview.section.virtualisation")));
+        m_diskHealth->setTitle(Locale::tr(QStringLiteral("overview.section.diskhealth")));
+        m_performance->setTitle(Locale::tr(QStringLiteral("overview.section.performance")));
+        m_connection->setTitle(Locale::tr(QStringLiteral("overview.section.connection")));
+        m_sensors->setTitle(Locale::tr(QStringLiteral("overview.section.sensors")));
+
+        // The row labels are rebuilt from the same call that fills them, so a language
+        // switch replays both rather than leaving twelve blocks in the old language.
+        setDeepFacts(m_deep);
     });
 }
 
@@ -322,7 +360,7 @@ void OverviewPage::setFacts(const SysInfo::Facts &facts)
     QVector<InfoRow> volumes;
     volumes.reserve(facts.volumes.size());
     for (const SysInfo::Facts::Volume &volume : facts.volumes)
-        volumes.append({volume.name, volume.detail, true, volume.used});
+        volumes.append({volume.name, volume.detail, true, volume.used, true});
     if (volumes.isEmpty())
         volumes.append({Locale::tr(QStringLiteral("ov.birim")), QStringLiteral("—"), false, -1.0});
     m_storage->setRows(volumes);
@@ -382,6 +420,110 @@ void OverviewPage::setFacts(const SysInfo::Facts &facts)
         {Locale::tr(QStringLiteral("ov.sonOturumAcma")), facts.lastLogon, true},
         {Locale::tr(QStringLiteral("ov.bekleyenYenidenBaslatma")), facts.pendingRestart, false},
         {Locale::tr(QStringLiteral("ov.sonGeriYuklemeNoktasi")), facts.lastRestorePoint, true},
+    });
+}
+
+void OverviewPage::setDeepFacts(const DeepInfo::Facts &facts)
+{
+    m_deep = facts;
+
+    m_update->setRows({
+        {Locale::tr(QStringLiteral("deep.pending")), facts.updatePending, false},
+        {Locale::tr(QStringLiteral("deep.lastCheck")), facts.updateLastCheck, true},
+        {Locale::tr(QStringLiteral("deep.paused")), facts.updatePaused, false},
+        {Locale::tr(QStringLiteral("deep.channel")), facts.updateChannel, false},
+        {Locale::tr(QStringLiteral("deep.service")), facts.updateService, false},
+    });
+
+    m_integrity->setRows({
+        {Locale::tr(QStringLiteral("deep.lastCrash")), facts.lastCrash, true, -1.0, true},
+        {Locale::tr(QStringLiteral("deep.criticalEvents")), facts.criticalEvents, false},
+        {Locale::tr(QStringLiteral("deep.restartReason")), facts.restartReason, false},
+        {Locale::tr(QStringLiteral("deep.minidumps")), facts.minidumps, true},
+    });
+
+    m_tasks->setRows({
+        {Locale::tr(QStringLiteral("deep.taskTotal")), facts.taskTotal, true},
+        {Locale::tr(QStringLiteral("deep.taskDisabled")), facts.taskDisabled, true},
+        {Locale::tr(QStringLiteral("deep.taskTelemetry")), facts.taskTelemetry, true},
+        {Locale::tr(QStringLiteral("deep.taskThirdParty")), facts.taskThirdParty, true},
+    });
+
+    m_drivers->setRows({
+        {Locale::tr(QStringLiteral("deep.driverProblem")), facts.driverProblem, false, -1.0, true},
+        {Locale::tr(QStringLiteral("deep.driverUnsigned")), facts.driverUnsigned, true},
+        {Locale::tr(QStringLiteral("deep.driverTotal")), facts.driverTotal, true},
+        {Locale::tr(QStringLiteral("deep.driverLatest")), facts.driverLatest, false, -1.0, true},
+    });
+
+    m_privacy->setRows({
+        {Locale::tr(QStringLiteral("deep.telemetry")), facts.privacyTelemetry, false},
+        {Locale::tr(QStringLiteral("deep.advertisingId")), facts.privacyAdvertisingId, false},
+        {Locale::tr(QStringLiteral("deep.activityHistory")), facts.privacyActivityHistory, false},
+        {Locale::tr(QStringLiteral("deep.location")), facts.privacyLocation, false},
+        {Locale::tr(QStringLiteral("deep.inkTyping")), facts.privacyInkTyping, false},
+        {Locale::tr(QStringLiteral("deep.privacyScore")), facts.privacyScore, false},
+    });
+
+    // The list-shaped blocks carry one row per volume or per disk, and a placeholder
+    // while the stage that fills them is still running — an empty card reads as broken.
+    QVector<InfoRow> encryption;
+    for (const DeepInfo::Entry &entry : facts.encryption)
+        encryption.append({entry.name, entry.detail, false, entry.meter, true});
+    if (encryption.isEmpty())
+        encryption.append({Locale::tr(QStringLiteral("ov.birim")), QStringLiteral("—"), false, -1.0});
+    encryption.append({Locale::tr(QStringLiteral("deep.recoveryKey")), facts.recoveryKey, false, -1.0});
+    encryption.append({Locale::tr(QStringLiteral("deep.tpmOwnership")), facts.tpmOwnership, false, -1.0});
+    m_encryption->setRows(encryption);
+
+    m_accounts->setRows({
+        {Locale::tr(QStringLiteral("deep.localAccounts")), facts.accountsLocal, false},
+        {Locale::tr(QStringLiteral("deep.guest")), facts.accountsGuest, false},
+        {Locale::tr(QStringLiteral("deep.uacLevel")), facts.uacLevel, false},
+        {Locale::tr(QStringLiteral("deep.passwordPolicy")), facts.passwordPolicy, false},
+        {Locale::tr(QStringLiteral("deep.passwordAge")), facts.passwordAge, true},
+    });
+
+    m_virtualisation->setRows({
+        {QStringLiteral("Hyper-V"), facts.hyperV, false},
+        {Locale::tr(QStringLiteral("deep.vbs")), facts.vbs, false},
+        {QStringLiteral("WSL"), facts.wsl, false},
+        {Locale::tr(QStringLiteral("deep.sandbox")), facts.sandbox, false},
+        {Locale::tr(QStringLiteral("deep.credentialGuard")), facts.credentialGuard, false},
+    });
+
+    // Stacked: a disk's name and its reliability counters are each a line's worth of
+    // text, and side by side neither one survives.
+    QVector<InfoRow> disks;
+    for (const DeepInfo::Entry &entry : facts.disks)
+        disks.append({entry.name, entry.detail, false, entry.meter, true});
+    if (disks.isEmpty())
+        disks.append({Locale::tr(QStringLiteral("deep.disk")), QStringLiteral("—"), false, -1.0});
+    disks.append({Locale::tr(QStringLiteral("deep.trim")), facts.trim, false, -1.0});
+    disks.append({Locale::tr(QStringLiteral("deep.partitionStyle")), facts.partitionStyle, true, -1.0});
+    m_diskHealth->setRows(disks);
+
+    m_performance->setRows({
+        {QStringLiteral("WinSAT"), facts.winsat, true},
+        {Locale::tr(QStringLiteral("deep.bootDuration")), facts.bootDuration, true},
+        {Locale::tr(QStringLiteral("deep.pageFile")), facts.pageFileUsage, true},
+        {Locale::tr(QStringLiteral("deep.commitCharge")), facts.commitCharge, true},
+    });
+
+    m_connection->setRows({
+        {QStringLiteral("DHCP"), facts.dhcp, false},
+        {Locale::tr(QStringLiteral("deep.proxy")), facts.proxy, true},
+        {QStringLiteral("DNS-over-HTTPS"), facts.doh, false},
+        {QStringLiteral("Wi-Fi"), facts.wifi, false},
+        {Locale::tr(QStringLiteral("deep.activeConnections")), facts.activeConnections, true},
+        {Locale::tr(QStringLiteral("deep.metered")), facts.metered, false},
+    });
+
+    m_sensors->setRows({
+        {Locale::tr(QStringLiteral("deep.cpuTemp")), facts.cpuTemperature, true},
+        {Locale::tr(QStringLiteral("deep.batteryHealth")), facts.batteryHealth, true},
+        {Locale::tr(QStringLiteral("deep.batteryCycles")), facts.batteryCycles, true},
+        {Locale::tr(QStringLiteral("deep.fan")), facts.fan, true},
     });
 }
 

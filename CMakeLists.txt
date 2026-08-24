@@ -23,6 +23,7 @@ set(PROJECT_SOURCES
     src/actionengine.h                src/actionengine.cpp
     src/appstate.h                    src/appstate.cpp
     src/sysinfo.h                     src/sysinfo.cpp
+    src/deepinfo.h                    src/deepinfo.cpp
     src/services.h                    src/services.cpp
     src/startup.h                     src/startup.cpp
     src/monitor.h                     src/monitor.cpp

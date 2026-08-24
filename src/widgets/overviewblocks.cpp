@@ -23,6 +23,7 @@ constexpr qreal RowGap = 16.0;     // label ↔ value
 
 constexpr qreal MeterHeight = 3.0;
 constexpr qreal MeterGap = 5.0;
+constexpr qreal StackGap = 3.0;   // label ↕ value on a stacked row
 
 /// The bar both blocks draw: a rounded track with a rounded fill in the accent.
 void drawMeter(QPainter *p, const QRectF &box, qreal fraction)
@@ -171,7 +172,7 @@ qreal InfoSection::headerHeight()
     return CardPadTop + Css::normalLine(Theme::Font::blockTitle()) + TitleGap + 1.0 + RuleGap;
 }
 
-qreal InfoSection::rowHeight(bool withMeter)
+qreal InfoSection::rowHeight(bool withMeter, bool stacked)
 {
     // `align-items:baseline`: the row is as tall as the deepest ascent plus the
     // deepest descent among its children, not the taller of the two line boxes.
@@ -183,7 +184,10 @@ qreal InfoSection::rowHeight(bool withMeter)
     const qreal below = qMax(Css::descent(labelFont), qMax(Css::descent(monoFont), Css::descent(textFont)));
 
     const qreal meter = withMeter ? MeterGap + MeterHeight : 0.0;
-    return 2 * RowPadY + above + below + meter + 1.0 /*separator*/;
+    // A stacked row is two line boxes with the same padding around the pair, plus the
+    // gap between them.
+    const qreal second = stacked ? above + below + StackGap : 0.0;
+    return 2 * RowPadY + above + below + second + meter + 1.0 /*separator*/;
 }
 
 void InfoSection::setTitle(const QString &title)
@@ -222,7 +226,7 @@ qreal InfoSection::contentHeight() const
 {
     qreal h = 0.0;
     for (const InfoRow &row : m_rows)
-        h += rowHeight(row.meter >= 0.0);
+        h += rowHeight(row.meter >= 0.0, row.stacked);
     return h;
 }
 
@@ -273,19 +277,33 @@ void InfoSection::paintEvent(QPaintEvent *)
     for (int i = 0; i < m_rows.size(); ++i) {
         const InfoRow &row = m_rows.at(i);
         const bool metered = row.meter >= 0.0;
-        const qreal rh = rowHeight(metered);
+        const qreal rh = rowHeight(metered, row.stacked);
         const QRectF box(left, y, right - left, rh);
         const qreal baseline = y + RowPadY + above;
 
         const QFont &valueFont = row.mono ? monoFont : textFont;
-        const qreal valueW = Css::textWidth(valueFont, row.value);
+        qreal lastBaseline = baseline;
 
-        Css::drawText(&p, QRectF(box.left(), box.top(), qMax(0.0, box.width() - valueW - RowGap), rh),
-                      baseline, labelFont, Color::TextDesc(), row.label, Qt::AlignLeft, true);
-        Css::drawText(&p, box, baseline, valueFont, Color::TextMono(), row.value, Qt::AlignRight);
+        if (row.stacked) {
+            // Two full-width lines: the name, then what is true about it. Both elided
+            // against the card rather than against whatever the other one left over.
+            Css::drawText(&p, box, baseline, labelFont, Color::TextPrimary(), row.label,
+                          Qt::AlignLeft, true);
+            lastBaseline = baseline + Css::descent(labelFont) + StackGap + Css::ascent(valueFont);
+            Css::drawText(&p, box, lastBaseline, valueFont, Color::TextMono(), row.value,
+                          Qt::AlignLeft, true);
+        } else {
+            const qreal valueW = Css::textWidth(valueFont, row.value);
+            Css::drawText(&p, QRectF(box.left(), box.top(), qMax(0.0, box.width() - valueW - RowGap), rh),
+                          baseline, labelFont, Color::TextDesc(), row.label, Qt::AlignLeft, true);
+            // Elided against the card too: a value wider than the whole row used to paint
+            // straight out through the left edge rather than stop at it.
+            Css::drawText(&p, box, baseline, valueFont, Color::TextMono(), row.value,
+                          Qt::AlignRight, true);
+        }
 
         if (metered) {
-            const qreal meterTop = baseline + Css::descent(valueFont) + MeterGap;
+            const qreal meterTop = lastBaseline + Css::descent(valueFont) + MeterGap;
             drawMeter(&p, QRectF(left, meterTop, right - left, MeterHeight), row.meter);
         }
 
