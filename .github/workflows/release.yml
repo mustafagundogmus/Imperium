@@ -115,6 +115,9 @@ jobs:
 
       - uses: ilammy/msvc-dev-cmd@v1
 
+      # No `modules:` line. Qt SVG is an essential in Qt 6 and ships inside the base
+      # install; naming it as an add-on makes aqt look for a package that is not in the
+      # index and fail the whole step.
       - name: Qt
         uses: jurplel/install-qt-action@v4
         with:
@@ -122,14 +125,14 @@ jobs:
           host: windows
           target: desktop
           arch: win64_msvc2022_64
-          modules: qtsvg
           cache: true
 
       - name: Build
         shell: cmd
         run: |
-          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-          cmake --build build --config Release
+          ninja --version || exit /b 1
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release || exit /b 1
+          cmake --build build || exit /b 1
 
       - name: Package
         shell: pwsh
@@ -155,3 +158,4 @@ jobs:
           set -euo pipefail
           gh release upload "${{ needs.publish.outputs.tag }}" \
             "Arbitrium-v${{ needs.publish.outputs.version }}-win64.zip" --clobber
+          echo "attached Arbitrium-v${{ needs.publish.outputs.version }}-win64.zip"
