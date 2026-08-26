@@ -203,20 +203,30 @@ jobs:
           # its own, and the app icon, the version block and the elevation manifest all
           # reach the executable through app.rc.
           #
-          # CMAKE_FIND_LIBRARY_SUFFIXES=.a is the load-bearing one. MSYS2's Qt is static
-          # itself but was configured -system-zlib, -system-libpng, -system-freetype and so
-          # on, and its CMake config resolves each of those through find_package. Left
-          # alone they resolve to the import libraries, and the "single file" comes out
-          # needing fourteen MSYS2 DLLs beside it — libfreetype-6, libharfbuzz-0,
-          # libpng16-16, zlib1 and the rest. Restricting the search to .a archives makes
-          # the same find_package calls pick the static ones MSYS2 also ships.
+          # MSYS2's Qt is static itself, but it was configured -system-zlib,
+          # -system-libpng, -system-freetype and so on, and its CMake package resolves each
+          # of those through find_package in *this* project. Left alone they resolve to the
+          # import libraries and the "single file" comes out wanting fourteen MSYS2 DLLs
+          # beside it — libfreetype-6, libharfbuzz-0, libpng16-16, zlib1 and the rest.
+          # MSYS2 ships a static archive for every one of them, so the fix is to make
+          # find_library look only for those.
+          #
+          # It has to be set here rather than with -D on the command line: CMake's
+          # Platform/Windows-GNU module assigns CMAKE_FIND_LIBRARY_SUFFIXES while project()
+          # runs, which overwrites anything handed in from outside. CMAKE_PROJECT_INCLUDE
+          # is included at the end of project(), which is after the platform module and
+          # before this project's own find_package(Qt6).
+          cat > static-deps.cmake <<'CMAKE'
+          # Included from the end of project(); see the note in .github/workflows/release.yml.
+          set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+          CMAKE
+
           qt="$(cygpath -m /mingw64/qt6-static)"
           cmake -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_PREFIX_PATH="$qt" \
             -DCMAKE_RC_COMPILER=windres \
-            -DCMAKE_FIND_LIBRARY_SUFFIXES=".a" \
-            -DBUILD_SHARED_LIBS=OFF
+            -DCMAKE_PROJECT_INCLUDE="$(cygpath -m "$PWD/static-deps.cmake")"
           cmake --build build
 
       - name: Check it is actually a single file
@@ -235,19 +245,24 @@ jobs:
           # So: look each import up in the Windows system directory. Anything not there is
           # something the user would have to be handed as well, which is the one thing this
           # file is supposed to make unnecessary.
+          # api-ms-win-* and ext-ms-* are API sets: the loader resolves them through a
+          # schema rather than to a file on disk, so they are part of Windows even though
+          # nothing of that name is in System32.
           system="$(cygpath -u "$(cmd //c 'echo %SystemRoot%' | tr -d '\r')")/System32"
-          missing=""
-          objdump -p "$exe" | sed -n 's/^\s*DLL Name: //p' | sort -fu | while read -r dll; do
-            if [ -e "$system/$dll" ]; then
-              echo "    ok       $dll"
-            else
-              echo "    NOT WINDOWS  $dll"
-            fi
-          done
-          missing=$(objdump -p "$exe" | sed -n 's/^\s*DLL Name: //p' | sort -fu \
-                    | while read -r dll; do [ -e "$system/$dll" ] || echo "$dll"; done)
-          if [ -n "$missing" ]; then
-            echo "::error::not a single file — it imports $(echo $missing | tr '\n' ' ')"
+          outside=$(objdump -p "$exe" | sed -n 's/^\s*DLL Name: //p' | sort -fu \
+                    | while read -r dll; do
+                        case "$dll" in
+                          api-ms-win-*|ext-ms-*) echo "    ok (api set)  $dll" >&2; continue ;;
+                        esac
+                        if [ -e "$system/$dll" ]; then
+                          echo "    ok            $dll" >&2
+                        else
+                          echo "    NOT WINDOWS   $dll" >&2
+                          echo "$dll"
+                        fi
+                      done)
+          if [ -n "$outside" ]; then
+            echo "::error::not a single file — it imports $(echo $outside | tr '\n' ' ')"
             exit 1
           fi
 
