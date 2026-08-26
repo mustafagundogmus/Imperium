@@ -237,7 +237,7 @@ jobs:
           # Included from the end of project(); see the note in .github/workflows/release.yml.
           set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
           set(CMAKE_CXX_STANDARD_LIBRARIES
-              "-Wl,--start-group -lharfbuzz -lfreetype -lgraphite2 -lbz2 -lbrotlidec -lbrotlicommon -lpng16 -lz -Wl,--end-group -lws2_32 -lcrypt32 -lbcrypt -lsecur32 ${CMAKE_CXX_STANDARD_LIBRARIES}")
+              "-Wl,--start-group -lharfbuzz -lfreetype -lgraphite2 -lbz2 -lbrotlidec -lbrotlicommon -lpng16 -lz -Wl,--end-group -lws2_32 -lcrypt32 -lbcrypt -lsecur32 -lrpcrt4 ${CMAKE_CXX_STANDARD_LIBRARIES}")
           CMAKE
 
           qt="$(cygpath -m /mingw64/qt6-static)"
