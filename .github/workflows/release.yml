@@ -8,9 +8,12 @@
 # builds that executable again, and the three things below exist so the shape cannot drift
 # a second time:
 #
-#   * The build is a static Qt (MSYS2's mingw-w64-x86_64-qt6-static), which is what the
-#     project has always been released from. Nothing else about CMakeLists.txt changes —
-#     it already branches on whether Qt is static and skips windeployqt when it is.
+#   * The build is against a static Qt compiled with its own bundled zlib, libpng, jpeg,
+#     PCRE2, HarfBuzz and FreeType — the same shape as the Qt this project has been
+#     released from since 0.9.5, and the reason its executable imports nothing but
+#     Windows. It is built once and cached; MSYS2 packages a static Qt but configures it
+#     -system-*, and its CMake files hardcode import-library paths a consumer cannot
+#     override, so a binary built against it needs fourteen MSYS2 DLLs beside it.
 #   * `objdump -p` reads the finished executable's import table back and looks every entry
 #     up in the Windows system directory. Anything that is not part of Windows is something
 #     the user would have to be handed as well, and fails the job. An earlier version of
@@ -142,6 +145,11 @@ jobs:
     name: Single-file executable
     needs: check
     runs-on: windows-latest
+    env:
+      # Bump the -rN suffix to throw the cached Qt away and build it again.
+      QT_VERSION: "6.11.1"
+      QT_CACHE_KEY: "qt-6.11.1-static-mingw-r1"
+      QT_PREFIX: "D:/qt-static"
     defaults:
       run:
         shell: msys2 {0}
@@ -152,100 +160,102 @@ jobs:
       # commit that first carried the tag and kept failing on a bug already fixed.
       - uses: actions/checkout@v4
 
-      # The project has been released from a static Qt since 0.9.5. Qt's own installer
-      # ships no static Windows build and aqt cannot fetch one, so this is where a
-      # prebuilt one comes from. It is a large package; the cache makes the second run
-      # onwards cheap.
       - uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
           update: false
           cache: true
-          # The libraries after qt6-static are not padding. MSYS2 builds its static Qt
-          # against the *system* zlib, libpng, freetype and so on rather than Qt's bundled
-          # copies, so Qt6Config still runs find_package on each of them when you consume
-          # it — but the package only lists them as build dependencies, so pacman does not
-          # pull them in for a consumer. Without libpng, Qt6Gui reports "WrapPNG could not
-          # be found", Qt6Widgets reports that Qt6Gui could not be found, and the configure
-          # fails with a message that names neither.
           install: >-
             zip
             unzip
+            tar
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-ninja
-            mingw-w64-x86_64-qt6-static
-            mingw-w64-x86_64-zlib
-            mingw-w64-x86_64-zstd
-            mingw-w64-x86_64-pcre2
-            mingw-w64-x86_64-libpng
-            mingw-w64-x86_64-libjpeg-turbo
-            mingw-w64-x86_64-libtiff
-            mingw-w64-x86_64-libwebp
-            mingw-w64-x86_64-freetype
-            mingw-w64-x86_64-harfbuzz
-            mingw-w64-x86_64-graphite2
-            mingw-w64-x86_64-brotli
-            mingw-w64-x86_64-double-conversion
-            mingw-w64-x86_64-md4c
-            mingw-w64-x86_64-libb2
-            mingw-w64-x86_64-openssl
-            mingw-w64-x86_64-dbus
-            mingw-w64-x86_64-vulkan-headers
-            mingw-w64-x86_64-vulkan-loader
+            mingw-w64-x86_64-python
 
-      - name: Build
-        env:
-          CC: gcc
-          CXX: g++
+      # Built once and kept. It is the slow step by a wide margin — most of an hour on a
+      # cold cache — and it changes only when QT_CACHE_KEY does.
+      - name: Restore the static Qt
+        id: qt
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.QT_PREFIX }}
+          key: ${{ env.QT_CACHE_KEY }}
+
+      # Why build Qt at all, when MSYS2 packages a static one?
+      #
+      # Because MSYS2's is configured -system-zlib, -system-libpng, -system-freetype and so
+      # on, and its CMake package hardcodes absolute paths to the *import* libraries for
+      # some of them. A consumer cannot override that: forcing the static archives on top
+      # produces a link with both, and harfbuzz arrives twice with every symbol defined
+      # twice. The resulting executable needs fourteen MSYS2 DLLs beside it, which is not
+      # what this project has ever shipped.
+      #
+      # A Qt configured with its own bundled copies has no system dependencies to resolve,
+      # which is why the executable this project has released since 0.9.5 imports nothing
+      # but Windows. That is what is built here, with the same set of bundled libraries and
+      # the same Schannel-only TLS.
+      - name: Build the static Qt
+        if: steps.qt.outputs.cache-hit != 'true'
         run: |
           set -euo pipefail
-          # MSYS2's cmake is a native Windows binary and does not read POSIX paths, so the
-          # prefix has to be handed over in the form it understands. CMAKE_RC_COMPILER is
-          # explicit because a Ninja generator on Windows does not always find windres on
-          # its own, and the app icon, the version block and the elevation manifest all
-          # reach the executable through app.rc.
-          #
-          # MSYS2's Qt is static itself, but it was configured -system-zlib,
-          # -system-libpng, -system-freetype and so on, and its CMake package resolves each
-          # of those through find_package in *this* project. Left alone they resolve to the
-          # import libraries and the "single file" comes out wanting fourteen MSYS2 DLLs
-          # beside it — libfreetype-6, libharfbuzz-0, libpng16-16, zlib1 and the rest.
-          # MSYS2 ships a static archive for every one of them, so the fix is to make
-          # find_library look only for those.
-          #
-          # It has to be set here rather than with -D on the command line: CMake's
-          # Platform/Windows-GNU module assigns CMAKE_FIND_LIBRARY_SUFFIXES while project()
-          # runs, which overwrites anything handed in from outside. CMAKE_PROJECT_INCLUDE
-          # is included at the end of project(), which is after the platform module and
-          # before this project's own find_package(Qt6).
-          # The second half of the file is the closure. A shared libfreetype-6.dll carries
-          # its own dependencies; libfreetype.a does not, and neither MSYS2's CMake config
-          # nor Qt's WrapFreetype names them — they live in the .pc file's Libs.private,
-          # which find_package never reads. So freetype's harfbuzz, bzip2 and brotli, and
-          # OpenSSL's sockets, are listed here. --start-group is not decoration: freetype
-          # and harfbuzz each reference the other, and a single pass over the archives
-          # cannot satisfy both.
-          #
-          # Where they go matters as much as that they are there. A static archive only
-          # contributes the objects that something already unresolved has asked for, so it
-          # has to come *after* everything that needs it. CMAKE_EXE_LINKER_FLAGS lands
-          # before the objects and link_libraries() before the target's own libraries;
-          # CMAKE_CXX_STANDARD_LIBRARIES is appended at the very end of the command line,
-          # which is the only position that works.
-          cat > static-deps.cmake <<'CMAKE'
-          # Included from the end of project(); see the note in .github/workflows/release.yml.
-          set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-          set(CMAKE_CXX_STANDARD_LIBRARIES
-              "-Wl,--start-group -lharfbuzz -lfreetype -lgraphite2 -lbz2 -lbrotlidec -lbrotlicommon -lpng16 -lz -Wl,--end-group -lws2_32 -lcrypt32 -lbcrypt -lsecur32 -lrpcrt4 ${CMAKE_CXX_STANDARD_LIBRARIES}")
-          CMAKE
+          base="https://download.qt.io/archive/qt/${QT_VERSION%.*}/$QT_VERSION/submodules"
+          mkdir -p /d/qt-src && cd /d/qt-src
 
-          qt="$(cygpath -m /mingw64/qt6-static)"
+          for m in qtbase qtsvg; do
+            echo "fetching $m"
+            curl -fsSL "$base/$m-everywhere-src-$QT_VERSION.tar.xz" | tar -xJ
+            mv "$m-everywhere-src-$QT_VERSION" "$m"
+          done
+
+          prefix="$QT_PREFIX"
+
+          # -DFEATURE_system_* = OFF is the whole point: Qt compiles its own zlib, libpng,
+          # libjpeg, PCRE2, HarfBuzz and FreeType into the static libraries, so nothing has
+          # to be found — or shipped — at the other end.
+          cmake -S qtbase -B build-qtbase -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="$prefix" \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DQT_BUILD_EXAMPLES=OFF \
+            -DQT_BUILD_TESTS=OFF \
+            -DQT_BUILD_BENCHMARKS=OFF \
+            -DFEATURE_system_zlib=OFF \
+            -DFEATURE_system_libpng=OFF \
+            -DFEATURE_system_jpeg=OFF \
+            -DFEATURE_system_pcre2=OFF \
+            -DFEATURE_system_harfbuzz=OFF \
+            -DFEATURE_system_freetype=OFF \
+            -DFEATURE_icu=OFF \
+            -DFEATURE_dbus=OFF \
+            -DFEATURE_openssl=OFF \
+            -DFEATURE_schannel=ON \
+            -DFEATURE_sql=OFF
+          cmake --build build-qtbase --parallel
+          cmake --install build-qtbase
+
+          # Svg is a separate module and the app links it; the icons are SVG paths.
+          cmake -S qtsvg -B build-qtsvg -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH="$prefix" \
+            -DCMAKE_INSTALL_PREFIX="$prefix"
+          cmake --build build-qtsvg --parallel
+          cmake --install build-qtsvg
+
+          # The sources are big and the cache should not carry them.
+          rm -rf /d/qt-src
+
+      - name: Build
+        run: |
+          set -euo pipefail
+          # CMAKE_RC_COMPILER is explicit because a Ninja generator on Windows does not
+          # always find windres on its own, and the app icon, the version block and the
+          # elevation manifest all reach the executable through app.rc.
           cmake -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_PREFIX_PATH="$qt" \
-            -DCMAKE_RC_COMPILER=windres \
-            -DCMAKE_PROJECT_INCLUDE="$(cygpath -m "$PWD/static-deps.cmake")"
+            -DCMAKE_PREFIX_PATH="$QT_PREFIX" \
+            -DCMAKE_RC_COMPILER=windres
           cmake --build build
 
       - name: Check it is actually a single file
@@ -256,17 +266,12 @@ jobs:
 
           # The import table is the only answer that means what it looks like it means, and
           # the test has to be "does every one of these ship with Windows" rather than a
-          # list of names to reject. A first attempt only rejected Qt and the MinGW
-          # runtime; it passed an executable that still wanted libfreetype-6.dll,
-          # libharfbuzz-0.dll, libpng16-16.dll, zlib1.dll and ten more from MSYS2 — a
-          # "single file" that runs on this runner and nowhere else.
+          # list of names to reject. An earlier version listed Qt, libgcc and libstdc++ and
+          # duly passed a build that wanted fourteen MSYS2 DLLs nobody had thought to name.
           #
-          # So: look each import up in the Windows system directory. Anything not there is
-          # something the user would have to be handed as well, which is the one thing this
-          # file is supposed to make unnecessary.
           # api-ms-win-* and ext-ms-* are API sets: the loader resolves them through a
-          # schema rather than to a file on disk, so they are part of Windows even though
-          # nothing of that name is in System32.
+          # schema rather than to a file, so they are part of Windows even though nothing of
+          # that name is in System32.
           system="$(cygpath -u "$(cmd //c 'echo %SystemRoot%' | tr -d '\r')")/System32"
           outside=$(objdump -p "$exe" | sed -n 's/^\s*DLL Name: //p' | sort -fu \
                     | while read -r dll; do
