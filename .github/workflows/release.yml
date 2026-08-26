@@ -202,11 +202,21 @@ jobs:
           # explicit because a Ninja generator on Windows does not always find windres on
           # its own, and the app icon, the version block and the elevation manifest all
           # reach the executable through app.rc.
+          #
+          # CMAKE_FIND_LIBRARY_SUFFIXES=.a is the load-bearing one. MSYS2's Qt is static
+          # itself but was configured -system-zlib, -system-libpng, -system-freetype and so
+          # on, and its CMake config resolves each of those through find_package. Left
+          # alone they resolve to the import libraries, and the "single file" comes out
+          # needing fourteen MSYS2 DLLs beside it — libfreetype-6, libharfbuzz-0,
+          # libpng16-16, zlib1 and the rest. Restricting the search to .a archives makes
+          # the same find_package calls pick the static ones MSYS2 also ships.
           qt="$(cygpath -m /mingw64/qt6-static)"
           cmake -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_PREFIX_PATH="$qt" \
-            -DCMAKE_RC_COMPILER=windres
+            -DCMAKE_RC_COMPILER=windres \
+            -DCMAKE_FIND_LIBRARY_SUFFIXES=".a" \
+            -DBUILD_SHARED_LIBS=OFF
           cmake --build build
 
       - name: Check it is actually a single file
@@ -215,15 +225,29 @@ jobs:
           exe=build/Arbitrium.exe
           test -f "$exe" || { echo "::error::the build produced no executable"; exit 1; }
 
-          # The import table is the only answer that means what it looks like it means. A
-          # dynamic Qt build links Qt6Core.dll and friends here, and a MinGW build that
-          # missed -static links libgcc_s / libstdc++-6 / libwinpthread-1. Either one is a
-          # payload that does not run on a machine without those DLLs beside it, which is
-          # the entire point of the file.
-          imports=$(objdump -p "$exe" | sed -n 's/^\s*DLL Name: //p' | sort -u)
-          echo "$imports"
-          if echo "$imports" | grep -qiE '^(Qt[0-9]|libgcc|libstdc\+\+|libwinpthread)'; then
-            echo "::error::not a static build — the executable imports the runtime beside it"
+          # The import table is the only answer that means what it looks like it means, and
+          # the test has to be "does every one of these ship with Windows" rather than a
+          # list of names to reject. A first attempt only rejected Qt and the MinGW
+          # runtime; it passed an executable that still wanted libfreetype-6.dll,
+          # libharfbuzz-0.dll, libpng16-16.dll, zlib1.dll and ten more from MSYS2 — a
+          # "single file" that runs on this runner and nowhere else.
+          #
+          # So: look each import up in the Windows system directory. Anything not there is
+          # something the user would have to be handed as well, which is the one thing this
+          # file is supposed to make unnecessary.
+          system="$(cygpath -u "$(cmd //c 'echo %SystemRoot%' | tr -d '\r')")/System32"
+          missing=""
+          objdump -p "$exe" | sed -n 's/^\s*DLL Name: //p' | sort -fu | while read -r dll; do
+            if [ -e "$system/$dll" ]; then
+              echo "    ok       $dll"
+            else
+              echo "    NOT WINDOWS  $dll"
+            fi
+          done
+          missing=$(objdump -p "$exe" | sed -n 's/^\s*DLL Name: //p' | sort -fu \
+                    | while read -r dll; do [ -e "$system/$dll" ] || echo "$dll"; done)
+          if [ -n "$missing" ]; then
+            echo "::error::not a single file — it imports $(echo $missing | tr '\n' ' ')"
             exit 1
           fi
 
