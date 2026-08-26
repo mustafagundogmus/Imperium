@@ -12,11 +12,6 @@
 
 namespace {
 
-constexpr int PadLeft = 18;
-constexpr int PadTop = 2;
-constexpr int PadRight = 12;
-constexpr int PadBottom = 16;
-
 constexpr int TileGap = 8;
 constexpr int TilesTopSpace = 4;
 // The blocks are cards now and carry their own padding, so the gutters between them
@@ -87,7 +82,8 @@ OverviewPage::OverviewPage(SystemMonitor *monitor, QWidget *parent)
     , m_monitor(monitor)
 {
     auto *outer = new QVBoxLayout(this);
-    outer->setContentsMargins(PadLeft, PadTop, PadRight, PadBottom);
+    outer->setContentsMargins(Theme::Metric::PagePadLeft, Theme::Metric::PagePadTop,
+                              Theme::Metric::PagePadRight, Theme::Metric::PagePadBottom);
     outer->setSpacing(Theme::Metric::SectionGap);
 
     // --- live stat tiles ----------------------------------------------------
@@ -118,7 +114,6 @@ OverviewPage::OverviewPage(SystemMonitor *monitor, QWidget *parent)
     chartLayout->setSpacing(0);
 
     m_chartHeader = new SectionHeader(Locale::tr(QStringLiteral("overview.chart.title")), chartBlock);
-    m_chartHeader->setCount(Locale::tr(QStringLiteral("overview.chart.interval")));
     chartLayout->addWidget(m_chartHeader);
 
     m_chart = new LiveChart(chartBlock);
@@ -338,7 +333,7 @@ void OverviewPage::setFacts(const SysInfo::Facts &facts)
         {Locale::tr(QStringLiteral("ov.dnsSunucusu")), facts.dnsServer, true},
         {Locale::tr(QStringLiteral("ov.ipv6Adresi")), facts.ipv6, true},
         {Locale::tr(QStringLiteral("ov.agGecidi")), facts.gateway, true},
-        {Locale::tr(QStringLiteral("ov.bagdastirici")), facts.adapterCount, false},
+        {Locale::tr(QStringLiteral("ov.bagdastiriciSayisi")), facts.adapterCount, false},
         {Locale::tr(QStringLiteral("ov.macAdresi")), facts.macAddress, true},
         {Locale::tr(QStringLiteral("ov.etkiAlani")), facts.domain, false},
     });

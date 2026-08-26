@@ -1,13 +1,29 @@
-# Cuts a release: the tag, the notes, and a Windows build to hang off it.
+# Cuts a release: the tag, the notes, and the two files every release since 0.9.5 has
+# carried — a single-file executable and a zip of that same executable.
 #
-# Two jobs on purpose. `publish` only needs the repository, so the release and its notes
-# exist within seconds and do not depend on a Qt install succeeding on a runner. `build`
-# then attaches the executable to that release; if the toolchain has a bad day the release
-# is still there, and re-running the job attaches the binary without republishing anything.
+# 0.9.8 shipped neither. It was the first release cut by this workflow, and the workflow
+# built against a dynamic Qt: the result was a 21MB archive of Arbitrium.exe plus every
+# Qt DLL, two D3D compilers nothing calls, and a stray .qt/ directory of CMake bookkeeping.
+# Every release before it was one 34MB executable that needed nothing beside it. This
+# builds that executable again, and the three things below exist so the shape cannot drift
+# a second time:
+#
+#   * The build is a static Qt (MSYS2's mingw-w64-x86_64-qt6-static), which is what the
+#     project has always been released from. Nothing else about CMakeLists.txt changes —
+#     it already branches on whether Qt is static and skips windeployqt when it is.
+#   * `objdump -p` reads the finished executable's import table back and fails the job if
+#     Qt, libgcc, libstdc++ or libwinpthread appear in it. A dynamic build cannot pass.
+#   * The release is created *after* the build, in the same job that attaches the assets,
+#     and the last step reads the asset list off the published release by name. The old
+#     order — publish first, build second — is exactly how 0.9.8 came to exist with the
+#     wrong payload and no error anywhere: a release that exists without its binary is
+#     worse than a release that does not exist yet.
 #
 # The notes come from docs/release-notes/<tag>.md when that file exists and from the
 # matching section of CHANGELOG.md when it does not, so a release never has to be written
 # twice.
+#
+# `dry_run` builds and checks everything and publishes nothing. Run it before tagging.
 
 name: Release
 
@@ -17,31 +33,54 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag to release, e.g. v0.9.8. Created from the default branch if it does not exist."
+        description: "Tag to release, e.g. v0.9.9. Created from the branch you run this on."
         required: true
         type: string
+      dry_run:
+        description: "Build and check the artefacts, publish nothing."
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
 
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
-  publish:
+  check:
+    name: Version
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.resolve.outputs.tag }}
       version: ${{ steps.resolve.outputs.version }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Resolve the tag and check the version agrees with it
         id: resolve
         shell: bash
+        # Through the environment, not spliced into the script body: `tag` is free text a
+        # dispatcher types, and text that reaches a shell by substitution is text that can
+        # end the quoting around it.
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
           set -euo pipefail
-          tag="${{ inputs.tag || github.ref_name }}"
+          tag="${INPUT_TAG:-$REF_NAME}"
+
+          # Matched against the tag, not against the version stripped out of it — `v` is
+          # part of the shape being checked, and testing the remainder would have let a
+          # bare "0.9.9" through to a workflow whose every other step assumes the prefix.
+          case "$tag" in
+            v[0-9]*.[0-9]*.[0-9]*) ;;
+            *) echo "::error::'$tag' is not a vMAJOR.MINOR.PATCH tag"; exit 1 ;;
+          esac
           version="${tag#v}"
+
           echo "tag=$tag"         >> "$GITHUB_OUTPUT"
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
@@ -54,31 +93,16 @@ jobs:
           fi
           grep -q "\"FileVersion\",[^\"]*\"$version\"" app.rc \
             || { echo "::error::app.rc does not carry $version"; exit 1; }
+          grep -q "^FILEVERSION *${version//./,},0" app.rc \
+            || { echo "::error::app.rc FILEVERSION is not ${version//./,},0"; exit 1; }
           grep -q "version=\"$version\.0\"" resources/Arbitrium.manifest \
             || { echo "::error::the manifest does not carry $version.0"; exit 1; }
           echo "version $version checks out in all three files"
 
-      - name: Point the tag at this commit
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          tag="${{ steps.resolve.outputs.tag }}"
-
-          # On a tag push this is already true and the call is a no-op. On a dispatch it is
-          # the whole point: the tag was created by an earlier run and does not move on its
-          # own, so `build` would keep checking out the commit that first carried the tag
-          # and keep failing on a bug fixed on the branch. Re-running the workflow has to
-          # mean re-running it against what the branch says now.
-          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$tag" >/dev/null 2>&1; then
-            gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/$tag" \
-              -f sha="$GITHUB_SHA" -F force=true >/dev/null
-            echo "$tag now points at $GITHUB_SHA"
-          else
-            echo "$tag does not exist yet; the release step creates it"
-          fi
-
+      # Collected here rather than in `publish`, and carried between the two as an
+      # artefact. Doing it in both places meant two implementations of "are there notes for
+      # this tag", and they had already drifted: the pre-flight accepted a section of pure
+      # whitespace that the real extraction would then reject, half an hour of build later.
       - name: Collect the notes
         shell: bash
         run: |
@@ -99,19 +123,170 @@ jobs:
             echo "notes extracted from CHANGELOG.md"
           fi
 
-          if [ ! -s notes.md ]; then
-            echo "::error::no release notes found for $tag"
+          if ! grep -q '[^[:space:]]' notes.md; then
+            echo "::error::no release notes for $tag in docs/release-notes/ or CHANGELOG.md"
             exit 1
           fi
 
-      - name: Publish the release
-        shell: bash
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-notes
+          path: notes.md
+          if-no-files-found: error
+          retention-days: 14
+
+  build:
+    name: Single-file executable
+    needs: check
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      # No `ref:`. The build is always of the commit this run was started on — the tagged
+      # commit on a tag push, the branch head on a dispatch — and the publish job moves the
+      # tag to match. Checking out the tag instead is how a re-run kept rebuilding the
+      # commit that first carried the tag and kept failing on a bug already fixed.
+      - uses: actions/checkout@v4
+
+      # The project has been released from a static Qt since 0.9.5. Qt's own installer
+      # ships no static Windows build and aqt cannot fetch one, so this is where a
+      # prebuilt one comes from. It is a large package; the cache makes the second run
+      # onwards cheap.
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: false
+          cache: true
+          install: >-
+            zip
+            unzip
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-qt6-static
+
+      - name: Build
         env:
-          GH_TOKEN: ${{ github.token }}
+          CC: gcc
+          CXX: g++
         run: |
           set -euo pipefail
-          tag="${{ steps.resolve.outputs.tag }}"
-          version="${{ steps.resolve.outputs.version }}"
+          # MSYS2's cmake is a native Windows binary and does not read POSIX paths, so the
+          # prefix has to be handed over in the form it understands. CMAKE_RC_COMPILER is
+          # explicit because a Ninja generator on Windows does not always find windres on
+          # its own, and the app icon, the version block and the elevation manifest all
+          # reach the executable through app.rc.
+          qt="$(cygpath -m /mingw64/qt6-static)"
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH="$qt" \
+            -DCMAKE_RC_COMPILER=windres
+          cmake --build build
+
+      - name: Check it is actually a single file
+        run: |
+          set -euo pipefail
+          exe=build/Arbitrium.exe
+          test -f "$exe" || { echo "::error::the build produced no executable"; exit 1; }
+
+          # The import table is the only answer that means what it looks like it means. A
+          # dynamic Qt build links Qt6Core.dll and friends here, and a MinGW build that
+          # missed -static links libgcc_s / libstdc++-6 / libwinpthread-1. Either one is a
+          # payload that does not run on a machine without those DLLs beside it, which is
+          # the entire point of the file.
+          imports=$(objdump -p "$exe" | sed -n 's/^\s*DLL Name: //p' | sort -u)
+          echo "$imports"
+          if echo "$imports" | grep -qiE '^(Qt[0-9]|libgcc|libstdc\+\+|libwinpthread)'; then
+            echo "::error::not a static build — the executable imports the runtime beside it"
+            exit 1
+          fi
+
+          # Windows reads the elevation request out of RT_MANIFEST before the process
+          # exists. Without it half the catalogue fails on the first write.
+          grep -qa 'requireAdministrator' "$exe" \
+            || { echo "::error::the executable carries no requireAdministrator manifest"; exit 1; }
+
+          bytes=$(stat -c%s "$exe")
+          echo "$exe is $bytes bytes"
+          # A static Qt Widgets + Svg + Network build lands around 34MB. Anything markedly
+          # smaller means Qt did not go in.
+          if [ "$bytes" -lt 20000000 ]; then
+            echo "::error::$bytes bytes is too small for a static build"
+            exit 1
+          fi
+
+      - name: Package
+        run: |
+          set -euo pipefail
+          version="${{ needs.check.outputs.version }}"
+          exe="Arbitrium-v$version-win64.exe"
+
+          # Two assets, one build. The zip is the same executable under the same name plus
+          # the README — which is exactly what 0.9.5, 0.9.6 and 0.9.7 shipped, down to the
+          # two entries.
+          cp build/Arbitrium.exe "$exe"
+          mkdir -p stage
+          cp "$exe" README.md stage/
+          (cd stage && zip -9 -X "../Arbitrium-v$version-win64.zip" "$exe" README.md)
+
+          ls -l "Arbitrium-v$version-win64.exe" "Arbitrium-v$version-win64.zip"
+          unzip -l "Arbitrium-v$version-win64.zip"
+
+      # Kept whether or not this run publishes, so a dry run leaves something to download
+      # and open.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Arbitrium-v${{ needs.check.outputs.version }}-win64
+          path: |
+            Arbitrium-v${{ needs.check.outputs.version }}-win64.exe
+            Arbitrium-v${{ needs.check.outputs.version }}-win64.zip
+          if-no-files-found: error
+          retention-days: 14
+
+  publish:
+    name: Publish
+    needs: [check, build]
+    if: ${{ !inputs.dry_run }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: Arbitrium-v${{ needs.check.outputs.version }}-win64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-notes
+
+      - name: Point the tag at the commit that was built
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${{ needs.check.outputs.tag }}"
+
+          # On a tag push this is already true and the call is a no-op. On a dispatch it is
+          # the whole point: the build job checked out this commit, so the tag has to name
+          # it too or the release would point at source that was never compiled.
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$tag" >/dev/null 2>&1; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/$tag" \
+              -f sha="$GITHUB_SHA" -F force=true >/dev/null
+            echo "$tag now points at $GITHUB_SHA"
+          else
+            echo "$tag does not exist yet; the release step creates it"
+          fi
+
+      - name: Publish the release and attach both files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${{ needs.check.outputs.tag }}"
+          version="${{ needs.check.outputs.version }}"
+          exe="Arbitrium-v$version-win64.exe"
+          zip="Arbitrium-v$version-win64.zip"
 
           # gh creates the tag itself from --target, which is one less thing to get wrong:
           # `git tag` on a runner needs a committer identity nobody has configured, and
@@ -121,69 +296,39 @@ jobs:
             echo "updated the notes on the existing release"
           else
             gh release create "$tag" \
-              --target "${{ github.sha }}" \
+              --target "$GITHUB_SHA" \
               --title "Arbitrium $version" \
               --notes-file notes.md
           fi
 
-  build:
-    needs: publish
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.publish.outputs.tag }}
+          gh release upload "$tag" "$exe" "$zip" --clobber
 
-      - uses: ilammy/msvc-dev-cmd@v1
-
-      # No `modules:` line. Qt SVG is an essential in Qt 6 and ships inside the base
-      # install; naming it as an add-on makes aqt look for a package that is not in the
-      # index and fail the whole step.
-      - name: Qt
-        uses: jurplel/install-qt-action@v4
-        with:
-          version: "6.8.*"
-          host: windows
-          target: desktop
-          arch: win64_msvc2022_64
-          cache: true
-
-      - name: Build
-        shell: cmd
-        run: |
-          ninja --version || exit /b 1
-          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release || exit /b 1
-          cmake --build build || exit /b 1
-
-      - name: Package
-        shell: pwsh
-        run: |
-          $version = "${{ needs.publish.outputs.version }}"
-          # CMakeLists already runs windeployqt after the link, so the build directory is
-          # the payload — minus the CMake bookkeeping nobody downloading this wants.
-          New-Item -ItemType Directory -Force -Path stage | Out-Null
-          Copy-Item build\Arbitrium.exe stage\
-          Get-ChildItem build -Directory |
-            Where-Object { $_.Name -notin @('CMakeFiles','.cmake','Arbitrium_autogen') } |
-            ForEach-Object { Copy-Item $_.FullName stage\ -Recurse }
-          Get-ChildItem build -File -Filter *.dll | Copy-Item -Destination stage\
-          Copy-Item README.md stage\
-          Copy-Item CHANGELOG.md stage\
-          Compress-Archive -Path stage\* -DestinationPath "Arbitrium-v$version-win64.zip"
-
-      - name: Attach it to the release
-        shell: bash
+      - name: Read the assets back off the release
         env:
           GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
           set -euo pipefail
-          tag="${{ needs.publish.outputs.tag }}"
-          zip="Arbitrium-v${{ needs.publish.outputs.version }}-win64.zip"
-          gh release upload "$tag" "$zip" --clobber
+          tag="${{ needs.check.outputs.tag }}"
+          version="${{ needs.check.outputs.version }}"
 
-          # Read it back off the release rather than trusting the upload's exit code. The
-          # release notes name this file too, so anything that greps the release for the
-          # name finds a match whether or not the asset is there — asking for the asset
-          # list by name is the only answer that means what it looks like it means.
-          gh release view "$tag" --json assets --jq '.assets[].name' | grep -Fxq "$zip"
-          echo "$zip is on the release"
+          # The release notes name these files too, so anything that greps the release for
+          # the name finds a match whether or not the asset is there — asking for the asset
+          # list, by name and with its size, is the only answer that means what it looks
+          # like it means. This is the check 0.9.8 did not have for the executable.
+          gh release view "$tag" --json assets \
+            --jq '.assets[] | "\(.name) \(.size)"' > assets.txt
+          cat assets.txt
+
+          for name in "Arbitrium-v$version-win64.exe" "Arbitrium-v$version-win64.zip"; do
+            size=$(awk -v n="$name" '$1 == n { print $2 }' assets.txt)
+            if [ -z "$size" ]; then
+              echo "::error::$name is not on the release"
+              exit 1
+            fi
+            if [ "$size" -lt 1000000 ]; then
+              echo "::error::$name is on the release but is only $size bytes"
+              exit 1
+            fi
+            echo "$name — $size bytes"
+          done

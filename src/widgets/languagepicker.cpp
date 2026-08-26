@@ -24,6 +24,14 @@ LanguagePicker::LanguagePicker(QWidget *parent)
     connect(Theme::notifier(), &Theme::Notifier::accentChanged, this, qOverload<>(&QWidget::update));
     connect(Theme::notifier(), &Theme::Notifier::appearanceChanged, this, qOverload<>(&QWidget::update));
     connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, qOverload<>(&QWidget::update));
+    // Every chip's rectangle is measured from Font::segment(), which carries the interface
+    // scale, so a face swap or a text-size change has to re-measure them. Without this the
+    // chips kept the widths of the size they were built at: at "Büyük" the labels ran past
+    // their outlines, at "Küçük" they floated inside them.
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+        rebuild();
+        update();
+    });
 }
 
 void LanguagePicker::rebuild()

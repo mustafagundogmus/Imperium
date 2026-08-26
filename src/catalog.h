@@ -64,7 +64,8 @@ struct LiveDescription
     QString lead;          ///< …or its literal text, when it has no key
     QString detail;        ///< the machine's own words: a command line, a service key
     QString stateKey;      ///< i18n key for a trailing state word, e.g. "svc.running"
-    QString note;          ///< a warning, shown behind the "dikkat:" prefix
+    QString note;          ///< a warning, shown behind the "dikkat:" prefix…
+    QString noteKey;       ///< …or its i18n key, which is what the service rows use
 
     /// The assembled sentence, in the interface language.
     QString text() const;
@@ -205,14 +206,4 @@ void forEachTweak(const Catalog &catalog, F &&fn)
         for (const Section &section : category.sections)
             for (const Tweak &tweak : section.tweaks)
                 fn(tweak);
-}
-
-/// Same, with the category each tweak came from.
-template <typename F>
-void forEachTweakInCategory(const Catalog &catalog, F &&fn)
-{
-    for (const Category &category : catalog.categories())
-        for (const Section &section : category.sections)
-            for (const Tweak &tweak : section.tweaks)
-                fn(category, tweak);
 }

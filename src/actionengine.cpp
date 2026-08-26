@@ -54,8 +54,14 @@ void ActionEngine::run(const Action &action)
             onFinished(-1);
     });
 
-    m_process->start();
+    // Announced before the launch, not after it. QProcess::start() reports a failure to
+    // launch synchronously — errorOccurred fires from inside the call — so emitting
+    // started() afterwards delivered finished() first: the page re-enabled the row, wrote
+    // the result, and was then told the action had just begun, leaving it dimmed and
+    // reading "çalışıyor" forever. m_process is already set here, so running() is true
+    // for anything the signal reaches.
     Q_EMIT started(action.id);
+    m_process->start();
 }
 
 void ActionEngine::onFinished(int exitCode)

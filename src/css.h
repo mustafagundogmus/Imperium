@@ -49,6 +49,14 @@ void drawCentered(QPainter *p, const QRectF &box, const QFont &f, const QColor &
 /// Turkish-correct `text-transform: uppercase` (i → İ, ı → I).
 QString upperTr(const QString &s);
 
+/// The three measurements a two-line row is built from: the vertical padding above and
+/// below its text (which the density setting halves), the name line and the description
+/// line. TweakRow and SettingRow are the same shape and each kept its own byte-identical
+/// copy of all three.
+qreal rowPadY();
+qreal rowNameLine();
+qreal rowDescLine();
+
 /// Fills a 1px hairline. Kept separate so the 1px stays 1 *logical* px on hi-dpi.
 void hairline(QPainter *p, const QRectF &r, const QColor &c);
 

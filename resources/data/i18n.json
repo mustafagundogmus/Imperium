@@ -995,6 +995,18 @@
   "ru": "Схема «Ultimate Performance» добавлена и включена.",
   "tr": "Ultimate Performance planı eklendi ve etkinleştirildi."
  },
+ "actions.result.ultimatePerfMissing": {
+  "ar": "الخطة غير موجودة؛ تمت العودة إلى متوازن.",
+  "de": "Der Plan war nicht vorhanden; zurück zu „Ausbalanciert“.",
+  "en": "The plan was not there; switched back to Balanced.",
+  "es": "El plan no estaba; se volvió a Equilibrado.",
+  "fr": "Le mode n'était pas présent ; retour à Usage normal.",
+  "it": "Il piano non era presente; ripristinato Bilanciato.",
+  "pl": "Planu nie było; przywrócono Zrównoważony.",
+  "pt": "O plano não existia; regressou a Equilibrado.",
+  "ru": "Схемы не было; возврат к «Сбалансированной».",
+  "tr": "Plan bulunamadı; dengeli plana geçildi."
+ },
  "actions.result.ultimatePerfRemoved": {
   "ar": "تمت إزالة الخطة والعودة إلى «متوازن».",
   "de": "Plan entfernt, zurück zu „Ausbalanciert“.",
@@ -1006,6 +1018,18 @@
   "pt": "Plano removido, voltou a «Equilibrado».",
   "ru": "Схема удалена, возврат к «Сбалансированной».",
   "tr": "Plan kaldırıldı, dengeli plana dönüldü."
+ },
+ "actions.result.ultimatePerfUnavailable": {
+  "ar": "تعذّر نسخ خطة الأداء الفائق في إصدار Windows هذا.",
+  "de": "Der Plan „Höchstleistung“ konnte in dieser Windows-Edition nicht kopiert werden.",
+  "en": "The Ultimate Performance plan could not be copied on this edition of Windows.",
+  "es": "No se pudo copiar el plan Rendimiento máximo en esta edición de Windows.",
+  "fr": "Le mode Performances ultimes n'a pas pu être copié sur cette édition de Windows.",
+  "it": "Non è stato possibile copiare il piano Prestazioni eccezionali in questa edizione di Windows.",
+  "pl": "Nie udało się skopiować planu Najwyższa wydajność w tej edycji systemu Windows.",
+  "pt": "Não foi possível copiar o plano Desempenho Máximo nesta edição do Windows.",
+  "ru": "Не удалось скопировать схему «Максимальная производительность» в этой редакции Windows.",
+  "tr": "Ultimate Performance planı bu Windows sürümünde kopyalanamadı."
  },
  "actions.result.widgetsRemoved": {
   "ar": "تمت إزالة حزم عناصر واجهة المستخدم.",
@@ -1703,6 +1727,18 @@
   "ru": "Удалено пакетов: %1 — %2",
   "tr": "%1 paket kaldırıldı: %2"
  },
+ "debloat.resultKept": {
+  "ar": "تعذّرت إزالة: %1",
+  "de": "konnte nicht entfernt werden: %1",
+  "en": "could not be removed: %1",
+  "es": "no se pudo eliminar: %1",
+  "fr": "n'a pas pu être supprimé : %1",
+  "it": "non è stato possibile rimuovere: %1",
+  "pl": "nie udało się usunąć: %1",
+  "pt": "não foi possível remover: %1",
+  "ru": "не удалось удалить: %1",
+  "tr": "kaldırılamadı: %1"
+ },
  "debloat.scanning": {
   "ar": "جارٍ فحص التطبيقات…",
   "de": "Apps werden gescannt…",
@@ -1846,6 +1882,18 @@
   "pt": "ID de publicidade",
   "ru": "Рекламный идентификатор",
   "tr": "Reklam kimliği"
+ },
+ "deep.batteryCapacity": {
+  "ar": "%1٪ (%2 / %3 mWh)",
+  "de": "%1 % (%2 / %3 mWh)",
+  "en": "%1% (%2 / %3 mWh)",
+  "es": "%1 % (%2 / %3 mWh)",
+  "fr": "%1 % (%2 / %3 mWh)",
+  "it": "%1% (%2 / %3 mWh)",
+  "pl": "%1% (%2 / %3 mWh)",
+  "pt": "%1% (%2 / %3 mWh)",
+  "ru": "%1 % (%2 / %3 mWh)",
+  "tr": "%%1 (%2 / %3 mWh)"
  },
  "deep.batteryCycles": {
   "ar": "عدد الدورات",
@@ -2040,15 +2088,15 @@
   "tr": "İmzasız"
  },
  "deep.encrypting": {
-  "ar": "جارٍ التشفير · %%1",
-  "de": "Wird verschlüsselt · %%1",
-  "en": "Encrypting · %%1",
-  "es": "Cifrando · %%1",
-  "fr": "Chiffrement · %%1",
-  "it": "Crittografia · %%1",
-  "pl": "Szyfrowanie · %%1",
-  "pt": "A encriptar · %%1",
-  "ru": "Шифрование · %%1",
+  "ar": "جارٍ التشفير · %1٪",
+  "de": "Wird verschlüsselt · %1 %",
+  "en": "Encrypting · %1%",
+  "es": "Cifrando · %1 %",
+  "fr": "Chiffrement · %1 %",
+  "it": "Crittografia · %1%",
+  "pl": "Szyfrowanie · %1%",
+  "pt": "A encriptar · %1%",
+  "ru": "Шифрование · %1 %",
   "tr": "Şifreleniyor · %%1"
  },
  "deep.fan": {
@@ -2136,15 +2184,15 @@
   "tr": "Son çökme"
  },
  "deep.lifeLeft": {
-  "ar": "%%1 من العمر",
-  "de": "%%1 Lebensdauer",
-  "en": "%%1 life",
-  "es": "%%1 de vida útil",
-  "fr": "%%1 de durée de vie",
-  "it": "%%1 di vita",
-  "pl": "%%1 żywotności",
-  "pt": "%%1 de vida útil",
-  "ru": "ресурс %%1",
+  "ar": "%1٪ من العمر",
+  "de": "%1 % Lebensdauer",
+  "en": "%1% life",
+  "es": "%1 % de vida útil",
+  "fr": "%1 % de durée de vie",
+  "it": "%1% di vita",
+  "pl": "%1% żywotności",
+  "pt": "%1% de vida útil",
+  "ru": "ресурс %1 %",
   "tr": "%%1 ömür"
  },
  "deep.localAccounts": {
@@ -2687,6 +2735,18 @@
   "ru": "%1/%2 отключено",
   "tr": "%1/%2 kapalı"
  },
+ "deep.tpmOwned": {
+  "ar": "مملوك",
+  "de": "In Besitz",
+  "en": "Owned",
+  "es": "Con propietario",
+  "fr": "Approprié",
+  "it": "Con proprietario",
+  "pl": "Przejęty",
+  "pt": "Com proprietário",
+  "ru": "Владелец назначен",
+  "tr": "Sahipli"
+ },
  "deep.tpmOwnership": {
   "ar": "ملكية TPM",
   "de": "TPM-Besitz",
@@ -2698,6 +2758,18 @@
   "pt": "Propriedade do TPM",
   "ru": "Владение TPM",
   "tr": "TPM sahipliği"
+ },
+ "deep.tpmUnowned": {
+  "ar": "غير مملوك",
+  "de": "Nicht in Besitz",
+  "en": "Not owned",
+  "es": "Sin propietario",
+  "fr": "Non approprié",
+  "it": "Senza proprietario",
+  "pl": "Nieprzejęty",
+  "pt": "Sem proprietário",
+  "ru": "Владелец не назначен",
+  "tr": "Sahipsiz"
  },
  "deep.trim": {
   "ar": "TRIM",
@@ -2878,6 +2950,18 @@
   "pt": "não foi possível ler a resposta",
   "ru": "не удалось прочитать ответ",
   "tr": "yanıt okunamadı"
+ },
+ "err.cannotRevertKeyDelete": {
+  "ar": "حذفت هذه الكتابة المفتاح بأكمله؛ ولا يمكن لقيمة واحدة استعادته",
+  "de": "dieser Schreibvorgang hat den ganzen Schlüssel gelöscht; ein einzelner Wert stellt ihn nicht wieder her",
+  "en": "this write deleted the whole key; one value cannot bring it back",
+  "es": "esta escritura eliminó toda la clave; un solo valor no puede restaurarla",
+  "fr": "cette écriture a supprimé la clé entière ; une seule valeur ne peut pas la restaurer",
+  "it": "questa scrittura ha eliminato l'intera chiave; un singolo valore non può ripristinarla",
+  "pl": "ten zapis usunął cały klucz; pojedyncza wartość go nie przywróci",
+  "pt": "esta escrita eliminou a chave inteira; um único valor não a pode restaurar",
+  "ru": "эта запись удалила весь раздел; одно значение его не вернёт",
+  "tr": "bu yazma tüm anahtarı sildi; tek bir değerden geri alınamaz"
  },
  "err.explorerStop": {
   "ar": "تعذّر إيقاف explorer.exe",
@@ -4187,6 +4271,18 @@
   "ru": "Адаптер",
   "tr": "Bağdaştırıcı"
  },
+ "ov.bagdastiriciSayisi": {
+  "ar": "المحوّلات",
+  "de": "Adapter",
+  "en": "Adapters",
+  "es": "Adaptadores",
+  "fr": "Cartes réseau",
+  "it": "Schede di rete",
+  "pl": "Karty sieciowe",
+  "pt": "Adaptadores",
+  "ru": "Адаптеры",
+  "tr": "Bağdaştırıcı sayısı"
+ },
  "ov.baglantiHizi": {
   "ar": "سرعة الاتصال",
   "de": "Verbindungsgeschwindigkeit",
@@ -5135,18 +5231,6 @@
   "ru": "Слоты",
   "tr": "Yuvalar"
  },
- "overview.chart.interval": {
-  "ar": "فاصل ثانية واحدة",
-  "de": "1-s-Intervall",
-  "en": "1 s interval",
-  "es": "intervalo de 1 s",
-  "fr": "intervalle de 1 s",
-  "it": "intervallo di 1 s",
-  "pl": "interwał 1 s",
-  "pt": "intervalo de 1 s",
-  "ru": "интервал 1 с",
-  "tr": "1 sn aralık"
- },
  "overview.chart.summary": {
   "ar": "فاصل ثانية واحدة · ذروة المعالج %1 متوسط %2 · متوسط الذاكرة %3",
   "de": "1-s-Intervall · CPU-Spitze %1 Ø %2 · Speicher Ø %3",
@@ -5554,6 +5638,18 @@
   "pt": "Memória",
   "ru": "Память",
   "tr": "Bellek"
+ },
+ "own.dialogTitle": {
+  "ar": "Arbitrium · الملكية",
+  "de": "Arbitrium · Besitz",
+  "en": "Arbitrium · Ownership",
+  "es": "Arbitrium · Propiedad",
+  "fr": "Arbitrium · Propriété",
+  "it": "Arbitrium · Proprietà",
+  "pl": "Arbitrium · Własność",
+  "pt": "Arbitrium · Propriedade",
+  "ru": "Arbitrium · Владение",
+  "tr": "Arbitrium · Sahiplik"
  },
  "own.exitCode": {
   "ar": "رمز الخروج",
@@ -6996,16 +7092,16 @@
   "tr": "Günlüğü aç"
  },
  "settings.language.desc": {
-  "ar": "يتحول نص الواجهة (القوائم والإعدادات والأزرار ومربعات الحوار) إلى اللغة التي تختارها. أسماء التعديلات وأوصافها بالتركية فقط حاليًا.",
-  "de": "Der Oberflächentext (Menüs, Einstellungen, Schaltflächen, Dialoge) wechselt in die gewählte Sprache. Tweak-Namen und -Beschreibungen sind derzeit nur auf Türkisch verfügbar.",
-  "en": "Interface text (menus, settings, buttons, dialogs) switches to your chosen language. Tweak names and descriptions are Turkish-only for now.",
-  "es": "El texto de la interfaz (menús, ajustes, botones, diálogos) cambia al idioma elegido. Los nombres y descripciones de los tweaks solo están en turco por ahora.",
-  "fr": "Le texte de l'interface (menus, paramètres, boutons, boîtes de dialogue) passe à la langue choisie. Les noms et descriptions des tweaks restent en turc pour l'instant.",
-  "it": "Il testo dell'interfaccia (menu, impostazioni, pulsanti, finestre di dialogo) passa alla lingua scelta. Nomi e descrizioni dei tweak sono solo in turco per ora.",
-  "pl": "Tekst interfejsu (menu, ustawienia, przyciski, okna dialogowe) zmienia się na wybrany język. Nazwy i opisy tweaków są obecnie dostępne tylko po turecku.",
-  "pt": "O texto da interface (menus, definições, botões, caixas de diálogo) muda para o idioma escolhido. Os nomes e descrições dos tweaks estão apenas em turco por agora.",
-  "ru": "Текст интерфейса (меню, настройки, кнопки, диалоги) переключается на выбранный язык. Названия и описания твиков пока доступны только на турецком.",
-  "tr": "Arayüz metinleri (menüler, ayarlar, düğmeler, iletişim kutuları) seçtiğiniz dile geçer. Tweak adları ve açıklamaları şu an yalnızca Türkçedir."
+  "ar": "ينتقل نص الواجهة وكتالوج التعديلات — الأسماء والأوصاف والخيارات — إلى اللغة التي تختارها. أما أسماء الخدمات وعناصر بدء التشغيل فتأتي من Windows نفسه وتبقى بلغة النظام.",
+  "de": "Oberflächentext und der Tweak-Katalog — Namen, Beschreibungen und Optionen — wechseln in die gewählte Sprache. Namen von Diensten und Autostart-Einträgen stammen von Windows und bleiben in der Systemsprache.",
+  "en": "Interface text and the tweak catalogue — names, descriptions and options — switch to your chosen language. Service and startup-item names come from Windows itself and stay in the system language.",
+  "es": "El texto de la interfaz y el catálogo de ajustes — nombres, descripciones y opciones — cambian al idioma elegido. Los nombres de servicios y elementos de inicio proceden de Windows y permanecen en el idioma del sistema.",
+  "fr": "Le texte de l'interface et le catalogue de réglages — noms, descriptions et options — passent dans la langue choisie. Les noms des services et des éléments de démarrage viennent de Windows et restent dans la langue du système.",
+  "it": "Il testo dell'interfaccia e il catalogo delle modifiche — nomi, descrizioni e opzioni — passano alla lingua scelta. I nomi di servizi ed elementi di avvio provengono da Windows e restano nella lingua di sistema.",
+  "pl": "Tekst interfejsu i katalog poprawek — nazwy, opisy i opcje — przełączają się na wybrany język. Nazwy usług i elementów autostartu pochodzą z systemu Windows i pozostają w języku systemu.",
+  "pt": "O texto da interface e o catálogo de ajustes — nomes, descrições e opções — mudam para o idioma escolhido. Os nomes de serviços e itens de arranque vêm do próprio Windows e permanecem no idioma do sistema.",
+  "ru": "Текст интерфейса и каталог твиков — названия, описания и варианты — переключаются на выбранный язык. Названия служб и элементов автозагрузки берутся из самой Windows и остаются на языке системы.",
+  "tr": "Arayüz metni ve tweak kataloğu — adlar, açıklamalar ve seçenekler — seçtiğiniz dile geçer. Hizmet ve başlangıç öğelerinin adları Windows'un kendisinden gelir ve sistem dilinde kalır."
  },
  "settings.language.label": {
   "ar": "اللغة",
@@ -7462,6 +7558,18 @@
   "pt": "Está disponível uma nova versão: %1 — clique para transferir.",
   "ru": "Доступна новая версия: %1 — нажмите, чтобы скачать.",
   "tr": "Yeni sürüm var: %1 — indirmek için tıklayın."
+ },
+ "settings.update.availableQuiet": {
+  "ar": "يتوفر إصدار جديد: %1 — اضغط على التحقق من التحديثات لفتحه.",
+  "de": "Eine neue Version ist verfügbar: %1 — zum Öffnen auf Nach Updates suchen klicken.",
+  "en": "A new version is available: %1 — press Check for updates to open it.",
+  "es": "Hay una nueva versión disponible: %1 — pulse Buscar actualizaciones para abrirla.",
+  "fr": "Une nouvelle version est disponible : %1 — appuyez sur Vérifier les mises à jour pour l'ouvrir.",
+  "it": "È disponibile una nuova versione: %1 — premi Controlla aggiornamenti per aprirla.",
+  "pl": "Dostępna jest nowa wersja: %1 — naciśnij Sprawdź aktualizacje, aby ją otworzyć.",
+  "pt": "Está disponível uma nova versão: %1 — prima Verificar atualizações para a abrir.",
+  "ru": "Доступна новая версия: %1 — нажмите «Проверить обновления», чтобы открыть её.",
+  "tr": "Yeni sürüm var: %1 — açmak için Güncellemeleri denetle'ye basın."
  },
  "settings.update.check": {
   "ar": "تحقّق",
@@ -7991,6 +8099,342 @@
   "ru": "Вручную",
   "tr": "Elle"
  },
+ "svc.risk.Audiosrv": {
+  "ar": "ينقطع الصوت تمامًا",
+  "de": "Der Ton fällt vollständig aus",
+  "en": "Sound cuts out entirely",
+  "es": "El sonido se corta por completo",
+  "fr": "Le son est totalement coupé",
+  "it": "L'audio si interrompe del tutto",
+  "pl": "Dźwięk zanika całkowicie",
+  "pt": "O som deixa de funcionar por completo",
+  "ru": "Звук полностью пропадает",
+  "tr": "Ses tamamen kesilir"
+ },
+ "svc.risk.BITS": {
+  "ar": "تتوقف التنزيلات في الخلفية (التحديثات والمتجر)",
+  "de": "Hintergrunddownloads (Updates, Store) werden gestoppt",
+  "en": "Background downloads (updates, the Store) stop",
+  "es": "Las descargas en segundo plano (actualizaciones, Store) se detienen",
+  "fr": "Les téléchargements en arrière-plan (mises à jour, Store) s'arrêtent",
+  "it": "I download in background (aggiornamenti, Store) si interrompono",
+  "pl": "Pobieranie w tle (aktualizacje, Sklep) przestaje działać",
+  "pt": "As transferências em segundo plano (atualizações, Store) param",
+  "ru": "Фоновые загрузки (обновления, Store) останавливаются",
+  "tr": "Arka plan indirmeleri (güncelleme, Store) durur"
+ },
+ "svc.risk.CDPSvc": {
+  "ar": "تنقطع التجارب عبر الأجهزة (الارتباط بالهاتف)",
+  "de": "Geräteübergreifende Funktionen (Handyverbindung) brechen ab",
+  "en": "Cross-device experiences (phone link) break",
+  "es": "Las experiencias entre dispositivos (vínculo con el teléfono) se rompen",
+  "fr": "Les expériences multi-appareils (lien avec le téléphone) sont rompues",
+  "it": "Le esperienze tra dispositivi (collegamento al telefono) si interrompono",
+  "pl": "Funkcje międzyurządzeniowe (Połącz z telefonem) przestają działać",
+  "pt": "As experiências entre dispositivos (ligação ao telemóvel) deixam de funcionar",
+  "ru": "Взаимодействие между устройствами («Связь с телефоном») нарушается",
+  "tr": "Cihazlar arası deneyimler (telefon bağlantısı) kopar"
+ },
+ "svc.risk.DoSvc": {
+  "ar": "تتوقف تحسينات تسليم التحديثات",
+  "de": "Die Übermittlungsoptimierung für Updates wird beendet",
+  "en": "Delivery Optimization for updates stops",
+  "es": "La optimización de distribución de actualizaciones se detiene",
+  "fr": "L'optimisation de la distribution des mises à jour s'arrête",
+  "it": "L'ottimizzazione recapito degli aggiornamenti si interrompe",
+  "pl": "Optymalizacja dostarczania aktualizacji przestaje działać",
+  "pt": "A otimização de entrega de atualizações para",
+  "ru": "Оптимизация доставки обновлений останавливается",
+  "tr": "Güncelleme dağıtım iyileştirmesi durur"
+ },
+ "svc.risk.FontCache": {
+  "ar": "يتم إيقاف ذاكرة تخزين الخطوط وتفتح التطبيقات ببطء أكبر",
+  "de": "Der Schriftartencache wird abgeschaltet, Apps starten langsamer",
+  "en": "The font cache is switched off and apps open more slowly",
+  "es": "La caché de fuentes se desactiva y las aplicaciones abren más lento",
+  "fr": "Le cache de polices est désactivé et les applications s'ouvrent plus lentement",
+  "it": "La cache dei caratteri viene disattivata e le app si aprono più lentamente",
+  "pl": "Pamięć podręczna czcionek zostaje wyłączona, aplikacje otwierają się wolniej",
+  "pt": "A cache de tipos de letra é desativada e as aplicações abrem mais devagar",
+  "ru": "Кэш шрифтов отключается, приложения открываются медленнее",
+  "tr": "Yazı tipi önbelleği kapanır, uygulamalar yavaş açılır"
+ },
+ "svc.risk.LanmanServer": {
+  "ar": "يتعذّر الوصول إلى مشاركات هذا الجهاز",
+  "de": "Freigaben auf diesem Rechner sind nicht mehr erreichbar",
+  "en": "Shares on this machine become unreachable",
+  "es": "Los recursos compartidos de este equipo dejan de ser accesibles",
+  "fr": "Les partages de cette machine deviennent inaccessibles",
+  "it": "Le condivisioni di questo computer diventano irraggiungibili",
+  "pl": "Udziały na tym komputerze stają się niedostępne",
+  "pt": "As partilhas nesta máquina deixam de estar acessíveis",
+  "ru": "Общие ресурсы этого компьютера станут недоступны",
+  "tr": "Bu makinedeki paylaşımlara erişilemez"
+ },
+ "svc.risk.LanmanWorkstation": {
+  "ar": "لا يمكن الاتصال بمشاركات الشبكة",
+  "de": "Netzwerkfreigaben lassen sich nicht mehr verbinden",
+  "en": "Network shares cannot be connected to",
+  "es": "No se puede conectar a recursos compartidos de red",
+  "fr": "Impossible de se connecter aux partages réseau",
+  "it": "Non è possibile connettersi alle condivisioni di rete",
+  "pl": "Nie można łączyć się z udziałami sieciowymi",
+  "pt": "Não é possível ligar a partilhas de rede",
+  "ru": "Подключиться к сетевым ресурсам нельзя",
+  "tr": "Ağ paylaşımlarına bağlanılamaz"
+ },
+ "svc.risk.MpsSvc": {
+  "ar": "يتوقف جدار حماية Windows تمامًا",
+  "de": "Die Windows-Firewall wird vollständig abgeschaltet",
+  "en": "Windows Firewall shuts down completely",
+  "es": "El Firewall de Windows se apaga por completo",
+  "fr": "Le Pare-feu Windows s'arrête complètement",
+  "it": "Windows Firewall si spegne completamente",
+  "pl": "Zapora Windows wyłącza się całkowicie",
+  "pt": "A Firewall do Windows desliga-se por completo",
+  "ru": "Брандмауэр Windows полностью отключается",
+  "tr": "Windows Güvenlik Duvarı tamamen kapanır"
+ },
+ "svc.risk.Netman": {
+  "ar": "تتوقف قائمة اتصالات الشبكة وإعدادها عن العمل",
+  "de": "Die Liste der Netzwerkverbindungen und deren Einrichtung funktionieren nicht mehr",
+  "en": "The network connections list and setup stop working",
+  "es": "La lista de conexiones de red y su configuración dejan de funcionar",
+  "fr": "La liste des connexions réseau et leur configuration cessent de fonctionner",
+  "it": "L'elenco delle connessioni di rete e la loro configurazione smettono di funzionare",
+  "pl": "Lista połączeń sieciowych i ich konfiguracja przestają działać",
+  "pt": "A lista de ligações de rede e a sua configuração deixam de funcionar",
+  "ru": "Список сетевых подключений и их настройка перестают работать",
+  "tr": "Ağ bağlantıları listesi ve kurulum çalışmaz"
+ },
+ "svc.risk.SecurityHealthService": {
+  "ar": "لن يعمل تطبيق أمن Windows",
+  "de": "Die App „Windows-Sicherheit“ startet nicht mehr",
+  "en": "The Windows Security app will not run",
+  "es": "La aplicación Seguridad de Windows no se ejecuta",
+  "fr": "L'application Sécurité Windows ne démarre plus",
+  "it": "L'app Sicurezza di Windows non si avvia",
+  "pl": "Aplikacja Zabezpieczenia Windows nie uruchomi się",
+  "pt": "A aplicação Segurança do Windows deixa de funcionar",
+  "ru": "Приложение «Безопасность Windows» не запускается",
+  "tr": "Windows Güvenlik uygulaması çalışmaz"
+ },
+ "svc.risk.Sense": {
+  "ar": "يتوقف اكتشاف نقاط النهاية في Defender",
+  "de": "Die Endpunkterkennung von Defender wird beendet",
+  "en": "Defender endpoint detection stops",
+  "es": "La detección de endpoints de Defender se detiene",
+  "fr": "La détection de point de terminaison Defender s'arrête",
+  "it": "Il rilevamento endpoint di Defender si interrompe",
+  "pl": "Wykrywanie punktów końcowych Defender przestaje działać",
+  "pt": "A deteção de pontos finais do Defender para",
+  "ru": "Обнаружение конечных точек Defender останавливается",
+  "tr": "Defender uç nokta algılaması durur"
+ },
+ "svc.risk.Spooler": {
+  "ar": "تتوقف قائمة انتظار الطباعة والمسح الضوئي تمامًا",
+  "de": "Die Druck- und Scannerwarteschlange steht still",
+  "en": "The print and scanner queue stops entirely",
+  "es": "La cola de impresión y escaneo se detiene por completo",
+  "fr": "La file d'attente d'impression et de numérisation s'arrête",
+  "it": "La coda di stampa e scansione si arresta del tutto",
+  "pl": "Kolejka drukowania i skanowania zatrzymuje się całkowicie",
+  "pt": "A fila de impressão e digitalização para por completo",
+  "ru": "Очередь печати и сканирования полностью останавливается",
+  "tr": "Yazdırma ve tarayıcı kuyruğu tamamen durur"
+ },
+ "svc.risk.SysMain": {
+  "ar": "يتم تعطيل التحميل المسبق (SuperFetch)",
+  "de": "Das Vorabladen (SuperFetch) wird deaktiviert",
+  "en": "Preloading (SuperFetch) is switched off",
+  "es": "La precarga (SuperFetch) queda desactivada",
+  "fr": "Le préchargement (SuperFetch) est désactivé",
+  "it": "Il precaricamento (SuperFetch) viene disattivato",
+  "pl": "Wstępne ładowanie (SuperFetch) zostaje wyłączone",
+  "pt": "O pré-carregamento (SuperFetch) fica desativado",
+  "ru": "Предзагрузка (SuperFetch) отключается",
+  "tr": "Önceden yükleme (SuperFetch) devre dışı kalır"
+ },
+ "svc.risk.TabletInputService": {
+  "ar": "تتوقف لوحة المفاتيح اللمسية وإدخال الكتابة اليدوية",
+  "de": "Bildschirmtastatur und Handschrifteingabe funktionieren nicht mehr",
+  "en": "The touch keyboard and handwriting input stop working",
+  "es": "El teclado táctil y la entrada manuscrita dejan de funcionar",
+  "fr": "Le clavier tactile et la saisie manuscrite cessent de fonctionner",
+  "it": "La tastiera virtuale e l'input scrittura smettono di funzionare",
+  "pl": "Klawiatura dotykowa i pismo odręczne przestają działać",
+  "pt": "O teclado tátil e a escrita manual deixam de funcionar",
+  "ru": "Сенсорная клавиатура и рукописный ввод перестают работать",
+  "tr": "Dokunmatik klavye ve el yazısı girişi çalışmaz"
+ },
+ "svc.risk.Themes": {
+  "ar": "تتعطل السمات المرئية ومظهر إطارات النوافذ",
+  "de": "Visuelle Designs und Fensterrahmen werden fehlerhaft dargestellt",
+  "en": "Visual themes and window frame styling break",
+  "es": "Los temas visuales y el estilo de las ventanas se rompen",
+  "fr": "Les thèmes visuels et le style des fenêtres se dégradent",
+  "it": "I temi visivi e lo stile delle finestre si guastano",
+  "pl": "Motywy wizualne i wygląd ramek okien przestają działać poprawnie",
+  "pt": "Os temas visuais e o estilo das janelas ficam danificados",
+  "ru": "Визуальные темы и оформление окон ломаются",
+  "tr": "Görsel temalar ve pencere çerçevesi görünümü bozulur"
+ },
+ "svc.risk.UsoSvc": {
+  "ar": "لا يمكن جدولة جلسات التحديث",
+  "de": "Updatesitzungen können nicht geplant werden",
+  "en": "Update sessions cannot be scheduled",
+  "es": "No se pueden programar sesiones de actualización",
+  "fr": "Les sessions de mise à jour ne peuvent plus être planifiées",
+  "it": "Le sessioni di aggiornamento non possono essere pianificate",
+  "pl": "Nie można zaplanować sesji aktualizacji",
+  "pt": "As sessões de atualização não podem ser agendadas",
+  "ru": "Сеансы обновления нельзя запланировать",
+  "tr": "Güncelleme oturumları zamanlanamaz"
+ },
+ "svc.risk.VSS": {
+  "ar": "لا يمكن إنشاء نقاط استعادة أو نسخ الظل",
+  "de": "Wiederherstellungspunkte und Schattenkopien lassen sich nicht mehr erstellen",
+  "en": "Restore points and shadow copies cannot be created",
+  "es": "No se pueden crear puntos de restauración ni instantáneas",
+  "fr": "Les points de restauration et clichés instantanés ne peuvent plus être créés",
+  "it": "Non è possibile creare punti di ripristino né copie shadow",
+  "pl": "Nie można tworzyć punktów przywracania ani kopii w tle",
+  "pt": "Não é possível criar pontos de restauro nem cópias sombra",
+  "ru": "Точки восстановления и теневые копии создать нельзя",
+  "tr": "Geri yükleme noktası ve gölge kopya oluşturulamaz"
+ },
+ "svc.risk.WSearch": {
+  "ar": "يفقد البحث في ابدأ ومستكشف الملفات فهرسه",
+  "de": "Die Suche in Start und Explorer verliert ihren Index",
+  "en": "Start and File Explorer search lose their index",
+  "es": "La búsqueda de Inicio y el Explorador pierden su índice",
+  "fr": "La recherche dans Démarrer et l'Explorateur perd son index",
+  "it": "La ricerca in Start ed Esplora file perde l'indice",
+  "pl": "Wyszukiwanie w menu Start i Eksploratorze traci indeks",
+  "pt": "A pesquisa no Iniciar e no Explorador perde o índice",
+  "ru": "Поиск в «Пуске» и Проводнике теряет индекс",
+  "tr": "Başlat ve Gezgin araması dizin kullanamaz"
+ },
+ "svc.risk.WerSvc": {
+  "ar": "يتوقف الإبلاغ عن الأخطاء وتسجيل الأعطال",
+  "de": "Fehlerberichterstattung und Absturzprotokolle entfallen",
+  "en": "Error reporting and crash logging stop",
+  "es": "Los informes de errores y registros de bloqueo se detienen",
+  "fr": "Les rapports d'erreurs et journaux de plantage s'arrêtent",
+  "it": "Segnalazione errori e log dei crash si interrompono",
+  "pl": "Raportowanie błędów i dzienniki awarii przestają działać",
+  "pt": "Os relatórios de erros e registos de falhas param",
+  "ru": "Отчёты об ошибках и журналы сбоев прекращаются",
+  "tr": "Hata raporlama ve çökme kayıtları durur"
+ },
+ "svc.risk.WinDefend": {
+  "ar": "تتوقف الحماية في الوقت الحقيقي من Microsoft Defender",
+  "de": "Der Echtzeitschutz von Microsoft Defender wird beendet",
+  "en": "Microsoft Defender's real-time protection stops",
+  "es": "La protección en tiempo real de Microsoft Defender se detiene",
+  "fr": "La protection en temps réel de Microsoft Defender s'arrête",
+  "it": "La protezione in tempo reale di Microsoft Defender si interrompe",
+  "pl": "Ochrona w czasie rzeczywistym Microsoft Defender przestaje działać",
+  "pt": "A proteção em tempo real do Microsoft Defender para",
+  "ru": "Защита в реальном времени Microsoft Defender останавливается",
+  "tr": "Microsoft Defender'ın gerçek zamanlı koruması durur"
+ },
+ "svc.risk.WlanSvc": {
+  "ar": "لا يمكن إنشاء اتصال شبكة لاسلكية",
+  "de": "Es kann keine WLAN-Verbindung hergestellt werden",
+  "en": "No wireless network connection can be made",
+  "es": "No se puede establecer conexión de red inalámbrica",
+  "fr": "Aucune connexion Wi-Fi ne peut être établie",
+  "it": "Non è possibile stabilire connessioni Wi-Fi",
+  "pl": "Nie można nawiązać połączenia bezprzewodowego",
+  "pt": "Não é possível estabelecer ligação sem fios",
+  "ru": "Беспроводное подключение установить нельзя",
+  "tr": "Kablosuz ağ bağlantısı kurulamaz"
+ },
+ "svc.risk.WpnService": {
+  "ar": "تتوقف إشعارات التطبيقات عن الوصول",
+  "de": "App-Benachrichtigungen kommen nicht mehr an",
+  "en": "App notifications stop arriving",
+  "es": "Las notificaciones de aplicaciones dejan de llegar",
+  "fr": "Les notifications d'applications n'arrivent plus",
+  "it": "Le notifiche delle app smettono di arrivare",
+  "pl": "Powiadomienia aplikacji przestają docierać",
+  "pt": "As notificações de aplicações deixam de chegar",
+  "ru": "Уведомления приложений перестают приходить",
+  "tr": "Uygulama bildirimleri gelmez"
+ },
+ "svc.risk.netprofm": {
+  "ar": "لا يتم التعرف على ملفات تعريف الشبكة (خاصة/عامة)",
+  "de": "Netzwerkprofile (privat/öffentlich) werden nicht erkannt",
+  "en": "Network profiles (private/public) are not recognised",
+  "es": "Los perfiles de red (privada/pública) no se reconocen",
+  "fr": "Les profils réseau (privé/public) ne sont plus reconnus",
+  "it": "I profili di rete (privata/pubblica) non vengono riconosciuti",
+  "pl": "Profile sieciowe (prywatny/publiczny) nie są rozpoznawane",
+  "pt": "Os perfis de rede (privada/pública) não são reconhecidos",
+  "ru": "Сетевые профили (частный/общий) не распознаются",
+  "tr": "Ağ profilleri (özel/genel) tanınmaz"
+ },
+ "svc.risk.seclogon": {
+  "ar": "يتم تعطيل «التشغيل كمستخدم آخر»",
+  "de": "„Als anderer Benutzer ausführen“ wird deaktiviert",
+  "en": "Run as a different user is switched off",
+  "es": "«Ejecutar como otro usuario» queda desactivado",
+  "fr": "« Exécuter en tant qu'autre utilisateur » est désactivé",
+  "it": "«Esegui come utente diverso» viene disattivato",
+  "pl": "Opcja „Uruchom jako inny użytkownik” zostaje wyłączona",
+  "pt": "«Executar como outro utilizador» fica desativado",
+  "ru": "«Запуск от имени другого пользователя» отключается",
+  "tr": "Farklı kullanıcı olarak çalıştırma devre dışı kalır"
+ },
+ "svc.risk.swprv": {
+  "ar": "يتوقف موفّر نسخ الظل عن العمل",
+  "de": "Der Schattenkopieanbieter funktioniert nicht mehr",
+  "en": "The shadow copy provider stops working",
+  "es": "El proveedor de instantáneas deja de funcionar",
+  "fr": "Le fournisseur de clichés instantanés cesse de fonctionner",
+  "it": "Il provider di copie shadow smette di funzionare",
+  "pl": "Dostawca kopii w tle przestaje działać",
+  "pt": "O fornecedor de cópias sombra deixa de funcionar",
+  "ru": "Поставщик теневого копирования перестаёт работать",
+  "tr": "Gölge kopya sağlayıcısı çalışmaz"
+ },
+ "svc.risk.wbengine": {
+  "ar": "يتوقف النسخ الاحتياطي لـ Windows عن العمل",
+  "de": "Windows-Sicherung funktioniert nicht mehr",
+  "en": "Windows Backup stops working",
+  "es": "La Copia de seguridad de Windows deja de funcionar",
+  "fr": "La Sauvegarde Windows cesse de fonctionner",
+  "it": "Backup di Windows smette di funzionare",
+  "pl": "Kopia zapasowa Windows przestaje działać",
+  "pt": "A Cópia de Segurança do Windows deixa de funcionar",
+  "ru": "Архивация Windows перестаёт работать",
+  "tr": "Windows Yedekleme çalışmaz"
+ },
+ "svc.risk.wscsvc": {
+  "ar": "تتوقف إشعارات حالة مركز الأمان",
+  "de": "Statusmeldungen des Sicherheitscenters bleiben aus",
+  "en": "Security Center status notifications stop",
+  "es": "Las notificaciones de estado del Centro de seguridad se detienen",
+  "fr": "Les notifications d'état du Centre de sécurité cessent",
+  "it": "Le notifiche di stato del Centro sicurezza si interrompono",
+  "pl": "Powiadomienia o stanie Centrum zabezpieczeń przestają działać",
+  "pt": "As notificações de estado do Centro de Segurança param",
+  "ru": "Уведомления о состоянии Центра безопасности прекращаются",
+  "tr": "Güvenlik Merkezi durum bildirimleri durur"
+ },
+ "svc.risk.wuauserv": {
+  "ar": "لا يستطيع Windows Update تنزيل التحديثات",
+  "de": "Windows Update kann keine Updates herunterladen",
+  "en": "Windows Update cannot download updates",
+  "es": "Windows Update no puede descargar actualizaciones",
+  "fr": "Windows Update ne peut plus télécharger de mises à jour",
+  "it": "Windows Update non può scaricare aggiornamenti",
+  "pl": "Windows Update nie może pobierać aktualizacji",
+  "pt": "O Windows Update não consegue transferir atualizações",
+  "ru": "Центр обновления Windows не может загружать обновления",
+  "tr": "Windows Update güncelleme indiremez"
+ },
  "svc.riskPrefix": {
   "ar": "تنبيه: ",
   "de": "Achtung: ",
@@ -8099,6 +8543,18 @@
   "ru": "заряжена",
   "tr": "dolu"
  },
+ "sys.bootMode.legacy": {
+  "ar": "قديم (BIOS)",
+  "de": "Legacy (BIOS)",
+  "en": "Legacy (BIOS)",
+  "es": "Heredado (BIOS)",
+  "fr": "Hérité (BIOS)",
+  "it": "Legacy (BIOS)",
+  "pl": "Starszy (BIOS)",
+  "pt": "Legado (BIOS)",
+  "ru": "Устаревший (BIOS)",
+  "tr": "Eski (BIOS)"
+ },
  "sys.bos": {
   "ar": "%1 · %2 متاح",
   "de": "%1 · %2 frei",
@@ -8170,6 +8626,18 @@
   "pt": "Ontem",
   "ru": "Вчера",
   "tr": "Dün"
+ },
+ "sys.ekran": {
+  "ar": "%1 شاشات",
+  "de": "%1 Bildschirme",
+  "en": "%1 displays",
+  "es": "%1 pantallas",
+  "fr": "%1 écrans",
+  "it": "%1 schermi",
+  "pl": "%1 ekranów",
+  "pt": "%1 ecrãs",
+  "ru": "%1 экрана",
+  "tr": "%1 ekran"
  },
  "sys.elevation.admin": {
   "ar": "مسؤول",
@@ -9539,30 +10007,6 @@
   "ru": "Принудительная очистка хранилища",
   "tr": "Zorunlu depolama temizliği"
  },
- "tweak.cln-autocomplete-history.desc": {
-  "ar": "يمنع مستكشف الملفات ومربّع «تشغيل» من اقتراح المسارات التي كتبتها سابقًا. وتظل المسارات مسجَّلة، لكنها لا تُعرض.",
-  "de": "Verhindert, dass Explorer und das Ausführen-Feld zuvor eingegebene Pfade vorschlagen. Die Pfade werden weiterhin gespeichert, nur nicht angeboten.",
-  "en": "Stops File Explorer and the Run box suggesting paths you typed before. The paths are still recorded; they just are not offered.",
-  "es": "Impide que el Explorador y el cuadro Ejecutar sugieran rutas ya escritas. Las rutas se siguen registrando; solo dejan de ofrecerse.",
-  "fr": "Empêche l'Explorateur et la boîte Exécuter de suggérer les chemins déjà saisis. Les chemins restent enregistrés, ils ne sont simplement plus proposés.",
-  "it": "Impedisce a Esplora file e alla finestra Esegui di suggerire percorsi già digitati. I percorsi restano registrati, semplicemente non vengono proposti.",
-  "pl": "Powstrzymuje Eksploratora i okno Uruchom przed podpowiadaniem wcześniej wpisanych ścieżek. Ścieżki nadal są zapisywane, po prostu nie są proponowane.",
-  "pt": "Impede que o Explorador e a caixa Executar sugiram caminhos já escritos. Os caminhos continuam registados; apenas deixam de ser oferecidos.",
-  "ru": "Не даёт Проводнику и окну «Выполнить» подсказывать ранее введённые пути. Пути по-прежнему записываются, просто не предлагаются.",
-  "tr": "Gezgin ve Çalıştır kutusunun daha önce yazdığınız yolları önermesini kapatır. Yollar yine kaydedilir; yalnızca öneri olarak sunulmaz."
- },
- "tweak.cln-autocomplete-history.name": {
-  "ar": "اقتراحات السجل في شريط العنوان",
-  "de": "Verlaufsvorschläge in der Adressleiste",
-  "en": "Address bar history suggestions",
-  "es": "Sugerencias del historial en la barra de direcciones",
-  "fr": "Suggestions d'historique dans la barre d'adresse",
-  "it": "Suggerimenti della cronologia nella barra degli indirizzi",
-  "pl": "Podpowiedzi historii na pasku adresu",
-  "pt": "Sugestões do histórico na barra de endereço",
-  "ru": "Подсказки истории в адресной строке",
-  "tr": "Adres çubuğu geçmişi önerileri"
- },
  "tweak.cln-clear-recentdocs.desc": {
   "ar": "يُفرغ قائمة المستندات الأخيرة عند تسجيل الخروج. ويُحتفظ بالسجل طوال الجلسة ثم يُمحى — وهو الحل الوسط بين عدم التسجيل مطلقًا وعدم المسح مطلقًا.",
   "de": "Leert die Liste zuletzt verwendeter Dokumente beim Abmelden. Der Verlauf bleibt während der Sitzung erhalten — der Mittelweg zwischen gar nicht aufzeichnen und nie löschen.",
@@ -9875,30 +10319,6 @@
   "ru": "Поведение Prefetch",
   "tr": "Prefetch davranışı"
  },
- "tweak.cln-search-history.desc": {
-  "ar": "يوقف حفظ عمليات البحث التي تجريها في «ابدأ» ومستكشف الملفات على هذا الجهاز.",
-  "de": "Verhindert, dass Ihre Suchvorgänge in Startmenü und Explorer auf diesem Rechner gespeichert werden.",
-  "en": "Stops the searches you make in Start and File Explorer being kept on this machine.",
-  "es": "Impide que las búsquedas que haces en Inicio y el Explorador se guarden en este equipo.",
-  "fr": "Empêche la conservation sur cette machine des recherches faites dans Démarrer et l'Explorateur.",
-  "it": "Impedisce che le ricerche fatte in Start e in Esplora file vengano conservate su questa macchina.",
-  "pl": "Powstrzymuje przechowywanie na tej maszynie wyszukiwań wykonanych w menu Start i Eksploratorze.",
-  "pt": "Impede que as pesquisas feitas no Iniciar e no Explorador sejam guardadas nesta máquina.",
-  "ru": "Отключает сохранение на этой машине поисковых запросов из «Пуска» и Проводника.",
-  "tr": "Başlat ve Gezgin'de yaptığınız aramaların bu makinede saklanmasını kapatır."
- },
- "tweak.cln-search-history.name": {
-  "ar": "سجل البحث على الجهاز",
-  "de": "Gerätesuchverlauf",
-  "en": "Device search history",
-  "es": "Historial de búsqueda del dispositivo",
-  "fr": "Historique de recherche de l'appareil",
-  "it": "Cronologia di ricerca del dispositivo",
-  "pl": "Historia wyszukiwania na urządzeniu",
-  "pt": "Histórico de pesquisa do dispositivo",
-  "ru": "Журнал поиска на устройстве",
-  "tr": "Cihaz arama geçmişi"
- },
  "tweak.cln-shutdown-app-timeout.desc": {
   "ar": "عدد المللي ثانية التي يُنتظَرها تطبيق لا يستجيب عند إيقاف التشغيل.",
   "de": "Wie viele Millisekunden beim Herunterfahren auf eine nicht reagierende Anwendung gewartet wird.",
@@ -10042,54 +10462,6 @@
   "pt": "Thumbs.db em pastas de rede",
   "ru": "Thumbs.db в сетевых папках",
   "tr": "Ağ klasörlerinde Thumbs.db"
- },
- "tweak.cln-track-docs.desc": {
-  "ar": "يمنع قوائم الانتقال في شريط المهام وقائمة ابدأ من عرض الملفات المفتوحة مؤخرًا.",
-  "de": "Verhindert, dass die Sprunglisten in Taskleiste und Startmenü zuletzt geöffnete Dateien anzeigen.",
-  "en": "Stops the jump lists on the taskbar and Start menu showing recently opened files.",
-  "es": "Impide que las listas de accesos rápidos de la barra de tareas y del menú Inicio muestren archivos abiertos recientemente.",
-  "fr": "Empêche les listes de raccourcis de la barre des tâches et du menu Démarrer d'afficher les fichiers récemment ouverts.",
-  "it": "Impedisce alle jump list della barra delle applicazioni e del menu Start di mostrare i file aperti di recente.",
-  "pl": "Powstrzymuje listy szybkiego dostępu na pasku zadań i w menu Start przed pokazywaniem ostatnio otwieranych plików.",
-  "pt": "Impede que as listas de atalhos da barra de tarefas e do menu Iniciar mostrem ficheiros abertos recentemente.",
-  "ru": "Не даёт спискам переходов на панели задач и в меню «Пуск» показывать недавно открытые файлы.",
-  "tr": "Görev çubuğu ve Başlat menüsündeki atlama listelerinin son açılan dosyaları göstermesini kapatır."
- },
- "tweak.cln-track-docs.name": {
-  "ar": "العناصر الأخيرة في قوائم الانتقال",
-  "de": "Zuletzt verwendete Elemente in Sprunglisten",
-  "en": "Recent items in jump lists",
-  "es": "Elementos recientes en listas de accesos rápidos",
-  "fr": "Éléments récents dans les listes de raccourcis",
-  "it": "Elementi recenti nelle jump list",
-  "pl": "Ostatnie elementy na listach szybkiego dostępu",
-  "pt": "Itens recentes nas listas de atalhos",
-  "ru": "Недавние элементы в списках переходов",
-  "tr": "Atlama listelerinde son öğeler"
- },
- "tweak.cln-track-progs.desc": {
-  "ar": "يمنع إبراز تطبيق مثبَّت حديثًا في قائمة ابدأ ويمنع تكوين قائمة الأكثر استخدامًا.",
-  "de": "Verhindert, dass eine neu installierte App im Startmenü hervorgehoben wird und dass die Liste der meistverwendeten entsteht.",
-  "en": "Stops a newly installed app being highlighted in Start, and stops the most-used list from forming.",
-  "es": "Impide que una aplicación recién instalada se destaque en Inicio y que se forme la lista de más usadas.",
-  "fr": "Empêche qu'une application fraîchement installée soit mise en avant dans Démarrer et que la liste des plus utilisées se constitue.",
-  "it": "Impedisce che un'app appena installata venga evidenziata in Start e che si formi l'elenco delle più usate.",
-  "pl": "Powstrzymuje wyróżnianie nowo zainstalowanej aplikacji w menu Start i tworzenie listy najczęściej używanych.",
-  "pt": "Impede que uma aplicação recém-instalada seja destacada no Iniciar e que a lista de mais usadas se forme.",
-  "ru": "Не даёт только что установленному приложению выделяться в «Пуске» и не даёт формироваться списку часто используемых.",
-  "tr": "Yeni kurulan bir uygulamanın Başlat menüsünde vurgulanmasını ve en çok kullanılanlar listesinin oluşmasını engeller."
- },
- "tweak.cln-track-progs.name": {
-  "ar": "التطبيقات المضافة حديثًا في ابدأ",
-  "de": "Zuletzt hinzugefügte Apps im Startmenü",
-  "en": "Recently added apps in Start",
-  "es": "Aplicaciones añadidas recientemente en Inicio",
-  "fr": "Applications récemment ajoutées dans Démarrer",
-  "it": "App aggiunte di recente in Start",
-  "pl": "Ostatnio dodane aplikacje w menu Start",
-  "pt": "Aplicações adicionadas recentemente no Iniciar",
-  "ru": "Недавно добавленные приложения в «Пуск»",
-  "tr": "Başlat menüsünde son eklenen uygulamalar"
  },
  "tweak.ctx-cmd-here.desc": {
   "ar": "يفتح موجه الأوامر في المجلد الحالي عند النقر بزر الماوس الأيمن على مساحة فارغة بداخله.",
@@ -12431,30 +12803,6 @@
   "ru": "Разрешение mDNS (Bonjour)",
   "tr": "mDNS (Bonjour) çözümlemesi"
  },
- "tweak.net-nagle.desc": {
-  "ar": "يمنع تجميع الحزم الصغيرة وإرسالها معًا. يخفض الكمون في الألعاب عبر الإنترنت؛ ويهدر النطاق للتطبيقات التي تنتج حزمًا صغيرة كثيرة.",
-  "de": "Verhindert, dass kleine Pakete gesammelt und gemeinsam gesendet werden. Senkt die Latenz in Onlinespielen; bei Anwendungen mit vielen kleinen Paketen verschwendet es Bandbreite.",
-  "en": "Stops small packets being pooled and sent together. Lowers latency in online games; wastes bandwidth for applications that produce many small packets.",
-  "es": "Impide que los paquetes pequeños se agrupen y se envíen juntos. Reduce la latencia en juegos en línea; desperdicia ancho de banda con aplicaciones que generan muchos paquetes pequeños.",
-  "fr": "Empêche le regroupement des petits paquets avant envoi. Réduit la latence dans les jeux en ligne ; gaspille de la bande passante pour les applications qui produisent beaucoup de petits paquets.",
-  "it": "Impedisce che i pacchetti piccoli vengano raccolti e inviati insieme. Abbassa la latenza nei giochi online; spreca banda con applicazioni che producono molti pacchetti piccoli.",
-  "pl": "Powstrzymuje łączenie małych pakietów i wysyłanie ich razem. Obniża opóźnienia w grach online; marnuje przepustowość dla aplikacji tworzących wiele małych pakietów.",
-  "pt": "Impede que pacotes pequenos sejam juntados e enviados em conjunto. Reduz a latência em jogos online; desperdiça largura de banda em aplicações que produzem muitos pacotes pequenos.",
-  "ru": "Не даёт мелким пакетам накапливаться и отправляться вместе. Снижает задержку в онлайн-играх; расходует полосу для приложений, генерирующих много мелких пакетов.",
-  "tr": "Küçük paketlerin biriktirilip birlikte gönderilmesini kapatır. Çevrimiçi oyunlarda gecikmeyi düşürür; çok sayıda küçük paket üreten uygulamalarda bant genişliği israfı yapar."
- },
- "tweak.net-nagle.name": {
-  "ar": "خوارزمية Nagle",
-  "de": "Nagle-Algorithmus",
-  "en": "Nagle's algorithm",
-  "es": "Algoritmo de Nagle",
-  "fr": "Algorithme de Nagle",
-  "it": "Algoritmo di Nagle",
-  "pl": "Algorytm Nagle'a",
-  "pt": "Algoritmo de Nagle",
-  "ru": "Алгоритм Нейгла",
-  "tr": "Nagle algoritması"
- },
  "tweak.net-netbios.desc": {
   "ar": "يعطّل بروتوكول تحليل الأسماء القديم. وهو معرّض لعائلة الهجمات نفسها التي يتعرض لها LLMNR؛ وقد يُفقد الوصول إلى مشاركات الشبكة القديمة جدًا.",
   "de": "Deaktiviert das alte Namensauflösungsprotokoll. Es ist derselben Angriffsfamilie wie LLMNR ausgesetzt; der Zugriff auf sehr alte Netzwerkfreigaben kann verloren gehen.",
@@ -12551,30 +12899,6 @@
   "ru": "Задержка TCP TIME_WAIT",
   "tr": "TCP TIME_WAIT süresi"
  },
- "tweak.net-teredo-full.desc": {
-  "ar": "يعطّل نفق Teredo الذي ينقل IPv6 عبر شبكة IPv4. وتعتمد عليه بعض تطبيقات النظير للنظير وميزات شبكة Xbox.",
-  "de": "Deaktiviert den Teredo-Tunnel, der IPv6 über ein IPv4-Netzwerk transportiert. Manche Peer-to-Peer-Anwendungen und Xbox-Netzwerkfunktionen bauen darauf.",
-  "en": "Turns off the Teredo tunnel that carries IPv6 over an IPv4 network. Some peer-to-peer applications and Xbox networking features rest on it.",
-  "es": "Desactiva el túnel Teredo que transporta IPv6 sobre una red IPv4. Algunas aplicaciones entre pares y funciones de red de Xbox dependen de él.",
-  "fr": "Désactive le tunnel Teredo qui transporte IPv6 sur un réseau IPv4. Certaines applications pair-à-pair et fonctions réseau Xbox en dépendent.",
-  "it": "Disattiva il tunnel Teredo che trasporta IPv6 su una rete IPv4. Alcune applicazioni peer-to-peer e funzioni di rete Xbox vi si appoggiano.",
-  "pl": "Wyłącza tunel Teredo przenoszący IPv6 przez sieć IPv4. Opierają się na nim niektóre aplikacje peer-to-peer i funkcje sieciowe Xbox.",
-  "pt": "Desativa o túnel Teredo que transporta IPv6 sobre uma rede IPv4. Algumas aplicações ponto-a-ponto e funcionalidades de rede da Xbox dependem dele.",
-  "ru": "Отключает туннель Teredo, несущий IPv6 поверх сети IPv4. На нём держатся некоторые P2P-приложения и сетевые функции Xbox.",
-  "tr": "IPv4 ağı üzerinden IPv6 taşıyan Teredo tünelini tamamen kapatır. Bazı eşler arası uygulamalar ve Xbox ağ özellikleri buna dayanır."
- },
- "tweak.net-teredo-full.name": {
-  "ar": "أنفاق Teredo",
-  "de": "Teredo-Tunnelung",
-  "en": "Teredo tunnelling",
-  "es": "Túnel Teredo",
-  "fr": "Tunnellisation Teredo",
-  "it": "Tunneling Teredo",
-  "pl": "Tunelowanie Teredo",
-  "pt": "Encapsulamento Teredo",
-  "ru": "Туннелирование Teredo",
-  "tr": "Teredo tünelleme"
- },
  "tweak.net-wifi-sense.desc": {
   "ar": "يمنع مشاركة كلمات مرور Wi-Fi مع جهات الاتصال والاتصال التلقائي بالشبكات المفتوحة.",
   "de": "Verhindert, dass WLAN-Kennwörter mit Kontakten geteilt werden, und unterbindet die automatische Verbindung mit offenen Netzwerken.",
@@ -12610,30 +12934,6 @@
   "pt": "Nenhum tweak correspondente.",
   "ru": "Подходящих твиков нет.",
   "tr": "Eşleşen tweak yok."
- },
- "tweak.perf-01-17611.desc": {
-  "ar": "يعطّل مكوّن تسجيل الألعاب في Windows تمامًا.",
-  "de": "Deaktiviert die Spielaufzeichnungskomponente von Windows vollständig.",
-  "en": "Completely disables the Windows game recording component.",
-  "es": "Deshabilita por completo el componente de grabación de juegos de Windows.",
-  "fr": "Désactive complètement le composant d'enregistrement de jeu de Windows.",
-  "it": "Disattiva completamente il componente di registrazione dei giochi di Windows.",
-  "pl": "Całkowicie wyłącza składnik nagrywania gier w systemie Windows.",
-  "pt": "Desabilita completamente o componente de gravação de jogos do Windows.",
-  "ru": "Полностью отключает компонент записи игр в Windows.",
-  "tr": "Windows'un oyun kayıt bileşenini tamamen devre dışı bırakır."
- },
- "tweak.perf-01-17611.name": {
-  "ar": "تسجيل الألعاب",
-  "de": "Spielaufzeichnung",
-  "en": "Game recording",
-  "es": "Grabación de juegos",
-  "fr": "Enregistrement de jeu",
-  "it": "Registrazione dei giochi",
-  "pl": "Nagrywanie gier",
-  "pt": "Gravação de jogos",
-  "ru": "Запись игр",
-  "tr": "Oyun kaydı özelliği"
  },
  "tweak.perf-01-852.desc": {
   "ar": "يفعّل الجدولة على بطاقة الرسومات لتخفيف الحمل الإضافي عن CPU.",
@@ -12803,30 +13103,6 @@
   "ru": "Парковка ядер",
   "tr": "Çekirdek park etme"
  },
- "tweak.perf-defrag-boot.desc": {
-  "ar": "يتحكم في تجميع Windows للملفات المقروءة عند الإقلاع جنبًا إلى جنب على القرص. لا معنى له على SSD، ويقصّر الإقلاع على القرص الصلب.",
-  "de": "Steuert, ob Windows die beim Start gelesenen Dateien auf der Platte nebeneinander legt. Auf einer SSD sinnlos, auf einer Festplatte verkürzt es den Start.",
-  "en": "Controls whether Windows gathers the files read at startup side by side on disk. Pointless on an SSD; on a spinning disk it shortens boot.",
-  "es": "Controla si Windows agrupa juntos en disco los archivos que se leen al arrancar. Inútil en SSD; en disco mecánico acorta el arranque.",
-  "fr": "Détermine si Windows regroupe côte à côte sur le disque les fichiers lus au démarrage. Inutile sur SSD ; sur disque mécanique, cela raccourcit le démarrage.",
-  "it": "Controlla se Windows raccoglie affiancati sul disco i file letti all'avvio. Inutile su SSD; su disco meccanico accorcia l'avvio.",
-  "pl": "Decyduje, czy Windows układa obok siebie na dysku pliki czytane przy starcie. Bezcelowe na SSD; na dysku talerzowym skraca rozruch.",
-  "pt": "Controla se o Windows junta lado a lado no disco os ficheiros lidos no arranque. Inútil num SSD; num disco mecânico encurta o arranque.",
-  "ru": "Определяет, укладывает ли Windows читаемые при загрузке файлы рядом на диске. На SSD бессмысленно; на жёстком диске сокращает загрузку.",
-  "tr": "Windows'un açılışta okunan dosyaları diskte yan yana toplamasını denetler. SSD'de anlamsızdır, sabit diskte açılışı kısaltır."
- },
- "tweak.perf-defrag-boot.name": {
-  "ar": "تحسين ملفات الإقلاع",
-  "de": "Optimierung der Startdateien",
-  "en": "Boot file optimisation",
-  "es": "Optimización de archivos de arranque",
-  "fr": "Optimisation des fichiers de démarrage",
-  "it": "Ottimizzazione dei file di avvio",
-  "pl": "Optymalizacja plików rozruchowych",
-  "pt": "Otimização dos ficheiros de arranque",
-  "ru": "Оптимизация загрузочных файлов",
-  "tr": "Önyükleme dosyalarını iyileştirme"
- },
  "tweak.perf-fso-global.desc": {
   "ar": "يمنع Windows من تحويل الألعاب بالشاشة الكاملة إلى نوافذ بلا حدود. وفي الشاشة الكاملة الحقيقية ينخفض كمون الإدخال بمقدار إطار.",
   "de": "Verhindert, dass Windows Vollbildspiele in randlose Fenster verwandelt. Im echten Vollbild sinkt die Eingabelatenz um ein Frame.",
@@ -12898,30 +13174,6 @@
   "pt": "Atalhos de teclado da Barra de Jogo",
   "ru": "Сочетания клавиш игровой панели",
   "tr": "Game Bar klavye kısayolları"
- },
- "tweak.perf-gamebar-tips.desc": {
-  "ar": "يعطّل الإشعار «هل تريد تجربة شريط الألعاب؟» الذي يظهر عند أول تشغيل لعبة.",
-  "de": "Deaktiviert den Hinweis „Möchten Sie die Game Bar ausprobieren?“, der beim ersten Start eines Spiels erscheint.",
-  "en": "Turns off the 'would you like to try Game Bar' notice that appears the first time a game opens.",
-  "es": "Desactiva el aviso «¿quieres probar la barra de juegos?» que aparece la primera vez que se abre un juego.",
-  "fr": "Désactive la notification « voulez-vous essayer la barre de jeu ? » qui apparaît au premier lancement d'un jeu.",
-  "it": "Disattiva l'avviso «vuoi provare la Game Bar?» che compare al primo avvio di un gioco.",
-  "pl": "Wyłącza komunikat „chcesz wypróbować pasek gier?” pojawiający się przy pierwszym uruchomieniu gry.",
-  "pt": "Desativa o aviso «quer experimentar a Barra de Jogo?» que aparece na primeira vez que um jogo abre.",
-  "ru": "Отключает уведомление «хотите попробовать игровую панель?», появляющееся при первом запуске игры.",
-  "tr": "Bir oyun ilk açıldığında beliren 'Game Bar'ı denemek ister misiniz' bildirimini kapatır."
- },
- "tweak.perf-gamebar-tips.name": {
-  "ar": "تلميح شريط الألعاب عند بدء لعبة",
-  "de": "Game-Bar-Tipp beim Spielstart",
-  "en": "Game Bar tip when a game starts",
-  "es": "Sugerencia de la barra de juegos al iniciar un juego",
-  "fr": "Astuce Game Bar au lancement d'un jeu",
-  "it": "Suggerimento Game Bar all'avvio di un gioco",
-  "pl": "Podpowiedź paska gier przy starcie gry",
-  "pt": "Sugestão da Barra de Jogo ao iniciar um jogo",
-  "ru": "Подсказка игровой панели при запуске игры",
-  "tr": "Oyun açılışında Game Bar ipucu"
  },
  "tweak.perf-gamebar.desc": {
   "ar": "يعطّل طبقة شريط الألعاب التي تُفتح بـ Win+G. ومعها يأتي تسجيل الشاشة ومقياس الأداء وقائمة الأصدقاء.",
@@ -13042,30 +13294,6 @@
   "pt": "Compressão de memória",
   "ru": "Сжатие памяти",
   "tr": "Bellek sıkıştırma"
- },
- "tweak.perf-mouse-precision.desc": {
-  "ar": "يعطّل تسريع الفأرة — فالحركة الفيزيائية نفسها تنتج المسافة نفسها للمؤشر. ولا غنى عنه لذاكرة العضلات في ألعاب التسديد.",
-  "de": "Deaktiviert die Mausbeschleunigung — dieselbe physische Bewegung erzeugt stets denselben Zeigerweg. Für Muskelgedächtnis in Zielspielen unerlässlich.",
-  "en": "Turns mouse acceleration off — the same physical movement always produces the same pointer travel. Necessary for muscle memory in games where you aim.",
-  "es": "Desactiva la aceleración del ratón: el mismo movimiento físico produce siempre el mismo recorrido del puntero. Imprescindible para la memoria muscular en juegos de puntería.",
-  "fr": "Désactive l'accélération de la souris : un même geste produit toujours le même déplacement du pointeur. Indispensable à la mémoire musculaire dans les jeux de visée.",
-  "it": "Disattiva l'accelerazione del mouse: lo stesso movimento fisico produce sempre lo stesso spostamento del puntatore. Indispensabile per la memoria muscolare nei giochi di mira.",
-  "pl": "Wyłącza akcelerację myszy — ten sam ruch fizyczny zawsze daje ten sam przebieg wskaźnika. Niezbędne dla pamięci mięśniowej w grach z celowaniem.",
-  "pt": "Desativa a aceleração do rato: o mesmo movimento físico produz sempre o mesmo percurso do ponteiro. Indispensável para a memória muscular em jogos de mira.",
-  "ru": "Отключает ускорение мыши — одно и то же физическое движение всегда даёт одинаковый путь указателя. Необходимо для мышечной памяти в играх с прицеливанием.",
-  "tr": "Fare ivmelenmesini kapatır — aynı fiziksel hareket her zaman aynı imleç yolunu üretir. Nişan alınan oyunlarda kas hafızası için gerekli."
- },
- "tweak.perf-mouse-precision.name": {
-  "ar": "دقة المؤشر المحسّنة",
-  "de": "Erweiterte Zeigerpräzision",
-  "en": "Enhanced pointer precision",
-  "es": "Precisión mejorada del puntero",
-  "fr": "Précision accrue du pointeur",
-  "it": "Precisione avanzata del puntatore",
-  "pl": "Zwiększona precyzja wskaźnika",
-  "pt": "Precisão melhorada do ponteiro",
-  "ru": "Повышенная точность указателя",
-  "tr": "Gelişmiş imleç hassasiyeti"
  },
  "tweak.perf-network-throttling.desc": {
   "ar": "تقييد حزم الشبكة أثناء تشغيل الوسائط. والافتراضي يحدّها بعشرة آلاف حزمة في الثانية؛ وإيقافه يُحدث فرقًا حقيقيًا على الوصلات السريعة.",
@@ -14099,30 +14327,6 @@
   "ru": "Порог экономии заряда",
   "tr": "Pil tasarrufu eşiği"
  },
- "tweak.pwr-fast-startup-menu.desc": {
-  "ar": "يُظهر مربّع بدء التشغيل السريع في لوحة التحكم. ويبقى الخيار مخفيًا ما دام الإسبات معطّلًا.",
-  "de": "Macht das Schnellstart-Kontrollkästchen in der Systemsteuerung sichtbar. Bei deaktiviertem Ruhezustand ist die Option verborgen.",
-  "en": "Makes the fast-startup checkbox visible in Control Panel. The option is hidden while hibernation is off.",
-  "es": "Hace visible la casilla de inicio rápido en el Panel de control. La opción queda oculta mientras la hibernación está desactivada.",
-  "fr": "Rend visible la case de démarrage rapide dans le Panneau de configuration. L'option est masquée tant que la veille prolongée est désactivée.",
-  "it": "Rende visibile la casella di avvio rapido nel Pannello di controllo. L'opzione resta nascosta finché l'ibernazione è disattivata.",
-  "pl": "Uwidacznia pole szybkiego rozruchu w Panelu sterowania. Opcja jest ukryta, dopóki hibernacja jest wyłączona.",
-  "pt": "Torna visível a caixa de arranque rápido no Painel de Controlo. A opção fica oculta enquanto a hibernação estiver desativada.",
-  "ru": "Делает флажок быстрого запуска видимым в Панели управления. При отключённой гибернации параметр скрыт.",
-  "tr": "Denetim Masası'ndaki hızlı başlatma kutucuğunu görünür kılar. Hazırda bekletme kapalıyken bu seçenek gizlenir."
- },
- "tweak.pwr-fast-startup-menu.name": {
-  "ar": "بدء التشغيل السريع في قائمة الإيقاف",
-  "de": "Schnellstart im Herunterfahren-Menü",
-  "en": "Fast startup in the shutdown menu",
-  "es": "Inicio rápido en el menú de apagado",
-  "fr": "Démarrage rapide dans le menu d'arrêt",
-  "it": "Avvio rapido nel menu di spegnimento",
-  "pl": "Szybki rozruch w menu zamykania",
-  "pt": "Arranque rápido no menu de encerramento",
-  "ru": "Быстрый запуск в меню завершения работы",
-  "tr": "Kapatma menüsünde hızlı başlatma"
- },
  "tweak.pwr-hibernate-file.desc": {
   "ar": "يزيل ملف hiberfil.sys ويعطّل الإسبات. ويحرّر مساحة قرص تعادل نحو ٤٠٪ من الذاكرة المثبّتة؛ ويختفي بدء التشغيل السريع معه.",
   "de": "Entfernt hiberfil.sys und deaktiviert den Ruhezustand. Gibt rund 40 % des Arbeitsspeichers an Plattenplatz frei; der Schnellstart entfällt ebenfalls.",
@@ -14194,30 +14398,6 @@
   "pt": "Ao fechar a tampa",
   "ru": "При закрытии крышки",
   "tr": "Kapak kapanınca"
- },
- "tweak.pwr-modern-standby.desc": {
-  "ar": "يفضّل سُبات S3 التقليدي على وضع الاستعداد الحديث. وهو العلاج المعروف للحاسوب المحمول الذي يسخن وتنفد بطاريته داخل الحقيبة؛ ويجب أن يدعم الجهاز S3.",
-  "de": "Bevorzugt den klassischen S3-Schlaf gegenüber modernem Standby. Die bekannte Abhilfe für Notebooks, die in der Tasche heiß werden und leerlaufen; der Rechner muss S3 unterstützen.",
-  "en": "Prefers classic S3 sleep over modern standby. The known cure for a laptop that heats up and drains in a bag; the machine has to support S3.",
-  "es": "Prefiere la suspensión S3 clásica a la moderna. El remedio conocido para el portátil que se calienta y se descarga en la mochila; el equipo debe admitir S3.",
-  "fr": "Préfère la veille S3 classique à la veille moderne. Le remède connu au portable qui chauffe et se vide dans un sac ; la machine doit prendre en charge S3.",
-  "it": "Preferisce la sospensione S3 classica allo standby moderno. Il rimedio noto per il portatile che si scalda e si scarica in borsa; la macchina deve supportare S3.",
-  "pl": "Preferuje klasyczny sen S3 zamiast nowoczesnego stanu wstrzymania. Znane lekarstwo na laptopa, który grzeje się i rozładowuje w torbie; maszyna musi obsługiwać S3.",
-  "pt": "Prefere a suspensão S3 clássica à suspensão moderna. O remédio conhecido para o portátil que aquece e se descarrega na mochila; a máquina tem de suportar S3.",
-  "ru": "Предпочитает классический сон S3 современному режиму ожидания. Известное лекарство от ноутбука, греющегося и разряжающегося в сумке; машина должна поддерживать S3.",
-  "tr": "Modern bekleme yerine klasik S3 uykuyu tercih eder. Çantada ısınan ve pili biten dizüstülerin bilinen çözümü; makinenin S3 desteklemesi gerekir."
- },
- "tweak.pwr-modern-standby.name": {
-  "ar": "وضع الاستعداد الحديث (S0)",
-  "de": "Modernes Standby (S0)",
-  "en": "Modern standby (S0)",
-  "es": "Suspensión moderna (S0)",
-  "fr": "Veille moderne (S0)",
-  "it": "Standby moderno (S0)",
-  "pl": "Nowoczesny stan wstrzymania (S0)",
-  "pt": "Suspensão moderna (S0)",
-  "ru": "Современный режим ожидания (S0)",
-  "tr": "Modern bekleme (S0)"
  },
  "tweak.pwr-pcie-aspm.desc": {
   "ar": "يعطّل إدارة طاقة الحالة النشطة (ASPM) على روابط PCIe. يعالج قفزات الكمون المفاجئة في بعض أقراص NVMe، ويرفع استهلاك الطاقة.",
@@ -15563,30 +15743,6 @@
   "ru": "Быстрое сопряжение Bluetooth",
   "tr": "Bluetooth hızlı eşleştirme"
  },
- "tweak.sys-07-973.desc": {
-  "ar": "يمكّن ميزة محفوظات الحافظة التي تُفتح بالضغط على Win+V.",
-  "de": "Aktiviert den Zwischenablageverlauf, der mit Windows+V geöffnet wird.",
-  "en": "Enables the clipboard history feature opened with Win+V.",
-  "es": "Habilita la función de historial del Portapapeles que se abre con Win+V.",
-  "fr": "Active la fonctionnalité d'historique du Presse-papiers ouverte avec Win+V.",
-  "it": "Attiva la funzionalità Cronologia degli Appunti che si apre con Win+V.",
-  "pl": "Włącza funkcję historii schowka otwieraną skrótem Win+V.",
-  "pt": "Habilita o recurso de histórico da Área de Transferência aberto com Win+V.",
-  "ru": "Включает журнал буфера обмена, открываемый сочетанием Win+V.",
-  "tr": "Win+V ile açılan pano geçmişi özelliğini etkinleştirir."
- },
- "tweak.sys-07-973.name": {
-  "ar": "محفوظات الحافظة",
-  "de": "Zwischenablageverlauf",
-  "en": "Clipboard history",
-  "es": "Historial del Portapapeles",
-  "fr": "Historique du Presse-papiers",
-  "it": "Cronologia degli Appunti",
-  "pl": "Historia schowka",
-  "pt": "Histórico da Área de Transferência",
-  "ru": "Журнал буфера обмена",
-  "tr": "Pano geçmişi"
- },
  "tweak.sys-08-7748.desc": {
   "ar": "يمنع الإشعارات التي تظهر عند وجود مشكلة في أجهزة USB.",
   "de": "Verhindert die Benachrichtigungen, die bei Problemen mit USB-Geräten angezeigt werden.",
@@ -16090,30 +16246,6 @@
   "pt": "Atualizar outros produtos Microsoft",
   "ru": "Обновлять другие продукты Microsoft",
   "tr": "Diğer Microsoft ürünlerini güncelle"
- },
- "tweak.upd-no-auto.desc": {
-  "ar": "يوقف بحث Windows Update عن التحديثات وتنزيلها تلقائيًا. وتتوقف تصحيحات الأمان أيضًا — ومن يوقفه يتحمّل مسؤولية التحديث يدويًا.",
-  "de": "Hält Windows Update davon ab, selbstständig nach Updates zu suchen und sie zu laden. Auch Sicherheitspatches bleiben aus — wer das abschaltet, übernimmt das Aktualisieren selbst.",
-  "en": "Stops Windows Update looking for and downloading updates on its own. Security patches stop too — turning this off means taking on the job of running updates by hand.",
-  "es": "Impide que Windows Update busque y descargue actualizaciones por su cuenta. Los parches de seguridad también se detienen: desactivarlo implica encargarse de actualizar a mano.",
-  "fr": "Empêche Windows Update de rechercher et de télécharger des mises à jour de lui-même. Les correctifs de sécurité s'arrêtent aussi : désactiver cela, c'est se charger des mises à jour à la main.",
-  "it": "Impedisce a Windows Update di cercare e scaricare aggiornamenti da solo. Si fermano anche le patch di sicurezza: chi lo disattiva si assume il compito di aggiornare a mano.",
-  "pl": "Powstrzymuje Windows Update przed samodzielnym wyszukiwaniem i pobieraniem aktualizacji. Poprawki bezpieczeństwa też ustają — wyłączając to, bierzesz aktualizowanie na siebie.",
-  "pt": "Impede que o Windows Update procure e transfira atualizações sozinho. Os patches de segurança também param — desativar isto significa assumir a atualização manual.",
-  "ru": "Полностью останавливает самостоятельный поиск и загрузку обновлений. Патчи безопасности тоже прекращаются — отключая это, вы берёте обновление на себя.",
-  "tr": "Windows Update'in kendiliğinden güncelleme aramasını ve indirmesini tamamen durdurur. Güvenlik yamaları da durur — bunu kapatan, güncellemeyi elle çalıştırmayı üstlenmiş olur."
- },
- "tweak.upd-no-auto.name": {
-  "ar": "التنزيل التلقائي للتحديثات",
-  "de": "Automatischer Updatedownload",
-  "en": "Automatic update downloads",
-  "es": "Descarga automática de actualizaciones",
-  "fr": "Téléchargement automatique des mises à jour",
-  "it": "Download automatico degli aggiornamenti",
-  "pl": "Automatyczne pobieranie aktualizacji",
-  "pt": "Transferência automática de atualizações",
-  "ru": "Автозагрузка обновлений",
-  "tr": "Otomatik güncelleme indirme"
  },
  "tweak.upd-notification-level.desc": {
   "ar": "عدد الإشعارات التي يعرضها Windows Update. في الوضع الأشد لا تبقى سوى تحذيرات إعادة التشغيل — وتظل التحديثات تُنزَّل وتُثبَّت.",
@@ -17315,30 +17447,6 @@
   "ru": "Показывать скрытые файлы",
   "tr": "Gizli dosyaları göster"
  },
- "tweak.wu-WPFToggleHideSettingsHome.desc": {
-  "ar": "يعيد إظهار صفحة البداية في تطبيق الإعدادات.",
-  "de": "Stellt die Startseite in der App „Einstellungen“ wieder her.",
-  "en": "Restores the Home page in the Settings app.",
-  "es": "Restaura la página Inicio en la aplicación Configuración.",
-  "fr": "Rétablit la page Accueil dans l'application Paramètres.",
-  "it": "Ripristina la pagina Home nell'app Impostazioni.",
-  "pl": "Przywraca stronę główną w aplikacji Ustawienia.",
-  "pt": "Restaura a página Início no aplicativo Configurações.",
-  "ru": "Возвращает страницу «Главная» в приложении «Параметры».",
-  "tr": "Ayarlar uygulamasındaki Giriş sayfasını geri getirir."
- },
- "tweak.wu-WPFToggleHideSettingsHome.name": {
-  "ar": "الصفحة الرئيسية للإعدادات",
-  "de": "Startseite der Einstellungen",
-  "en": "Settings home page",
-  "es": "Página de inicio de Configuración",
-  "fr": "Page d'accueil des Paramètres",
-  "it": "Pagina iniziale delle Impostazioni",
-  "pl": "Strona główna Ustawień",
-  "pt": "Página inicial das Configurações",
-  "ru": "Главная страница Параметров",
-  "tr": "Ayarlar giriş sayfası"
- },
  "tweak.wu-WPFToggleMouseAcceleration.desc": {
   "ar": "يفعّل تسريع الماوس الذي يغيّر سرعة المؤشر تبعًا لسرعة الحركة.",
   "de": "Aktiviert die Mausbeschleunigung, die die Zeigergeschwindigkeit an die Bewegungsgeschwindigkeit anpasst.",
@@ -17484,16 +17592,16 @@
   "tr": "Uyku modunda ağ bağlantısı"
  },
  "tweak.wu-WPFToggleStartMenuRecommendations.desc": {
-  "ar": "يعيد تشغيل قسم العناصر الموصى بها في قائمة ابدأ.",
-  "de": "Aktiviert den Bereich Empfohlen im Startmenü wieder.",
-  "en": "Turns the Recommended section of the Start menu back on.",
-  "es": "Vuelve a activar la sección Recomendado del menú Inicio.",
-  "fr": "Réactive la section Recommandé du menu Démarrer.",
-  "it": "Riattiva la sezione Consigliati del menu Start.",
-  "pl": "Ponownie włącza sekcję Polecane w menu Start.",
-  "pt": "Volta a ativar a secção Recomendado do menu Iniciar.",
-  "ru": "Снова включает раздел «Рекомендуем» в меню «Пуск».",
-  "tr": "Başlat menüsündeki önerilen öğeler bölümünü yeniden açar."
+  "ar": "يخفي قسم \"المُوصى به\" في قائمة ابدأ عبر نهج. وعند إيقافه يُزال النهج تمامًا.",
+  "de": "Blendet den Bereich „Empfohlen“ im Startmenü per Richtlinie aus. Ausgeschaltet wird die Richtlinie wieder entfernt.",
+  "en": "Hides the Recommended section of the Start menu by policy. Switched off, the policy is removed entirely.",
+  "es": "Oculta la sección Recomendado del menú Inicio mediante directiva. Al desactivarlo, la directiva se elimina por completo.",
+  "fr": "Masque la section Recommandé du menu Démarrer via une stratégie. Désactivé, la stratégie est entièrement supprimée.",
+  "it": "Nasconde la sezione Consigliati del menu Start tramite criterio. Se disattivato, il criterio viene rimosso del tutto.",
+  "pl": "Ukrywa sekcję Polecane w menu Start za pomocą zasady. Po wyłączeniu zasada jest całkowicie usuwana.",
+  "pt": "Oculta a secção Recomendado do menu Iniciar através de política. Ao desativar, a política é removida por completo.",
+  "ru": "Скрывает раздел «Рекомендуем» в меню «Пуск» политикой. При выключении политика полностью удаляется.",
+  "tr": "Başlat menüsündeki Önerilenler bölümünü ilke ile gizler. Kapalıyken ilke tümüyle kaldırılır."
  },
  "tweak.wu-WPFToggleStartMenuRecommendations.name": {
   "ar": "التوصيات في قائمة ابدأ",
@@ -17699,30 +17807,6 @@
   "ru": "Автоматические предложения приложений",
   "tr": "Otomatik uygulama önerileri"
  },
- "tweak.wu-WPFTweaksDeliveryOptimization.desc": {
-  "ar": "يمنع استخدام نطاق الإنترنت الترددي لديك في توزيع التحديثات.",
-  "de": "Verhindert, dass Ihre Internetbandbreite zur Verteilung von Updates genutzt wird.",
-  "en": "Stops your internet bandwidth from being used to distribute updates.",
-  "es": "Impide que tu ancho de banda de Internet se use para distribuir actualizaciones.",
-  "fr": "Empêche l'utilisation de votre bande passante Internet pour distribuer des mises à jour.",
-  "it": "Impedisce l'uso della tua banda Internet per distribuire gli aggiornamenti.",
-  "pl": "Uniemożliwia wykorzystywanie Twojego łącza internetowego do dystrybucji aktualizacji.",
-  "pt": "Impede que sua largura de banda da Internet seja usada para distribuir atualizações.",
-  "ru": "Запрещает использовать пропускную способность вашего интернет-канала для раздачи обновлений.",
-  "tr": "İnternet bant genişliğinizin güncelleme dağıtımına kullanılmasını engeller."
- },
- "tweak.wu-WPFTweaksDeliveryOptimization.name": {
-  "ar": "تحسين التسليم",
-  "de": "Übermittlungsoptimierung",
-  "en": "Delivery Optimization",
-  "es": "Optimización de entrega",
-  "fr": "Optimisation de la distribution",
-  "it": "Ottimizzazione recapito",
-  "pl": "Optymalizacja dostarczania",
-  "pt": "Otimização de Entrega",
-  "ru": "Оптимизация доставки",
-  "tr": "Teslim iyileştirme"
- },
  "tweak.wu-WPFTweaksDisableBGapps.desc": {
   "ar": "يمنع تشغيل تطبيقات Store في الخلفية.",
   "de": "Verhindert, dass Store-Apps im Hintergrund ausgeführt werden.",
@@ -17746,30 +17830,6 @@
   "pt": "Aplicativos em segundo plano",
   "ru": "Фоновые приложения",
   "tr": "Arka plan uygulamaları"
- },
- "tweak.wu-WPFTweaksDisableFSO.desc": {
-  "ar": "يعطّل تحسينات ملء الشاشة لجميع التطبيقات.",
-  "de": "Deaktiviert die Vollbildoptimierungen für alle Anwendungen.",
-  "en": "Disables fullscreen optimizations for all apps.",
-  "es": "Deshabilita las optimizaciones de pantalla completa en todas las aplicaciones.",
-  "fr": "Désactive les optimisations du mode plein écran pour toutes les applications.",
-  "it": "Disattiva le ottimizzazioni per lo schermo intero in tutte le applicazioni.",
-  "pl": "Wyłącza optymalizacje trybu pełnoekranowego dla wszystkich aplikacji.",
-  "pt": "Desativa as otimizações de tela cheia em todos os aplicativos.",
-  "ru": "Отключает оптимизацию полноэкранного режима для всех приложений.",
-  "tr": "Tüm uygulamalarda tam ekran optimizasyonlarını devre dışı bırakır."
- },
- "tweak.wu-WPFTweaksDisableFSO.name": {
-  "ar": "تحسينات ملء الشاشة",
-  "de": "Vollbildoptimierungen",
-  "en": "Fullscreen optimizations",
-  "es": "Optimizaciones de pantalla completa",
-  "fr": "Optimisations du mode plein écran",
-  "it": "Ottimizzazioni schermo intero",
-  "pl": "Optymalizacje trybu pełnoekranowego",
-  "pt": "Otimizações de tela cheia",
-  "ru": "Оптимизация во весь экран",
-  "tr": "Tam ekran optimizasyonları"
  },
  "tweak.wu-WPFTweaksDisableLockscreen.desc": {
   "ar": "يعطّل شاشة القفل التي تظهر عند بدء التشغيل وعند التنبيه من السكون.",
@@ -17938,54 +17998,6 @@
   "pt": "Aplicativos complementares de dispositivos",
   "ru": "Сопутствующие приложения устройств",
   "tr": "Cihaz eşlik uygulamaları"
- },
- "tweak.wu-WPFTweaksRazerBlock.desc": {
-  "ar": "يمنع Windows Update من تثبيت برامج تشغيل الأجهزة تلقائيًا، وبذلك يُمنع أيضًا تثبيت برامج الشركات المصنّعة مثل Razer من تلقاء نفسها عند توصيل جهاز.",
-  "de": "Verhindert, dass Windows Update Hardwaretreiber selbstständig installiert; so installiert sich auch Herstellersoftware wie Razer beim Anschließen eines Geräts nicht mehr selbst.",
-  "en": "Stops Windows Update from installing hardware drivers on its own, which also prevents vendor software such as Razer from installing itself when a device is connected.",
-  "es": "Impide que Windows Update instale controladores de hardware por su cuenta, lo que también evita que software de fabricantes como Razer se instale solo al conectar un dispositivo.",
-  "fr": "Empêche Windows Update d'installer automatiquement les pilotes matériels, ce qui bloque aussi l'installation automatique de logiciels constructeurs comme Razer lors du branchement d'un appareil.",
-  "it": "Impedisce a Windows Update di installare automaticamente i driver hardware, evitando anche che software di produttori come Razer si installi da solo quando si collega un dispositivo.",
-  "pl": "Uniemożliwia usłudze Windows Update samodzielne instalowanie sterowników sprzętu, dzięki czemu oprogramowanie producentów takich jak Razer nie instaluje się samo po podłączeniu urządzenia.",
-  "pt": "Impede que o Windows Update instale drivers de hardware por conta própria, o que também evita que softwares de fabricantes como a Razer se instalem sozinhos ao conectar um dispositivo.",
-  "ru": "Запрещает Windows Update самостоятельно устанавливать драйверы оборудования; так же блокируется автоматическая установка ПО производителей, например Razer, при подключении устройства.",
-  "tr": "Windows Update'in donanım sürücülerini kendiliğinden kurmasını durdurur; Razer gibi üretici yazılımlarının cihaz takınca kendini kurması da böyle engellenir."
- },
- "tweak.wu-WPFTweaksRazerBlock.name": {
-  "ar": "تحديثات برامج التشغيل عبر Windows Update",
-  "de": "Treiberupdates über Windows Update",
-  "en": "Windows Update driver updates",
-  "es": "Actualizaciones de controladores de Windows Update",
-  "fr": "Mises à jour de pilotes via Windows Update",
-  "it": "Aggiornamenti dei driver tramite Windows Update",
-  "pl": "Aktualizacje sterowników z Windows Update",
-  "pt": "Atualizações de drivers do Windows Update",
-  "ru": "Обновления драйверов через Windows Update",
-  "tr": "Windows Update sürücü güncellemeleri"
- },
- "tweak.wu-WPFTweaksRestorePoint.desc": {
-  "ar": "يزيل فترة الانتظار التي تحدّ من إنشاء نقاط الاستعادة.",
-  "de": "Entfernt die Wartezeit, die das Erstellen von Wiederherstellungspunkten einschränkt.",
-  "en": "Removes the waiting period that limits how often restore points can be created.",
-  "es": "Elimina el tiempo de espera que limita la creación de puntos de restauración.",
-  "fr": "Supprime le délai d'attente qui limite la création de points de restauration.",
-  "it": "Rimuove l'intervallo di attesa che limita la creazione dei punti di ripristino.",
-  "pl": "Usuwa okres oczekiwania ograniczający tworzenie punktów przywracania.",
-  "pt": "Remove o tempo de espera que limita a criação de pontos de restauração.",
-  "ru": "Убирает интервал ожидания, ограничивающий создание точек восстановления.",
-  "tr": "Geri yükleme noktası oluşturmayı sınırlayan bekleme süresini kaldırır."
- },
- "tweak.wu-WPFTweaksRestorePoint.name": {
-  "ar": "نقطة الاستعادة",
-  "de": "Wiederherstellungspunkt",
-  "en": "Restore point",
-  "es": "Punto de restauración",
-  "fr": "Point de restauration",
-  "it": "Punto di ripristino",
-  "pl": "Punkt przywracania",
-  "pt": "Ponto de restauração",
-  "ru": "Точка восстановления",
-  "tr": "Geri yükleme noktası"
  },
  "tweak.wu-WPFTweaksRevertStartMenu.desc": {
   "ar": "يعيد التخطيط القديم بدلاً من قائمة ابدأ الجديدة في Windows.",
@@ -18298,30 +18310,6 @@
   "pt": "Política de nível de telemetria",
   "ru": "Политика уровня телеметрии",
   "tr": "Telemetri düzeyi ilkesi"
- },
- "tweak.wu-telemetry-siuf.desc": {
-  "ar": "يمنع Windows من طلب ملاحظاتك.",
-  "de": "Verhindert, dass Windows Sie um Feedback bittet.",
-  "en": "Stops Windows from asking you for feedback.",
-  "es": "Impide que Windows te pida comentarios.",
-  "fr": "Empêche Windows de vous demander des commentaires.",
-  "it": "Impedisce a Windows di chiederti feedback.",
-  "pl": "Wyłącza proszenie o opinię przez system Windows.",
-  "pt": "Impede que o Windows solicite comentários.",
-  "ru": "Отключает запросы отзывов от Windows.",
-  "tr": "Windows'un geri bildirim istemesini kapatır."
- },
- "tweak.wu-telemetry-siuf.name": {
-  "ar": "معدّل تكرار الملاحظات",
-  "de": "Feedbackhäufigkeit",
-  "en": "Feedback frequency",
-  "es": "Frecuencia de comentarios",
-  "fr": "Fréquence des commentaires",
-  "it": "Frequenza dei feedback",
-  "pl": "Częstotliwość opinii",
-  "pt": "Frequência de comentários",
-  "ru": "Частота отзывов",
-  "tr": "Geri bildirim sıklığı"
  },
  "tweak.wu-telemetry-speech.desc": {
   "ar": "يوقف إرسال بيانات الصوت إلى Microsoft لمعالجتها.",

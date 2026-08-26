@@ -10,10 +10,20 @@ const QString KeyLevel = QStringLiteral("app/migration");
 
 /// The context-menu rework of 0.9.3.
 ///
-/// Take ownership moved to the verb named `runas`, because that is the one name the
-/// shell elevates before running — under the old name the command ran with a plain
-/// token and could not touch a file TrustedInstaller owned. The old verb keys are still
-/// sitting in the shell, showing a second entry that does not work.
+/// Take ownership moved to the verb named `runas`, because that is the one name the shell
+/// elevates before running — under the old name the command ran with a plain token and
+/// could not touch a file TrustedInstaller owned. The old verb keys were left sitting in
+/// the shell, showing a second entry that did not work.
+///
+/// 0.9.5 then moved it back: the app is manifested requireAdministrator, so the verb no
+/// longer has to be named `runas` to elevate, and `ArbitriumTakeOwnership` is the name the
+/// current catalogue writes again. Which makes this step's key list the *live* one — it
+/// spent three releases deleting the entry the user had just applied, on any machine
+/// whose HKCU had not yet recorded the level. So it now reads the command first and
+/// leaves anything that names this app's own switches alone, exactly as ownershipVerbs()
+/// below does. The verb this app writes invokes the executable with --own or --disown;
+/// the 0.9.3-era one ran takeown/icacls directly, and nothing else answers to either
+/// description.
 ///
 /// The power plan verb kept its key but became a cascading menu, and a verb cannot both
 /// carry a command and open a submenu; the command left over from the old shape has to
@@ -23,10 +33,21 @@ bool contextMenuRework()
     bool ok = true;
 
     for (const QString &path : {QStringLiteral("*\\shell\\ArbitriumTakeOwnership"),
-                                QStringLiteral("Directory\\shell\\ArbitriumTakeOwnership"),
-                                QStringLiteral("DesktopBackground\\Shell\\ArbitriumPowerPlan\\command")}) {
+                                QStringLiteral("Directory\\shell\\ArbitriumTakeOwnership")}) {
+        const Registry::Value command =
+            Registry::read(Registry::Hive::HKCR, path + QStringLiteral("\\command"), QString());
+        // Containment, not equality: the catalogue expands %ARBITRIUM% to wherever the
+        // executable happens to live, so comparing against one spelling would delete a
+        // working entry written by a copy at a different path.
+        if (command.exists && (command.data.contains(QLatin1String("--own"))
+                               || command.data.contains(QLatin1String("--disown"))))
+            continue;
         ok = Registry::removeKey(Registry::Hive::HKCR, path) && ok;
     }
+
+    ok = Registry::removeKey(Registry::Hive::HKCR,
+                             QStringLiteral("DesktopBackground\\Shell\\ArbitriumPowerPlan\\command"))
+         && ok;
 
     // The shield badge these carried was decoration: the entries open consoles that
     // elevate themselves, and the badge on a verb that does not elevate is a lie.

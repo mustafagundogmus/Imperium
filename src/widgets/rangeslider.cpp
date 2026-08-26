@@ -71,6 +71,17 @@ void RangeSlider::mousePressEvent(QMouseEvent *e)
 {
     if (e->button() != Qt::LeftButton)
         return;
+
+    // Only the leftmost Track pixels are the rail; the rest of the widget is the numeric
+    // label. indexAt() clamps whatever it is given, so a press on the label used to snap
+    // the value straight to the maximum stop. Accepted rather than ignored: an ignored
+    // press travels up to the frameless window and starts a window drag, which no other
+    // control here does.
+    if (e->position().x() > Track) {
+        e->accept();
+        return;
+    }
+
     m_dragging = true;
     const int hit = indexAt(e->position().x());
     if (hit != m_current) {

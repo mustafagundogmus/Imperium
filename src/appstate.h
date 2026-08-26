@@ -49,7 +49,6 @@ public:
     bool isPending(const QString &id) const { return selected(id) != appliedOption(id); }
 
     void setOn(const QString &id, bool on);
-    void toggle(const QString &id);
 
     /// Re-reads one tweak from the machine. Used after the journal writes a value back
     /// behind the catalogue's back.
@@ -70,9 +69,6 @@ public:
         QString firstError;
     };
 
-    /// Writes every pending change to the registry and folds the results back in.
-    ApplyReport applyPending();
-
     struct StepOutcome
     {
         QString id;
@@ -92,8 +88,6 @@ public:
     /// Stashes the pending set so it can be restored after an elevated relaunch.
     void stashPending() const;
 
-    QDateTime lastAppliedAt() const { return m_lastApplied; }
-
     // --- view state ---------------------------------------------------------
     QString selectedCategory() const { return m_category; }
     void setSelectedCategory(const QString &id);
@@ -112,7 +106,6 @@ Q_SIGNALS:
     void selectionChanged();
     void filterChanged();
     void queryChanged();
-    void committed(int count);
 
 private:
     void recomputePending();
@@ -130,5 +123,4 @@ private:
     QString m_category = QStringLiteral("ov");
     Filter m_filter = Filter::All;
     QString m_query;
-    QDateTime m_lastApplied;
 };

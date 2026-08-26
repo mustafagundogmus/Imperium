@@ -4,6 +4,8 @@
 #include "catalog.h"
 #include "registry.h"
 
+#include <algorithm>
+
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
@@ -98,6 +100,13 @@ int exportRegFile(const QString &path, const QStringList &ids,
 
     int written = 0;
     QString openKey;   // the [key] header currently in effect
+
+    // Keys already emitted as [-key]. In .reg syntax a plain [key] header *creates* the
+    // key, so a value line written under a key the file has just deleted put it straight
+    // back — and about twenty ctx-* tweaks are shaped exactly that way, with the DELETE_KEY
+    // on the first entry and its siblings under the same key after it. The exported file
+    // then did not reproduce what Apply does, which is the one thing it is for.
+    QStringList deletedKeys;
     for (const QString &id : ids) {
         const Tweak *tweak = catalog.tweak(id);
         if (!tweak || tweak->options.isEmpty())
@@ -124,9 +133,21 @@ int exportRegFile(const QString &path, const QStringList &ids,
             if (data.compare(Registry::DeleteKeySentinel, Qt::CaseInsensitive) == 0) {
                 text += QStringLiteral("[-%1]\r\n\r\n").arg(key);
                 openKey.clear();
+                deletedKeys << key;
                 ++written;
                 continue;
             }
+
+            // Descendants too: [-key] takes the whole subtree, exactly as
+            // Registry::removeKey does, and a later header naming a child would rebuild
+            // the child and its parent along with it.
+            const bool gone = std::any_of(
+                deletedKeys.cbegin(), deletedKeys.cend(), [&key](const QString &d) {
+                    return key.compare(d, Qt::CaseInsensitive) == 0
+                           || key.startsWith(d + QLatin1Char('\\'), Qt::CaseInsensitive);
+                });
+            if (gone)
+                continue;   // its values went with the key
 
             // One header per key: a tweak that owns several values under the same key
             // writes them as one block, the way a hand-written .reg file would.

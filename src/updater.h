@@ -22,7 +22,13 @@ public:
     static QString repository();
     static QString releasesUrl();
 
-    void check();
+    /// \a userInitiated marks a check somebody asked for by pressing the button. The
+    /// launch-time check is not one, and the difference decides whether finding a new
+    /// version is allowed to open a browser: doing that unprompted, seconds after the
+    /// window appears, is not what "checks quietly while the app opens" describes.
+    /// Carried through the signal rather than held in a member so a second check cannot
+    /// inherit the first one's origin.
+    void check(bool userInitiated = false);
     bool busy() const { return m_busy; }
 
     /// Compares two "1.2.3" style versions. Returns >0 when \a a is newer than \a b.
@@ -30,8 +36,9 @@ public:
 
 Q_SIGNALS:
     /// \a version is empty when the check failed; \a error then says why.
+    /// \a userInitiated is the flag the check that produced this was started with.
     void finished(bool updateAvailable, const QString &version, const QString &url,
-                  const QString &error);
+                  const QString &error, bool userInitiated);
 
 private:
     QNetworkAccessManager *m_network = nullptr;

@@ -142,15 +142,6 @@ QString content(const QString &key, const QString &sourceText)
     return sourceText;
 }
 
-bool hasTranslation(const QString &key)
-{
-    const auto entryIt = g_table.constFind(key);
-    if (entryIt == g_table.constEnd())
-        return false;
-    const auto textIt = entryIt->constFind(g_language);
-    return textIt != entryIt->constEnd() && !textIt->isEmpty();
-}
-
 bool isFirstRunPending()
 {
     return !QSettings().value(QStringLiteral("setup/completed"), false).toBool();

@@ -5,6 +5,7 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QRegularExpression>
+#include <QVarLengthArray>
 
 #ifdef Q_OS_WIN
 #  ifndef WIN32_LEAN_AND_MEAN
@@ -23,6 +24,47 @@ namespace {
 const QString AdminsSid = QStringLiteral("S-1-5-32-544");
 const QString TrustedInstallerSid =
     QStringLiteral("S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464");
+
+/// What takeown.exe and icacls.exe actually wrote, decoded with the code page they wrote
+/// it in.
+///
+/// These are console programs. With their output redirected to a pipe they encode it in
+/// the *console* output code page — 857 on a Turkish install — while
+/// QString::fromLocal8Bit decodes with the ANSI one, 1254 on the same machine. Every
+/// non-ASCII byte therefore came back as the wrong character, in exactly the pane the
+/// header calls "what the tools printed". Qt 6 has no decoder for an arbitrary code page,
+/// so this goes through MultiByteToWideChar directly.
+QString fromConsole(const QByteArray &bytes)
+{
+#ifdef Q_OS_WIN
+    if (bytes.isEmpty())
+        return {};
+
+    // The child gets a console of its own, so the code page is the system's console
+    // default: HKCU\Console\CodePage when the user has pinned one, otherwise the OEM CP.
+    UINT codePage = 0;
+    DWORD value = 0;
+    DWORD size = sizeof(value);
+    if (RegGetValueW(HKEY_CURRENT_USER, L"Console", L"CodePage", RRF_RT_REG_DWORD,
+                     nullptr, &value, &size)
+        == ERROR_SUCCESS) {
+        codePage = UINT(value);
+    }
+    if (codePage == 0)
+        codePage = GetOEMCP();
+
+    const int needed = MultiByteToWideChar(codePage, 0, bytes.constData(), int(bytes.size()),
+                                           nullptr, 0);
+    if (needed <= 0)
+        return QString::fromLocal8Bit(bytes);   // unconvertible; the old answer is no worse
+
+    QVarLengthArray<wchar_t> wide(needed);
+    MultiByteToWideChar(codePage, 0, bytes.constData(), int(bytes.size()), wide.data(), needed);
+    return QString::fromWCharArray(wide.data(), needed);
+#else
+    return QString::fromLocal8Bit(bytes);
+#endif
+}
 
 /// The SID of whoever is running us. Elevation does not change the user — it changes
 /// which of their groups are enabled — so this is the account that will still be sitting
@@ -116,7 +158,7 @@ Run run(const QString &program, const QStringList &arguments)
     }
 
     result.code = process.exitCode();
-    result.output = QString::fromLocal8Bit(process.readAll()).trimmed();
+    result.output = fromConsole(process.readAll()).trimmed();
     return result;
 }
 

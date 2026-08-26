@@ -25,7 +25,6 @@ public:
     void setSubtitle(const QString &subtitle);
     void setPendingLabel(const QString &label);   ///< "3 bekliyor"; empty hides it
     void setControlsVisible(bool visible);
-    void setFilterIndex(int index);
 
     QSize sizeHint() const override;
 
@@ -41,6 +40,11 @@ protected:
     void leaveEvent(QEvent *) override;
 
 private:
+    /// Puts the filter control where it belongs. Called from resizeEvent and from every
+    /// path that can change its width — the control is placed by hand rather than by a
+    /// layout, so nothing else moves it.
+    void layoutFilter();
+
     QRectF sortRect() const;
     qreal contentHeight() const;
 

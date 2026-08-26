@@ -45,7 +45,7 @@ int Updater::compareVersions(const QString &a, const QString &b)
     return 0;
 }
 
-void Updater::check()
+void Updater::check(bool userInitiated)
 {
     if (m_busy)
         return;
@@ -61,7 +61,7 @@ void Updater::check()
     request.setTransferTimeout(10000);
 
     QNetworkReply *reply = m_network->get(request);
-    connect(reply, &QNetworkReply::finished, this, [this, reply] {
+    connect(reply, &QNetworkReply::finished, this, [this, reply, userInitiated] {
         reply->deleteLater();
         m_busy = false;
 
@@ -70,22 +70,23 @@ void Updater::check()
             // A repo with no published release answers 404; that is not a failure.
             if (status == 404) {
                 Q_EMIT finished(false, QString(), releasesUrl(),
-                                Locale::tr(QStringLiteral("err.noRelease")));
+                                Locale::tr(QStringLiteral("err.noRelease")), userInitiated);
                 return;
             }
-            Q_EMIT finished(false, QString(), releasesUrl(), reply->errorString());
+            Q_EMIT finished(false, QString(), releasesUrl(), reply->errorString(), userInitiated);
             return;
         }
 
         const QJsonObject release = QJsonDocument::fromJson(reply->readAll()).object();
         const QString tag = release.value(QStringLiteral("tag_name")).toString();
         if (tag.isEmpty()) {
-            Q_EMIT finished(false, QString(), releasesUrl(), Locale::tr(QStringLiteral("err.badResponse")));
+            Q_EMIT finished(false, QString(), releasesUrl(),
+                            Locale::tr(QStringLiteral("err.badResponse")), userInitiated);
             return;
         }
 
         const QString url = release.value(QStringLiteral("html_url")).toString(releasesUrl());
         const bool newer = compareVersions(tag, QCoreApplication::applicationVersion()) > 0;
-        Q_EMIT finished(newer, tag, url, QString());
+        Q_EMIT finished(newer, tag, url, QString(), userInitiated);
     });
 }

@@ -36,9 +36,10 @@ SystemMonitor::SystemMonitor(QObject *parent)
     m_ram.reserve(HistorySize);
 
 #ifdef Q_OS_WIN
-    SYSTEM_INFO si{};
-    GetSystemInfo(&si);
-    m_logicalCores = int(si.dwNumberOfProcessors);
+    // Not GetSystemInfo: dwNumberOfProcessors counts only the group the calling thread is
+    // in, and caps at 64. The physical count below spans every group, so on a machine with
+    // more than one the page showed a thread count smaller than its own core count.
+    m_logicalCores = int(GetActiveProcessorCount(ALL_PROCESSOR_GROUPS));
 
     DWORD length = 0;
     GetLogicalProcessorInformationEx(RelationProcessorCore, nullptr, &length);

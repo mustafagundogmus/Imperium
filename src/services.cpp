@@ -25,6 +25,16 @@ namespace {
 
 constexpr DWORD ServiceWin32 = 0x00000010 | 0x00000020;   // OWN_PROCESS | SHARE_PROCESS
 
+// SERVICE_USERSERVICE_INSTANCE. A per-user service exists twice in the registry: a
+// template (CDPUserSvc, cbdhsvc, ...) whose Start value persists and is inherited, and one
+// instance per logon session (CDPUserSvc_81365) that is created at sign-in and destroyed
+// at sign-out. Both satisfy the Win32 mask, so the list carried 24 rows named after a
+// session LUID that vanish on the next reboot and cannot usefully be changed. The
+// template stays — it is the only thing that can actually be switched — and the instances
+// go. SERVICE_USER_SERVICE (0x40) is deliberately not part of this test: it is set on the
+// template too.
+constexpr DWORD ServiceUserInstance = 0x00000080;
+
 const wchar_t *wide(const QString &s)
 {
     return reinterpret_cast<const wchar_t *>(s.utf16());
@@ -79,44 +89,44 @@ const char *const CoreServices[] = {
     "ShellHWDetection", "Themes", "AudioEndpointBuilder",
 };
 
-/// Services you may well want to disable, each with the thing that stops working when
-/// you do. Locking these would be paternalistic; letting them go quietly would not be
+/// Services you may well want to disable, each of which has something that stops working
+/// when you do. Locking these would be paternalistic; letting them go quietly would not be
 /// honest — a disabled Windows Update or firewall should say so on the row.
-struct RiskyService
-{
-    const char *key;
-    const char *consequence;
-};
-
-const RiskyService RiskyServices[] = {
-    {"WinDefend",      "Microsoft Defender'ın gerçek zamanlı koruması durur"},
-    {"MpsSvc",         "Windows Güvenlik Duvarı tamamen kapanır"},
-    {"wscsvc",         "Güvenlik Merkezi durum bildirimleri durur"},
-    {"SecurityHealthService", "Windows Güvenlik uygulaması çalışmaz"},
-    {"Sense",          "Defender uç nokta algılaması durur"},
-    {"wuauserv",       "Windows Update güncelleme indiremez"},
-    {"UsoSvc",         "Güncelleme oturumları zamanlanamaz"},
-    {"BITS",           "Arka plan indirmeleri (güncelleme, Store) durur"},
-    {"DoSvc",          "Güncelleme dağıtım iyileştirmesi durur"},
-    {"Spooler",        "Yazdırma ve tarayıcı kuyruğu tamamen durur"},
-    {"Audiosrv",       "Ses tamamen kesilir"},
-    {"WlanSvc",        "Kablosuz ağ bağlantısı kurulamaz"},
-    {"Netman",         "Ağ bağlantıları listesi ve kurulum çalışmaz"},
-    {"netprofm",       "Ağ profilleri (özel/genel) tanınmaz"},
-    {"WSearch",        "Başlat ve Gezgin araması dizin kullanamaz"},
-    {"SysMain",        "Önceden yükleme (SuperFetch) devre dışı kalır"},
-    {"VSS",            "Geri yükleme noktası ve gölge kopya oluşturulamaz"},
-    {"swprv",          "Gölge kopya sağlayıcısı çalışmaz"},
-    {"wbengine",       "Windows Yedekleme çalışmaz"},
-    {"WerSvc",         "Hata raporlama ve çökme kayıtları durur"},
-    {"LanmanServer",   "Bu makinedeki paylaşımlara erişilemez"},
-    {"LanmanWorkstation", "Ağ paylaşımlarına bağlanılamaz"},
-    {"WpnService",     "Uygulama bildirimleri gelmez"},
-    {"CDPSvc",         "Cihazlar arası deneyimler (telefon bağlantısı) kopar"},
-    {"TabletInputService", "Dokunmatik klavye ve el yazısı girişi çalışmaz"},
-    {"seclogon",       "Farklı kullanıcı olarak çalıştırma devre dışı kalır"},
-    {"Themes",         "Görsel temalar ve pencere çerçevesi görünümü bozulur"},
-    {"FontCache",      "Yazı tipi önbelleği kapanır, uygulamalar yavaş açılır"},
+///
+/// The consequence itself is not here. It used to be, as a Turkish sentence beside each
+/// name, which meant the other nine languages showed a Turkish warning. Each row's
+/// sentence now lives in resources/data/i18n.json under `svc.risk.<ServiceKey>` and is
+/// looked up when the row is drawn, so it follows the interface language like everything
+/// else. The key is derived from the name below and cannot drift from it.
+const char *const RiskyServices[] = {
+    "WinDefend",
+    "MpsSvc",
+    "wscsvc",
+    "SecurityHealthService",
+    "Sense",
+    "wuauserv",
+    "UsoSvc",
+    "BITS",
+    "DoSvc",
+    "Spooler",
+    "Audiosrv",
+    "WlanSvc",
+    "Netman",
+    "netprofm",
+    "WSearch",
+    "SysMain",
+    "VSS",
+    "swprv",
+    "wbengine",
+    "WerSvc",
+    "LanmanServer",
+    "LanmanWorkstation",
+    "WpnService",
+    "CDPSvc",
+    "TabletInputService",
+    "seclogon",
+    "Themes",
+    "FontCache",
 };
 
 QStringList multiString(HKEY key, const wchar_t *name)
@@ -137,10 +147,15 @@ QStringList multiString(HKEY key, const wchar_t *name)
     const auto *p = reinterpret_cast<const wchar_t *>(buffer.constData());
     const auto *end = p + size / sizeof(wchar_t);
     while (p < end && *p) {
-        const QString entry = QString::fromWCharArray(p);
+        // Bounded, for the same reason readString above is: nothing obliges a registry
+        // string to be null-terminated, and letting fromWCharArray look for the terminator
+        // itself reads past the block. QByteArray's own trailing NUL is one byte; a
+        // wchar_t needs two.
+        const auto *stop = std::find(p, end, L'\0');
+        const QString entry = QString::fromWCharArray(p, int(stop - p));
         if (!entry.isEmpty())
             list << entry;
-        p += entry.size() + 1;
+        p = stop + 1;   // may reach end + 1; the loop test above catches it
     }
     return list;
 }
@@ -195,7 +210,8 @@ QVector<Info> enumerate()
 
         // Drivers have their own start semantics (boot, system) and no business in a
         // list that offers "automatic, manual, disabled".
-        if (!haveType || !haveStart || !(type & ServiceWin32) || start < 2 || start > 4) {
+        if (!haveType || !haveStart || !(type & ServiceWin32) || (type & ServiceUserInstance)
+            || start < 2 || start > 4) {
             RegCloseKey(key);
             continue;
         }
@@ -261,15 +277,20 @@ QVector<Info> enumerate()
         CloseServiceHandle(scm);
     }
 
+    // The consequence is looked up, not stored: it used to be a Turkish literal in the
+    // table above, copied verbatim into the row and shown untranslated in the other nine
+    // languages. The key is derived from the service name so the table cannot drift from
+    // the strings — svc.risk.<ServiceKey>, one per row, all ten languages.
     QHash<QString, QString> risky;
-    for (const RiskyService &entry : RiskyServices)
-        risky.insert(QString::fromLatin1(entry.key).toLower(),
-                     QString::fromUtf8(entry.consequence));
+    for (const char *entry : RiskyServices) {
+        const QString key = QString::fromLatin1(entry);
+        risky.insert(key.toLower(), QStringLiteral("svc.risk.") + key);
+    }
 
     for (Info &info : services) {
         const QString id = info.key.toLower();
         info.running = running.contains(id);
-        info.riskNote = risky.value(id);
+        info.riskNoteKey = risky.value(id);
         if (locked.contains(id)) {
             info.locked = true;
             info.lockReason = Locale::tr(QStringLiteral("svc.lockReason"));

@@ -14,21 +14,6 @@ constexpr qreal ColGap = 12.0;
 constexpr qreal TrailingGap = 16.0;
 constexpr qreal TextGap = 1.0;
 
-qreal padY()
-{
-    return Theme::compact() ? 4.0 : 7.0;
-}
-
-qreal nameLine()
-{
-    return Css::normalLine(Theme::Font::tweakName());
-}
-
-qreal descLine()
-{
-    return Css::line(Theme::Font::tweakDesc(), 1.45);
-}
-
 } // namespace
 
 SettingRow::SettingRow(const QString &name, const QString &desc, QWidget *control,
@@ -42,12 +27,16 @@ SettingRow::SettingRow(const QString &name, const QString &desc, QWidget *contro
     if (m_control)
         m_control->setParent(this);
     setFixedHeight(sizeHint().height());
-    // Every metric here comes out of the font, so the face changing means measuring again.
-    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+    // Every metric here comes out of the font and the density flag, so either of them
+    // changing means measuring again — see the note in tweakrow.cpp about compactChanged
+    // having spent three releases with no listener at all.
+    const auto remeasure = [this] {
         setFixedHeight(sizeHint().height());
         updateGeometry();
         update();
-    });
+    };
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, remeasure);
+    connect(Theme::notifier(), &Theme::Notifier::compactChanged, this, remeasure);
 
     positionControl();
     connect(Theme::notifier(), &Theme::Notifier::appearanceChanged, this, qOverload<>(&QWidget::update));
@@ -55,14 +44,14 @@ SettingRow::SettingRow(const QString &name, const QString &desc, QWidget *contro
 
 int SettingRow::rowHeight()
 {
-    return qRound(2 * (BorderW + padY()) + nameLine() + TextGap + descLine());
+    return qRound(2 * (BorderW + Css::rowPadY()) + Css::rowNameLine() + TextGap + Css::rowDescLine());
 }
 
 QSize SettingRow::sizeHint() const
 {
     int h = rowHeight();
     if (m_control)
-        h = qMax(h, int(m_control->sizeHint().height() + 2 * (BorderW + padY())));
+        h = qMax(h, int(m_control->sizeHint().height() + 2 * (BorderW + Css::rowPadY())));
     return {0, h};
 }
 
@@ -122,15 +111,15 @@ void SettingRow::paintEvent(QPaintEvent *)
         return;
 
     // The text block is centred on the row so a taller control does not drag it upwards.
-    const qreal block = nameLine() + TextGap + descLine();
+    const qreal block = Css::rowNameLine() + TextGap + Css::rowDescLine();
     const qreal top = (height() - block) / 2.0;
 
     const QFont &nameFont = Font::tweakName();
     const QFont &descFont = Font::tweakDesc();
     const QRectF box(textX, 0, textW, height());
 
-    Css::drawText(&p, box, Css::baseline(nameFont, top, nameLine()),
+    Css::drawText(&p, box, Css::baseline(nameFont, top, Css::rowNameLine()),
                   nameFont, Color::TextPrimary(), m_name, Qt::AlignLeft, true);
-    Css::drawText(&p, box, Css::baseline(descFont, top + nameLine() + TextGap, descLine()),
+    Css::drawText(&p, box, Css::baseline(descFont, top + Css::rowNameLine() + TextGap, Css::rowDescLine()),
                   descFont, Color::TextDesc(), m_desc, Qt::AlignLeft, true);
 }

@@ -5,7 +5,7 @@
 **Your Windows. Your rules.**
 
 Windows ships with opinions about your privacy, your bandwidth, and what belongs on your Start menu.
-Arbitrium is where you overrule them — 600+ of them, one switch at a time.
+Arbitrium is where you overrule them — 391 of them, one switch at a time.
 
 [![Windows 10 | 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?style=for-the-badge&logo=windows11&logoColor=white)](#)
 [![Portable](https://img.shields.io/badge/Install-Not%20Required-2ea44f?style=for-the-badge)](#)
@@ -39,7 +39,7 @@ it runs. Read it, then decide.
 
 ## What's inside
 
-### ⚙️ 600+ tweaks that actually apply here
+### ⚙️ 391 tweaks that actually apply here
 
 Not a generic list scraped from a 2016 forum post. Arbitrium checks each tweak against **your**
 Windows build. A setting Microsoft retired three versions ago isn't quietly presented as a working
@@ -47,16 +47,19 @@ switch — it's shown greyed out, with the reason. Honesty over a longer feature
 
 | | |
 |---|---|
-| **System** · 62 | Core behaviour, updates, lock screen, sign-in |
+| **System** · 63 | Core behaviour, lock screen, sign-in, shell policy |
 | **File Explorer** · 57 | Extensions, panes, Quick access, launch target |
-| **Privacy** · 42 | Telemetry, diagnostics, advertising ID, activity history |
+| **Privacy** · 41 | Telemetry, diagnostics, advertising ID, activity history |
 | **Visual Effects** · 35 | Animations, transparency, shadows, thumbnails |
+| **Memory & CPU** · 32 | Paging, caching, prefetch, scheduling |
+| **Windows Update** · 29 | Deferral, drivers, delivery optimisation, restart behaviour |
+| **Network & Internet** · 27 | DNS, IPv6, Teredo, discovery, metered connections |
+| **Security hardening** · 23 | SMB, LSA, PowerShell logging, legacy protocols |
+| **Cleanup** · 22 | Storage Sense, temp, component store, history |
 | **Startup** · 20 | Everything that runs when you sign in |
-| **Network & Internet** · 18 | DNS, IPv6, Teredo, discovery, metered connections |
+| **Context menu** · 20 | Take Ownership, Services, cascading power plans, and more |
 | **Advanced** · 13 | The ones with sharp edges |
-| **Context Menu** · 9 | Take Ownership, Services, cascading power plans, and more |
-| **Memory & CPU** · 9 | Paging, caching, prefetch behaviour |
-| **Cleanup** · 3 | Storage Sense and friends |
+| **Power management** · 9 | Sleep, hibernation, USB selective suspend |
 
 ### 🔧 Every Windows service, in one place
 
@@ -83,14 +86,20 @@ script.
 
 ### 📊 A dashboard that isn't decoration
 
-Live CPU and memory graphs at one-second resolution, alongside the machine facts you actually go
-looking for: activation state, Secure Boot, TPM, BIOS and SMBIOS, core isolation, uptime, pending
-restarts, last restore point, every network adapter, every volume.
+Live CPU and memory graphs at one-second resolution, alongside **28 blocks** of the machine facts
+you actually go looking for: activation state, Secure Boot, TPM, BIOS and SMBIOS, core isolation,
+uptime, pending restarts and *why*, last restore point, every network adapter, every volume — plus
+BitLocker and SMART per drive, Windows Update state, scheduled tasks, driver problems, privacy
+posture, virtualisation, accounts, sensors and the last bugcheck code.
+
+Nothing here blocks the window. The heavy reads arrive in three stages behind the page, and a
+value that genuinely cannot be read says so rather than guessing.
 
 ### 💾 Profiles that travel
 
-Save your entire configuration as a portable XML profile and apply it on the next machine — 606
-tweaks in one file. Or export just your pending changes as a plain **`.reg`** file that Windows
+Save your entire configuration as a portable XML profile and apply it on the next machine — every
+tweak, service and startup entry in one file, each remembered as the *position* it sits at rather
+than a bare on/off. Or export just your pending changes as a plain **`.reg`** file that Windows
 understands without Arbitrium anywhere in sight. Your setup shouldn't be a hostage.
 
 ### 🛡️ A safety net, on by default
@@ -102,7 +111,7 @@ promise worth backing twice.
 
 ## Every word, in ten languages
 
-Not just the buttons — **everything**. All 268 tweak names and descriptions, every service state,
+Not just the buttons — **everything**. All 391 tweak names and descriptions, every service state,
 every action, every label on the dashboard, every line in the log.
 
 🇹🇷 Türkçe · 🇬🇧 English · 🇩🇪 Deutsch · 🇫🇷 Français · 🇪🇸 Español · 🇮🇹 Italiano · 🇵🇹 Português · 🇵🇱 Polski · 🇷🇺 Русский · 🇸🇦 العربية
@@ -125,7 +134,10 @@ Because a tool you'll actually open should be worth looking at.
 
 ## Getting started
 
-1. Download the latest release.
+1. Download **`Arbitrium-vX.Y.Z-win64.exe`** from the [latest release](https://github.com/shadesofdeath/Arbitrium/releases/latest).
+   That single file *is* the application — Qt is linked into it, so there is nothing to unpack
+   and nothing to put beside it. (The `.zip` next to it holds the same executable and this
+   README, for anyone whose browser dislikes a bare `.exe`.)
 2. Run it. **No installation, no setup wizard, no bundled toolbar.** One executable.
 3. On first launch, pick your language and your look.
 4. Flip what you want. Press **Apply** when you mean it.

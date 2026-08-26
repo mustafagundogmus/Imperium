@@ -12,10 +12,6 @@
 namespace {
 
 /// The mockup's scroll body: `padding:2px 12px 16px 18px`.
-constexpr int PadLeft = 18;
-constexpr int PadTop = 2;
-constexpr int PadRight = 12;
-constexpr int PadBottom = 16;
 
 } // namespace
 
@@ -24,7 +20,8 @@ TweakPage::TweakPage(AppState *state, QWidget *parent)
     , m_state(state)
 {
     auto *outer = new QVBoxLayout(this);
-    outer->setContentsMargins(PadLeft, PadTop, PadRight, PadBottom);
+    outer->setContentsMargins(Theme::Metric::PagePadLeft, Theme::Metric::PagePadTop,
+                              Theme::Metric::PagePadRight, Theme::Metric::PagePadBottom);
     outer->setSpacing(0);
     outer->addStretch(1);
     m_layout = outer;

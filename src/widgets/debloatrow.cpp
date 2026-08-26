@@ -77,14 +77,6 @@ void DebloatRow::setStatus(const QString &text)
     update();
 }
 
-void DebloatRow::clearStatus()
-{
-    if (m_status.isEmpty())
-        return;
-    m_status.clear();
-    update();
-}
-
 QRectF DebloatRow::checkboxRect() const
 {
     const qreal y = std::round((height() - CheckSize) / 2.0);

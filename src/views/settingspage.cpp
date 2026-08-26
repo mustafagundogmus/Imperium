@@ -32,11 +32,6 @@
 
 namespace {
 
-constexpr int PadLeft = 18;
-constexpr int PadTop = 2;
-constexpr int PadRight = 12;
-constexpr int PadBottom = 16;
-
 /// A section is a header plus 1px-separated rows, exactly like a tweak section.
 QWidget *makeSection(const QString &title, const QVector<QWidget *> &rows, QWidget *parent)
 {
@@ -82,25 +77,39 @@ SettingsPage::SettingsPage(AppState *state, Updater *updater, QWidget *parent)
     , m_updater(updater)
 {
     m_layout = new QVBoxLayout(this);
-    m_layout->setContentsMargins(PadLeft, PadTop, PadRight, PadBottom);
+    m_layout->setContentsMargins(Theme::Metric::PagePadLeft, Theme::Metric::PagePadTop,
+                                 Theme::Metric::PagePadRight, Theme::Metric::PagePadBottom);
     m_layout->setSpacing(Theme::Metric::SectionGap);
     m_layout->addStretch(1);
 
     rebuild();
 
     connect(m_updater, &Updater::finished, this,
-            [this](bool available, const QString &version, const QString &url, const QString &error) {
+            [this](bool available, const QString &version, const QString &url, const QString &error,
+                   bool userInitiated) {
                 m_updateButton->setEnabledLook(true);
                 if (!error.isEmpty()) {
+                    // A check nobody asked for should not report its own failure: the
+                    // network being down at launch is not news the user requested.
+                    if (!userInitiated)
+                        return;
                     m_updateRow->setDesc(Locale::tr(QStringLiteral("settings.update.checkFailed")).arg(error));
                     Q_EMIT notice(Locale::tr(QStringLiteral("settings.update.checkFailedNotice")));
                     return;
                 }
                 if (available) {
-                    m_updateRow->setDesc(Locale::tr(QStringLiteral("settings.update.available")).arg(version));
+                    // Only a check somebody pressed a button for is allowed to take over
+                    // the screen. The launch-time one says so and stops there — its own
+                    // setting promises it looks "silently", and a browser opening by
+                    // itself seconds after the window appears is the opposite of that.
+                    m_updateRow->setDesc(Locale::tr(userInitiated
+                                                        ? QStringLiteral("settings.update.available")
+                                                        : QStringLiteral("settings.update.availableQuiet"))
+                                             .arg(version));
                     Q_EMIT notice(Locale::tr(QStringLiteral("settings.update.newVersionNotice")).arg(version));
-                    QDesktopServices::openUrl(QUrl(url));
-                } else {
+                    if (userInitiated)
+                        QDesktopServices::openUrl(QUrl(url));
+                } else if (userInitiated) {
                     m_updateRow->setDesc(Locale::tr(QStringLiteral("settings.update.upToDate"))
                                              .arg(QCoreApplication::applicationVersion()));
                     Q_EMIT notice(Locale::tr(QStringLiteral("settings.update.upToDateNotice")));
@@ -429,5 +438,5 @@ void SettingsPage::onCheckUpdates()
 {
     m_updateButton->setEnabledLook(false);
     m_updateRow->setDesc(Locale::tr(QStringLiteral("settings.update.checking")));
-    m_updater->check();
+    m_updater->check(true);
 }

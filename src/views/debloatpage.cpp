@@ -17,10 +17,6 @@
 
 namespace {
 
-constexpr int PadLeft = 18;
-constexpr int PadTop = 2;
-constexpr int PadRight = 12;
-constexpr int PadBottom = 16;
 constexpr int TopBarGap = 10;
 
 /// Section titles, indexed by InstalledApp::section().
@@ -55,7 +51,8 @@ DebloatPage::DebloatPage(QWidget *parent)
     , m_engine(new ActionEngine(this))
 {
     m_layout = new QVBoxLayout(this);
-    m_layout->setContentsMargins(PadLeft, PadTop, PadRight, PadBottom);
+    m_layout->setContentsMargins(Theme::Metric::PagePadLeft, Theme::Metric::PagePadTop,
+                                 Theme::Metric::PagePadRight, Theme::Metric::PagePadBottom);
     m_layout->setSpacing(Theme::Metric::SectionGap);
 
     auto *topBar = new QWidget(this);
@@ -123,6 +120,14 @@ DebloatPage::DebloatPage(QWidget *parent)
                     summary = Locale::tr(QStringLiteral("debloat.result"))
                                   .arg(parts.value(1))
                                   .arg(parts.value(2));
+                    // The script now checks each package is actually gone from both the
+                    // registered and the provisioned list before counting it. Anything
+                    // Windows kept is named here rather than quietly folded into the
+                    // "removed" total, which is what used to happen.
+                    const QString kept = parts.value(3).trimmed();
+                    if (!kept.isEmpty())
+                        summary += QStringLiteral(" · ")
+                                   + Locale::tr(QStringLiteral("debloat.resultKept")).arg(kept);
                 }
 
                 if (ok) {
@@ -235,7 +240,17 @@ void DebloatPage::rebuild(const QVector<InstalledApp> &apps)
     m_summaryLabel->setText(Locale::tr(QStringLiteral("debloat.summary"))
                                 .arg(m_rowCount)
                                 .arg(m_removableCount));
-    m_rescanButton->setEnabledLook(true);
+    // A rebuild can land in the middle of a removal — a language change is the way it
+    // happens — and it throws away every row, taking their busy markers with it. Put the
+    // in-flight state back rather than leaving the page looking idle while PowerShell is
+    // still working.
+    const bool busy = m_engine->running();
+    if (busy) {
+        for (const QString &id : std::as_const(m_pendingIds))
+            if (DebloatRow *row = m_rows.value(id))
+                row->setBusy(true);
+    }
+    m_rescanButton->setEnabledLook(!busy && !m_scanner->running());
     updateBulkBar();
 }
 
@@ -253,7 +268,7 @@ void DebloatPage::updateBulkBar()
 
     m_bulkRemoveButton->setText(Locale::tr(QStringLiteral("debloat.removeSelected")).arg(checked));
     m_bulkRemoveButton->setEnabledLook(checked > 0 && !m_engine->running());
-    m_selectAllButton->setEnabledLook(selectable > 0);
+    m_selectAllButton->setEnabledLook(selectable > 0 && !m_engine->running());
     m_selectAllButton->setText(
         Locale::tr(checked > 0 && checked == selectable
                        ? QStringLiteral("debloat.clearSelection")

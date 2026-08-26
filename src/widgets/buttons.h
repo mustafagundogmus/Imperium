@@ -4,7 +4,6 @@
 //                                    padding 3px 10px, hover text #C6C6CE
 //   PillButton::Accent  "Uygula (3)" 11px/500 #141414 on the accent, radius 5,
 //                                    padding 4px 12px, hover filter brightness(1.08)
-//   LinkLabel           "Yeni oluştur" 10.5px accent, hover #E4C288
 //   WindowButton        40×36 hit area, 10px glyph, hover #1C1C21 (close: #3A1D1F)
 
 #pragma once
@@ -46,30 +45,6 @@ private:
     bool m_hovered = false;
     bool m_pressed = false;
     bool m_live = true;
-};
-
-class LinkLabel : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit LinkLabel(const QString &text, QWidget *parent = nullptr);
-
-    QSize sizeHint() const override;
-
-Q_SIGNALS:
-    void clicked();
-
-protected:
-    void paintEvent(QPaintEvent *) override;
-    void enterEvent(QEnterEvent *) override;
-    void leaveEvent(QEvent *) override;
-    void mousePressEvent(QMouseEvent *) override;
-    void mouseReleaseEvent(QMouseEvent *) override;
-
-private:
-    QString m_text;
-    bool m_hovered = false;
 };
 
 class WindowButton : public QWidget

@@ -160,11 +160,8 @@ QHash<QString, int> TweakEngine::readAll() const
 }
 
 void TweakEngine::journal(const Tweak &tweak, int index, const RegistryEntry &entry,
-                          const QString &desired)
+                          const QString &desired, const Original &before)
 {
-    const Registry::Hive hive = Registry::hiveFromString(entry.hive);
-    const Registry::Value before = Registry::read(hive, entry.path, entry.value);
-
     QJsonObject record;
     record.insert(QStringLiteral("at"), QDateTime::currentDateTime().toString(Qt::ISODate));
     record.insert(QStringLiteral("id"), tweak.id);
@@ -173,8 +170,8 @@ void TweakEngine::journal(const Tweak &tweak, int index, const RegistryEntry &en
     record.insert(QStringLiteral("hive"), entry.hive);
     record.insert(QStringLiteral("path"), entry.path);
     record.insert(QStringLiteral("value"), entry.value);
-    record.insert(QStringLiteral("existed"), before.exists);
-    record.insert(QStringLiteral("keyExisted"), Registry::keyExists(hive, entry.path));
+    record.insert(QStringLiteral("existed"), before.existed);
+    record.insert(QStringLiteral("keyExisted"), before.keyExisted);
     record.insert(QStringLiteral("previousType"), before.type);
     record.insert(QStringLiteral("previousData"), before.data);
     record.insert(QStringLiteral("desired"), desired);
@@ -182,6 +179,16 @@ void TweakEngine::journal(const Tweak &tweak, int index, const RegistryEntry &en
     QFile file(m_journalPath);
     if (file.open(QIODevice::Append | QIODevice::Text))
         file.write(QJsonDocument(record).toJson(QJsonDocument::Compact) + '\n');
+
+    // The map this reads back from is built once, in loadOriginals(), from the file as it
+    // stood at startup — so without this line "put it back the way this machine had it"
+    // did nothing at all for any value first touched in the current session, and started
+    // working only after a restart. First write wins, which is the rule loadOriginals()
+    // applies to the same records. Inserted whether or not the append above succeeded: a
+    // full disk should not also cost the session its knowledge of the original.
+    const QString key = originalKey(tweak.id, index);
+    if (!m_originals.contains(key))
+        m_originals.insert(key, before);
 }
 
 QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak *, int>> &requests)
@@ -234,6 +241,30 @@ QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak
             continue;
         }
 
+        // Every value this tweak owns, read before a single one of them is written.
+        //
+        // This used to happen inside the write loop, one entry at a time, which meant
+        // entry i was recorded after entries 0…i-1 had already landed. About twenty
+        // catalogue tweaks put a DELETE_KEY on their first entry and keep the rest inside
+        // that same key — ctx-control is one — so the loop deleted the key and then
+        // journalled "nothing was here" for values it had just destroyed. A journal that
+        // says the key was empty is a journal that cannot put it back, and loadOriginals()
+        // then cached that lie as what the machine originally held.
+        QVector<Original> before;
+        before.reserve(tweak->reg.size());
+        for (const RegistryEntry &entry : tweak->reg) {
+            Original state;
+            const Registry::Hive hive = Registry::hiveFromString(entry.hive);
+            if (hive != Registry::Hive::Invalid) {
+                const Registry::Value value = Registry::read(hive, entry.path, entry.value);
+                state.existed = value.exists;
+                state.type = value.type;
+                state.data = value.data;
+                state.keyExisted = Registry::keyExists(hive, entry.path);
+            }
+            before.append(state);
+        }
+
         bool allOk = true;
         for (int i = 0; i < tweak->reg.size(); ++i) {
             const RegistryEntry &entry = tweak->reg.at(i);
@@ -267,7 +298,6 @@ QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak
                                      ? Registry::DeleteKeySentinel
                                      : Registry::DeleteSentinel;
                     }
-                    outcome.restoredOriginal = true;
                 }
             }
 
@@ -275,7 +305,7 @@ QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak
             // write actually puts there. Journalling the catalogue's target first meant
             // a restore recorded — and the Log page then offered to undo — a value that
             // was never written.
-            journal(*tweak, i, entry, target);
+            journal(*tweak, i, entry, target, before.at(i));
 
             QString error;
             bool ok;
@@ -345,44 +375,43 @@ bool TweakEngine::revert(const JournalEntry &entry, QString *error)
         return false;
     }
 
+    // A line that recorded a whole-key deletion cannot be undone from a single value.
+    // DELETE_KEY took the key and everything under it — other values, subkeys, whatever
+    // else lived there — and one journal record describes one value. Writing that value
+    // back would rebuild a fraction of what was removed and report it as a full undo, so
+    // the honest answer is to refuse. The Log page greys these rows out for the same
+    // reason; this is the guard behind that.
+    if (entry.desired.compare(Registry::DeleteKeySentinel, Qt::CaseInsensitive) == 0) {
+        if (error)
+            *error = Locale::tr(QStringLiteral("err.cannotRevertKeyDelete"));
+        return false;
+    }
+
     if (entry.existed) {
         const QString type = entry.previousType.isEmpty() ? QStringLiteral("SZ")
                                                           : entry.previousType;
         return Registry::write(hive, entry.path, entry.value, type, entry.previousData, error);
     }
 
-    // There was no value here before. Take the key with it only if we made that too.
-    if (!entry.keyExisted)
-        return Registry::removeKey(hive, entry.path, error);
-    return Registry::remove(hive, entry.path, entry.value, error);
-}
+    // There was no value here before, so undoing the write means taking the value away.
+    if (!Registry::remove(hive, entry.path, entry.value, error))
+        return false;
 
-bool TweakEngine::needsElevation(const QVector<const Tweak *> &tweaks)
-{
-    for (const Tweak *tweak : tweaks)
-        for (const RegistryEntry &entry : tweak->reg)
-            if (Registry::requiresElevation(Registry::hiveFromString(entry.hive)))
-                return true;
-    return false;
+    // …and only then, if we also made the key, dropping it — but only while it is still
+    // empty. `keyExisted` is one instant's snapshot and these keys are shared: thirteen
+    // catalogue tweaks write into the Windows Update policy key alone, and a domain
+    // policy or another tool may have written there since. This used to be an outright
+    // RegDeleteTreeW of the key, which took every one of those with it and then reported
+    // success. removeEmptyKey() leaves an occupied key alone; an empty policy key left
+    // behind is inert, since only DELETE_KEY positions read a key's existence as state.
+    if (!entry.keyExisted)
+        Registry::removeEmptyKey(hive, entry.path);
+    return true;
 }
 
 bool TweakEngine::isElevated()
 {
-#ifdef Q_OS_WIN
-    static const bool elevated = [] {
-        HANDLE token = nullptr;
-        if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &token))
-            return false;
-        TOKEN_ELEVATION elevation{};
-        DWORD size = sizeof(elevation);
-        const bool ok = GetTokenInformation(token, TokenElevation, &elevation, sizeof(elevation), &size);
-        CloseHandle(token);
-        return ok && elevation.TokenIsElevated != 0;
-    }();
-    return elevated;
-#else
-    return false;
-#endif
+    return Registry::isElevated();
 }
 
 bool TweakEngine::relaunchElevated()

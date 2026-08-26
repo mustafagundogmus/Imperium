@@ -87,11 +87,25 @@ int fontGeneration()
 
 QString loadFace(const QString &path, const QString &fallback)
 {
+    // Memoised by path, because QFontDatabase::addApplicationFont() does not deduplicate:
+    // it appends a fresh entry and hands the platform database the same bytes again every
+    // time it is called. The comment this replaced claimed the opposite, so every typeface
+    // pick registered four more copies of four font files, and the two mono faces were
+    // re-registered on top of that.
+    static QHash<QString, QString> resolved;
+    const auto cached = resolved.constFind(path);
+    if (cached != resolved.cend())
+        return *cached;
+
     const int id = QFontDatabase::addApplicationFont(path);
     if (id < 0)
-        return fallback;
+        return fallback;   // not cached: a later call may pass a different fallback
     const QStringList families = QFontDatabase::applicationFontFamilies(id);
-    return families.isEmpty() ? fallback : families.first();
+    if (families.isEmpty())
+        return fallback;
+
+    resolved.insert(path, families.first());
+    return families.first();
 }
 
 QColor g_accent{0xD2, 0xA7, 0x5A};
@@ -119,7 +133,6 @@ Appearance g_appearance = Appearance::Dark;
 const Palette &darkPalette()
 {
     static const Palette p{
-        /* page          */ {0x0E, 0x0E, 0x11},
         /* window        */ {0x17, 0x17, 0x1B},
         /* surface       */ {0x1E, 0x1E, 0x23},
         /* surfaceHover  */ {0x23, 0x23, 0x29},
@@ -150,8 +163,6 @@ const Palette &darkPalette()
         /* iconStroke    */ {0xA8, 0xA8, 0xB2},   //  7.58:1
 
         /* onAccent      */ {0x14, 0x14, 0x14},
-        /* closeHover    */ {0x4A, 0x24, 0x28},
-        /* linkHover     */ {0xE4, 0xC2, 0x88},
         /* scrollThumb   */ {0x35, 0x35, 0x3C},
     };
     return p;
@@ -163,7 +174,6 @@ const Palette &darkPalette()
 const Palette &lightPalette()
 {
     static const Palette p{
-        /* page          */ {0xE9, 0xE9, 0xED},
         /* window        */ {0xFB, 0xFB, 0xFC},
         /* surface       */ {0xF3, 0xF3, 0xF6},
         /* surfaceHover  */ {0xEE, 0xEE, 0xF2},
@@ -194,8 +204,6 @@ const Palette &lightPalette()
         /* iconStroke    */ {0x6B, 0x6B, 0x76},
 
         /* onAccent      */ {0x14, 0x14, 0x14},
-        /* closeHover    */ {0xF2, 0xD6, 0xD8},
-        /* linkHover     */ {0x8A, 0x63, 0x1E},
         /* scrollThumb   */ {0xC6, 0xC6, 0xCF},
     };
     return p;
@@ -218,12 +226,13 @@ Appearance appearance()
     return g_appearance;
 }
 
-void setAppearance(Appearance a)
+void setAppearance(Appearance a, Persist persist)
 {
     if (a == g_appearance)
         return;
     g_appearance = a;
-    QSettings().setValue(QStringLiteral("appearance/theme"),
+    if (persist == Persist::Yes)
+        QSettings().setValue(QStringLiteral("appearance/theme"),
                          a == Appearance::Light ? QStringLiteral("light") : QStringLiteral("dark"));
     Q_EMIT notifier()->appearanceChanged();
 }
@@ -303,8 +312,8 @@ const QVector<Typeface> &typefaces()
 
 QString loadTypeface(const QString &id)
 {
-    // addApplicationFont() is a no-op for a file already registered, and returns the
-    // family either way, so this needs no cache of its own.
+    // No cache of its own: loadFace() memoises by resource path, which is the level that
+    // catches applyFace()'s four loads per typeface and the two mono ones as well.
     const FaceFiles *face = faceFor(id);
     return loadFace(QLatin1String(face->regular), QString::fromLatin1(face->family));
 }
@@ -314,14 +323,15 @@ QString typeface()
     return g_typeface;
 }
 
-void setTypeface(const QString &id)
+void setTypeface(const QString &id, Persist persist)
 {
     const FaceFiles *face = faceFor(id);
     if (QLatin1String(face->id) == g_typeface)
         return;
 
     g_typeface = QString::fromLatin1(face->id);
-    QSettings().setValue(QStringLiteral("appearance/typeface"), g_typeface);
+    if (persist == Persist::Yes)
+        QSettings().setValue(QStringLiteral("appearance/typeface"), g_typeface);
 
     applyFace(*face);
     ++g_fontGeneration;   // every style recomputes on its next call
@@ -333,14 +343,15 @@ qreal fontScale()
     return g_fontScale;
 }
 
-void setFontScale(qreal scale)
+void setFontScale(qreal scale, Persist persist)
 {
     scale = qBound(0.85, scale, 1.6);
     if (qFuzzyCompare(scale, g_fontScale))
         return;
 
     g_fontScale = scale;
-    QSettings().setValue(QStringLiteral("appearance/fontScale"), scale);
+    if (persist == Persist::Yes)
+        QSettings().setValue(QStringLiteral("appearance/fontScale"), scale);
 
     // Same consequence as a face swap — every style is rebuilt and every widget has to
     // relayout as well as repaint — so it rides the same signal rather than a new one.
@@ -404,8 +415,6 @@ TWEAKER_FONT(kbd,                 mono(9))
 TWEAKER_FONT(categoryName,        sans(12.5, Weight::Text))
 TWEAKER_FONT(categoryNameSelected,sans(12.5, Weight::Medium))
 TWEAKER_FONT(categoryCount,       mono(10))
-TWEAKER_FONT(upperLabel,          sans(10, Weight::Regular, 0.08))
-TWEAKER_FONT(restoreValue,        sans(11.5))
 TWEAKER_FONT(link,                sans(10.5))
 TWEAKER_FONT(pageTitle,           sans(15, Weight::SemiBold, -0.01))
 TWEAKER_FONT(pageSub,             sans(11))
@@ -442,13 +451,18 @@ QColor accent()
     return g_accent;
 }
 
-QColor accentSoft()
+QColor accentSoft(Appearance a)
 {
     QColor c = g_accent;
     // The mockup's `accent + "21"` → 13%. On white that wash all but disappears, so the
     // light palette leans on it a little harder to keep the selected row readable.
-    c.setAlpha(g_appearance == Appearance::Light ? 0x30 : 0x21);
+    c.setAlpha(a == Appearance::Light ? 0x30 : 0x21);
     return c;
+}
+
+QColor accentSoft()
+{
+    return accentSoft(g_appearance);
 }
 
 QColor accentInk()
@@ -463,23 +477,13 @@ QColor accentInk()
                            int(c.value() * 0.62));
 }
 
-QString accentName(const QColor &c)
-{
-    static const QHash<QString, QString> names{
-        {QStringLiteral("#d2a75a"), QStringLiteral("Amber")},
-        {QStringLiteral("#7fb8a4"), Locale::tr(QStringLiteral("accent.sage"))},
-        {QStringLiteral("#8e9bd8"), Locale::tr(QStringLiteral("accent.lavender"))},
-        {QStringLiteral("#c4c4cc"), Locale::tr(QStringLiteral("accent.neutral"))},
-    };
-    return names.value(c.name(QColor::HexRgb).toLower(), c.name(QColor::HexRgb).toUpper());
-}
-
-void setAccent(const QColor &c)
+void setAccent(const QColor &c, Persist persist)
 {
     if (!c.isValid() || c == g_accent)
         return;
     g_accent = c;
-    QSettings().setValue(QStringLiteral("appearance/accent"), c.name(QColor::HexRgb));
+    if (persist == Persist::Yes)
+        QSettings().setValue(QStringLiteral("appearance/accent"), c.name(QColor::HexRgb));
     Q_EMIT notifier()->accentChanged();
 }
 
@@ -494,12 +498,13 @@ bool compact()
     return g_compact;
 }
 
-void setCompact(bool on)
+void setCompact(bool on, Persist persist)
 {
     if (on == g_compact)
         return;
     g_compact = on;
-    QSettings().setValue(QStringLiteral("layout/compact"), on);
+    if (persist == Persist::Yes)
+        QSettings().setValue(QStringLiteral("layout/compact"), on);
     Q_EMIT notifier()->compactChanged();
 }
 

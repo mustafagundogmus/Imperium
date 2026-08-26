@@ -40,7 +40,6 @@ private:
     ActionEngine *m_engine = nullptr;
     QHash<QString, PillButton *> m_buttons;
     QHash<QString, SettingRow *> m_rows;
-    QHash<QString, QString> m_descriptions;   ///< to restore after a result line
     QVector<SectionHeader *> m_sectionHeaders;
     int m_rowCount = 0;
 };

@@ -75,10 +75,24 @@ MainWindow::MainWindow(QWidget *parent)
     refreshStatusSummary();
     connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, refreshStatusSummary);
     connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, &MainWindow::refreshView);
-    // The title bar carries "Yönetici"/"Standart", which is a word like any other.
+    // …and the counters, which is what fills the Genel Bakis card's five rows. Its title
+    // was retranslated and its rows were not, so the card read half in one language and
+    // half in the other until the next apply.
+    connect(Locale::notifier(), &Locale::Notifier::languageChanged, this,
+            &MainWindow::refreshCounters);
+    // Both fact structs hold finished words, not raw readings — "Açık", "Şebeke",
+    // "Dijital lisans", a date written the way the locale writes dates. Re-pushing the
+    // struct we already had therefore retranslated the *labels* and left every *value*
+    // in the language it was read in. The only way back is to read them again, which is
+    // what collect() is cheap enough to do (it is what runs before the window is shown)
+    // and what DeepInfo::Probe::retranslate() does without paying for its two PowerShell
+    // stages a second time.
     connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, [this] {
+        m_facts = SysInfo::collect();
         m_titleBar->setSystemSummary(SysInfo::titleBarSummary(m_facts));
         m_overview->setFacts(m_facts);
+        if (m_deepProbe)
+            m_deepProbe->retranslate();
     });
 
     m_overview->setFacts(m_facts);
@@ -208,11 +222,6 @@ void MainWindow::wire()
     connect(m_statusBar, &StatusBar::revertRequested, this, &MainWindow::onRevert);
 
     connect(m_state, &AppState::pendingChanged, this, &MainWindow::refreshCounters);
-    connect(m_state, &AppState::committed, this, [this] {
-        refreshCounters();
-        refreshView();
-    });
-
     connect(m_settings, &SettingsPage::notice, m_statusBar, &StatusBar::setNotice);
     connect(m_actions, &ActionPage::notice, m_statusBar, &StatusBar::setNotice);
     connect(m_debloat, &DebloatPage::notice, m_statusBar, &StatusBar::setNotice);
@@ -260,6 +269,13 @@ void MainWindow::wire()
 
     auto *clearSearch = new QShortcut(QKeySequence(Qt::Key_Escape), this);
     connect(clearSearch, &QShortcut::activated, this, [this] { m_sidebar->search()->clearText(); });
+    // A window shortcut consumes the key before any widget sees a key press, so this one
+    // was eating the Escape the apply overlay listens for — the overlay could not be
+    // dismissed with the keyboard, and Escape during a run cleared the search box behind
+    // the scrim instead. Disabling the shortcut object is the only thing that works;
+    // returning early from the handler is too late, the key is already gone.
+    connect(m_applyOverlay, &ApplyOverlay::visibilityChanged, clearSearch, &QShortcut::setEnabled);
+    clearSearch->setEnabled(!m_applyOverlay->isVisible());
 }
 
 QVector<Section> MainWindow::visibleSections() const
@@ -296,8 +312,13 @@ QVector<Section> MainWindow::visibleSections() const
         if (!c)
             return result;
         for (const Section &s : c->sections) {
-            Section kept;
-            kept.title = s.title;
+            // Copied whole and emptied, rather than field by field. Copying `title` alone
+            // silently dropped `titleKey`, and the two synthesised categories — Services
+            // and Startup — carry their heading only as a key, so both rendered under a
+            // blank header in every language. Anything added to Section from here on comes
+            // along on its own.
+            Section kept = s;
+            kept.tweaks.clear();
             for (const Tweak &t : s.tweaks)
                 if (keep(t))
                     kept.tweaks.append(t);
@@ -404,8 +425,11 @@ void MainWindow::refreshView()
         for (const Section &s : sections)
             hits += s.tweaks.size();
         m_header->setTitle(Locale::tr(QStringLiteral("content.search.title")));
+        // One multi-argument arg(), not two chained ones: chaining substitutes the query
+        // first and then rescans it, so typing "%2" into the search box put the hit count
+        // inside the user's own text and left the real marker unreplaced.
         m_header->setSubtitle(Locale::tr(QStringLiteral("content.search.subtitle"))
-                                  .arg(m_state->query().trimmed()).arg(hits));
+                                  .arg(m_state->query().trimmed(), QString::number(hits)));
         m_header->setPendingLabel(Locale::tr(QStringLiteral("content.pending")).arg(m_state->pendingCount()));
     } else if (!category) {
         // Every pinned page returned above and the overview did too, so getting here with
@@ -535,6 +559,26 @@ void MainWindow::onSortToggled(bool alphabetical)
 {
     m_alphabetical = alphabetical;
     refreshView();
+}
+
+void MainWindow::syncOverlayGeometry()
+{
+    // Null for the whole first half of the constructor, and a resize can arrive there.
+    if (m_applyOverlay)
+        m_applyOverlay->setGeometry(overlayRect());
+}
+
+void MainWindow::resizeEvent(QResizeEvent *e)
+{
+    FramelessWindow::resizeEvent(e);
+    syncOverlayGeometry();
+}
+
+void MainWindow::changeEvent(QEvent *e)
+{
+    FramelessWindow::changeEvent(e);
+    if (e->type() == QEvent::WindowStateChange)
+        syncOverlayGeometry();
 }
 
 QRect MainWindow::overlayRect() const

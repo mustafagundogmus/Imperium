@@ -130,8 +130,9 @@ void ThemeSwitch::paintPreview(QPainter *p, const QRectF &box, Theme::Appearance
     const QRectF side(box.left(), box.top() + barH, sideW, box.height() - barH);
     p->fillRect(side, pal.surface);
 
-    QColor wash = accent;
-    wash.setAlpha(appearance == Theme::Appearance::Light ? 0x38 : 0x28);
+    // The same token the sidebar paints with, asked for the appearance this card is
+    // offering. Re-deriving it here is what let the two drift apart.
+    const QColor wash = Theme::accentSoft(appearance);
     p->fillRect(QRectF(side.left() + 3.0, side.top() + 4.0, sideW - 6.0, 5.0), wash);
     for (int i = 1; i < 4; ++i)
         p->fillRect(QRectF(side.left() + 3.0, side.top() + 4.0 + i * 8.0, sideW - 9.0, 2.0),

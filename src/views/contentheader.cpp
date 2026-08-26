@@ -33,10 +33,17 @@ ContentHeader::ContentHeader(QWidget *parent)
         m_filter->setLabels({Locale::tr(QStringLiteral("segment.all")),
                              Locale::tr(QStringLiteral("segment.active")),
                              Locale::tr(QStringLiteral("segment.changed"))});
+        // setLabels re-measures the control, and setFixedWidth moves only its right edge.
+        // Nothing resizes this header on a language change, so without this the control
+        // kept its old left edge: "Tumu / Etkin / Degisen" became "All / Active / Changed"
+        // and the group either overlapped the sort glyph or left a gap beside it.
+        layoutFilter();
+        update();
     });
     setFixedHeight(sizeHint().height());
     // Every metric here comes out of the font, so the face changing means measuring again.
     connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+        layoutFilter();
         setFixedHeight(sizeHint().height());
         updateGeometry();
         update();
@@ -88,12 +95,8 @@ void ContentHeader::setControlsVisible(bool visible)
     m_filter->setVisible(visible);
     setFixedHeight(sizeHint().height());
     updateGeometry();
+    layoutFilter();
     update();
-}
-
-void ContentHeader::setFilterIndex(int index)
-{
-    m_filter->setCurrentIndex(index);
 }
 
 QRectF ContentHeader::sortRect() const
@@ -102,12 +105,17 @@ QRectF ContentHeader::sortRect() const
     return {width() - PadX - SortSize, std::round(y), qreal(SortSize), qreal(SortSize)};
 }
 
-void ContentHeader::resizeEvent(QResizeEvent *e)
+void ContentHeader::layoutFilter()
 {
-    QWidget::resizeEvent(e);
     const qreal x = width() - PadX - SortSize - Gap - m_filter->width();
     const qreal y = PadTop + (contentHeight() - m_filter->height()) / 2.0;
     m_filter->move(qRound(x), qRound(y));
+}
+
+void ContentHeader::resizeEvent(QResizeEvent *e)
+{
+    QWidget::resizeEvent(e);
+    layoutFilter();
 }
 
 void ContentHeader::mouseMoveEvent(QMouseEvent *e)

@@ -1,6 +1,7 @@
 #include "sysinfo.h"
 
 #include "i18n.h"
+#include "registry.h"
 
 #include <QDateTime>
 #include <QDir>
@@ -38,12 +39,12 @@ const QString Unknown = QStringLiteral("—");
 
 QSettings hklm(const QString &path)
 {
-    return QSettings(QStringLiteral("HKEY_LOCAL_MACHINE\\") + path, QSettings::NativeFormat);
+    return Registry::openKey(Registry::Hive::HKLM, path);
 }
 
 QSettings hkcu(const QString &path)
 {
-    return QSettings(QStringLiteral("HKEY_CURRENT_USER\\") + path, QSettings::NativeFormat);
+    return Registry::openKey(Registry::Hive::HKCU, path);
 }
 
 QString orUnknown(const QString &s)
@@ -66,14 +67,7 @@ QString formatBytes(quint64 bytes)
 
 bool isElevated()
 {
-    HANDLE token = nullptr;
-    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &token))
-        return false;
-    TOKEN_ELEVATION elevation{};
-    DWORD size = sizeof(elevation);
-    const bool ok = GetTokenInformation(token, TokenElevation, &elevation, sizeof(elevation), &size);
-    CloseHandle(token);
-    return ok && elevation.TokenIsElevated;
+    return Registry::isElevated();
 }
 
 /// TPM version via the TPM Base Services, loaded on demand so tbs.dll is not a hard
@@ -118,9 +112,11 @@ CoreCounts coreCounts()
 {
     CoreCounts c;
 
-    SYSTEM_INFO si{};
-    GetSystemInfo(&si);
-    c.logical = int(si.dwNumberOfProcessors);
+    // Not GetSystemInfo: dwNumberOfProcessors counts only the processor group the calling
+    // thread happens to be in and stops at 64, while the physical count below walks every
+    // group. Two scopes feeding one "%1 çekirdek / %2 iş parçacığı" label meant a machine
+    // with more than one group reported fewer threads than it had cores.
+    c.logical = int(GetActiveProcessorCount(ALL_PROCESSOR_GROUPS));
 
     DWORD length = 0;
     GetLogicalProcessorInformationEx(RelationProcessorCore, nullptr, &length);
@@ -343,7 +339,6 @@ int countPolicyValues(const QString &root, int depth = 0)
     return n;
 }
 
-
 /// Primary display mode plus how many panels are attached.
 void readDisplays(Facts &f)
 {
@@ -356,7 +351,7 @@ void readDisplays(Facts &f)
         device.cb = sizeof(device);
     }
     if (attached > 0)
-        f.displayCount = QStringLiteral("%1 ekran").arg(attached);
+        f.displayCount = Locale::tr(QStringLiteral("sys.ekran")).arg(attached);
 
     DEVMODEW mode{};
     mode.dmSize = sizeof(mode);
@@ -541,7 +536,6 @@ void readVolumes(Facts &f)
     }
 }
 
-
 QString formatCount(quint64 n)
 {
     return QLocale().toString(qulonglong(n));
@@ -574,8 +568,9 @@ void readFirmware(Facts &f)
     // ERROR_INVALID_FUNCTION. The dummy GUID is the documented probe.
     SetLastError(ERROR_SUCCESS);
     GetFirmwareEnvironmentVariableW(L"", L"{00000000-0000-0000-0000-000000000000}", nullptr, 0);
-    f.bootMode = GetLastError() == ERROR_INVALID_FUNCTION ? QStringLiteral("Eski (BIOS)")
-                                                          : QStringLiteral("UEFI");
+    f.bootMode = GetLastError() == ERROR_INVALID_FUNCTION
+                     ? Locale::tr(QStringLiteral("sys.bootMode.legacy"))
+                     : QStringLiteral("UEFI");
 }
 
 void readProcessorDetail(Facts &f)
@@ -707,14 +702,19 @@ void readLocale(Facts &f)
     if (zone.isEmpty())
         zone = tz.value(QStringLiteral("StandardName")).toString().trimmed();
 
-    TIME_ZONE_INFORMATION info{};
-    if (GetTimeZoneInformation(&info) != TIME_ZONE_ID_INVALID) {
-        const int offset = -(info.Bias + info.DaylightBias) / 60;
-        zone = QStringLiteral("%1 (UTC%2%3)")
-                   .arg(zone.isEmpty() ? QStringLiteral("—") : zone,
-                        offset >= 0 ? QStringLiteral("+") : QStringLiteral("-"))
-                   .arg(qAbs(offset));
-    }
+    // Qt, not GetTimeZoneInformation. The hand-rolled version added DaylightBias whether
+    // or not daylight time was in effect — the field is filled in regardless, and only the
+    // *return value* says which season the machine is in — so half the year was an hour
+    // out. It also divided by 60 as an integer, which reads India (bias 330) as UTC+5.
+    // Qt asks the zone's full rules and answers in seconds.
+    const int secs = QDateTime::currentDateTime().offsetFromUtc();
+    const int mins = qAbs(secs) / 60;
+    zone = QStringLiteral("%1 (UTC%2%3%4)")
+               .arg(zone.isEmpty() ? QStringLiteral("—") : zone,
+                    secs < 0 ? QStringLiteral("-") : QStringLiteral("+"))
+               .arg(mins / 60)
+               .arg(mins % 60 ? QStringLiteral(":%1").arg(mins % 60, 2, 10, QLatin1Char('0'))
+                              : QString());
     f.timeZone = orUnknown(zone);
 
     QSettings w32 = hklm(QStringLiteral("SYSTEM\\CurrentControlSet\\Services\\W32Time\\Parameters"));
@@ -828,7 +828,6 @@ QString uptimeString()
     return Unknown;
 #endif
 }
-
 
 LiveCounters liveCounters()
 {
@@ -1053,8 +1052,22 @@ $qfe = Get-CimInstance Win32_QuickFixEngineering | Sort-Object InstalledOn -Desc
 )PS";
 
     auto *process = new QProcess(this);
-    connect(process, &QProcess::finished, this, [this, process](int, QProcess::ExitStatus) {
+
+    // Both signals, with a one-shot guard, the way DeepInfo::Probe does it. QProcess does
+    // not emit finished() when the process fails to start, only errorOccurred() — so on a
+    // machine where powershell.exe cannot launch, this used to resolve nothing at all and
+    // leak the QProcess for the life of the window. And a process that dies emits both,
+    // which is the other half of why the guard is here.
+    const auto settle = [this, process](bool ok) {
+        if (process->property("settled").toBool())
+            return;
+        process->setProperty("settled", true);
         process->deleteLater();
+
+        if (!ok) {
+            Q_EMIT resolved({}, {}, {});
+            return;
+        }
 
         const QByteArray out = process->readAllStandardOutput().trimmed();
         const QJsonObject o = QJsonDocument::fromJson(out).object();
@@ -1081,12 +1094,24 @@ $qfe = Get-CimInstance Win32_QuickFixEngineering | Sort-Object InstalledOn -Desc
         }
 
         Q_EMIT resolved(activation, restore, o.value(QStringLiteral("hotfix")).toString());
-    });
+    };
+
+    connect(process, &QProcess::finished, this,
+            [settle](int code, QProcess::ExitStatus) { settle(code == 0); });
+    connect(process, &QProcess::errorOccurred, this,
+            [settle](QProcess::ProcessError) { settle(false); });
+
+    // The same console-encoding preamble DeepInfo::runScript uses, and for the same
+    // reason: a fresh console writes in the OEM code page, and one byte of it that is not
+    // valid UTF-8 makes Qt reject the whole JSON document.
+    const QString preamble =
+        QStringLiteral("[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding $false; "
+                       "$OutputEncoding = [Console]::OutputEncoding; ");
 
     process->start(powershell,
                    {QStringLiteral("-NoProfile"), QStringLiteral("-NonInteractive"),
                     QStringLiteral("-ExecutionPolicy"), QStringLiteral("Bypass"),
-                    QStringLiteral("-Command"), QString::fromLatin1(script)});
+                    QStringLiteral("-Command"), preamble + QString::fromUtf8(script)});
 #else
     Q_EMIT resolved({}, {}, {});
 #endif

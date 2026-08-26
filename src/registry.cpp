@@ -1,6 +1,7 @@
 #include "registry.h"
 #include "i18n.h"
 
+#include <QHash>
 #include <QStringList>
 
 #include <string>
@@ -82,17 +83,37 @@ Hive hiveFromString(const QString &name)
     return Hive::Invalid;
 }
 
-QString hiveToString(Hive hive)
+QSettings openKey(Hive hive, const QString &path)
 {
-    switch (hive) {
-    case Hive::HKLM: return QStringLiteral("HKLM");
-    case Hive::HKCU: return QStringLiteral("HKCU");
-    case Hive::HKCR: return QStringLiteral("HKCR");
-    case Hive::HKU:  return QStringLiteral("HKU");
-    case Hive::HKCC: return QStringLiteral("HKCC");
-    case Hive::Invalid: break;
-    }
-    return QStringLiteral("?");
+    static const QHash<Hive, QString> roots{
+        {Hive::HKLM, QStringLiteral("HKEY_LOCAL_MACHINE")},
+        {Hive::HKCU, QStringLiteral("HKEY_CURRENT_USER")},
+        {Hive::HKCR, QStringLiteral("HKEY_CLASSES_ROOT")},
+        {Hive::HKU,  QStringLiteral("HKEY_USERS")},
+        {Hive::HKCC, QStringLiteral("HKEY_CURRENT_CONFIG")},
+    };
+    return QSettings(roots.value(hive) + QLatin1Char('\\') + path, QSettings::NativeFormat);
+}
+
+bool isElevated()
+{
+#ifdef Q_OS_WIN
+    // Cached: the answer cannot change without the process being replaced.
+    static const bool elevated = [] {
+        HANDLE token = nullptr;
+        if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &token))
+            return false;
+        TOKEN_ELEVATION elevation{};
+        DWORD size = sizeof(elevation);
+        const bool ok = GetTokenInformation(token, TokenElevation, &elevation,
+                                            sizeof(elevation), &size);
+        CloseHandle(token);
+        return ok && elevation.TokenIsElevated != 0;
+    }();
+    return elevated;
+#else
+    return false;
+#endif
 }
 
 bool requiresElevation(Hive hive)
@@ -307,6 +328,50 @@ bool keyExists(Hive hive, const QString &path)
     return true;
 #else
     Q_UNUSED(hive); Q_UNUSED(path);
+    return false;
+#endif
+}
+
+bool removeEmptyKey(Hive hive, const QString &path, QString *error)
+{
+#ifdef Q_OS_WIN
+    HKEY root = nativeHive(hive);
+    if (!root) {
+        if (error) *error = Locale::tr(QStringLiteral("err.badHive"));
+        return false;
+    }
+
+    const QString trimmed = path.trimmed();
+    if (trimmed.isEmpty() || trimmed == QLatin1String("\\")) {
+        if (error) *error = Locale::tr(QStringLiteral("err.noRootDelete"));
+        return false;
+    }
+
+    HKEY key = nullptr;
+    if (RegOpenKeyExW(root, wide(trimmed), 0, KEY_READ, &key) != ERROR_SUCCESS)
+        return true;   // already gone, which is the state being asked for
+
+    DWORD subkeys = 0;
+    DWORD values = 0;
+    const LONG info = RegQueryInfoKeyW(key, nullptr, nullptr, nullptr, &subkeys, nullptr,
+                                       nullptr, &values, nullptr, nullptr, nullptr, nullptr);
+    RegCloseKey(key);
+
+    // Somebody else lives here. Leaving the key is the whole point of this function.
+    if (info != ERROR_SUCCESS || subkeys != 0 || values != 0)
+        return true;
+
+    // RegDeleteKeyExW, not RegDeleteTreeW: it fails rather than recurses if a subkey
+    // appeared between the count above and this call.
+    const LONG status = RegDeleteKeyExW(root, wide(trimmed), 0, 0);
+    if (status == ERROR_SUCCESS || status == ERROR_FILE_NOT_FOUND)
+        return true;
+
+    if (error) *error = describe(status);
+    return false;
+#else
+    Q_UNUSED(hive); Q_UNUSED(path);
+    if (error) *error = Locale::tr(QStringLiteral("err.windowsOnly"));
     return false;
 #endif
 }

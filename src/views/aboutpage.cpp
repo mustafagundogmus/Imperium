@@ -12,11 +12,6 @@
 
 namespace {
 
-constexpr int PadLeft = 18;
-constexpr int PadTop = 2;
-constexpr int PadRight = 12;
-constexpr int PadBottom = 16;
-
 // buymeacoffee.com takes a page slug, not an @handle — no leading "@" here.
 const QString DonateUrl = QStringLiteral("https://buymeacoffee.com/berkayay");
 
@@ -26,7 +21,8 @@ AboutPage::AboutPage(QWidget *parent)
     : QWidget(parent)
 {
     auto *outer = new QVBoxLayout(this);
-    outer->setContentsMargins(PadLeft, PadTop, PadRight, PadBottom);
+    outer->setContentsMargins(Theme::Metric::PagePadLeft, Theme::Metric::PagePadTop,
+                              Theme::Metric::PagePadRight, Theme::Metric::PagePadBottom);
     outer->setSpacing(1);
 
     auto *profile = new PillButton(PillButton::Ghost, QString(), this);

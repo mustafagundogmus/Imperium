@@ -17,24 +17,9 @@ const qreal ToggleCol = Theme::Metric::ToggleWidth;
 constexpr qreal ColGap = 12.0;
 constexpr qreal TextGap = 1.0;   // flex column gap between name and desc
 
-qreal padY()
-{
-    return Theme::compact() ? 4.0 : 7.0;
-}
-
-qreal nameLine()
-{
-    return Css::normalLine(Theme::Font::tweakName());
-}
-
-qreal descLine()
-{
-    return Css::line(Theme::Font::tweakDesc(), 1.45);
-}
-
 qreal textBlockHeight()
 {
-    return nameLine() + TextGap + descLine();
+    return Css::rowNameLine() + TextGap + Css::rowDescLine();
 }
 
 } // namespace
@@ -50,12 +35,17 @@ TweakRow::TweakRow(const Tweak &tweak, AppState *state, QWidget *parent)
     , m_state(state)
 {
     setFixedHeight(rowHeight(m_choice));
-    // Every metric here comes out of the font, so the face changing means measuring again.
-    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+    // Every metric here comes out of the font and the density flag, so either of them
+    // changing means measuring again. compactChanged had no listener anywhere in the app,
+    // which is why "denser rows" only took effect on the next launch — the switch wrote
+    // the setting, emitted the signal, and nothing was listening.
+    const auto remeasure = [this] {
         setFixedHeight(rowHeight(m_choice));
         updateGeometry();
         update();
-    });
+    };
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, remeasure);
+    connect(Theme::notifier(), &Theme::Notifier::compactChanged, this, remeasure);
 
     // A tweak this build ignores is shown, not hidden — knowing it exists and does not
     // apply here is worth more than a shorter list — but it cannot be operated.
@@ -121,12 +111,12 @@ TweakRow::TweakRow(const Tweak &tweak, AppState *state, QWidget *parent)
 
 int TweakRow::rowHeight(bool choice)
 {
-    const qreal text = 2 * (BorderW + padY()) + textBlockHeight();
+    const qreal text = 2 * (BorderW + Css::rowPadY()) + textBlockHeight();
     if (!choice)
         return qRound(text);
 
     // The segmented control is taller than the two lines of text beside it.
-    const qreal control = 2 * (BorderW + padY()) + SegmentedControl::controlHeight();
+    const qreal control = 2 * (BorderW + Css::rowPadY()) + SegmentedControl::controlHeight();
     return qRound(qMax(text, control));
 }
 
@@ -164,7 +154,7 @@ void TweakRow::paintEvent(QPaintEvent *)
     QPainter p(this);
     p.setRenderHint(QPainter::TextAntialiasing, true);
 
-    const qreal top = BorderW + padY();
+    const qreal top = BorderW + Css::rowPadY();
 
     // A switch keeps its own column and the text starts after it; a choice puts its
     // control at the far end, so the text starts at the padding and stops before it.
@@ -181,14 +171,14 @@ void TweakRow::paintEvent(QPaintEvent *)
 
     const QRectF box(textX, 0, textW, height());
 
-    Css::drawText(&p, box, Css::baseline(nameFont, top, nameLine()), nameFont,
+    Css::drawText(&p, box, Css::baseline(nameFont, top, Css::rowNameLine()), nameFont,
                   m_applicable ? Color::TextPrimary() : Color::TextFaint(),
                   m_name, Qt::AlignLeft, /*elide=*/true);
 
     // The reason replaces the description rather than crowding in beside it: a row that
     // does nothing here has nothing to explain about what it would do.
-    const qreal descTop = top + nameLine() + TextGap;
-    Css::drawText(&p, box, Css::baseline(descFont, descTop, descLine()), descFont,
+    const qreal descTop = top + Css::rowNameLine() + TextGap;
+    Css::drawText(&p, box, Css::baseline(descFont, descTop, Css::rowDescLine()), descFont,
                   m_applicable ? Color::TextDesc() : Color::TextFainter(),
                   m_applicable ? m_desc : m_requirement, Qt::AlignLeft, /*elide=*/true);
 }

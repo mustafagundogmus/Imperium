@@ -14,13 +14,17 @@
 // one resource file, one key per string, ten language columns — is auditable without
 // tooling and costs nothing at runtime beyond a hash lookup.
 //
-// Coverage is deliberate, not total: the interface chrome (navigation, settings, dialogs,
-// the first-run setup) is fully translated into all ten languages. The catalogue itself —
-// 600+ tweak names and descriptions, service and startup-item text, action scripts — stays
-// Turkish everywhere. Translating that content with real quality is a separate, much
-// larger project than the app's shell, and a careless machine pass across ten languages of
-// technical Windows terminology would be worse than being honest that it is not done yet.
-// Settings' language row says exactly this.
+// Coverage is close to total, and this paragraph used to say the opposite. The interface
+// chrome (navigation, settings, dialogs, the first-run setup) has always been translated
+// into all ten languages; 0.9.8 brought the catalogue with it — every tweak name and
+// description, every section heading, every option label, every one-shot action — and
+// 0.9.9 finished the job by moving the last hard-coded sentences (the service risk notes,
+// two SysInfo values, the ownership dialog's title) into the table as well.
+//
+// Two things stay in the system's language on purpose, because they are not this app's
+// words to translate: the names and descriptions Windows gives its own services and
+// startup entries, which are read from the machine at run time, and the numeric labels of
+// a range tweak, which are digits and a unit. Settings' language row says exactly this.
 
 #pragma once
 
@@ -61,9 +65,6 @@ QString tr(const QString &key);
 /// to the key: half-translated content stays readable instead of showing "tweak.priv-07".
 /// This is what lets the catalogue be translated a category at a time.
 QString content(const QString &key, const QString &sourceText);
-
-/// True when \a key has an entry for the language in use. For counting coverage.
-bool hasTranslation(const QString &key);
 
 /// First launch on this machine: no setup has completed yet, so main() shows the wizard
 /// instead of going straight to MainWindow.

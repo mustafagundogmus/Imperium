@@ -4,6 +4,225 @@ Bu dosya sürümler arasındaki dikkate değer değişiklikleri listeler.
 Biçim [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) temellidir ve
 proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
+## [0.9.9] — 2026-08-26
+
+0.9.8 büyük bir sürümdü ve büyük sürümlerin bıraktığı izleri bıraktı. Bu sürüm yeni özellik
+getirmiyor: 0.9.8'in açtığı deliklerin kapatılması, kataloğun kendisiyle çelişen yerlerinin
+temizlenmesi ve paketlemenin eski hâline döndürülmesi.
+
+### Düzeltildi
+
+#### Kayıt defteri ve veri bütünlüğü
+
+- **Günlük sayfasındaki "Geri al" paylaşılan bir anahtarı tümüyle siliyordu.** Değerin
+  yazılmadan önce var olmadığı kaydedilmişse, geri alma `RegDeleteTreeW` ile anahtarın
+  *tamamını* — içindeki her değeri ve her alt anahtarı — kaldırıyordu. `keyExisted` tek bir
+  yazma anındaki fotoğraftır ve bu anahtarlar paylaşılır: yalnız
+  `SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate` içine on üç tweak yazıyor. `upd-drivers`
+  satırını geri almak, ondan sonra aynı anahtara yazılmış her şeyi — bir etki alanı ilkesinin
+  yazdıklarını dahil — birlikte götürüyor ve "geri alındı" diyordu. Artık yalnızca o değer
+  siliniyor; anahtar ise ancak *şu anda* bomboşsa ve yalnızca `RegDeleteKeyExW` ile (alt
+  anahtarı olan bir anahtarı reddeder) kaldırılıyor.
+- **Tüm anahtarı silen bir yazma artık geri alınabilir gibi gösterilmiyor.** `DELETE_KEY` bir
+  alt ağacın tamamını götürür; tek değerlik bir günlük satırı onu geri kuramaz. Bu satırların
+  düğmesi soluk çiziliyor ve motor açık bir mesajla reddediyor.
+- **Günlük, tweak'in kendi yazmalarından *sonraki* durumu kaydediyordu.** "Önceki değer"
+  yazma döngüsünün içinde okunuyordu, yani `i` numaralı giriş 0…i-1 zaten uygulandıktan sonra.
+  İlk girişi bir `DELETE_KEY` olan yirmi kadar tweak'te (`ctx-control` bunlardan biri) bu,
+  uygulamanın bir saniye önce sildiği değerler için "burada hiçbir şey yoktu" yazmak demekti.
+  Artık her tweak'in sahip olduğu değerlerin tamamı, hiçbiri yazılmadan önce okunuyor.
+- **"Makinede ne varsa ona döndür" yeniden başlatılana kadar hiçbir şey yapmıyordu.**
+  `m_originals` yalnızca kurucuda, günlük dosyasından okunuyordu; `journal()` dosyaya
+  ekliyor ama haritayı güncellemiyordu. Aç–vazgeç–kapat, yani en olası kullanım, katalogdaki
+  varsayılana düşüyordu. Artık ilk yazma haritayı da besliyor.
+- **Geçiş adımı 1, kataloğun *şu anki* "Sahipliği al" girişini siliyordu.** 0.9.3 fiili
+  `runas`'a taşımıştı, 0.9.5 `ArbitriumTakeOwnership`'e geri getirdi — ve adım hâlâ o adı
+  siliyordu. Üstelik bekçisi HKCU'daki bir bayraktı; sildiği anahtar ise makine geneli.
+  Artık komut önce okunuyor, `--own`/`--disown` içeren giriş bırakılıyor.
+- **Dışa aktarılan `.reg`, sildiği anahtarı hemen yeniden oluşturuyordu.** `.reg` sözdiziminde
+  `[anahtar]` başlığı anahtarı *yaratır*; `[-anahtar]`'dan sonra aynı anahtara yazılan değer
+  satırları silmeyi geri alıyordu. Yaklaşık yirmi `ctx-*` tweak'i tam olarak bu şekilde.
+
+#### Genel Bakış'ın on iki yeni bloğu
+
+- **PowerShell çıktısı yanlış kod sayfasıyla okunuyordu ve İngilizce olmayan bir makinede
+  iki aşamanın ikisi de tümüyle çöpe gidiyordu.** Bir GUI süreci `powershell.exe` başlattığında
+  konsolun çıktı kod sayfası sistemin OEM'idir — Türkçe kurulumda 857. Cevabın herhangi bir
+  yerindeki tek bir ASCII dışı karakter (bir diskin adı, bir Wi-Fi SSID'si, yerelleştirilmiş
+  bir `fsutil` satırı) Qt'ye geçersiz UTF-8 olarak ulaşıyor; Qt bunu atlamıyor, tüm belgeyi
+  `IllegalUTF8String` ile reddediyor. Tek karakter, ve Envanter ile Donanım aşamalarının
+  tamamı yok. Konsol artık açıkça UTF-8'e alınıyor. Betiğin kendisi de `fromLatin1` yerine
+  `fromUtf8` ile okunuyor — iki betikte gömülü olan `·` PowerShell'e `Â·` olarak gidiyordu.
+- **Boş kalan satırlar artık "—" diyor.** `DeepInfo::Facts`'in başlığı her alanın "—" ile
+  başladığını söylüyordu; hiçbirinin başlangıç değeri yoktu. Cevaplanamayan satır boş
+  çiziliyordu.
+- **"TPM sahipliği" satırı hiçbir zaman doldurulmuyordu.** Sayfa satırı çiziyordu, hiçbir yer
+  alana yazmıyordu. Donanım aşaması artık `Win32_Tpm`'e soruyor.
+- **DHCP satırı her makinede "—" idi.** `GetAdaptersAddresses` `GAA_FLAG_INCLUDE_GATEWAYS`
+  olmadan çağrılıyordu, dolayısıyla `FirstGatewayAddress` hep boştu ve döngü her bağdaştırıcıyı
+  eliyordu.
+- **En yaygın iki "yeniden başlatma bekliyor" bayrağı hiç görülemiyordu.** Windows bunları
+  *boş* anahtar olarak oluşturur; kod ise anahtarın içinde bir şey olup olmadığına bakıyordu.
+  Dahası QSettings okumak için de `RegCreateKeyEx` kullanır — bayrağı ararken yazma ihtimali
+  vardı. Artık `RegOpenKeyEx` ile soruluyor.
+- **Üçüncü taraf zamanlanmış görev sayısı beşte bir çıkıyordu.** Sayım kök yolundaki (`\`)
+  görevleri hariç tutuyordu; kurulum programlarının görevlerini bıraktığı yer tam olarak orası.
+- **Pil sağlığı, pili olan makinede "Yok" diyordu.** WMI pil sınıflarının olmaması ile pilin
+  olmaması ayrı sorular; artık ayrı cevaplanıyor.
+- **Sayfa GiB ile GB'ı karıştırıyordu.** İki değer `formattedDataSize` varsayılanıyla IEC
+  birimi basıyor, komşuları GB basıyordu.
+- **Saat dilimi yılın yarısında bir saat şaşıyordu.** `DaylightBias`, yaz saati yürürlükte
+  olsun olmasın ekleniyordu — hangisinde olduğunu yalnızca çağrının dönüş değeri söyler. Tam
+  sayı bölmesi ayrıca yarım saatlik dilimleri kırpıyordu (Hindistan UTC+5 okunuyordu).
+- **Mantıksal çekirdek sayısı yalnızca geçerli işlemci grubunu sayıyordu**, fiziksel sayı ise
+  hepsini. Aynı etikete iki farklı kapsam besleniyordu.
+
+#### Dil
+
+- **Dil değiştirmek etiketleri çeviriyor, değerleri eski dilde bırakıyordu.** Hem
+  `SysInfo::Facts` hem `DeepInfo::Facts` bitmiş cümleler taşır — "Açık", "Şebeke", yerele göre
+  yazılmış bir tarih. Aynı yapıyı yeniden itmek bunları çevirmez. `SysInfo` yeniden okunuyor;
+  `DeepInfo::Probe::retranslate()` ise iki PowerShell aşamasının cevabını sakladığı JSON'dan
+  yeniden kuruyor, yani bedeli ikinci kez ödemiyor.
+- **Yirmi sekiz hizmet risk notu on dilin dokuzunda Türkçe görünüyordu.** Notlar tabloda
+  Türkçe cümle olarak duruyordu; artık `svc.risk.<HizmetAdı>` anahtarlarıyla on dilde.
+- **Yüzde işareti dokuz dilde yanlış tarafta yazılıyordu.** `%%1` Qt'de kaçış değildir;
+  Türkçedeki "%92" biçimi diğer dillere olduğu gibi kopyalanmıştı.
+- Kalan Türkçe sabit metinler (`%1 ekran`, `Eski (BIOS)`, sahiplik penceresinin başlığı)
+  tabloya taşındı.
+- **Ayarlar'daki dil satırı artık doğru söylüyor.** "Tweak adları ve açıklamaları şimdilik
+  yalnızca Türkçe" cümlesi 0.9.8 ile yanlış hâle gelmişti.
+- Arama kutusuna `%2` yazmak başlığı bozuyordu: sorgu ile sayı zincirleme `.arg()`'den
+  geçiyordu.
+- Arapça artık metin yönü verilerek çiziliyor, böylece satır başındaki noktalama doğru tarafta
+  duruyor. Arayüzün tümüyle aynalanması ayrı bir iş; bu sürümde yapılmadı.
+
+#### Arayüz
+
+- **"Sık satırlar" ayarı hiçbir şey yapmıyordu.** `compactChanged` sinyalinin uygulamada tek
+  bir dinleyicisi yoktu; ayar yazılıyor, satırlar bir sonraki açılışa kadar eski yükseklikte
+  kalıyordu.
+- **Hizmetler ve Başlangıç bölüm başlıkları boş çiziliyordu.** `MainWindow::visibleSections()`
+  bölümü alan alan kopyalarken `titleKey`'i düşürüyordu ve bu iki sentezlenmiş kategori
+  başlığını yalnızca anahtarla taşır.
+- **Uygulama katmanı pencere yeniden boyutlandırılınca yerinde kalıyordu**, ve 160 ms'lik
+  kapanış geçişi hiç oynamıyordu: `setEndValue(0.0)` durmuş bir animasyonda değeri hemen
+  yayımlar, dolayısıyla katman `start()` çağrılmadan gizleniyordu.
+- **Escape tuşu katmana hiç ulaşmıyordu.** Pencere kısayolu tuşu widget'lara varmadan yutuyor;
+  katman açıkken kısayol devre dışı bırakılıyor.
+- **Aralık kaydırıcısının sayı etiketine basmak değeri en yükseğe atıyordu.** Etiket sütunu
+  raya dahil değil; basış artık orada kabul edilip yok sayılıyor.
+- **Filtre denetimi dil değişince yerinden oynuyordu.** `setLabels()` genişliği değiştirir ama
+  denetimi kimse yeniden yerleştirmiyordu.
+- **`PillButton` her `setText()`'te yeni bir sinyal bağlantısı bırakıyordu** — durum çubuğunun
+  "Uygula (n)" düğmesi bunu her bekleyen değişiklikte yapıyor.
+- **Yazı tipi dosyaları her seferinde yeniden kaydediliyordu.** `addApplicationFont()` aynı
+  dosyayı ikinci kez kaydettiğinde işlem yapmaz sanılıyordu; yapar.
+- Dil seçici arayüz ölçeği değişince kendini yeniden ölçmüyordu; Genel Bakış'ın Katalog kartı
+  başlığını çevirip satırlarını çevirmiyordu; Ağ bloğunda iki satır aynı etiketi taşıyordu;
+  `Css::hairline()` sözünü verdiği 1 piksellik keskin çizgiyi çizmiyordu.
+- Uygulamalar sayfası, bir kaldırma sürerken dil değiştirilirse satırların "çalışıyor"
+  işaretini kaybedip düğmeleri yeniden etkinleştiriyordu.
+
+#### Sistem modülleri
+
+- **Hizmet listesinin yaklaşık %15'i işe yaramaz satırlardı.** Kullanıcı başına hizmetlerin
+  oturum örnekleri (`CDPUserSvc_81365` gibi) listeye giriyordu; bunlar oturum açılışında
+  yaratılır, kapanışında yok olur ve değiştirilemez. Şablonları kalıyor — değiştirilebilen
+  şey zaten onlar.
+- **Kaldırma betiği başarısız kaldırmayı başarı sayıyordu.** Her istenen paket koşulsuz
+  "kaldırıldı" listesine ekleniyordu; hatalar bastırıldığı için `powershell.exe` de 0 ile
+  çıkıyordu. Artık her paket iki listede de yok olduğu doğrulanıyor ve kalanlar adıyla
+  bildiriliyor.
+- **Bir eylem başlatılamadığında satır kalıcı olarak "çalışıyor"da kalıyordu.**
+  `QProcess::start()` başlatma hatasını eşzamanlı bildirir, dolayısıyla `started` sinyali
+  `finished`'dan *sonra* çıkıyordu.
+- **`SysInfo::Probe` başlatılamayan bir süreci hiç çözmüyor ve `QProcess`'i sızdırıyordu.**
+- **`REG_MULTI_SZ` okuması tampon dışına taşıyordu** — yirmi satır yukarıda düzeltilmiş olan
+  hatanın aynısı.
+- **Sahiplik araçlarının çıktısı yanlış kod sayfasıyla çözülüyordu** (ANSI, oysa konsol OEM).
+- **Ultimate Performance eylemleri Türkçe Windows'ta çalışmıyordu.** Plan `powercfg -list`
+  çıktısında `Ultimate|Üstün` diye aranıyordu; Türkçe adı "Nihai Performans". Üstelik
+  bulunamayınca `.ToString()` null üzerinde çağrılıp hata veriyor, betik devam edip başarı
+  bildiriyordu. Artık plan sabit bir GUID ile oluşturulup o GUID ile siliniyor.
+- **Güncelleme denetimi açılışta tarayıcıyı kendiliğinden açıyordu.** Ayarın kendi açıklaması
+  "sessizce bakar" diyor; sessiz denetim artık yalnızca satırı ve bildirimi güncelliyor.
+
+### Değiştirildi
+
+#### Katalog: 411 → 391 tweak
+
+0.9.8'in 143 yeni tweak'i, var olanlarla on yedi yerde çakıştı: iki satır aynı kayıt değerine
+sahip oluyor, hangisini en son çevirdiyseniz o kazanıyor ve diğeri yanlış durumu gösteriyordu.
+Her çiftte değeri daha geniş kapsayan satır tutuldu; eşdeğer olanlarda eski kimlik tutuldu,
+çünkü ön ayar dosyaları ve günlük kayıtları onu adlandırıyor. `wu-WPFTweaksRazerBlock`'un tek
+özgün değeri `upd-drivers`'a taşındı, dolayısıyla hiçbir yetenek kaybedilmedi.
+
+Üç tweak de tümüyle kaldırıldı, çünkü yazıldıkları hâlde çalışamazlardı:
+
+- `net-nagle` — `TcpAckFrequency` ve `TCPNoDelay`'i `…\Tcpip\Parameters\Interfaces` kapsayıcı
+  anahtarına yazıyordu. TCP/IP bunları yalnızca altındaki bağdaştırıcı başına `{GUID}`
+  anahtarlarından okur. Katalog kendi yazdığını geri okuduğu için satır "uygulandı" diyordu.
+- `wu-WPFToggleHideSettingsHome` — açıkken `show:home` yazıyordu; `SettingsPageVisibility`
+  böyle bir sözcük tanımıyor. Kapalıyken ise etkin bir ilke kuruyordu. `vis-02-16017` aynı
+  değeri zaten doğru biçimde tutuyor.
+- `upd-no-auto` — `NoAutoUpdate`'in ikinci sahibi; `upd-auoptions` bunu zaten bir konum olarak
+  ifade ediyor.
+
+Bunların dışında: fare hızlanmasının üç değeri ile Yapışkan Tuşlar bayrağı `DWORD` ilan
+edilmişti, oysa Windows'ta hepsi `REG_SZ` — uygulamak değerin türünü değiştiriyordu.
+`wu-WPFToggleStartMenuRecommendations` kapalı konumunda üç ilke *kuruyordu*; konum 0 uygulama
+genelinde "Windows'un getirdiği hâl" demektir. `cln-dns-negative-ttl`'in varsayılanı üretilen
+adımların üzerinde değildi, sessizce yok sayılıyordu.
+
+#### Sürüm paketlemesi
+
+0.9.8, 0.9.5'ten beri her sürümün taşıdığı iki dosyanın ikisini de taşımadı. Bu workflow'un
+kestiği ilk sürümdü ve workflow dinamik bir Qt ile derliyordu: sonuç, `Arbitrium.exe` artı her
+Qt DLL'i, hiçbir şeyin çağırmadığı iki D3D derleyicisi ve bir avuç CMake artığı içeren 21 MB'lık
+bir arşiv oldu. Ondan önceki her sürüm, yanına hiçbir şey gerekmeyen tek bir 34 MB'lık
+çalıştırılabilir dosyaydı.
+
+Bu sürüm onu geri getiriyor ve şeklin bir daha kaymaması için üç şey ekliyor: derleme MSYS2'nin
+`qt6-static` paketiyle yapılıyor; `objdump` bitmiş dosyanın içe aktarma tablosunu geri okuyup
+Qt, libgcc, libstdc++ veya libwinpthread görürse işi düşürüyor; ve release, derlemeden *sonra*,
+varlıkları ekleyen işin içinde oluşturuluyor — eski sıra, yani önce yayımla sonra derle, tam
+olarak 0.9.8'in yanlış içerikle ve hiçbir yerde hata olmadan var olabilmesinin yolu.
+`workflow_dispatch` artık bir `dry_run` girdisi de alıyor: her şeyi derler, denetler ve hiçbir
+şey yayımlamaz.
+
+#### Ortak hâle getirilen kod
+
+- `Registry::openKey()` ve `Registry::isElevated()` — `hklm()`/`hkcu()` yardımcıları üç
+  dosyada, yükseltme yoklaması iki dosyada aynen yazılmıştı. QSettings'in okumak için bile
+  anahtar *yarattığı* uyarısı artık tek bir yerde duruyor; bu tam da yukarıdaki
+  yeniden-başlatma bayrağı hatasının kaynağıydı.
+- `Theme::Metric::PagePad*` — yedi sayfanın her biri aynı dört sayının kendi kopyasını
+  taşıyordu.
+- `Css::rowPadY()` / `rowNameLine()` / `rowDescLine()` — `TweakRow` ve `SettingRow`'da
+  bayt bayt aynıydı.
+- `Theme::accentSoft(Appearance)` — vurgu yıkamasının alfası `ThemeSwitch` içinde ayrıca
+  yazılmıştı ve değerler ayrışmıştı, yani tema önizlemesi önizlediği kenar çubuğuna
+  benzemiyordu.
+- Tema ayarlayıcıları artık bir `Persist` parametresi alıyor. Komut satırı anahtarları tek
+  seferlikti ama kalıcı ayarlayıcılardan geçiyordu: bir rengi denemek için `--accent` vermek
+  onu kalıcı olarak kaydediyordu. `--theme` ayrıca "light değilse dark" diye okuyordu, yani
+  her yazım hatası koyu temaya dönüyordu.
+
+### Kaldırıldı
+
+Hiçbir yerden çağrılmayan kod: `AppState::applyPending()` ve `committed` sinyali (uygulama
+tamamen `applyOne()` üzerinden yürüyor), `AppState::toggle()`, `lastAppliedAt()` ve onunla
+birlikte hiç okunmayan `state/lastApplied` kaydı, `TweakEngine::needsElevation()`,
+`Outcome::restoredOriginal`, `ActionPage::m_descriptions`, `Theme::accentName()`,
+`Locale::hasTranslation()`, `Registry::hiveToString()`, `Icons::logoDiamond()`,
+`DebloatRow::clearStatus()`, `ContentHeader::setFilterIndex()`, `ActionEngine::runningId()` ve
+`logPath()`, `forEachTweakInCategory()`, `LinkLabel` widget'ının tamamı, kullanılmayan palet
+renkleri (`page`, `closeHover`, `linkHover`) ve ölçüleri, iki yazı tipi biçemi ve karşılığı
+olmayan i18n anahtarları.
+
+---
+
 ## [0.9.8] — 2026-08-24
 
 ### Eklendi
@@ -112,17 +331,6 @@ temizlenir; kaydın kendisini durduran yedi anahtar tweak olarak eklendi.
   kategori Gelişmiş'i listenin dışına itecekti; büyük arayüz ölçeğinde aynısı zaten
   oluyordu.
 
-#### Bilgi satırlarında iki satırlı düzen
-
-`InfoRow` artık `stacked` taşıyor: etiket üstte, değer altında, ikisi de kartın tam
-genişliğinde. Yan yana düzen değeri istediği kadar genişletip etiketi artan yere
-sıkıştırıyor; "Sürüm — 24H2 · 26100" için doğru, bir fiziksel diski adlandıran satır
-için değil. Depolama, Disk sağlığı, Şifreleme, Sürücüler ve Sistem bütünlüğü satırları
-bunu kullanıyor. Yan yana düzende değer de artık kart kenarında kırpılıyor — daha önce
-satırdan geniş bir değer sol kenardan taşarak çiziliyordu.
-
-### Düzeltildi
-
 #### Kayıt defteri ve veri bütünlüğü
 
 - **Geçiş adımı artık Arbitrium'a ait olmayan bir kabuk fiilini silmiyor.**
@@ -199,7 +407,16 @@ satırdan geniş bir değer sol kenardan taşarak çiziliyordu.
   `-Wshadow` ile derleme artık uyarısız.
 - `ApplyOverlay::m_dryRun` kaldırıldı — hiç okunmayan bir üye.
 
+#### Bilgi satırlarında iki satırlı düzen
+
+`InfoRow` artık `stacked` taşıyor: etiket üstte, değer altında, ikisi de kartın tam
+genişliğinde. Yan yana düzen değeri istediği kadar genişletip etiketi artan yere
+sıkıştırıyor; "Sürüm — 24H2 · 26100" için doğru, bir fiziksel diski adlandıran satır
+için değil. Depolama, Disk sağlığı, Şifreleme, Sürücüler ve Sistem bütünlüğü satırları
+bunu kullanıyor. Yan yana düzende değer de artık kart kenarında kırpılıyor — daha önce
+satırdan geniş bir değer sol kenardan taşarak çiziliyordu.
+
 ---
 
+[0.9.9]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.9
 [0.9.8]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.8
-[0.9.7]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.7

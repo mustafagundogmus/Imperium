@@ -43,18 +43,14 @@ AppState::AppState(TweakEngine *engine, QObject *parent)
         settings.remove(StashGroup);
         recomputePending();
     }
-
-    const QVariant stamp = settings.value(QStringLiteral("state/lastApplied"));
-    if (stamp.isValid())
-        m_lastApplied = stamp.toDateTime();
 }
 
 void AppState::noteAppliedMove(const QString &id, int was, int now)
 {
     // "Applied" counts the tweaks sitting anywhere other than the position Windows ships,
     // so a move only changes the total when it crosses that position — in one direction
-    // or the other. The same six lines were copied into applyPending(), applyOne() and
-    // refreshFromMachine(), which is three chances for the two arms to drift apart.
+    // or the other. The same six lines were copied into applyOne() and
+    // refreshFromMachine(), which is two chances for the arms to drift apart.
     const int fallback = m_default.value(id, 0);
     if (now != fallback && was == fallback)
         ++m_appliedCount;
@@ -134,11 +130,6 @@ void AppState::refreshFromMachine(const QString &id)
     Q_EMIT pendingChanged();
 }
 
-void AppState::toggle(const QString &id)
-{
-    setOn(id, !isOn(id));
-}
-
 int AppState::pendingCount(const Category &c) const
 {
     int n = 0;
@@ -169,48 +160,6 @@ void AppState::stashPending() const
     settings.endGroup();
 }
 
-AppState::ApplyReport AppState::applyPending()
-{
-    ApplyReport report;
-    if (m_pending.isEmpty() || !m_engine)
-        return report;
-
-    const Catalog &catalog = Catalog::instance();
-    QVector<QPair<const Tweak *, int>> requests;
-    requests.reserve(m_pending.size());
-    for (const QString &id : std::as_const(m_pending)) {
-        if (const Tweak *tweak = catalog.tweak(id))
-            requests.append({tweak, m_on.value(id, 0)});
-    }
-
-    const QVector<TweakEngine::Outcome> outcomes = m_engine->apply(requests);
-
-    for (const TweakEngine::Outcome &outcome : outcomes) {
-        if (outcome.ok) {
-            const int now = m_on.value(outcome.id, 0);
-            const int was = m_applied.value(outcome.id, 0);
-            m_applied[outcome.id] = now;
-            noteAppliedMove(outcome.id, was, now);
-            m_pending.remove(outcome.id);
-            ++report.succeeded;
-        } else {
-            ++report.failed;
-            report.elevationRequired = report.elevationRequired || outcome.elevationRequired;
-            if (report.firstError.isEmpty())
-                report.firstError = outcome.error;
-        }
-    }
-
-    if (report.succeeded > 0) {
-        m_lastApplied = QDateTime::currentDateTime();
-        QSettings().setValue(QStringLiteral("state/lastApplied"), m_lastApplied);
-    }
-
-    Q_EMIT pendingChanged();
-    Q_EMIT committed(report.succeeded);
-    return report;
-}
-
 AppState::StepOutcome AppState::applyOne(const QString &id)
 {
     StepOutcome outcome;
@@ -239,8 +188,6 @@ AppState::StepOutcome AppState::applyOne(const QString &id)
         noteAppliedMove(id, was, desired);
         m_pending.remove(id);
 
-        m_lastApplied = QDateTime::currentDateTime();
-        QSettings().setValue(QStringLiteral("state/lastApplied"), m_lastApplied);
         Q_EMIT pendingChanged();
     }
 

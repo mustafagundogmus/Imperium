@@ -23,11 +23,21 @@
 
 #pragma once
 
+#include <QJsonObject>
 #include <QObject>
 #include <QString>
 #include <QVector>
 
 namespace DeepInfo {
+
+/// What a row says before anything has answered it, and what it goes back to saying when
+/// the answer is "this machine cannot tell you".
+///
+/// It lives here rather than in the .cpp because every field of Facts below starts at it.
+/// They used to start at an empty QString while the comment above promised otherwise, so
+/// a stage that failed — which, before the encoding fix in runScript(), was every stage on
+/// a non-English machine — painted a column of blank rows instead of a column of dashes.
+inline const QString Unknown = QStringLiteral("—");
 
 /// One row of a list-shaped block (an encrypted volume, a physical disk).
 struct Entry
@@ -40,81 +50,81 @@ struct Entry
 struct Facts
 {
     // --- Windows Update ----------------------------------------------------
-    QString updatePending;
-    QString updateLastCheck;
-    QString updatePaused;
-    QString updateChannel;
-    QString updateService;
+    QString updatePending = Unknown;
+    QString updateLastCheck = Unknown;
+    QString updatePaused = Unknown;
+    QString updateChannel = Unknown;
+    QString updateService = Unknown;
 
     // --- system integrity & crash history ----------------------------------
-    QString lastCrash;
-    QString criticalEvents;
-    QString restartReason;
-    QString minidumps;
+    QString lastCrash = Unknown;
+    QString criticalEvents = Unknown;
+    QString restartReason = Unknown;
+    QString minidumps = Unknown;
 
     // --- scheduled tasks ---------------------------------------------------
-    QString taskTotal;
-    QString taskDisabled;
-    QString taskTelemetry;
-    QString taskThirdParty;
+    QString taskTotal = Unknown;
+    QString taskDisabled = Unknown;
+    QString taskTelemetry = Unknown;
+    QString taskThirdParty = Unknown;
 
     // --- drivers -----------------------------------------------------------
-    QString driverProblem;
-    QString driverUnsigned;
-    QString driverTotal;
-    QString driverLatest;
+    QString driverProblem = Unknown;
+    QString driverUnsigned = Unknown;
+    QString driverTotal = Unknown;
+    QString driverLatest = Unknown;
 
     // --- privacy scorecard -------------------------------------------------
-    QString privacyTelemetry;
-    QString privacyAdvertisingId;
-    QString privacyActivityHistory;
-    QString privacyLocation;
-    QString privacyInkTyping;
-    QString privacyScore;
+    QString privacyTelemetry = Unknown;
+    QString privacyAdvertisingId = Unknown;
+    QString privacyActivityHistory = Unknown;
+    QString privacyLocation = Unknown;
+    QString privacyInkTyping = Unknown;
+    QString privacyScore = Unknown;
 
     // --- encryption --------------------------------------------------------
     QVector<Entry> encryption;
-    QString recoveryKey;
-    QString tpmOwnership;
+    QString recoveryKey = Unknown;
+    QString tpmOwnership = Unknown;
 
     // --- accounts & UAC ----------------------------------------------------
-    QString accountsLocal;
-    QString accountsGuest;
-    QString uacLevel;
-    QString passwordPolicy;
-    QString passwordAge;
+    QString accountsLocal = Unknown;
+    QString accountsGuest = Unknown;
+    QString uacLevel = Unknown;
+    QString passwordPolicy = Unknown;
+    QString passwordAge = Unknown;
 
     // --- virtualisation & isolation ----------------------------------------
-    QString hyperV;
-    QString vbs;
-    QString wsl;
-    QString sandbox;
-    QString credentialGuard;
+    QString hyperV = Unknown;
+    QString vbs = Unknown;
+    QString wsl = Unknown;
+    QString sandbox = Unknown;
+    QString credentialGuard = Unknown;
 
     // --- disk health -------------------------------------------------------
     QVector<Entry> disks;
-    QString trim;
-    QString partitionStyle;
+    QString trim = Unknown;
+    QString partitionStyle = Unknown;
 
     // --- performance baseline ----------------------------------------------
-    QString winsat;
-    QString bootDuration;
-    QString pageFileUsage;
-    QString commitCharge;
+    QString winsat = Unknown;
+    QString bootDuration = Unknown;
+    QString pageFileUsage = Unknown;
+    QString commitCharge = Unknown;
 
     // --- connection detail -------------------------------------------------
-    QString dhcp;
-    QString proxy;
-    QString doh;
-    QString wifi;
-    QString activeConnections;
-    QString metered;
+    QString dhcp = Unknown;
+    QString proxy = Unknown;
+    QString doh = Unknown;
+    QString wifi = Unknown;
+    QString activeConnections = Unknown;
+    QString metered = Unknown;
 
     // --- sensors, fan & battery health -------------------------------------
-    QString cpuTemperature;
-    QString batteryHealth;
-    QString batteryCycles;
-    QString fan;
+    QString cpuTemperature = Unknown;
+    QString batteryHealth = Unknown;
+    QString batteryCycles = Unknown;
+    QString fan = Unknown;
 };
 
 /// Fills a Facts in the background, publishing after each stage.
@@ -139,6 +149,16 @@ public:
     /// Everything resolved so far. Fields not yet reached still read "—".
     const Facts &facts() const { return m_facts; }
 
+    /// Rebuilds every answer in the interface's current language, then emits updated().
+    ///
+    /// Facts holds finished sentences rather than raw readings — "Açık", "3 devre dışı", a
+    /// date written the way the locale writes dates — so there is no way to move it to
+    /// another language except to build it again. The registry stage is cheap enough to
+    /// redo outright; the two PowerShell stages are not, and what they answer does not
+    /// depend on the interface language, so they are replayed from the JSON they already
+    /// returned. Does nothing before start(), which would read in the new language anyway.
+    void retranslate();
+
 Q_SIGNALS:
     /// \a stage has landed and facts() carries its answers.
     void updated(Stage stage);
@@ -150,13 +170,22 @@ private:
 
     /// Runs \a script through PowerShell and hands the parsed JSON object to \a then.
     /// A run that fails calls \a then with an empty object, so the caller has one path.
-    void runScript(const char *script, void (Probe::*then)(const class QJsonObject &));
+    void runScript(const char *script, void (Probe::*then)(const QJsonObject &));
 
-    void applyInventory(const class QJsonObject &o);
-    void applyHardware(const class QJsonObject &o);
+    void applyInventory(const QJsonObject &o);
+    void applyHardware(const QJsonObject &o);
 
     Facts m_facts;
     bool m_started = false;
+
+    /// What each script stage answered, kept so retranslate() can rebuild from it
+    /// without paying for the run a second time.
+    QJsonObject m_inventory;
+    QJsonObject m_hardware;
+
+    /// True while retranslate() is replaying: the stages must not chain into the next
+    /// one, and the page only wants one refresh at the end rather than three.
+    bool m_replaying = false;
 };
 
 } // namespace DeepInfo

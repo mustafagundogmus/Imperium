@@ -26,9 +26,6 @@ QPixmap fragment(const QString &cacheKey, const QString &inner, qreal viewBox,
 
 // --- named glyphs from the design ------------------------------------------
 
-/// The handoff's 10×10 accent diamond. The title bar now shows the project's own icon
-/// instead; this is kept so the original mark is one call away.
-QPixmap logoDiamond(const QColor &c, qreal dpr);
 QPixmap search(const QColor &c, qreal dpr);                 ///< 11×11 from a 12 viewBox
 QPixmap windowMinimize(const QColor &c, qreal dpr);         ///< 10×10
 QPixmap windowMaximize(const QColor &c, qreal dpr);         ///< 10×10

@@ -15,11 +15,6 @@
 
 namespace {
 
-constexpr int PadLeft = 18;
-constexpr int PadTop = 2;
-constexpr int PadRight = 12;
-constexpr int PadBottom = 16;
-
 } // namespace
 
 ActionPage::ActionPage(QWidget *parent)
@@ -27,7 +22,8 @@ ActionPage::ActionPage(QWidget *parent)
     , m_engine(new ActionEngine(this))
 {
     auto *outer = new QVBoxLayout(this);
-    outer->setContentsMargins(PadLeft, PadTop, PadRight, PadBottom);
+    outer->setContentsMargins(Theme::Metric::PagePadLeft, Theme::Metric::PagePadTop,
+                              Theme::Metric::PagePadRight, Theme::Metric::PagePadBottom);
     outer->setSpacing(Theme::Metric::SectionGap);
 
     for (const ActionSection &section : ActionCatalog::instance().sections())
@@ -90,7 +86,6 @@ void ActionPage::retranslate()
                                      ? action.displayDesc()
                                      : Locale::tr(QStringLiteral("actions.irreversible"))
                                            .arg(action.displayDesc());
-            m_descriptions.insert(action.id, desc);
             if (SettingRow *row = m_rows.value(action.id)) {
                 row->setName(action.displayName());
                 row->setDesc(desc);
@@ -135,7 +130,6 @@ QWidget *ActionPage::buildSection(const ActionSection &section)
 
         m_buttons.insert(action.id, button);
         m_rows.insert(action.id, row);
-        m_descriptions.insert(action.id, desc);
         ++m_rowCount;
     }
 

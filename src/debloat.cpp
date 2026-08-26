@@ -375,25 +375,47 @@ QString DebloatActions::removalScript(const QStringList &packageNames)
 {
     QStringList lines;
     lines << QStringLiteral("$removed = New-Object System.Collections.Generic.List[string]");
+    lines << QStringLiteral("$failed  = New-Object System.Collections.Generic.List[string]");
 
     for (const QString &name : packageNames) {
         const QString esc = QString(name).replace(QLatin1Char('\''), QStringLiteral("''"));
+
+        // Ask afterwards rather than assume. Both removals are -ErrorAction
+        // SilentlyContinue, which is deliberate — a package present for one account and
+        // not another is normal — but it also means powershell.exe exits 0 whatever
+        // happened. The old script simply added every requested name to $removed, so a
+        // package Windows refuses to remove was reported as removed, and the list was then
+        // re-scanned and showed it still sitting there.
+        //
+        // -eq against $_.Name, not -Name '<pattern>': the -Name parameter takes a
+        // wildcard, so a name containing [ or * matched something else or nothing.
+        lines << QStringLiteral("$n = '%1'").arg(esc);
+        lines << QStringLiteral("$gone = $true");
         lines << QStringLiteral(
-                     "Get-AppxPackage -AllUsers -Name '%1' -ErrorAction SilentlyContinue | "
-                     "Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue")
-                     .arg(esc);
+            "if (@(Get-AppxPackage -AllUsers -ErrorAction SilentlyContinue | "
+            "Where-Object { $_.Name -eq $n }).Count) {"
+            " Get-AppxPackage -AllUsers -ErrorAction SilentlyContinue | "
+            "Where-Object { $_.Name -eq $n } | "
+            "Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue;"
+            " if (@(Get-AppxPackage -AllUsers -ErrorAction SilentlyContinue | "
+            "Where-Object { $_.Name -eq $n }).Count) { $gone = $false } }");
         lines << QStringLiteral(
-                     "Get-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | "
-                     "Where-Object { $_.DisplayName -eq '%1' } | "
-                     "Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Out-Null")
-                     .arg(esc);
-        lines << QStringLiteral("$removed.Add('%1')").arg(esc);
+            "if (@(Get-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | "
+            "Where-Object { $_.DisplayName -eq $n }).Count) {"
+            " Get-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | "
+            "Where-Object { $_.DisplayName -eq $n } | "
+            "Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Out-Null;"
+            " if (@(Get-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | "
+            "Where-Object { $_.DisplayName -eq $n }).Count) { $gone = $false } }");
+        lines << QStringLiteral("if ($gone) { $removed.Add($n) } else { $failed.Add($n) }");
     }
 
     // Machine-readable, not a sentence: the script has no idea what language the interface
     // is in, and a translated format string would have to survive PowerShell quoting on the
-    // way through. DebloatPage turns this into words with Locale::tr instead.
+    // way through. DebloatPage turns this into words with Locale::tr instead. The fourth
+    // field is the one the old token had no room for — what did not come off.
     lines << QStringLiteral(
-        "Write-Output (\"ARB-REMOVED|{0}|{1}\" -f $removed.Count, ($removed -join ', '))");
+        "Write-Output (\"ARB-REMOVED|{0}|{1}|{2}\" -f $removed.Count, "
+        "($removed -join ', '), ($failed -join ', '))");
     return lines.join(QLatin1Char('\n'));
 }

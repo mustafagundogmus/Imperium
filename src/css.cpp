@@ -2,9 +2,13 @@
 #include "i18n.h"
 #include "theme.h"
 
+#include <algorithm>
+#include <cmath>
+
 #include <QColor>
 #include <QFontMetricsF>
 #include <QPainter>
+#include <QTextOption>
 
 namespace Css {
 
@@ -56,11 +60,23 @@ void drawText(QPainter *p, const QRectF &box, qreal baselineY, const QFont &f,
     p->setFont(f);
     p->setPen(c);
 
+    // Arabic is written right to left, and Qt infers a string's direction from its first
+    // strong character. That is right for a sentence and wrong for the many rows here that
+    // begin with a neutral — a digit, a bracket, a "·" — where the leading punctuation ends
+    // up on the wrong side of the words. Marking the paragraph direction explicitly puts
+    // the bidi algorithm in the right frame for the whole run.
+    //
+    // Only the direction. Mirroring the layout as well is a separate, much larger job:
+    // essentially every widget here paints its own geometry, and flipping the text
+    // alignment without flipping the boxes around it would move the labels away from the
+    // values they belong to.
+    const bool rtl = Locale::isRtl();
+
     QString s = text;
     const QFontMetricsF fm(f);
     qreal w = fm.horizontalAdvance(s);
     if (elide && w > box.width()) {
-        s = fm.elidedText(s, Qt::ElideRight, box.width());
+        s = fm.elidedText(s, rtl ? Qt::ElideLeft : Qt::ElideRight, box.width());
         w = fm.horizontalAdvance(s);
     }
 
@@ -70,7 +86,16 @@ void drawText(QPainter *p, const QRectF &box, qreal baselineY, const QFont &f,
     else if (align & Qt::AlignHCenter)
         x = box.left() + (box.width() - w) / 2.0;
 
-    p->drawText(QPointF(x, baselineY), s);
+    if (rtl) {
+        QTextOption option;
+        option.setTextDirection(Qt::RightToLeft);
+        option.setWrapMode(QTextOption::NoWrap);
+        // The rect form is what takes a QTextOption; it is given the text's own advance
+        // width so the glyphs land exactly where the point form would have put them.
+        p->drawText(QRectF(x, baselineY - fm.ascent(), w, fm.height()), s, option);
+    } else {
+        p->drawText(QPointF(x, baselineY), s);
+    }
     p->restore();
 }
 
@@ -96,9 +121,46 @@ QString upperTr(const QString &s)
     return out.toUpper();
 }
 
+qreal rowPadY()
+{
+    return Theme::compact() ? 4.0 : 7.0;
+}
+
+qreal rowNameLine()
+{
+    return normalLine(Theme::Font::tweakName());
+}
+
+qreal rowDescLine()
+{
+    return line(Theme::Font::tweakDesc(), 1.45);
+}
+
 void hairline(QPainter *p, const QRectF &r, const QColor &c)
 {
-    p->fillRect(r, c);
+    // The contract in the header is a crisp 1 *logical* pixel, and a bare fillRect does
+    // not deliver it. With QPainter::Antialiasing on — which most of the callers have,
+    // since they are drawing rounded cards in the same pass — a rect whose edge falls on
+    // a fractional coordinate is blended across two rows of device pixels at partial
+    // alpha, so the "1px" divider comes out softer than the one drawn two lines earlier
+    // at a whole coordinate. Dividers looked unevenly weighted for exactly this reason.
+    //
+    // Two things fix it, and neither needs the painter's transform unpicked: round the
+    // thin axis to a whole logical pixel, and turn antialiasing off for the fill so the
+    // raster engine lands on device pixels instead of blending across them.
+    QRectF line = r;
+    if (r.height() <= r.width()) {   // horizontal rule
+        line.moveTop(std::round(r.top()));
+        line.setHeight(std::max(1.0, std::round(r.height())));
+    } else {                         // vertical rule
+        line.moveLeft(std::round(r.left()));
+        line.setWidth(std::max(1.0, std::round(r.width())));
+    }
+
+    const bool wasAntialiased = p->testRenderHint(QPainter::Antialiasing);
+    p->setRenderHint(QPainter::Antialiasing, false);
+    p->fillRect(line, c);
+    p->setRenderHint(QPainter::Antialiasing, wasAntialiased);
 }
 
 } // namespace Css

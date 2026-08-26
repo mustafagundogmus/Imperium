@@ -37,7 +37,6 @@ public:
         QString id;
         bool ok = false;
         bool elevationRequired = false;
-        bool restoredOriginal = false;   ///< off wrote the journalled value, not the default
         QString error;
     };
 
@@ -69,9 +68,6 @@ public:
     /// position it meant.
     bool revert(const JournalEntry &entry, QString *error = nullptr);
 
-    /// True when at least one of these tweaks lives outside HKCU.
-    static bool needsElevation(const QVector<const Tweak *> &tweaks);
-
     static bool isElevated();
 
     /// Restarts the app through the UAC prompt. Returns false if the user declines.
@@ -89,8 +85,16 @@ private:
         QString data;
     };
 
+    /// Appends one journal line, and — because the file is only read back at startup —
+    /// folds \a before into m_originals at the same time.
+    ///
+    /// \a before is handed in rather than read here: apply() snapshots every value a
+    /// tweak owns before it writes any of them. Reading it at this point recorded entry
+    /// *i* after entries 0…i-1 had already landed, which for the twenty-odd tweaks whose
+    /// first entry deletes the key the rest live in meant journalling "there was nothing
+    /// here" about values this app had just destroyed.
     void journal(const Tweak &tweak, int index, const struct RegistryEntry &entry,
-                 const QString &desired);
+                 const QString &desired, const Original &before);
     void loadOriginals();
 
     QString m_journalPath;

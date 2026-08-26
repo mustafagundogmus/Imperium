@@ -3,6 +3,7 @@
 #include "../appstate.h"
 #include "../catalog.h"
 #include "../i18n.h"
+#include "../registry.h"
 #include "../sysinfo.h"
 #include "../theme.h"
 #include "../widgets/buttons.h"
@@ -14,11 +15,6 @@
 
 namespace {
 
-constexpr int PadLeft = 18;
-constexpr int PadTop = 2;
-constexpr int PadRight = 12;
-constexpr int PadBottom = 16;
-
 /// The journal grows without bound; the screen does not need to.
 constexpr int MaxRows = 300;
 
@@ -29,12 +25,14 @@ QString target(const TweakEngine::JournalEntry &entry)
                                                 : entry.value;
     const QString before = entry.existed ? entry.previousData
                                          : Locale::tr(QStringLiteral("journal.value.absent"));
-    const QString after = entry.desired.compare(QStringLiteral("DELETE"), Qt::CaseInsensitive) == 0
-                              ? Locale::tr(QStringLiteral("journal.value.deleted"))
-                              : entry.desired.compare(QStringLiteral("DELETE_KEY"),
-                                                      Qt::CaseInsensitive) == 0
-                                    ? Locale::tr(QStringLiteral("journal.value.keyDeleted"))
-                                    : entry.desired;
+    // Spelled through the sentinels rather than as literals: they are defined once in
+    // registry.h and every other comparison in the app goes through them.
+    const QString after =
+        entry.desired.compare(Registry::DeleteSentinel, Qt::CaseInsensitive) == 0
+            ? Locale::tr(QStringLiteral("journal.value.deleted"))
+            : entry.desired.compare(Registry::DeleteKeySentinel, Qt::CaseInsensitive) == 0
+                  ? Locale::tr(QStringLiteral("journal.value.keyDeleted"))
+                  : entry.desired;
 
     const QString empty = Locale::tr(QStringLiteral("journal.value.empty"));
     return QStringLiteral("%1\\%2\\%3 · %4 → %5")
@@ -50,7 +48,8 @@ JournalPage::JournalPage(TweakEngine *engine, AppState *state, QWidget *parent)
     , m_state(state)
 {
     m_layout = new QVBoxLayout(this);
-    m_layout->setContentsMargins(PadLeft, PadTop, PadRight, PadBottom);
+    m_layout->setContentsMargins(Theme::Metric::PagePadLeft, Theme::Metric::PagePadTop,
+                                 Theme::Metric::PagePadRight, Theme::Metric::PagePadBottom);
     m_layout->setSpacing(Theme::Metric::SectionGap);
     m_layout->addStretch(1);
 
@@ -103,7 +102,16 @@ void JournalPage::reload()
         const TweakEngine::JournalEntry &entry = m_entries.at(i);
 
         auto *button = new PillButton(PillButton::Ghost, Locale::tr(QStringLiteral("journal.revert")));
-        connect(button, &PillButton::clicked, this, [this, i] { revert(i); });
+
+        // A line that recorded a whole-key deletion describes one value out of everything
+        // that went with the key, so there is no honest undo to offer. Dimmed rather than
+        // hidden: the write still happened and the log's job is to say so.
+        const bool keyDelete = entry.desired.compare(Registry::DeleteKeySentinel,
+                                                     Qt::CaseInsensitive) == 0;
+        if (keyDelete)
+            button->setEnabledLook(false);
+        else
+            connect(button, &PillButton::clicked, this, [this, i] { revert(i); });
 
         // The journal stores the name as it read at the time of the write, which is the
         // language that was in use then. Looking the id back up in the catalogue is what

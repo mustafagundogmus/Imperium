@@ -40,11 +40,19 @@ Q_SIGNALS:
     void finished(int succeeded, int failed, bool elevationRequired, const QString &firstError);
     void notice(const QString &text);
 
+    /// Emitted whenever the overlay comes up or goes away. MainWindow uses it to stand
+    /// its Escape shortcut down: a window shortcut consumes the key before any widget
+    /// receives a key press, so while that shortcut is live the overlay cannot be
+    /// dismissed from the keyboard at all.
+    void visibilityChanged(bool visible);
+
 protected:
     void paintEvent(QPaintEvent *) override;
     void resizeEvent(QResizeEvent *) override;
     void mousePressEvent(QMouseEvent *) override;
     void keyPressEvent(QKeyEvent *) override;
+    void showEvent(QShowEvent *) override;
+    void hideEvent(QHideEvent *) override;
 
 private:
     void start();

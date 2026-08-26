@@ -473,23 +473,6 @@
        "on": false
       },
       {
-       "id": "sys-07-973",
-       "name": "Pano geçmişi",
-       "desc": "Win+V ile açılan pano geçmişi özelliğini etkinleştirir.",
-       "reg": [
-        {
-         "hive": "HKCU",
-         "path": "Software\\Microsoft\\Clipboard",
-         "value": "EnableClipboardHistory",
-         "type": "DWORD",
-         "on": "1",
-         "off": "0"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
        "id": "sys-08-83",
        "name": "Monitör çıkınca küçültme",
        "desc": "Monitör bağlantısı kesildiğinde pencerelerin küçültülmesini engeller.",
@@ -711,23 +694,6 @@
        "on": false
       },
       {
-       "id": "wu-WPFToggleHideSettingsHome",
-       "name": "Ayarlar giriş sayfası",
-       "desc": "Ayarlar uygulamasındaki Giriş sayfasını geri getirir.",
-       "reg": [
-        {
-         "hive": "HKCU",
-         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
-         "value": "SettingsPageVisibility",
-         "type": "SZ",
-         "on": "show:home",
-         "off": "hide:home"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
        "id": "wu-WPFTweaksEndTaskOnTaskbar",
        "name": "Görev çubuğunda görevi sonlandır",
        "desc": "Görev çubuğu sağ tık menüsünde görevi sonlandırma seçeneğini açar.",
@@ -778,7 +744,7 @@
          "hive": "HKCU",
          "path": "Control Panel\\Mouse",
          "value": "MouseSpeed",
-         "type": "DWORD",
+         "type": "SZ",
          "on": "1",
          "off": "0"
         },
@@ -786,7 +752,7 @@
          "hive": "HKCU",
          "path": "Control Panel\\Mouse",
          "value": "MouseThreshold1",
-         "type": "DWORD",
+         "type": "SZ",
          "on": "6",
          "off": "0"
         },
@@ -794,7 +760,7 @@
          "hive": "HKCU",
          "path": "Control Panel\\Mouse",
          "value": "MouseThreshold2",
-         "type": "DWORD",
+         "type": "SZ",
          "on": "10",
          "off": "0"
         }
@@ -811,7 +777,7 @@
          "hive": "HKCU",
          "path": "Control Panel\\Accessibility\\StickyKeys",
          "value": "Flags",
-         "type": "DWORD",
+         "type": "SZ",
          "on": "506",
          "off": "58"
         }
@@ -876,40 +842,6 @@
        "on": false
       },
       {
-       "id": "wu-WPFTweaksDisableFSO",
-       "name": "Tam ekran optimizasyonları",
-       "desc": "Tüm uygulamalarda tam ekran optimizasyonlarını devre dışı bırakır.",
-       "reg": [
-        {
-         "hive": "HKCU",
-         "path": "System\\GameConfigStore",
-         "value": "GameDVR_DXGIHonorFSEWindowsCompatible",
-         "type": "DWORD",
-         "on": "1",
-         "off": "0"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
-       "id": "wu-WPFTweaksRestorePoint",
-       "name": "Geri yükleme noktası",
-       "desc": "Geri yükleme noktası oluşturmayı sınırlayan bekleme süresini kaldırır.",
-       "reg": [
-        {
-         "hive": "HKLM",
-         "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\SystemRestore",
-         "value": "SystemRestorePointCreationFrequency",
-         "type": "DWORD",
-         "on": "0",
-         "off": "1440"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
        "id": "wu-WPFToggleDetailedBSoD",
        "name": "Ayrıntılı mavi ekran",
        "desc": "Mavi ekranda teknik ayrıntıları açar ve üzgün yüz simgesini kaldırır.",
@@ -965,39 +897,6 @@
          "hive": "HKLM",
          "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Device Metadata",
          "value": "PreventDeviceMetadataFromNetwork",
-         "type": "DWORD",
-         "on": "1",
-         "off": "DELETE"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
-       "id": "wu-WPFTweaksRazerBlock",
-       "name": "Windows Update sürücü güncellemeleri",
-       "desc": "Windows Update'in donanım sürücülerini kendiliğinden kurmasını durdurur; Razer gibi üretici yazılımlarının cihaz takınca kendini kurması da böyle engellenir.",
-       "reg": [
-        {
-         "hive": "HKLM",
-         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\DriverSearching",
-         "value": "SearchOrderConfig",
-         "type": "DWORD",
-         "on": "0",
-         "off": "1"
-        },
-        {
-         "hive": "HKLM",
-         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Device Installer",
-         "value": "DisableCoInstallers",
-         "type": "DWORD",
-         "on": "1",
-         "off": "0"
-        },
-        {
-         "hive": "HKLM",
-         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
-         "value": "ExcludeWUDriversInQualityUpdate",
          "type": "DWORD",
          "on": "1",
          "off": "DELETE"
@@ -1854,6 +1753,14 @@
          "type": "DWORD",
          "on": "0",
          "off": "1"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Device Installer",
+         "value": "DisableCoInstallers",
+         "type": "DWORD",
+         "on": "1",
+         "off": "0"
         }
        ],
        "applied": false,
@@ -2088,23 +1995,6 @@
          "hive": "HKLM",
          "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
          "value": "DisablePauseUXAccess",
-         "type": "DWORD",
-         "on": "1",
-         "off": "DELETE"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
-       "id": "upd-no-auto",
-       "name": "Otomatik güncelleme indirme",
-       "desc": "Windows Update'in kendiliğinden güncelleme aramasını ve indirmesini tamamen durdurur. Güvenlik yamaları da durur — bunu kapatan, güncellemeyi elle çalıştırmayı üstlenmiş olur.",
-       "reg": [
-        {
-         "hive": "HKLM",
-         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU",
-         "value": "NoAutoUpdate",
          "type": "DWORD",
          "on": "1",
          "off": "DELETE"
@@ -3356,23 +3246,6 @@
          "hive": "HKLM",
          "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\DataCollection",
          "value": "AllowTelemetry",
-         "type": "DWORD",
-         "on": "0",
-         "off": "DELETE"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
-       "id": "wu-telemetry-siuf",
-       "name": "Geri bildirim sıklığı",
-       "desc": "Windows'un geri bildirim istemesini kapatır.",
-       "reg": [
-        {
-         "hive": "HKCU",
-         "path": "Software\\Microsoft\\Siuf\\Rules",
-         "value": "NumberOfSIUFInPeriod",
          "type": "DWORD",
          "on": "0",
          "off": "DELETE"
@@ -4750,28 +4623,6 @@
      ]
     },
     {
-     "title": "İnternet trafiği · WinUtil",
-     "tweaks": [
-      {
-       "id": "wu-WPFTweaksDeliveryOptimization",
-       "name": "Teslim iyileştirme",
-       "desc": "İnternet bant genişliğinizin güncelleme dağıtımına kullanılmasını engeller.",
-       "reg": [
-        {
-         "hive": "HKLM",
-         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization",
-         "value": "DODownloadMode",
-         "type": "DWORD",
-         "on": "0",
-         "off": "DELETE"
-        }
-       ],
-       "applied": false,
-       "on": false
-      }
-     ]
-    },
-    {
      "title": "IPv6 ayarları · WinUtil",
      "tweaks": [
       {
@@ -4870,31 +4721,6 @@
         }
        ],
        "default": 0,
-       "applied": false,
-       "on": false
-      },
-      {
-       "id": "net-nagle",
-       "name": "Nagle algoritması",
-       "desc": "Küçük paketlerin biriktirilip birlikte gönderilmesini kapatır. Çevrimiçi oyunlarda gecikmeyi düşürür; çok sayıda küçük paket üreten uygulamalarda bant genişliği israfı yapar.",
-       "reg": [
-        {
-         "hive": "HKLM",
-         "path": "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\Interfaces",
-         "value": "TcpAckFrequency",
-         "type": "DWORD",
-         "on": "1",
-         "off": "DELETE"
-        },
-        {
-         "hive": "HKLM",
-         "path": "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\Interfaces",
-         "value": "TCPNoDelay",
-         "type": "DWORD",
-         "on": "1",
-         "off": "DELETE"
-        }
-       ],
        "applied": false,
        "on": false
       },
@@ -5076,23 +4902,6 @@
          "type": "DWORD",
          "on": "0",
          "off": "1"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
-       "id": "net-teredo-full",
-       "name": "Teredo tünelleme",
-       "desc": "IPv4 ağı üzerinden IPv6 taşıyan Teredo tünelini tamamen kapatır. Bazı eşler arası uygulamalar ve Xbox ağ özellikleri buna dayanır.",
-       "reg": [
-        {
-         "hive": "HKLM",
-         "path": "SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters",
-         "value": "DisabledComponents",
-         "type": "DWORD",
-         "on": "1",
-         "off": "DELETE"
         }
        ],
        "applied": false,
@@ -6338,24 +6147,24 @@
          "path": "SOFTWARE\\Microsoft\\PolicyManager\\current\\device\\Start",
          "value": "HideRecommendedSection",
          "type": "DWORD",
-         "on": "0",
-         "off": "1"
+         "on": "1",
+         "off": "DELETE"
         },
         {
          "hive": "HKLM",
          "path": "SOFTWARE\\Microsoft\\PolicyManager\\current\\device\\Education",
          "value": "IsEducationEnvironment",
          "type": "DWORD",
-         "on": "0",
-         "off": "1"
+         "on": "1",
+         "off": "DELETE"
         },
         {
          "hive": "HKLM",
          "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Explorer",
          "value": "HideRecommendedSection",
          "type": "DWORD",
-         "on": "0",
-         "off": "1"
+         "on": "1",
+         "off": "DELETE"
         }
        ],
        "applied": false,
@@ -7612,23 +7421,6 @@
      "title": "Oyun bileşenleri",
      "tweaks": [
       {
-       "id": "perf-01-17611",
-       "name": "Oyun kaydı özelliği",
-       "desc": "Windows'un oyun kayıt bileşenini tamamen devre dışı bırakır.",
-       "reg": [
-        {
-         "hive": "HKLM",
-         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\GameDVR",
-         "value": "AllowgameDVR",
-         "type": "DWORD",
-         "on": "0",
-         "off": "DELETE"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
        "id": "perf-02-1447",
        "name": "Oyun modu",
        "desc": "Windows oyun modunu kapatarak oyunlara özel önceliklendirmeyi durdurur.",
@@ -8163,23 +7955,6 @@
        ],
        "applied": false,
        "on": false
-      },
-      {
-       "id": "perf-defrag-boot",
-       "name": "Önyükleme dosyalarını iyileştirme",
-       "desc": "Windows'un açılışta okunan dosyaları diskte yan yana toplamasını denetler. SSD'de anlamsızdır, sabit diskte açılışı kısaltır.",
-       "reg": [
-        {
-         "hive": "HKLM",
-         "path": "SOFTWARE\\Microsoft\\Dfrg\\BootOptimizeFunction",
-         "value": "Enable",
-         "type": "SZ",
-         "on": "N",
-         "off": "Y"
-        }
-       ],
-       "applied": false,
-       "on": false
       }
      ]
     },
@@ -8270,23 +8045,6 @@
        "on": false
       },
       {
-       "id": "perf-gamebar-tips",
-       "name": "Oyun açılışında Game Bar ipucu",
-       "desc": "Bir oyun ilk açıldığında beliren 'Game Bar'ı denemek ister misiniz' bildirimini kapatır.",
-       "reg": [
-        {
-         "hive": "HKCU",
-         "path": "SOFTWARE\\Microsoft\\GameBar",
-         "value": "AutoGameModeEnabled",
-         "type": "DWORD",
-         "on": "0",
-         "off": "1"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
        "id": "perf-autohdr",
        "name": "Otomatik HDR",
        "desc": "SDR oyunları HDR'a çeviren katmanı açar. HDR destekli ekran gerekir; bazı oyunlarda renkleri bozar.",
@@ -8340,39 +8098,6 @@
          "type": "DWORD",
          "on": "1",
          "off": "0"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
-       "id": "perf-mouse-precision",
-       "name": "Gelişmiş imleç hassasiyeti",
-       "desc": "Fare ivmelenmesini kapatır — aynı fiziksel hareket her zaman aynı imleç yolunu üretir. Nişan alınan oyunlarda kas hafızası için gerekli.",
-       "reg": [
-        {
-         "hive": "HKCU",
-         "path": "Control Panel\\Mouse",
-         "value": "MouseSpeed",
-         "type": "SZ",
-         "on": "0",
-         "off": "1"
-        },
-        {
-         "hive": "HKCU",
-         "path": "Control Panel\\Mouse",
-         "value": "MouseThreshold1",
-         "type": "SZ",
-         "on": "0",
-         "off": "6"
-        },
-        {
-         "hive": "HKCU",
-         "path": "Control Panel\\Mouse",
-         "value": "MouseThreshold2",
-         "type": "SZ",
-         "on": "0",
-         "off": "10"
         }
        ],
        "applied": false,
@@ -8436,23 +8161,6 @@
          "type": "DWORD",
          "on": "2",
          "off": "1"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
-       "id": "pwr-modern-standby",
-       "name": "Modern bekleme (S0)",
-       "desc": "Modern bekleme yerine klasik S3 uykuyu tercih eder. Çantada ısınan ve pili biten dizüstülerin bilinen çözümü; makinenin S3 desteklemesi gerekir.",
-       "reg": [
-        {
-         "hive": "HKLM",
-         "path": "SYSTEM\\CurrentControlSet\\Control\\Power",
-         "value": "PlatformAoAcOverride",
-         "type": "DWORD",
-         "on": "0",
-         "off": "DELETE"
         }
        ],
        "applied": false,
@@ -8529,23 +8237,6 @@
         }
        ],
        "default": 0,
-       "applied": false,
-       "on": false
-      },
-      {
-       "id": "pwr-fast-startup-menu",
-       "name": "Kapatma menüsünde hızlı başlatma",
-       "desc": "Denetim Masası'ndaki hızlı başlatma kutucuğunu görünür kılar. Hazırda bekletme kapalıyken bu seçenek gizlenir.",
-       "reg": [
-        {
-         "hive": "HKLM",
-         "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Power",
-         "value": "HiberbootEnabled",
-         "type": "DWORD",
-         "on": "0",
-         "off": "1"
-        }
-       ],
        "applied": false,
        "on": false
       },
@@ -8723,74 +8414,6 @@
        ],
        "applied": false,
        "on": false
-      },
-      {
-       "id": "cln-track-docs",
-       "name": "Atlama listelerinde son öğeler",
-       "desc": "Görev çubuğu ve Başlat menüsündeki atlama listelerinin son açılan dosyaları göstermesini kapatır.",
-       "reg": [
-        {
-         "hive": "HKCU",
-         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-         "value": "Start_TrackDocs",
-         "type": "DWORD",
-         "on": "0",
-         "off": "1"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
-       "id": "cln-track-progs",
-       "name": "Başlat menüsünde son eklenen uygulamalar",
-       "desc": "Yeni kurulan bir uygulamanın Başlat menüsünde vurgulanmasını ve en çok kullanılanlar listesinin oluşmasını engeller.",
-       "reg": [
-        {
-         "hive": "HKCU",
-         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-         "value": "Start_TrackProgs",
-         "type": "DWORD",
-         "on": "0",
-         "off": "1"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
-       "id": "cln-search-history",
-       "name": "Cihaz arama geçmişi",
-       "desc": "Başlat ve Gezgin'de yaptığınız aramaların bu makinede saklanmasını kapatır.",
-       "reg": [
-        {
-         "hive": "HKCU",
-         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\SearchSettings",
-         "value": "IsDeviceSearchHistoryEnabled",
-         "type": "DWORD",
-         "on": "0",
-         "off": "1"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
-       "id": "cln-autocomplete-history",
-       "name": "Adres çubuğu geçmişi önerileri",
-       "desc": "Gezgin ve Çalıştır kutusunun daha önce yazdığınız yolları önermesini kapatır. Yollar yine kaydedilir; yalnızca öneri olarak sunulmaz.",
-       "reg": [
-        {
-         "hive": "HKCU",
-         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\AutoComplete",
-         "value": "Append Completion",
-         "type": "SZ",
-         "on": "no",
-         "off": "yes"
-        }
-       ],
-       "applied": false,
-       "on": false
       }
      ]
     },
@@ -8908,7 +8531,7 @@
        "range": {
         "min": 0,
         "max": 300,
-        "step": 30,
+        "step": 5,
         "unit": "sn",
         "default": 5
        },

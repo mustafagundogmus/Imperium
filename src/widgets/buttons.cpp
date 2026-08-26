@@ -30,6 +30,13 @@ PillButton::PillButton(Variant variant, const QString &text, QWidget *parent)
     setCursor(Qt::ArrowCursor);   // the mockup keeps `cursor:default` on both buttons
     setAttribute(Qt::WA_Hover, true);
     connect(Theme::notifier(), &Theme::Notifier::accentChanged, this, qOverload<>(&QWidget::update));
+    // Every metric here comes out of the font, so the face changing means measuring again.
+    // Connected once, here — it used to be made inside refreshGeometry(), which setText()
+    // also calls, so a button whose caption changes gained a connection each time. The
+    // status bar's "Uygula (n)" and the Apps page's bulk buttons are retitled on every
+    // click, and each of those left another live lambda behind.
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this,
+            &PillButton::refreshGeometry);
     refreshGeometry();
 }
 
@@ -47,13 +54,8 @@ QSize PillButton::sizeHint() const
 void PillButton::refreshGeometry()
 {
     setFixedSize(sizeHint());
-    // Every metric here comes out of the font, so the face changing means measuring again.
-    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
-        setFixedSize(sizeHint());
-        updateGeometry();
-        update();
-    });
-
+    updateGeometry();
+    update();
 }
 
 void PillButton::setText(const QString &text)
@@ -157,74 +159,6 @@ void PillButton::paintEvent(QPaintEvent *)
     p.drawRoundedRect(QRectF(0, 0, width(), height()),
                       Metric::ControlRadius, Metric::ControlRadius);
     Css::drawCentered(&p, rect(), Font::buttonAccent(), fg, m_text, Qt::AlignHCenter);
-}
-
-// ------------------------------------------------------------------- LinkLabel ---
-
-LinkLabel::LinkLabel(const QString &text, QWidget *parent)
-    : QWidget(parent)
-    , m_text(text)
-{
-    setCursor(Qt::PointingHandCursor);
-    setAttribute(Qt::WA_Hover, true);
-    setFixedSize(sizeHint());
-    // Every metric here comes out of the font, so the face changing means measuring again.
-    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
-        setFixedSize(sizeHint());
-        updateGeometry();
-        update();
-    });
-
-    connect(Theme::notifier(), &Theme::Notifier::accentChanged, this, qOverload<>(&QWidget::update));
-}
-
-QSize LinkLabel::sizeHint() const
-{
-    const QFont &f = Theme::Font::link();
-    return {qCeil(Css::textWidth(f, m_text)), qCeil(Css::normalLine(f))};
-}
-
-void LinkLabel::enterEvent(QEnterEvent *e)
-{
-    m_hovered = true;
-    update();
-    QWidget::enterEvent(e);
-}
-
-void LinkLabel::leaveEvent(QEvent *e)
-{
-    m_hovered = false;
-    update();
-    QWidget::leaveEvent(e);
-}
-
-void LinkLabel::mousePressEvent(QMouseEvent *e)
-{
-    if (e->button() == Qt::LeftButton) {
-        e->accept();
-        return;
-    }
-    QWidget::mousePressEvent(e);
-}
-
-void LinkLabel::mouseReleaseEvent(QMouseEvent *e)
-{
-    if (e->button() == Qt::LeftButton) {
-        e->accept();
-        if (rect().contains(e->pos()))
-            Q_EMIT clicked();
-        return;
-    }
-    QWidget::mouseReleaseEvent(e);
-}
-
-void LinkLabel::paintEvent(QPaintEvent *)
-{
-    QPainter p(this);
-    p.setRenderHint(QPainter::TextAntialiasing, true);
-    const QFont &f = Theme::Font::link();
-    const QColor c = m_hovered ? Theme::Color::LinkHover() : Theme::accentInk();
-    Css::drawText(&p, rect(), Css::baseline(f, 0, Css::normalLine(f)), f, c, m_text);
 }
 
 // ---------------------------------------------------------------- WindowButton ---

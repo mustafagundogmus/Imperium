@@ -1,6 +1,7 @@
 #include "deepinfo.h"
 
 #include "i18n.h"
+#include "registry.h"
 #include "sysinfo.h"
 
 #include <QDateTime>
@@ -35,7 +36,8 @@
 namespace DeepInfo {
 namespace {
 
-const QString Unknown = QStringLiteral("—");
+// Unknown lives in the header now — Facts defaults every field to it, so it has to be
+// visible to anyone who declares one.
 
 /// Not named tr(): inside a QObject member, unqualified tr() resolves to QObject::tr
 /// long before it reaches this namespace, and QObject::tr hands back its own argument —
@@ -54,12 +56,41 @@ QString onOff(bool on)
 
 QSettings hklm(const QString &path)
 {
-    return QSettings(QStringLiteral("HKEY_LOCAL_MACHINE\\") + path, QSettings::NativeFormat);
+    return Registry::openKey(Registry::Hive::HKLM, path);
 }
 
 QSettings hkcu(const QString &path)
 {
-    return QSettings(QStringLiteral("HKEY_CURRENT_USER\\") + path, QSettings::NativeFormat);
+    return Registry::openKey(Registry::Hive::HKCU, path);
+}
+
+/// True when the HKLM key at \a path is there, whatever it holds.
+///
+/// Deliberately not QSettings: Qt opens a key for reading through createOrOpenKey, so
+/// asking QSettings about a key that does not exist creates it. Several of the flags this
+/// answers for are pending-restart markers — writing one while checking for it would be
+/// telling the user to reboot because we asked whether they had to.
+bool hklmKeyExists(const char *path)
+{
+    HKEY key = nullptr;
+    const QString wide = QString::fromLatin1(path);
+    if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, reinterpret_cast<const wchar_t *>(wide.utf16()),
+                      0, KEY_READ, &key)
+        != ERROR_SUCCESS)
+        return false;
+    RegCloseKey(key);
+    return true;
+}
+
+/// Whether this machine has a battery at all, which is not the same question as whether
+/// its capacity registers can be read.
+bool hasBattery()
+{
+    SYSTEM_POWER_STATUS status{};
+    if (!GetSystemPowerStatus(&status))
+        return false;
+    // 128 is "no system battery"; 255 is "unknown", which is not a denial.
+    return status.BatteryFlag != 128;
 }
 
 /// A registry DWORD, or \a fallback when the value is missing or not a number.
@@ -178,14 +209,21 @@ QString pendingRestartReason()
 
     QStringList reasons;
     for (const Flag &flag : flags) {
-        QSettings key = hklm(QString::fromLatin1(flag.root));
-        // Two shapes of flag: one where a named value carries it, and one where Windows
-        // simply creates the key. QSettings has no keyExists, so the second is asked as
-        // "does this key hold anything at all" — a key that is not there answers no to
-        // both, which is the same answer.
-        const bool set = flag.value
-                             ? !key.value(QString::fromLatin1(flag.value)).toStringList().isEmpty()
-                             : !key.childKeys().isEmpty() || !key.childGroups().isEmpty();
+        bool set = false;
+        if (flag.value) {
+            QSettings key = hklm(QString::fromLatin1(flag.root));
+            set = !key.value(QString::fromLatin1(flag.value)).toStringList().isEmpty();
+        } else {
+            // The key's existence *is* the flag, and the two that matter most —
+            // Component Based Servicing\RebootPending and Auto Update\RebootRequired —
+            // are created by Windows completely empty. Asking QSettings whether the key
+            // holds anything therefore answered "no" whether or not it was there, so the
+            // most common pending restart on any machine was the one this never saw. It
+            // also has to be asked with RegOpenKeyEx rather than by building a QSettings
+            // on the path: QSettings creates a key it cannot open, so merely looking
+            // would have written the flag it was looking for.
+            set = hklmKeyExists(flag.root);
+        }
         if (set)
             reasons << word(flag.key);
     }
@@ -223,7 +261,12 @@ QString establishedConnections()
 QString dhcpState()
 {
     ULONG size = 0;
-    const ULONG flags = GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER;
+    // GAA_FLAG_INCLUDE_GATEWAYS is not optional here: FirstGatewayAddress is only filled
+    // in when it is asked for, and the loop below rejects every adapter that has no
+    // gateway. Without it the answer was not "no DHCP", it was no adapter at all, and the
+    // row read "—" on every machine. sysinfo.cpp passes it for the same structure.
+    const ULONG flags = GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST
+                        | GAA_FLAG_SKIP_DNS_SERVER | GAA_FLAG_INCLUDE_GATEWAYS;
     if (GetAdaptersAddresses(AF_INET, flags, nullptr, nullptr, &size) != ERROR_BUFFER_OVERFLOW)
         return Unknown;
 
@@ -441,7 +484,7 @@ void Probe::runInstant()
                 total += f.size();
             m_facts.minidumps = Locale::tr(QStringLiteral("deep.minidumpCount"))
                                     .arg(files.size())
-                                    .arg(QLocale().formattedDataSize(total));
+                                    .arg(QLocale().formattedDataSize(total, 1, QLocale::DataSizeTraditionalFormat));
 
             const QFileInfo &newest = files.first();
             const quint32 code = bugCheckOf(newest.absoluteFilePath());
@@ -499,8 +542,8 @@ void Probe::runInstant()
             const quint64 limit = quint64(perf.CommitLimit) * perf.PageSize;
             m_facts.commitCharge =
                 QStringLiteral("%1 / %2 · %%3")
-                    .arg(QLocale().formattedDataSize(qint64(used)),
-                         QLocale().formattedDataSize(qint64(limit)))
+                    .arg(QLocale().formattedDataSize(qint64(used), 1, QLocale::DataSizeTraditionalFormat),
+                         QLocale().formattedDataSize(qint64(limit), 1, QLocale::DataSizeTraditionalFormat))
                     .arg(qRound(100.0 * qreal(used) / qreal(limit)));
         }
     }
@@ -542,10 +585,28 @@ void Probe::runScript(const char *script, void (Probe::*then)(const QJsonObject 
     connect(process, &QProcess::errorOccurred, this,
             [settle](QProcess::ProcessError) { settle(false); });
 
+    // Two encoding fixes, and between them they are the difference between these stages
+    // working and returning nothing at all on a machine that is not in English.
+    //
+    // The console first. A GUI process starting powershell.exe gets a fresh console whose
+    // output code page is the system OEM one — 857 on a Turkish install — so a single
+    // non-ASCII character anywhere in the answer (a disk's FriendlyName, a Wi-Fi SSID, a
+    // localised fsutil line, the '·' below) reached Qt as a byte that is not valid UTF-8.
+    // Qt's JSON parser does not skip it: it fails the whole document with
+    // IllegalUTF8String, fromJson() returns null, and applyInventory/applyHardware take
+    // their "nothing came back" branch. One character, and the entire stage is discarded.
+    //
+    // Then the script itself, which is a UTF-8 literal in a UTF-8 source file: reading it
+    // back as Latin-1 turned the '·' both scripts embed into 'Â·' before PowerShell ever
+    // saw it.
+    const QString preamble =
+        QStringLiteral("[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding $false; "
+                       "$OutputEncoding = [Console]::OutputEncoding; ");
+
     process->start(powershell,
                    {QStringLiteral("-NoProfile"), QStringLiteral("-NonInteractive"),
                     QStringLiteral("-ExecutionPolicy"), QStringLiteral("Bypass"),
-                    QStringLiteral("-Command"), QString::fromLatin1(script)});
+                    QStringLiteral("-Command"), preamble + QString::fromUtf8(script)});
 #else
     Q_UNUSED(script);
     (this->*then)({});
@@ -574,6 +635,11 @@ $me = $users | Where-Object { $_.Name -eq $env:USERNAME } | Select-Object -First
 $tasks = @(Get-ScheduledTask)
 $telemetryNames = @('Consolidator','UsbCeip','Microsoft Compatibility Appraiser','ProgramDataUpdater','KernelCeipTask','DiskDiagnosticDataCollector','QueueReporting')
 $telemetry = @($tasks | Where-Object { $telemetryNames -contains $_.TaskName })
+# Windows' own tasks live under \Microsoft\*, so "everything else" is nearly the right
+# test for a third-party one — except that the root path is exactly where installers put
+# theirs, and excluding it undercounted by about five to one. These are the few tasks
+# Microsoft does register at the root, and they are the ones to subtract instead.
+$msRoot = @('CreateExplorerShellUnelevatedTask','MicrosoftEdgeUpdateTaskMachineCore','MicrosoftEdgeUpdateTaskMachineUA')
 
 $pnp = @(Get-CimInstance Win32_PnPEntity | Where-Object { $_.ConfigManagerErrorCode -ne 0 })
 $drivers = @(Get-CimInstance Win32_PnPSignedDriver)
@@ -609,7 +675,8 @@ $pf = Get-CimInstance Win32_PageFileUsage | Select-Object -First 1
   taskDisabled   = @($tasks | Where-Object { $_.State -eq 'Disabled' }).Count
   taskTelemetryOff = @($telemetry | Where-Object { $_.State -eq 'Disabled' }).Count
   taskTelemetryTotal = $telemetry.Count
-  taskThirdParty = @($tasks | Where-Object { $_.TaskPath -notlike '\Microsoft\*' -and $_.TaskPath -ne '\' }).Count
+  taskThirdParty = @($tasks | Where-Object { $_.TaskPath -notlike '\Microsoft\*' -and
+    -not ($_.TaskPath -eq '\' -and ($msRoot -contains $_.TaskName -or $_.TaskName -like 'OneDrive*')) }).Count
   driverProblem  = $pnp.Count
   driverProblemName = if ($pnp.Count -gt 0) { [string]$pnp[0].Name + ' · ' + [string]$pnp[0].ConfigManagerErrorCode } else { '' }
   driverTotal    = $drivers.Count
@@ -630,6 +697,9 @@ $pf = Get-CimInstance Win32_PageFileUsage | Select-Object -First 1
 
 void Probe::applyInventory(const QJsonObject &o)
 {
+    if (!m_replaying)
+        m_inventory = o;
+
     if (!o.isEmpty()) {
         // --- accounts -------------------------------------------------------
         const int accounts = o.value(QStringLiteral("accountCount")).toInt(-1);
@@ -724,8 +794,13 @@ void Probe::applyInventory(const QJsonObject &o)
             m_facts.pageFileUsage = word("sys.none");
     }
 
-    Q_EMIT updated(Stage::Inventory);
-    runHardware();
+    // A replay is rebuilding text that is already on screen, so it neither advances to
+    // the next stage nor asks the page to redraw between them; retranslate() does that
+    // once, at the end.
+    if (!m_replaying) {
+        Q_EMIT updated(Stage::Inventory);
+        runHardware();
+    }
 }
 
 void Probe::runHardware()
@@ -791,6 +866,13 @@ try {
   if ($full) { $fullCapacity = [int]$full.FullChargedCapacity }
 } catch {}
 
+$tpmOwned = ''
+try {
+  $tpm = Get-CimInstance -Namespace root/CIMV2/Security/MicrosoftTpm -ClassName Win32_Tpm |
+         Select-Object -First 1
+  if ($tpm) { $tpmOwned = if ($tpm.IsOwned_InitialValue) { 'yes' } else { 'no' } }
+} catch {}
+
 $wifi = ''
 try {
   $lines = netsh wlan show interfaces 2>$null
@@ -809,6 +891,7 @@ try {
   batteryDesign = $designCapacity
   batteryFull = $fullCapacity
   batteryCycles = $cycles
+  tpmOwned = [string]$tpmOwned
   wifi = [string]$wifi
 } | ConvertTo-Json -Compress -Depth 4
 )PS";
@@ -818,6 +901,9 @@ try {
 
 void Probe::applyHardware(const QJsonObject &o)
 {
+    if (!m_replaying)
+        m_hardware = o;
+
     if (!o.isEmpty()) {
         // --- encryption -----------------------------------------------------
         const QJsonArray volumes = o.value(QStringLiteral("volumes")).toArray();
@@ -922,22 +1008,70 @@ void Probe::applyHardware(const QJsonObject &o)
 
         const int design = o.value(QStringLiteral("batteryDesign")).toInt(-1);
         const int full = o.value(QStringLiteral("batteryFull")).toInt(-1);
+        const int cycleCount = o.value(QStringLiteral("batteryCycles")).toInt(-1);
         if (design > 0 && full > 0) {
-            m_facts.batteryHealth = QStringLiteral("%%1 (%2 / %3 mWh)")
-                                        .arg(qRound(100.0 * full / design))
-                                        .arg(QLocale().toString(full), QLocale().toString(design));
+            // Through the table, because the percent sign goes before the number in
+            // Turkish and after it almost everywhere else — the literal here was the
+            // Turkish shape, so nine languages read "%92".
+            m_facts.batteryHealth = Locale::tr(QStringLiteral("deep.batteryCapacity"))
+                                        .arg(QString::number(qRound(100.0 * full / design)),
+                                             QLocale().toString(full),
+                                             QLocale().toString(design));
+        } else if (design > 0 || cycleCount > 0) {
+            // BatteryStaticData answered something, so there is a battery; only the
+            // capacity registers are missing.
+            m_facts.batteryHealth = word("deep.notReadable");
         } else {
-            m_facts.batteryHealth = word("sys.none");
+            // Nothing came back at all, which is two different situations: a desktop, and
+            // a laptop whose firmware does not implement the WMI battery classes. Windows
+            // itself knows which, and saying "yok" about a battery that is sitting right
+            // there is the kind of confident wrong answer this page is meant to avoid.
+            m_facts.batteryHealth = hasBattery() ? word("deep.notReadable") : word("sys.none");
         }
 
         const int cycles = o.value(QStringLiteral("batteryCycles")).toInt(-1);
         if (cycles > 0)
             m_facts.batteryCycles = QLocale().toString(cycles);
 
+        // Whether the TPM has an owner, which is the half of "you have a TPM" that decides
+        // whether BitLocker can seal a key to it. The Encryption block has rendered this
+        // row since 0.9.8; nothing ever filled it, so it read blank on every machine.
+        // A VM or a firmware with no TPM answers nothing at all and the row keeps its dash.
+        const QString tpmOwned = o.value(QStringLiteral("tpmOwned")).toString();
+        if (tpmOwned == QLatin1String("yes"))
+            m_facts.tpmOwnership = word("deep.tpmOwned");
+        else if (tpmOwned == QLatin1String("no"))
+            m_facts.tpmOwnership = word("deep.tpmUnowned");
+
         const QString wifi = o.value(QStringLiteral("wifi")).toString().trimmed();
         m_facts.wifi = wifi.isEmpty() ? word("deep.noWifi") : wifi;
     }
 
+    if (!m_replaying)
+        Q_EMIT updated(Stage::Hardware);
+}
+
+void Probe::retranslate()
+{
+    // Before the first run there is nothing to rebuild, and start() will read everything
+    // in whatever language is current by then.
+    if (!m_started)
+        return;
+
+    m_replaying = true;
+
+    // Back to a struct of dashes first. The two list-shaped blocks — encrypted volumes
+    // and physical disks — are appended to rather than assigned, so replaying on top of
+    // the old Facts would show every drive twice.
+    m_facts = Facts{};
+
+    runInstant();
+    if (!m_inventory.isEmpty())
+        applyInventory(m_inventory);
+    if (!m_hardware.isEmpty())
+        applyHardware(m_hardware);
+
+    m_replaying = false;
     Q_EMIT updated(Stage::Hardware);
 }
 

@@ -8,11 +8,13 @@
 #include "../shell.h"
 #include "../theme.h"
 
+#include <QHideEvent>
 #include <QKeyEvent>
 #include <QLinearGradient>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
+#include <QShowEvent>
 #include <QTimer>
 #include <QVariantAnimation>
 
@@ -52,7 +54,14 @@ ApplyOverlay::ApplyOverlay(AppState *state, QWidget *parent)
     connect(m_fade, &QVariantAnimation::valueChanged, this, [this](const QVariant &v) {
         m_opacity = v.toReal();
         update();
-        if (m_opacity <= 0.001 && m_fade->endValue().toReal() == 0.0)
+    });
+    // Hidden when the animation ends, not when a value happens to arrive at zero.
+    // setEndValue() is not passive: on a stopped animation sitting at its end it
+    // recomputes the current value and emits valueChanged straight away, so the old test
+    // fired inside setEndValue(0.0) — the overlay vanished on the spot and the 160ms
+    // fade-out it was meant to trigger never drew a frame.
+    connect(m_fade, &QVariantAnimation::finished, this, [this] {
+        if (m_fade->endValue().toReal() == 0.0)
             hide();
     });
 
@@ -261,6 +270,18 @@ void ApplyOverlay::keyPressEvent(QKeyEvent *e)
         return;
     }
     e->accept();
+}
+
+void ApplyOverlay::showEvent(QShowEvent *e)
+{
+    QWidget::showEvent(e);
+    Q_EMIT visibilityChanged(true);
+}
+
+void ApplyOverlay::hideEvent(QHideEvent *e)
+{
+    QWidget::hideEvent(e);
+    Q_EMIT visibilityChanged(false);
 }
 
 void ApplyOverlay::paintEvent(QPaintEvent *)

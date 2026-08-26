@@ -66,15 +66,6 @@ QPixmap fragment(const QString &cacheKey, const QString &inner, qreal viewBox,
     return render(cacheKey, inner, viewBox, size, dpr);
 }
 
-QPixmap logoDiamond(const QColor &c, qreal dpr)
-{
-    const QString inner = QStringLiteral(
-                              "<rect x=\"1.8\" y=\"1.8\" width=\"6.4\" height=\"6.4\" "
-                              "transform=\"rotate(45 5 5)\" fill=\"none\" stroke=\"%1\" stroke-width=\"1.2\"/>")
-                              .arg(hex(c));
-    return fragment(QStringLiteral("logo:%1").arg(hex(c)), inner, 10, QSize(10, 10), dpr);
-}
-
 QPixmap search(const QColor &c, qreal dpr)
 {
     const QString inner = QStringLiteral(

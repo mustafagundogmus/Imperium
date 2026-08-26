@@ -35,7 +35,6 @@ public:
     /// Replaces the description with a result line (e.g. after a removal); clearStatus()
     /// restores the original text.
     void setStatus(const QString &text);
-    void clearStatus();
 
     PillButton *removeButton() const { return m_removeButton; }
 

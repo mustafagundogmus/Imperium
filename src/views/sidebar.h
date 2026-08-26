@@ -27,7 +27,6 @@
 
 class AppState;
 class CategoryRow;
-class LinkLabel;
 class SearchField;
 class SectionHeader;
 class SmoothScrollArea;

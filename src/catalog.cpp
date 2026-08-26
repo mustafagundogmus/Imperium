@@ -53,8 +53,9 @@ QString LiveDescription::text() const
         parts << detail;
     if (!stateKey.isEmpty())
         parts << Locale::tr(stateKey);
-    if (!note.isEmpty())
-        parts << Locale::tr(QStringLiteral("svc.riskPrefix")) + note;
+    if (!noteKey.isEmpty() || !note.isEmpty())
+        parts << Locale::tr(QStringLiteral("svc.riskPrefix"))
+                     + (noteKey.isEmpty() ? note : Locale::tr(noteKey));
     return parts.join(QStringLiteral(" · "));
 }
 
@@ -161,7 +162,6 @@ Catalog::Catalog()
     load();
 }
 
-
 Category *Catalog::mutableCategory(const QString &id)
 {
     for (Category &c : m_categories)
@@ -204,7 +204,7 @@ void Catalog::appendServices()
         t.live.stateKey = service.running ? QStringLiteral("svc.running")
                                           : QStringLiteral("svc.stopped");
         // A warning belongs on the row, not only in a tooltip nobody hovers.
-        t.live.note = service.riskNote;
+        t.live.noteKey = service.riskNoteKey;
         t.tooltip = service.description;
         t.locked = service.locked;
         t.lockReason = service.lockReason;
@@ -234,7 +234,6 @@ void Catalog::appendServices()
 
     category->sections.append(section);
 }
-
 
 void Catalog::appendStartup()
 {
@@ -393,6 +392,7 @@ void Catalog::load()
                     const int fallback = range.value(QStringLiteral("default")).toInt(from);
 
                     t.isRange = true;
+                    bool matched = false;
                     for (int v = from; v <= to_; v += step) {
                         TweakOption option;
                         option.label = unit.isEmpty() ? QString::number(v)
@@ -402,8 +402,24 @@ void Catalog::load()
                         for (int i = 1; i < t.reg.size(); ++i)
                             option.data[i] = QString::number(v);
                         t.options.append(option);
-                        if (v == fallback)
+                        if (v == fallback) {
                             t.defaultOption = int(t.options.size()) - 1;
+                            matched = true;
+                        }
+                    }
+
+                    // A declared default that is not on the min/step grid never matched, and
+                    // defaultOption silently kept its struct initialiser of 0 — which the rest
+                    // of the app reads as "this is what Windows ships". Snapping to the nearest
+                    // generated stop is the smallest honest answer; the alternative is a range
+                    // whose "default" position is whatever the minimum happens to be.
+                    if (!matched && !t.options.isEmpty()) {
+                        t.defaultOption = qBound(0, qRound(double(fallback - from) / step),
+                                                 int(t.options.size()) - 1);
+                        qWarning("catalog: %s declares a range default of %d, which is not on the "
+                                 "%d/%d grid; snapping to %d",
+                                 qUtf8Printable(t.id), fallback, from, step,
+                                 from + t.defaultOption * step);
                     }
                 } else {
                     TweakOption off;

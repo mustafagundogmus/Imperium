@@ -36,7 +36,10 @@ struct Info
 
     /// Not load-bearing enough to lock, but consequential enough that the row should say
     /// what stops working. The switch stays operable — this is a warning, not a lock.
-    QString riskNote;
+    ///
+    /// An i18n key rather than the sentence: the row outlives a language change, and the
+    /// list is built once.
+    QString riskNoteKey;
 };
 
 /// Every Win32 service on this machine, sorted by display name. Read-only, no elevation.

@@ -26,7 +26,6 @@ enum class Appearance { Dark, Light };
 struct Palette
 {
     // surfaces
-    QColor page;            ///< behind the window
     QColor window;
     QColor surface;         ///< search field
     QColor surfaceHover;    ///< category / row hover
@@ -61,8 +60,6 @@ struct Palette
 
     // accents / states
     QColor onAccent;
-    QColor closeHover;
-    QColor linkHover;
     QColor scrollThumb;
 };
 
@@ -73,11 +70,19 @@ const Palette &palette();
 const Palette &palette(Appearance a);
 
 Appearance appearance();
-void setAppearance(Appearance a);
+/// Whether a setter writes its new value to QSettings as well as applying it.
+///
+/// The command-line switches are one-shot overrides for a single run — `--theme light`
+/// to take a screenshot, `--accent` to see a colour, `--compact` to check a layout — and
+/// they went through the very setters the settings page uses, so trying one rewrote the
+/// look the user had saved and it stayed rewritten. Everything else a setter does still
+/// happens either way: the styles rebuild, the notifier fires, the window repaints.
+enum class Persist { Yes, No };
+
+void setAppearance(Appearance a, Persist persist = Persist::Yes);
 
 namespace Color {
 
-inline const QColor &Page()            { return palette().page; }
 inline const QColor &Window()          { return palette().window; }
 inline const QColor &Surface()         { return palette().surface; }
 inline const QColor &SurfaceHover()    { return palette().surfaceHover; }
@@ -108,7 +113,6 @@ inline const QColor &Placeholder()     { return palette().placeholder; }
 inline const QColor &IconStroke()      { return palette().iconStroke; }
 
 inline const QColor &OnAccent()        { return palette().onAccent; }
-inline const QColor &LinkHover()       { return palette().linkHover; }
 inline const QColor &ScrollThumb()     { return palette().scrollThumb; }
 
 } // namespace Color
@@ -131,19 +135,24 @@ inline constexpr int SearchHeight   = 27;
 inline constexpr int CategoryHeight = 28;
 inline constexpr int ControlRadius  = 5;   // controls, rows, buttons
 inline constexpr int BadgeRadius    = 3;   // ⌃K badge
-inline constexpr qreal ToggleRadius = 7.5; // spec says 8, clamped to half of 15
 
 // The handoff's switch is 26×15 with a 9px knob. The redesigned one is a shade larger
 // so the wipe fill and the squash have room to read; everything else in the row grid is
 // derived from these, so the layout follows automatically.
 inline constexpr int ToggleWidth  = 30;    // the capsule itself
 inline constexpr int ToggleHeight = 16;
-inline constexpr int KnobInset    = 2;     // from the padding box
-inline constexpr int ToggleBleed  = 0;   // kept at zero: the switch has no outer glow
 
 inline constexpr int WindowButtonWidth = 40;
 
 inline constexpr int SectionGap = 16;      // gap between tweak sections
+
+// The margin every stacked page keeps around its content. Declared here because all seven
+// of them want the same four numbers, and each used to carry its own copy — seven places
+// to edit, and seven chances for one of them to be missed.
+inline constexpr int PagePadLeft   = 18;
+inline constexpr int PagePadTop    = 2;
+inline constexpr int PagePadRight  = 12;
+inline constexpr int PagePadBottom = 16;
 inline constexpr int ScrollBarWidth = 8;
 
 // Shadow: CSS `0 24px 80px rgba(0,0,0,.55)`.
@@ -195,12 +204,12 @@ const QVector<Typeface> &typefaces();
 QString loadTypeface(const QString &id);
 
 QString typeface();                    ///< id of the face in use
-void setTypeface(const QString &id);   ///< persists and rebuilds every style
+void setTypeface(const QString &id, Persist persist = Persist::Yes);   ///< rebuilds every style
 
 /// A multiplier over every text size in the app, 1.0 being the design's own sizes.
 /// Clamped to [0.85, 1.6]; persisted; rebuilds every style like a face swap does.
 qreal fontScale();
-void  setFontScale(qreal scale);
+void  setFontScale(qreal scale, Persist persist = Persist::Yes);
 
 /// The interface-scale steps the settings page offers, small to large. Kept next to the
 /// setter so the row and the clamp above cannot drift apart.
@@ -236,8 +245,6 @@ const QFont &kbd();                ///< "⌃K" badge              mono 9
 const QFont &categoryName();       ///< sidebar row             sans 12.5 / 450
 const QFont &categoryNameSelected();///< sidebar row, selected  sans 12.5 / 500
 const QFont &categoryCount();      ///< sidebar count           mono 10
-const QFont &upperLabel();         ///< "GERİ YÜKLEME NOKTASI"  sans 10 / .08em
-const QFont &restoreValue();       ///< "Bugün, 14:32"          sans 11.5
 const QFont &link();               ///< "Yeni oluştur"          sans 10.5
 const QFont &pageTitle();          ///< "Gizlilik"              sans 15 / 600 / -.01em
 const QFont &pageSub();            ///< "31 tweak · 12 etkin ·" sans 11
@@ -278,11 +285,15 @@ Q_SIGNALS:
 
 /// Accent presets offered by the design (`accent` prop of the mockup).
 QList<QColor> accentPresets();
-QString accentName(const QColor &c);   ///< Turkish label for a preset, or its hex
 
 QColor accent();
-QColor accentSoft();          ///< accent behind a selected row (13% dark / 18% light)
-void   setAccent(const QColor &c);
+QColor accentSoft();          ///< accent behind a selected row (13% dark / 19% light)
+/// The same wash for an appearance that is not the one in force — which is what the theme
+/// preview cards need, since each of them draws the palette it is offering rather than the
+/// one currently on screen. They used to re-derive it with their own alpha values, drifted
+/// from these, so the preview did not match the sidebar it was previewing.
+QColor accentSoft(Appearance a);
+void   setAccent(const QColor &c, Persist persist = Persist::Yes);
 
 /// The accent as *text*. On the light palette the raw amber is too pale to read, so
 /// this is a darkened variant; on the dark palette it is the accent itself.
@@ -292,6 +303,6 @@ Notifier *notifier();
 
 // ----------------------------------------------------------------- layout ---
 bool compact();               ///< `compact` prop: tweak row padding 4px vs 7px
-void setCompact(bool on);
+void setCompact(bool on, Persist persist = Persist::Yes);
 
 } // namespace Theme

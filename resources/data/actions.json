@@ -159,10 +159,9 @@
      "reversible": true,
      "note": "Dizüstü bilgisayarlarda pil ömrünü belirgin biçimde kısaltır.",
      "run": [
-      "powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61",
-      "$plan = (powercfg -list | Select-String 'Ultimate|Üstün').ToString()",
-      "if ($plan -match '([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})') { powercfg -setactive $Matches[1] }",
-      "Write-Output 'ARB|ultimatePerfAdded'"
+      "powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 a7b3c9d1-4e52-4f68-9c0a-5d1e2f3a4b5c 2>$null | Out-Null",
+      "powercfg -setactive a7b3c9d1-4e52-4f68-9c0a-5d1e2f3a4b5c 2>$null",
+      "if ((powercfg -getactivescheme | Out-String) -match 'a7b3c9d1-4e52-4f68-9c0a-5d1e2f3a4b5c') { Write-Output 'ARB|ultimatePerfAdded' } else { Write-Output 'ARB|ultimatePerfUnavailable' }"
      ]
     },
     {
@@ -172,10 +171,9 @@
      "reversible": true,
      "note": "",
      "run": [
-      "powercfg -setactive 381b4222-f694-41f0-9685-ff5bb260df2e",
-      "$plan = (powercfg -list | Select-String 'Ultimate|Üstün')",
-      "if ($plan -and $plan.ToString() -match '([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})') { powercfg -delete $Matches[1] }",
-      "Write-Output 'ARB|ultimatePerfRemoved'"
+      "powercfg -setactive 381b4222-f694-41f0-9685-ff5bb260df2e 2>$null",
+      "powercfg -delete a7b3c9d1-4e52-4f68-9c0a-5d1e2f3a4b5c 2>$null",
+      "if ((powercfg -list | Out-String) -match 'a7b3c9d1-4e52-4f68-9c0a-5d1e2f3a4b5c') { Write-Output 'ARB|ultimatePerfMissing' } else { Write-Output 'ARB|ultimatePerfRemoved' }"
      ]
     }
    ]

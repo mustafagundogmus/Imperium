@@ -24,12 +24,9 @@ public:
     explicit ActionEngine(QObject *parent = nullptr);
 
     bool running() const { return m_process != nullptr; }
-    QString runningId() const { return m_runningId; }
 
     /// Starts \a action. Does nothing when one is already running.
     void run(const Action &action);
-
-    QString logPath() const { return m_logPath; }
 
 Q_SIGNALS:
     void started(const QString &id);

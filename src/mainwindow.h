@@ -48,7 +48,7 @@ public:
     /// Opens a category by id ("ov", "priv", …). Ignored if the id is unknown.
     void showCategory(const QString &id);
 
-    /// Opens the search with  text already in it — the command line's --search, which
+    /// Opens the search with \a text already in it — the command line's --search, which
     /// is how a support answer can say "run it like this and look at what comes up".
     void showSearch(const QString &text);
 
@@ -62,8 +62,17 @@ private Q_SLOTS:
                          const QString &firstError);
     void onRevert();
 
+protected:
+    // The apply overlay is a hand-placed child of the card rather than a layout item, so
+    // its geometry only follows the window if something puts it there. Both handlers are
+    // needed: a drag-resize arrives as resizeEvent, a maximise or restore as a
+    // WindowStateChange whose resize lands before the state has settled.
+    void resizeEvent(QResizeEvent *e) override;
+    void changeEvent(QEvent *e) override;
+
 private:
     void buildUi();
+    void syncOverlayGeometry();
     void wire();
     void refreshView();       ///< header + list + stack page
     void refreshCounters();   ///< pending-driven labels and tiles

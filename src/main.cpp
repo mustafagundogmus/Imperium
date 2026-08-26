@@ -189,11 +189,13 @@ void runSelfTest(MainWindow &window, const QString &path)
         const QString family1 = Theme::Font::tweakName().family();
         const qreal line1 = Css::normalLine(Theme::Font::tweakName());
 
-        Theme::setTypeface(QStringLiteral("saira"));
+        // Persist::No on both: the self test must leave the machine exactly as it found
+        // it, and these two calls used to write the swap and the restore to QSettings.
+        Theme::setTypeface(QStringLiteral("saira"), Theme::Persist::No);
         const QString family2 = Theme::Font::tweakName().family();
         const qreal line2 = Css::normalLine(Theme::Font::tweakName());
 
-        Theme::setTypeface(before);
+        Theme::setTypeface(before, Theme::Persist::No);
         const QString family3 = Theme::Font::tweakName().family();
 
         lines << QStringLiteral("typeface swap    -> %1 (%2px) -> %3 (%4px) -> %5")
@@ -450,22 +452,32 @@ int main(int argc, char *argv[])
                                                 : Ownership::giveBack(target);
 
         QMessageBox box(result.ok ? QMessageBox::Information : QMessageBox::Warning,
-                        QStringLiteral("Arbitrium · Sahiplik"), result.summary);
+                        Locale::tr(QStringLiteral("own.dialogTitle")), result.summary);
         box.setDetailedText(result.detail);
         box.exec();
         return result.ok ? 0 : 1;
     }
 
+    // All four are overrides for this run only. They used to go through the persisting
+    // setters, so `--accent #ff0000` to look at a colour, or `--theme light` to take one
+    // screenshot, quietly became the look the app opened with from then on.
     if (parser.isSet(accentOption))
-        Theme::setAccent(QColor(parser.value(accentOption)));
+        Theme::setAccent(QColor(parser.value(accentOption)), Theme::Persist::No);
     if (parser.isSet(compactOption))
-        Theme::setCompact(true);
+        Theme::setCompact(true, Theme::Persist::No);
     if (parser.isSet(typefaceOption))
-        Theme::setTypeface(parser.value(typefaceOption));
-    if (parser.isSet(themeOption))
-        Theme::setAppearance(parser.value(themeOption).compare(QStringLiteral("light"), Qt::CaseInsensitive) == 0
-                                 ? Theme::Appearance::Light
-                                 : Theme::Appearance::Dark);
+        Theme::setTypeface(parser.value(typefaceOption), Theme::Persist::No);
+    if (parser.isSet(themeOption)) {
+        // Named, not "light or else dark": the old test made every misspelling mean dark,
+        // so `--theme lite` silently did the opposite of what it asked for.
+        const QString name = parser.value(themeOption);
+        if (name.compare(QStringLiteral("light"), Qt::CaseInsensitive) == 0)
+            Theme::setAppearance(Theme::Appearance::Light, Theme::Persist::No);
+        else if (name.compare(QStringLiteral("dark"), Qt::CaseInsensitive) == 0)
+            Theme::setAppearance(Theme::Appearance::Dark, Theme::Persist::No);
+        else
+            qWarning("--theme takes 'dark' or 'light'; ignoring '%s'", qUtf8Printable(name));
+    }
 
     applyPalette(app);
     // Qt's own palette and the tooltip skin are not repainted by our widgets, so they
