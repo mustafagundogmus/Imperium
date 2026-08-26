@@ -148,7 +148,7 @@ jobs:
     env:
       # Bump the -rN suffix to throw the cached Qt away and build it again.
       QT_VERSION: "6.11.1"
-      QT_CACHE_KEY: "qt-6.11.1-static-mingw-r1"
+      QT_CACHE_KEY: "qt-6.11.1-static-mingw-r2"
       QT_PREFIX: "D:/qt-static"
     defaults:
       run:
@@ -176,9 +176,13 @@ jobs:
 
       # Built once and kept. It is the slow step by a wide margin — most of an hour on a
       # cold cache — and it changes only when QT_CACHE_KEY does.
+      # restore/save rather than the combined action: the combined one only writes the
+      # cache in its post step, which does not run when the job has failed — so the first
+      # run threw away fifty minutes of Qt because a later step found three DLLs it did not
+      # like. Saved here instead, the moment it exists and before anything else can fail.
       - name: Restore the static Qt
         id: qt
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ${{ env.QT_PREFIX }}
           key: ${{ env.QT_CACHE_KEY }}
@@ -245,6 +249,13 @@ jobs:
 
           # The sources are big and the cache should not carry them.
           rm -rf /d/qt-src
+
+      - name: Keep the static Qt
+        if: steps.qt.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.QT_PREFIX }}
+          key: ${{ env.QT_CACHE_KEY }}
 
       - name: Build
         run: |
