@@ -352,6 +352,10 @@ jobs:
     if: ${{ !inputs.dry_run }}
     runs-on: ubuntu-latest
     steps:
+      # No checkout. This job needs the two artefacts and nothing else — the notes were
+      # written by `check`, which had the repository. Every gh call therefore names the
+      # repository with -R: without a working tree gh has no remote to infer it from, and
+      # the first run of this job died on "not a git repository" after a clean build.
       - uses: actions/download-artifact@v4
         with:
           name: Arbitrium-v${{ needs.check.outputs.version }}-win64
@@ -393,17 +397,18 @@ jobs:
           # gh creates the tag itself from --target, which is one less thing to get wrong:
           # `git tag` on a runner needs a committer identity nobody has configured, and
           # this needs no working tree at all.
-          if gh release view "$tag" >/dev/null 2>&1; then
-            gh release edit "$tag" --title "Arbitrium $version" --notes-file notes.md
+          if gh release view "$tag" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release edit "$tag" -R "$GITHUB_REPOSITORY" \
+              --title "Arbitrium $version" --notes-file notes.md
             echo "updated the notes on the existing release"
           else
-            gh release create "$tag" \
+            gh release create "$tag" -R "$GITHUB_REPOSITORY" \
               --target "$GITHUB_SHA" \
               --title "Arbitrium $version" \
               --notes-file notes.md
           fi
 
-          gh release upload "$tag" "$exe" "$zip" --clobber
+          gh release upload "$tag" -R "$GITHUB_REPOSITORY" "$exe" "$zip" --clobber
 
       - name: Read the assets back off the release
         env:
@@ -418,7 +423,7 @@ jobs:
           # the name finds a match whether or not the asset is there — asking for the asset
           # list, by name and with its size, is the only answer that means what it looks
           # like it means. This is the check 0.9.8 did not have for the executable.
-          gh release view "$tag" --json assets \
+          gh release view "$tag" -R "$GITHUB_REPOSITORY" --json assets \
             --jq '.assets[] | "\(.name) \(.size)"' > assets.txt
           cat assets.txt
 
