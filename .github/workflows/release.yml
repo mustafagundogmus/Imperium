@@ -11,8 +11,11 @@
 #   * The build is a static Qt (MSYS2's mingw-w64-x86_64-qt6-static), which is what the
 #     project has always been released from. Nothing else about CMakeLists.txt changes —
 #     it already branches on whether Qt is static and skips windeployqt when it is.
-#   * `objdump -p` reads the finished executable's import table back and fails the job if
-#     Qt, libgcc, libstdc++ or libwinpthread appear in it. A dynamic build cannot pass.
+#   * `objdump -p` reads the finished executable's import table back and looks every entry
+#     up in the Windows system directory. Anything that is not part of Windows is something
+#     the user would have to be handed as well, and fails the job. An earlier version of
+#     this check listed names to reject instead — Qt, libgcc, libstdc++ — and duly passed a
+#     build that wanted fourteen MSYS2 DLLs nobody had thought to name.
 #   * The release is created *after* the build, in the same job that attaches the assets,
 #     and the last step reads the asset list off the published release by name. The old
 #     order — publish first, build second — is exactly how 0.9.8 came to exist with the

@@ -228,6 +228,27 @@ install(TARGETS Arbitrium
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
+# Which plugins a static build links in.
+#
+# A static Qt imports every plugin it has unless told otherwise, and which plugins it has
+# depends on how that Qt was built. The one this project has been released from since 0.9.5
+# carries exactly four image formats — GIF, ICO, JPEG, SVG — and two TLS backends,
+# cert-only and Schannel. That is the set the shipped executable has always had.
+#
+# A Qt packaged with more of them is not a free upgrade: MSYS2's adds TIFF, WebP and an
+# OpenSSL backend, and each drags its own third-party dependencies in behind it. libtiff
+# wants jbig and zstd, libcrypto wants a good deal of ws2_32, and satisfying all of that
+# means the executable stops being one file — which is the entire point of the static
+# build. Naming the exclusions here keeps the payload the same whichever Qt is in front of
+# it. Nothing in the app reads a TIFF or a WebP, and the TLS it uses is Schannel.
+if(QT_VERSION_MAJOR EQUAL 6 AND ARBITRIUM_STATIC_QT)
+    qt_import_plugins(Arbitrium
+        EXCLUDE_BY_TYPE sqldrivers
+        EXCLUDE Qt6::QTiffPlugin Qt6::QWebpPlugin Qt6::QTgaPlugin Qt6::QWbmpPlugin
+                Qt6::QOpenSSLBackendPlugin
+    )
+endif()
+
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(Arbitrium)
 endif()
