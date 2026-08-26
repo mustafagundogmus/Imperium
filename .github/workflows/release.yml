@@ -227,17 +227,17 @@ jobs:
           # and harfbuzz each reference the other, and a single pass over the archives
           # cannot satisfy both.
           #
-          # link_libraries() rather than CMAKE_EXE_LINKER_FLAGS: the latter is placed
-          # before the objects on the command line, where a static archive contributes
-          # nothing because nothing has asked for its symbols yet.
+          # Where they go matters as much as that they are there. A static archive only
+          # contributes the objects that something already unresolved has asked for, so it
+          # has to come *after* everything that needs it. CMAKE_EXE_LINKER_FLAGS lands
+          # before the objects and link_libraries() before the target's own libraries;
+          # CMAKE_CXX_STANDARD_LIBRARIES is appended at the very end of the command line,
+          # which is the only position that works.
           cat > static-deps.cmake <<'CMAKE'
           # Included from the end of project(); see the note in .github/workflows/release.yml.
           set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-          link_libraries(
-              -Wl,--start-group
-              harfbuzz freetype graphite2 bz2 brotlidec brotlicommon png16 z
-              -Wl,--end-group
-              ws2_32 crypt32 bcrypt)
+          set(CMAKE_CXX_STANDARD_LIBRARIES
+              "-Wl,--start-group -lharfbuzz -lfreetype -lgraphite2 -lbz2 -lbrotlidec -lbrotlicommon -lpng16 -lz -Wl,--end-group -lws2_32 -lcrypt32 -lbcrypt -lsecur32 ${CMAKE_CXX_STANDARD_LIBRARIES}")
           CMAKE
 
           qt="$(cygpath -m /mingw64/qt6-static)"
