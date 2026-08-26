@@ -219,9 +219,25 @@ jobs:
           # runs, which overwrites anything handed in from outside. CMAKE_PROJECT_INCLUDE
           # is included at the end of project(), which is after the platform module and
           # before this project's own find_package(Qt6).
+          # The second half of the file is the closure. A shared libfreetype-6.dll carries
+          # its own dependencies; libfreetype.a does not, and neither MSYS2's CMake config
+          # nor Qt's WrapFreetype names them — they live in the .pc file's Libs.private,
+          # which find_package never reads. So freetype's harfbuzz, bzip2 and brotli, and
+          # OpenSSL's sockets, are listed here. --start-group is not decoration: freetype
+          # and harfbuzz each reference the other, and a single pass over the archives
+          # cannot satisfy both.
+          #
+          # link_libraries() rather than CMAKE_EXE_LINKER_FLAGS: the latter is placed
+          # before the objects on the command line, where a static archive contributes
+          # nothing because nothing has asked for its symbols yet.
           cat > static-deps.cmake <<'CMAKE'
           # Included from the end of project(); see the note in .github/workflows/release.yml.
           set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+          link_libraries(
+              -Wl,--start-group
+              harfbuzz freetype graphite2 bz2 brotlidec brotlicommon png16 z
+              -Wl,--end-group
+              ws2_32 crypt32 bcrypt)
           CMAKE
 
           qt="$(cygpath -m /mingw64/qt6-static)"
