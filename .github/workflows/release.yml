@@ -158,6 +158,13 @@ jobs:
           msystem: MINGW64
           update: false
           cache: true
+          # The libraries after qt6-static are not padding. MSYS2 builds its static Qt
+          # against the *system* zlib, libpng, freetype and so on rather than Qt's bundled
+          # copies, so Qt6Config still runs find_package on each of them when you consume
+          # it — but the package only lists them as build dependencies, so pacman does not
+          # pull them in for a consumer. Without libpng, Qt6Gui reports "WrapPNG could not
+          # be found", Qt6Widgets reports that Qt6Gui could not be found, and the configure
+          # fails with a message that names neither.
           install: >-
             zip
             unzip
@@ -165,6 +172,24 @@ jobs:
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-ninja
             mingw-w64-x86_64-qt6-static
+            mingw-w64-x86_64-zlib
+            mingw-w64-x86_64-zstd
+            mingw-w64-x86_64-pcre2
+            mingw-w64-x86_64-libpng
+            mingw-w64-x86_64-libjpeg-turbo
+            mingw-w64-x86_64-libtiff
+            mingw-w64-x86_64-libwebp
+            mingw-w64-x86_64-freetype
+            mingw-w64-x86_64-harfbuzz
+            mingw-w64-x86_64-graphite2
+            mingw-w64-x86_64-brotli
+            mingw-w64-x86_64-double-conversion
+            mingw-w64-x86_64-md4c
+            mingw-w64-x86_64-libb2
+            mingw-w64-x86_64-openssl
+            mingw-w64-x86_64-dbus
+            mingw-w64-x86_64-vulkan-headers
+            mingw-w64-x86_64-vulkan-loader
 
       - name: Build
         env:
