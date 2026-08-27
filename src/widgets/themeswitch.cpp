@@ -7,6 +7,8 @@
 #include <QPainter>
 #include <QPainterPath>
 
+#include <iterator>
+
 namespace {
 
 constexpr qreal CardW = 84.0;
@@ -14,13 +16,29 @@ constexpr qreal CardH = 52.0;
 constexpr qreal Gap = 10.0;
 constexpr qreal RingOffset = 3.0;   // the selection ring sits this far outside the card
 constexpr qreal LabelGap = 5.0;
+constexpr qreal RowVGap = 12.0;     // space below a label before the next row of cards
+constexpr int Cols = 4;             // eight themes wrap to a 4×2 grid
 
-const Theme::Appearance Order[2] = {Theme::Appearance::Dark, Theme::Appearance::Light};
+const Theme::Appearance Order[] = {
+    Theme::Appearance::Dark,   Theme::Appearance::Light,
+    Theme::Appearance::Midnight, Theme::Appearance::Sepia,
+    Theme::Appearance::Ocean,  Theme::Appearance::Forest,
+    Theme::Appearance::Dusk,   Theme::Appearance::Rose};
+constexpr int Count = int(std::size(Order));
 
 QString labelFor(Theme::Appearance a)
 {
-    return Locale::tr(a == Theme::Appearance::Light ? QStringLiteral("theme.light")
-                                                    : QStringLiteral("theme.dark"));
+    switch (a) {
+    case Theme::Appearance::Light:    return Locale::tr(QStringLiteral("theme.light"));
+    case Theme::Appearance::Midnight: return Locale::tr(QStringLiteral("theme.midnight"));
+    case Theme::Appearance::Sepia:    return Locale::tr(QStringLiteral("theme.sepia"));
+    case Theme::Appearance::Ocean:    return Locale::tr(QStringLiteral("theme.ocean"));
+    case Theme::Appearance::Forest:   return Locale::tr(QStringLiteral("theme.forest"));
+    case Theme::Appearance::Dusk:     return Locale::tr(QStringLiteral("theme.dusk"));
+    case Theme::Appearance::Rose:     return Locale::tr(QStringLiteral("theme.rose"));
+    case Theme::Appearance::Dark:     break;
+    }
+    return Locale::tr(QStringLiteral("theme.dark"));
 }
 
 } // namespace
@@ -46,18 +64,25 @@ ThemeSwitch::ThemeSwitch(QWidget *parent)
 QSize ThemeSwitch::sizeHint() const
 {
     const qreal labelLine = Css::normalLine(Theme::Font::tileSub());
-    return {qRound(2 * CardW + Gap + 2 * RingOffset),
-            qRound(CardH + 2 * RingOffset + LabelGap + labelLine)};
+    const int cols = qMin(Count, Cols);
+    const int rows = (Count + Cols - 1) / Cols;
+    const qreal rowPitch = CardH + LabelGap + labelLine + RowVGap;
+    return {qRound(cols * CardW + (cols - 1) * Gap + 2 * RingOffset),
+            qRound(rows * rowPitch - RowVGap + 2 * RingOffset)};
 }
 
 QRectF ThemeSwitch::cardRect(int index) const
 {
-    return {RingOffset + index * (CardW + Gap), RingOffset, CardW, CardH};
+    const qreal labelLine = Css::normalLine(Theme::Font::tileSub());
+    const qreal rowPitch = CardH + LabelGap + labelLine + RowVGap;
+    const int col = index % Cols;
+    const int row = index / Cols;
+    return {RingOffset + col * (CardW + Gap), RingOffset + row * rowPitch, CardW, CardH};
 }
 
 int ThemeSwitch::indexAt(const QPointF &pos) const
 {
-    for (int i = 0; i < 2; ++i)
+    for (int i = 0; i < Count; ++i)
         if (cardRect(i).adjusted(-RingOffset, -RingOffset, RingOffset, RingOffset).contains(pos))
             return i;
     return -1;
@@ -167,7 +192,7 @@ void ThemeSwitch::paintEvent(QPaintEvent *)
     const QFont &labelFont = Font::tileSub();
     const qreal labelLine = Css::normalLine(labelFont);
 
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < Count; ++i) {
         const QRectF card = cardRect(i);
         const bool selected = appearance() == Order[i];
 

@@ -9,12 +9,6 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-namespace {
-
-/// The mockup's scroll body: `padding:2px 12px 16px 18px`.
-
-} // namespace
-
 TweakPage::TweakPage(AppState *state, QWidget *parent)
     : QWidget(parent)
     , m_state(state)

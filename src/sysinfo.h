@@ -12,6 +12,7 @@
 
 #include <QObject>
 #include <QPair>
+#include <QJsonObject>
 #include <QString>
 #include <QVector>
 
@@ -185,12 +186,23 @@ public:
 
     void start();
 
+    /// Re-emits resolved() in the interface's current language from the answer the one
+    /// PowerShell run already returned. A language change re-reads SysInfo::collect(),
+    /// which cannot fill activation, the restore point or the last update — those come
+    /// only from here — so this replays them onto the fresh struct. Does nothing before
+    /// the run lands.
+    void retranslate();
+
 Q_SIGNALS:
     /// \a activation, \a restorePoint and \a lastUpdate are empty when unavailable.
     void resolved(const QString &activation, const QString &restorePoint, const QString &lastUpdate);
 
 private:
+    /// Turns one parsed answer into the three translated strings and emits resolved().
+    void emitFrom(const QJsonObject &o);
+
     bool m_started = false;
+    QJsonObject m_output;   ///< the last successful answer, kept for retranslate()
 };
 
 } // namespace SysInfo

@@ -1070,30 +1070,8 @@ $qfe = Get-CimInstance Win32_QuickFixEngineering | Sort-Object InstalledOn -Desc
         }
 
         const QByteArray out = process->readAllStandardOutput().trimmed();
-        const QJsonObject o = QJsonDocument::fromJson(out).object();
-
-        QString activation;
-        const int license = o.value(QStringLiteral("license")).toInt(-1);
-        if (license == 1) {
-            const QString channel = o.value(QStringLiteral("channel")).toString();
-            activation = channel.compare(QStringLiteral("Retail"), Qt::CaseInsensitive) == 0
-                             ? Locale::tr(QStringLiteral("sys.perakendeLisans"))
-                         : channel.compare(QStringLiteral("OEM"), Qt::CaseInsensitive) == 0
-                             ? Locale::tr(QStringLiteral("sys.oemLisans"))
-                             : Locale::tr(QStringLiteral("sys.dijitalLisans"));
-        } else if (license >= 0) {
-            activation = Locale::tr(QStringLiteral("sys.etkinlestirilmemis"));
-        }
-
-        QString restore;
-        const QString iso = o.value(QStringLiteral("restore")).toString();
-        if (!iso.isEmpty()) {
-            const QDateTime dt = QDateTime::fromString(iso, Qt::ISODateWithMs);
-            if (dt.isValid())
-                restore = friendlyDateTime(dt, /*withComma=*/true);
-        }
-
-        Q_EMIT resolved(activation, restore, o.value(QStringLiteral("hotfix")).toString());
+        m_output = QJsonDocument::fromJson(out).object();
+        emitFrom(m_output);
     };
 
     connect(process, &QProcess::finished, this,
@@ -1115,6 +1093,40 @@ $qfe = Get-CimInstance Win32_QuickFixEngineering | Sort-Object InstalledOn -Desc
 #else
     Q_EMIT resolved({}, {}, {});
 #endif
+}
+
+void Probe::emitFrom(const QJsonObject &o)
+{
+    QString activation;
+    const int license = o.value(QStringLiteral("license")).toInt(-1);
+    if (license == 1) {
+        const QString channel = o.value(QStringLiteral("channel")).toString();
+        activation = channel.compare(QStringLiteral("Retail"), Qt::CaseInsensitive) == 0
+                         ? Locale::tr(QStringLiteral("sys.perakendeLisans"))
+                     : channel.compare(QStringLiteral("OEM"), Qt::CaseInsensitive) == 0
+                         ? Locale::tr(QStringLiteral("sys.oemLisans"))
+                         : Locale::tr(QStringLiteral("sys.dijitalLisans"));
+    } else if (license >= 0) {
+        activation = Locale::tr(QStringLiteral("sys.etkinlestirilmemis"));
+    }
+
+    QString restore;
+    const QString iso = o.value(QStringLiteral("restore")).toString();
+    if (!iso.isEmpty()) {
+        const QDateTime dt = QDateTime::fromString(iso, Qt::ISODateWithMs);
+        if (dt.isValid())
+            restore = friendlyDateTime(dt, /*withComma=*/true);
+    }
+
+    Q_EMIT resolved(activation, restore, o.value(QStringLiteral("hotfix")).toString());
+}
+
+void Probe::retranslate()
+{
+    // Nothing to replay before the run lands, or if it failed — and a failure must not
+    // overwrite anything, so m_output stays empty on that path.
+    if (!m_output.isEmpty())
+        emitFrom(m_output);
 }
 
 } // namespace SysInfo

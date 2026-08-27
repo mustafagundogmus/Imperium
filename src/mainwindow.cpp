@@ -19,6 +19,7 @@
 #include "views/statusbar.h"
 #include "widgets/applyoverlay.h"
 #include "views/titlebar.h"
+#include "views/tilauncherpage.h"
 #include "views/tweakpage.h"
 #include "widgets/searchfield.h"
 #include "widgets/smoothscrollarea.h"
@@ -89,6 +90,13 @@ MainWindow::MainWindow(QWidget *parent)
     // stages a second time.
     connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, [this] {
         m_facts = SysInfo::collect();
+        // collect() cannot fill activation, the restore point or the last update — those
+        // come only from the async probe. Re-emitting its cached answer merges the three
+        // back onto the freshly-collected struct (the resolved() handler below), so the
+        // re-read does not blank them; without it they reverted to "—" on a language
+        // change and stayed there.
+        if (m_probe)
+            m_probe->retranslate();
         m_titleBar->setSystemSummary(SysInfo::titleBarSummary(m_facts));
         m_overview->setFacts(m_facts);
         if (m_deepProbe)
@@ -173,6 +181,10 @@ void MainWindow::buildUi()
     m_actions = new ActionPage(m_actionScroll);
     m_actionScroll->setWidget(m_actions);
 
+    m_tiScroll = new SmoothScrollArea(m_stack);
+    m_tiLauncher = new TiLauncherPage(m_tiScroll);
+    m_tiScroll->setWidget(m_tiLauncher);
+
     m_debloatScroll = new SmoothScrollArea(m_stack);
     m_debloat = new DebloatPage(m_debloatScroll);
     m_debloatScroll->setWidget(m_debloat);
@@ -189,6 +201,7 @@ void MainWindow::buildUi()
     m_stack->addWidget(m_tweakScroll);
     m_stack->addWidget(m_settingsScroll);
     m_stack->addWidget(m_actionScroll);
+    m_stack->addWidget(m_tiScroll);
     m_stack->addWidget(m_debloatScroll);
     m_stack->addWidget(m_journalScroll);
     m_stack->addWidget(m_aboutScroll);
@@ -224,6 +237,7 @@ void MainWindow::wire()
     connect(m_state, &AppState::pendingChanged, this, &MainWindow::refreshCounters);
     connect(m_settings, &SettingsPage::notice, m_statusBar, &StatusBar::setNotice);
     connect(m_actions, &ActionPage::notice, m_statusBar, &StatusBar::setNotice);
+    connect(m_tiLauncher, &TiLauncherPage::notice, m_statusBar, &StatusBar::setNotice);
     connect(m_debloat, &DebloatPage::notice, m_statusBar, &StatusBar::setNotice);
     connect(m_journal, &JournalPage::notice, m_statusBar, &StatusBar::setNotice);
     // The scan runs in the background from construction on; if it lands while this page
@@ -274,7 +288,13 @@ void MainWindow::wire()
     // dismissed with the keyboard, and Escape during a run cleared the search box behind
     // the scrim instead. Disabling the shortcut object is the only thing that works;
     // returning early from the handler is too late, the key is already gone.
-    connect(m_applyOverlay, &ApplyOverlay::visibilityChanged, clearSearch, &QShortcut::setEnabled);
+    // Negated: the signal carries "the overlay is visible", and the shortcut has to be
+    // OFF exactly then. Wiring it straight to setEnabled did the opposite — it turned the
+    // shortcut on while the overlay was up (so Escape still cleared the search behind the
+    // scrim) and off the moment it closed (so Escape stopped clearing the search at all
+    // for the rest of the session).
+    connect(m_applyOverlay, &ApplyOverlay::visibilityChanged, clearSearch,
+            [clearSearch](bool visible) { clearSearch->setEnabled(!visible); });
     clearSearch->setEnabled(!m_applyOverlay->isVisible());
 }
 
@@ -350,10 +370,11 @@ void MainWindow::refreshView()
     const bool actions = !searching && current == Sidebar::actionsId();
     const bool debloat = !searching && current == Sidebar::debloatId();
     const bool journal = !searching && current == Sidebar::journalId();
+    const bool tiLauncher = !searching && current == Sidebar::tiLauncherId();
     const bool about = !searching && current == Sidebar::aboutId();
     const bool overview = !searching && category && category->isOverview();
 
-    m_header->setControlsVisible(!overview && !settings && !about && !debloat);
+    m_header->setControlsVisible(!overview && !settings && !about && !debloat && !tiLauncher);
 
     if (about) {
         m_header->setTitle(Locale::tr(QStringLiteral("sidebar.about")));
@@ -382,6 +403,14 @@ void MainWindow::refreshView()
                                   .arg(m_actions->rowCount()));
         m_header->setPendingLabel({});
         m_stack->setCurrentWidget(m_actionScroll);
+        return;
+    }
+
+    if (tiLauncher) {
+        m_header->setTitle(Locale::tr(QStringLiteral("ti.title")));
+        m_header->setSubtitle(Locale::tr(QStringLiteral("ti.subtitle")));
+        m_header->setPendingLabel({});
+        m_stack->setCurrentWidget(m_tiScroll);
         return;
     }
 

@@ -26,12 +26,17 @@ constexpr qreal BlockPadBottom = 12.0;   // bottom block padding
 // shape but sit outside the scrolling group. The restore point used to live under this
 // row; it is a setting, and it now says so — see SettingsPage's Güvenlik section.
 constexpr qreal SettingsGap = 6.0;
-constexpr int PinnedRows = 4;   // Günlük + Eylemler + Ayarlar + Hakkında
+constexpr int PinnedRows = 5;   // Günlük + Eylemler + TrustedInstaller + Ayarlar + Hakkında
 
 const QString JournalIcon = QStringLiteral(
     "M2.5 1.5h7v9h-7zM4.5 4h3M4.5 6h3M4.5 8h2");
 const QString ActionsIcon = QStringLiteral(
     "M2 6h8M6 2v8M3.6 3.6l4.8 4.8M8.4 3.6L3.6 8.4");
+// A shield with a check: the authority mark. TrustedInstaller is the account that owns
+// what an administrator is refused, so a shield reads truer here than a key would.
+const QString TiLauncherIcon = QStringLiteral(
+    "M6 1.4L9.8 2.9v3.2c0 2.4-1.6 4-3.8 4.9-2.2-.9-3.8-2.5-3.8-4.9V2.9z"
+    "M4.4 6.1l1.1 1.1 2.2-2.6");
 // A trash can: lid + tapered body + two ribs. Debloat removes installed packages, which
 // is closer to Eylemler's one-shot actions than to a reversible tweak position.
 const QString DebloatIcon = QStringLiteral(
@@ -110,6 +115,10 @@ Sidebar::Sidebar(AppState *state, QWidget *parent)
                                 QString(), this);
     connect(m_actions, &CategoryRow::activated, this, &Sidebar::categoryActivated);
 
+    m_tiLauncher = new CategoryRow(tiLauncherId(), Locale::tr(QStringLiteral("sidebar.tilauncher")),
+                                   TiLauncherIcon, QString(), this);
+    connect(m_tiLauncher, &CategoryRow::activated, this, &Sidebar::categoryActivated);
+
     m_settings = new CategoryRow(settingsId(), Locale::tr(QStringLiteral("sidebar.settings")), SettingsIcon,
                                  QString(), this);
     connect(m_settings, &CategoryRow::activated, this, &Sidebar::categoryActivated);
@@ -129,6 +138,7 @@ Sidebar::Sidebar(AppState *state, QWidget *parent)
         retranslateGroups();
         m_journal->setName(Locale::tr(QStringLiteral("sidebar.journal")));
         m_actions->setName(Locale::tr(QStringLiteral("sidebar.actions")));
+        m_tiLauncher->setName(Locale::tr(QStringLiteral("sidebar.tilauncher")));
         m_settings->setName(Locale::tr(QStringLiteral("sidebar.settings")));
         m_about->setName(Locale::tr(QStringLiteral("sidebar.about")));
     });
@@ -201,6 +211,7 @@ void Sidebar::setSelected(const QString &categoryId)
         row->setSelected(row->categoryId() == categoryId);
     m_settings->setSelected(categoryId == settingsId());
     m_actions->setSelected(categoryId == actionsId());
+    m_tiLauncher->setSelected(categoryId == tiLauncherId());
     m_journal->setSelected(categoryId == journalId());
     m_about->setSelected(categoryId == aboutId());
 }
@@ -215,9 +226,14 @@ qreal Sidebar::settingsRowTop() const
     return aboutRowTop() - RowGap - Theme::Metric::CategoryHeight;
 }
 
-qreal Sidebar::actionsRowTop() const
+qreal Sidebar::tiLauncherRowTop() const
 {
     return settingsRowTop() - RowGap - Theme::Metric::CategoryHeight;
+}
+
+qreal Sidebar::actionsRowTop() const
+{
+    return tiLauncherRowTop() - RowGap - Theme::Metric::CategoryHeight;
 }
 
 qreal Sidebar::journalRowTop() const
@@ -283,6 +299,8 @@ void Sidebar::resizeEvent(QResizeEvent *e)
                            contentW, Theme::Metric::CategoryHeight);
     m_actions->setGeometry(qRound(PadX), qRound(actionsRowTop()),
                            contentW, Theme::Metric::CategoryHeight);
+    m_tiLauncher->setGeometry(qRound(PadX), qRound(tiLauncherRowTop()),
+                              contentW, Theme::Metric::CategoryHeight);
     m_settings->setGeometry(qRound(PadX), qRound(settingsRowTop()),
                             contentW, Theme::Metric::CategoryHeight);
     m_about->setGeometry(qRound(PadX), qRound(aboutRowTop()),

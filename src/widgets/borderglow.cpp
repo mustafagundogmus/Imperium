@@ -332,7 +332,7 @@ void BorderGlow::paintEvent(QPaintEvent *e)
     if (!e->region().intersects(regionFor(runs)))
         return;
 
-    const bool light = Theme::appearance() == Theme::Appearance::Light;
+    const bool light = Theme::isLightFamily(Theme::appearance());
     const qreal breath = 0.82 + 0.18 * qSin(m_phase * 2.0 * M_PI);
     // A glow over a white surface reads far heavier than the same one over near-black.
     const qreal strength = m_level * breath * (light ? 0.72 : 1.0);

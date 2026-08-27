@@ -162,6 +162,65 @@ void runSelfTest(MainWindow &window, const QString &path)
               << QStringLiteral("elevated         -> %1").arg(TweakEngine::isElevated());
     }
 
+    // Undoing one journalled write, against a key something else lives in.
+    //
+    // This is the 0.9.9 bug written down as a test. revert() used to delete the whole key
+    // whenever the journal said the value had not been there before — and `keyExisted` is
+    // one instant's snapshot, while the keys are shared: thirteen catalogue tweaks write
+    // into the Windows Update policy key alone. Undoing one of them took the other twelve,
+    // and anything a domain policy had put there since, and reported success.
+    //
+    // Two scenarios, because the fix has two halves that pull against each other: the key
+    // must survive while somebody else is in it, and must still go when it is empty.
+    {
+        using namespace Registry;
+        const QString shared = QStringLiteral("Software\\Arbitrium\\SelfTest\\Shared");
+        const QString alone = QStringLiteral("Software\\Arbitrium\\SelfTest\\Alone");
+        QString error;
+
+        TweakEngine::JournalEntry entry;
+        entry.hive = QStringLiteral("HKCU");
+        entry.existed = false;      // the value was not there before the write…
+        entry.keyExisted = false;   // …and neither was the key
+        entry.desired = QStringLiteral("1");
+
+        // One key, two values, as two tweaks writing into the same policy key.
+        write(Hive::HKCU, shared, QStringLiteral("Mine"), QStringLiteral("DWORD"),
+              QStringLiteral("1"), &error);
+        write(Hive::HKCU, shared, QStringLiteral("Neighbour"), QStringLiteral("DWORD"),
+              QStringLiteral("2"), &error);
+
+        TweakEngine engine;
+        entry.path = shared;
+        entry.value = QStringLiteral("Mine");
+        const bool undidShared = engine.revert(entry, &error);
+        const bool mineGone = !read(Hive::HKCU, shared, QStringLiteral("Mine")).exists;
+        const bool neighbourKept = read(Hive::HKCU, shared, QStringLiteral("Neighbour")).exists;
+        const bool sharedKeyKept = keyExists(Hive::HKCU, shared);
+
+        // The same undo where nothing else is in the key: this one should take the key.
+        write(Hive::HKCU, alone, QStringLiteral("Only"), QStringLiteral("DWORD"),
+              QStringLiteral("1"), &error);
+        entry.path = alone;
+        entry.value = QStringLiteral("Only");
+        const bool undidAlone = engine.revert(entry, &error);
+        const bool aloneKeyGone = !keyExists(Hive::HKCU, alone);
+
+        // And a line that recorded a whole-key deletion, which one value cannot undo.
+        entry.desired = DeleteKeySentinel;
+        QString refusal;
+        const bool refusedKeyDelete = !engine.revert(entry, &refusal);
+
+        removeKey(Hive::HKCU, QStringLiteral("Software\\Arbitrium\\SelfTest"), &error);
+
+        lines << QStringLiteral("geri al · paylaşılan -> undo=%1 değer gitti=%2 komşu duruyor=%3 anahtar duruyor=%4")
+                     .arg(undidShared).arg(mineGone).arg(neighbourKept).arg(sharedKeyKept)
+              << QStringLiteral("geri al · tek       -> undo=%1 boş anahtar gitti=%2")
+                     .arg(undidAlone).arg(aloneKeyGone)
+              << QStringLiteral("geri al · anahtar   -> reddedildi=%1 '%2'")
+                     .arg(refusedKeyDelete).arg(refusal);
+    }
+
     // Build-bound tweaks: which ones this machine cannot use, and why.
     {
         int total = 0;
@@ -400,7 +459,7 @@ int main(int argc, char *argv[])
     QCommandLineOption compactOption(QStringLiteral("compact"),
                                      QStringLiteral("Denser tweak rows (4px instead of 7px padding)."));
     QCommandLineOption themeOption(QStringLiteral("theme"),
-                                   QStringLiteral("Appearance: dark or light."),
+                                   QStringLiteral("Appearance: dark, light, midnight, sepia, ocean, forest, dusk, rose."),
                                    QStringLiteral("name"));
     QCommandLineOption typefaceOption(QStringLiteral("typeface"),
                                       QStringLiteral("Interface face: plex, monda, opensans, "
@@ -470,13 +529,26 @@ int main(int argc, char *argv[])
     if (parser.isSet(themeOption)) {
         // Named, not "light or else dark": the old test made every misspelling mean dark,
         // so `--theme lite` silently did the opposite of what it asked for.
-        const QString name = parser.value(themeOption);
-        if (name.compare(QStringLiteral("light"), Qt::CaseInsensitive) == 0)
+        const QString name = parser.value(themeOption).toLower();
+        if (name == QLatin1String("light"))
             Theme::setAppearance(Theme::Appearance::Light, Theme::Persist::No);
-        else if (name.compare(QStringLiteral("dark"), Qt::CaseInsensitive) == 0)
+        else if (name == QLatin1String("dark"))
             Theme::setAppearance(Theme::Appearance::Dark, Theme::Persist::No);
+        else if (name == QLatin1String("midnight"))
+            Theme::setAppearance(Theme::Appearance::Midnight, Theme::Persist::No);
+        else if (name == QLatin1String("sepia"))
+            Theme::setAppearance(Theme::Appearance::Sepia, Theme::Persist::No);
+        else if (name == QLatin1String("ocean"))
+            Theme::setAppearance(Theme::Appearance::Ocean, Theme::Persist::No);
+        else if (name == QLatin1String("forest"))
+            Theme::setAppearance(Theme::Appearance::Forest, Theme::Persist::No);
+        else if (name == QLatin1String("dusk"))
+            Theme::setAppearance(Theme::Appearance::Dusk, Theme::Persist::No);
+        else if (name == QLatin1String("rose"))
+            Theme::setAppearance(Theme::Appearance::Rose, Theme::Persist::No);
         else
-            qWarning("--theme takes 'dark' or 'light'; ignoring '%s'", qUtf8Printable(name));
+            qWarning("--theme takes dark, light, midnight, sepia, ocean, forest, dusk or "
+                     "rose; ignoring '%s'", qUtf8Printable(name));
     }
 
     applyPalette(app);

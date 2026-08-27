@@ -84,6 +84,15 @@ cache. Switch DNS to Cloudflare, Google, or Quad9 in one click. Add the hidden *
 Performance** power plan. Each one tells you up front whether it can be undone — and shows you the
 script.
 
+### 🛡️ Launch anything as TrustedInstaller
+
+The account that owns the files and registry keys even an administrator is refused. Point the
+**TrustedInstaller** page at a program or a file — or use the one-tap shortcuts for a shell,
+PowerShell, the registry editor, or the file manager — and it starts under that account, able to
+read and write all of it without changing a single permission. No service to install, no token
+juggling; it uses the elevated session the app already runs in. `whoami` in the launched shell
+says `nt service\trustedinstaller`, which is the whole point.
+
 ### 📊 A dashboard that isn't decoration
 
 Live CPU and memory graphs at one-second resolution, alongside **28 blocks** of the machine facts
@@ -124,8 +133,8 @@ Switch language from Settings and the entire interface changes instantly. No res
 
 Because a tool you'll actually open should be worth looking at.
 
-- **Dark and light**, both designed rather than inverted
-- **Accent colours** you can pick, applied across the whole interface
+- **Eight themes** — Dark and Light, a deeper Midnight and a warm Sepia, and four gently tinted darks (Ocean, Forest, Dusk, Rose), each a full palette rather than an inversion
+- **Eight accent colours** you can pick, applied across the whole interface
 - **Six typefaces** to choose from
 - **Four text sizes**, because not everyone runs a 4K panel at 100%
 - A **frameless window** with smooth scrolling and animation everywhere it earns its place

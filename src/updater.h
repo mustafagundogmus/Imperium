@@ -43,4 +43,5 @@ Q_SIGNALS:
 private:
     QNetworkAccessManager *m_network = nullptr;
     bool m_busy = false;
+    bool m_pendingUserInitiated = false;   ///< origin of the check in flight
 };

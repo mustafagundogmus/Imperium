@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(Arbitrium VERSION 0.9.9 LANGUAGES CXX)
+project(Arbitrium VERSION 0.9.10 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -30,6 +30,7 @@ set(PROJECT_SOURCES
     src/registry.h                    src/registry.cpp
     src/migration.h                   src/migration.cpp
     src/ownership.h                   src/ownership.cpp
+    src/trustedinstaller.h            src/trustedinstaller.cpp
     src/debloat.h                     src/debloat.cpp
     src/preset.h                      src/preset.cpp
     src/settings.h                    src/settings.cpp
@@ -64,6 +65,7 @@ set(PROJECT_SOURCES
     src/views/contentheader.h         src/views/contentheader.cpp
     src/views/overviewpage.h          src/views/overviewpage.cpp
     src/views/actionpage.h            src/views/actionpage.cpp
+    src/views/tilauncherpage.h        src/views/tilauncherpage.cpp
     src/views/debloatpage.h           src/views/debloatpage.cpp
     src/views/journalpage.h           src/views/journalpage.cpp
     src/views/settingspage.h          src/views/settingspage.cpp
@@ -245,7 +247,7 @@ if(QT_VERSION_MAJOR EQUAL 6 AND ARBITRIUM_STATIC_QT)
     qt_import_plugins(Arbitrium
         EXCLUDE_BY_TYPE sqldrivers
         EXCLUDE Qt6::QTiffPlugin Qt6::QWebpPlugin Qt6::QTgaPlugin Qt6::QWbmpPlugin
-                Qt6::QOpenSSLBackendPlugin
+                Qt6::QTlsBackendOpenSSLPlugin
     )
 endif()
 

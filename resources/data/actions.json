@@ -172,8 +172,10 @@
      "note": "",
      "run": [
       "powercfg -setactive 381b4222-f694-41f0-9685-ff5bb260df2e 2>$null",
+      "$had = ((powercfg -list | Out-String) -match 'a7b3c9d1-4e52-4f68-9c0a-5d1e2f3a4b5c')",
       "powercfg -delete a7b3c9d1-4e52-4f68-9c0a-5d1e2f3a4b5c 2>$null",
-      "if ((powercfg -list | Out-String) -match 'a7b3c9d1-4e52-4f68-9c0a-5d1e2f3a4b5c') { Write-Output 'ARB|ultimatePerfMissing' } else { Write-Output 'ARB|ultimatePerfRemoved' }"
+      "$still = ((powercfg -list | Out-String) -match 'a7b3c9d1-4e52-4f68-9c0a-5d1e2f3a4b5c')",
+      "if (-not $had) { Write-Output 'ARB|ultimatePerfMissing' } elseif ($still) { Write-Output 'ARB|ultimatePerfRemoveFailed' } else { Write-Output 'ARB|ultimatePerfRemoved' }"
      ]
     }
    ]

@@ -32,8 +32,8 @@ public:
     /// Disables the row's own button while a removal touching it is in flight.
     void setBusy(bool busy);
 
-    /// Replaces the description with a result line (e.g. after a removal); clearStatus()
-    /// restores the original text.
+    /// Replaces the description with a result line (e.g. after a removal). The row is
+    /// rebuilt on the next rescan, which is what puts the original text back.
     void setStatus(const QString &text);
 
     PillButton *removeButton() const { return m_removeButton; }

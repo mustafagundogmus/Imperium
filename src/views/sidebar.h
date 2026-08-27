@@ -54,6 +54,10 @@ public:
     /// …and the write history, which is not a category either.
     static QString journalId() { return QStringLiteral("journal"); }
 
+    /// …and the TrustedInstaller launcher, a tool rather than a catalogue category — it
+    /// starts a program under the account that owns the files an administrator cannot.
+    static QString tiLauncherId() { return QStringLiteral("tilauncher"); }
+
     /// True for any of the pinned rows above: pages of their own, none of which the
     /// catalogue knows about. The five comparisons were written out at three separate
     /// call sites in MainWindow, which is three places to forget one when a sixth
@@ -61,7 +65,7 @@ public:
     static bool isPinnedPage(const QString &id)
     {
         return id == settingsId() || id == actionsId() || id == debloatId()
-               || id == journalId() || id == aboutId();
+               || id == journalId() || id == tiLauncherId() || id == aboutId();
     }
 
     /// …and who built it, which is not a category, a setting, or anything you would come
@@ -87,6 +91,7 @@ private:
     void retranslateGroups();
     qreal aboutRowTop() const;
     qreal settingsRowTop() const;
+    qreal tiLauncherRowTop() const;
     qreal actionsRowTop() const;
     qreal journalRowTop() const;
     int bottomBlockHeight() const;
@@ -96,6 +101,7 @@ private:
     QWidget *m_list = nullptr;
     CategoryRow *m_settings = nullptr;
     CategoryRow *m_actions = nullptr;
+    CategoryRow *m_tiLauncher = nullptr;
     CategoryRow *m_journal = nullptr;
     CategoryRow *m_about = nullptr;
     QVector<CategoryRow *> m_rows;          ///< every selectable category row, any order

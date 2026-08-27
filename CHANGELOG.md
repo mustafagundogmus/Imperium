@@ -4,6 +4,97 @@ Bu dosya sürümler arasındaki dikkate değer değişiklikleri listeler.
 Biçim [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) temellidir ve
 proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
+## [0.9.10] — 2026-08-27
+
+Bir yeni araç, altı yeni tema, dört yeni vurgu rengi — ve 0.9.9'un kendi değişikliğinde
+açtığı dokuz gerilemenin kapatılması. 0.9.9 diff'i, düzeltmeleri yaparken yeni hata sokup
+sokmadığını görmek için ayrıca adversarial denetime alındı; aşağıdaki "Düzeltildi" başlığı
+onun bulduklarıdır.
+
+### Eklendi
+
+#### TrustedInstaller Başlatıcı
+
+Sol menüye, Eylemler'in altına yeni bir sekme. Bir yöneticinin bile önce sahipliğini almadan
+dokunamadığı dosya ve anahtarların sahibi olan hesabı — TrustedInstaller — kullanarak bir
+program veya dosya başlatır. Bir yol yazın ya da Gözat ile seçin; Komut İstemi, PowerShell,
+Kayıt Defteri Düzenleyicisi ve Dosya Gezgini için tek dokunuşluk kısayollar da var.
+
+Başlatma yerel Win32 (`src/trustedinstaller.*`), betik değil: TrustedInstaller hizmeti
+başlatılır, ardından yeni süreç o process'i **ebeveyn göstererek** birincil belirtecini miras
+alır — NSudo/PowerRun'ın kullandığı yöntem. Makinede hiçbir şey yazılmaz; yalnızca uygulama
+zaten yükseltilmiş çalıştığı için mümkün, standart bir belirteç bunu hiçbir şekilde yapamaz.
+Yürütülebilir bir dosya doğrudan çalışır; başka her şey (bir betik, bir belge, bir kurulum
+paketi) kabuk üzerinden, kendi ilişkili uygulamasında, yine TrustedInstaller olarak açılır.
+Başlatılan kabukta `whoami` → `nt service\trustedinstaller`. Uygulama yükseltilmemişse sayfa
+kararıp nedenini söyler. Tüm metinler on dilde.
+
+#### Sekiz tema
+
+Görünüm dark/light'tan sekiz palete çıktı. İkisi değişmedi; altısı yeni:
+
+| Tema | Ne |
+|---|---|
+| **Gece** | Siyaha yakın, OLED dostu, kontrastı yükseltilmiş koyu |
+| **Sepya** | Sıcak kâğıt zemin, kahve-gri metin (açık) |
+| **Okyanus** | Maviye çalan koyu |
+| **Orman** | Yeşile çalan koyu |
+| **Alaca** | Mora çalan koyu |
+| **Gül** | Rosé'ye çalan koyu |
+
+Dört tonlu koyu, kontrastı doğrulanmış Dark paletinden **her tokenin parlaklığı birebir
+korunarak, yalnızca ton kaydırılarak** üretildi — hepsinde en soluk içerik tokenı 4.5:1'i
+geçer, Dark'ın referansı gibi. Tint bilerek hafif: fark edilen ama bağırmayan bir zemin.
+Görünüm sistemi iki değerli bir enum'dan isimli bir palet yapısına taşındı; `--theme`,
+kalıcılık, tema anahtarı (artık 4×2 ızgara) ve on dildeki isimler buna göre güncellendi.
+
+#### Sekiz vurgu rengi
+
+Dörtten sekize: amber, sage, periwinkle, neutral üstüne kil gülü, sis mavisi, yumuşak mor ve
+sakin yeşil. Hepsi aynı düşük doygunluklu register'da — vurgu, dolu bir alan değil, seçili
+satırın arkasındaki yıkama ve bir düğme üzerindeki metin olduğu için.
+
+### Düzeltildi
+
+0.9.9'un kendi diff'i denetlendi; bulunan dokuz gerileme:
+
+- **Escape kısayolu ters bağlanmıştı.** Uygulama katmanı açıkken kısayolu kapatması
+  gerekirken açıyordu (Escape yine perdenin arkasındaki aramayı siliyordu), katman
+  kapanınca da kalıcı olarak kapatıyordu — böylece o oturum boyunca Escape aramayı hiç
+  temizlemiyordu.
+- **Dil değiştirmek üç SysInfo alanını siliyordu.** Etkinleştirme, son geri yükleme noktası
+  ve son güncelleme yalnızca eşzamansız yoklamadan gelir; dil değişiminde `SysInfo::collect()`
+  yeniden okunuyor ve bu üçünü boşaltıyordu. `SysInfo::Probe::retranslate()` eklendi; yoklamanın
+  sakladığı cevabı, ikinci kez çalıştırmadan yeni struct'a yeniden yansıtıyor.
+- **Bir tweak'in Türkçe açıklaması i18n ile çelişiyordu.** `wu-WPFToggleStartMenuRecommendations`'ın
+  kutupluluğu ters çevrilirken i18n güncellendi ama katalogdaki satır içi Türkçe açıklama eski
+  yönü anlatmaya devam ediyordu — ve `Locale::content` Türkçede tam olarak o satır içi metni
+  kullanır. Senkronlandı.
+- **Ultimate Performance kaldırma kontrolü tersti.** `-match` silmeden *sonra* çalışıyordu; eşleşme
+  silmenin başarısız olduğu anlamına gelirken "plan yoktu" diyor, plan gerçekten yoksa "kaldırıldı"
+  diyordu. Silmeden önce ölçülüyor artık, ve kaldırılamama için yeni bir sonuç anahtarı eklendi.
+- **CMake, var olmayan bir OpenSSL TLS eklenti hedefini dışlıyordu** (`QOpenSSLBackendPlugin`),
+  dolayısıyla hiçbir şey yapmıyordu — gerçek ad `QTlsBackendOpenSSLPlugin`.
+- **Tema ayarlayıcıları kalıcılık yazmasını kimlik korumasından *sonra* yapıyordu**, böylece bir
+  `--theme` bayrağının ayarladığı değeri kullanıcı ayarlardan aynen seçerse kayıt atlanıyordu.
+- **RTL metin yanlış uçtan kırpılıyordu.** Arapça için `ElideLeft`, çift ters çevirmeye yol açıp
+  etiketin başını kesiyordu; iki yön için de `ElideRight`, çünkü bidi yeniden sıralaması üç
+  noktayı zaten okuma-ucu tarafına koyar.
+- **Açılış güncelleme denetimi sürerken butona basılırsa** o basış yutuluyor ve satır
+  "Denetleniyor…"da kalıyordu; devam eden isteğin kaynağı artık taşınıyor.
+- Silinen `clearStatus()`'a işaret eden bir yorum, taşınan sabitlerden geri kalan yetim bir
+  yorum ve boş bir isim uzayı, ve kaldırılan `LinkLabel` ile ölen `Font::link()` biçemi temizlendi.
+
+### Değiştirildi
+
+- Görünüm `Theme::Appearance` artık iki değil sekiz şema taşıyor; palet isimle saklanıyor, sayıyla
+  değil, böylece sıra serbestçe değişebilir.
+- Vurgu paleti `Theme::accentPresets()` dörtten sekiz renge çıktı; `AccentPicker` genişliğini
+  kendi hesapladığı için kod dışında bir değişiklik gerekmedi.
+- Tema anahtarı `ThemeSwitch` sabit iki karttan `Order[]` üzerinde bir 4×2 ızgaraya genelleştirildi.
+
+---
+
 ## [0.9.9] — 2026-08-26
 
 0.9.8 büyük bir sürümdü ve büyük sürümlerin bıraktığı izleri bıraktı. Bu sürüm yeni özellik
@@ -418,5 +509,6 @@ satırdan geniş bir değer sol kenardan taşarak çiziliyordu.
 
 ---
 
+[0.9.10]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.10
 [0.9.9]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.9
 [0.9.8]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.8

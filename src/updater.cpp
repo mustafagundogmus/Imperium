@@ -47,9 +47,16 @@ int Updater::compareVersions(const QString &a, const QString &b)
 
 void Updater::check(bool userInitiated)
 {
-    if (m_busy)
+    if (m_busy) {
+        // A button press that lands while the launch-time check is still open is not
+        // lost — it adopts the request already in flight, which is answering the same
+        // question. Otherwise its reply came back marked silent and the settings row,
+        // set to "Denetleniyor…" by the press, was never rewritten.
+        m_pendingUserInitiated = m_pendingUserInitiated || userInitiated;
         return;
+    }
     m_busy = true;
+    m_pendingUserInitiated = userInitiated;
 
     QNetworkRequest request(QUrl(QStringLiteral("https://api.github.com/repos/%1/%2/releases/latest")
                                      .arg(Owner, Repo)));
@@ -61,7 +68,7 @@ void Updater::check(bool userInitiated)
     request.setTransferTimeout(10000);
 
     QNetworkReply *reply = m_network->get(request);
-    connect(reply, &QNetworkReply::finished, this, [this, reply, userInitiated] {
+    connect(reply, &QNetworkReply::finished, this, [this, reply] {
         reply->deleteLater();
         m_busy = false;
 
@@ -70,10 +77,10 @@ void Updater::check(bool userInitiated)
             // A repo with no published release answers 404; that is not a failure.
             if (status == 404) {
                 Q_EMIT finished(false, QString(), releasesUrl(),
-                                Locale::tr(QStringLiteral("err.noRelease")), userInitiated);
+                                Locale::tr(QStringLiteral("err.noRelease")), m_pendingUserInitiated);
                 return;
             }
-            Q_EMIT finished(false, QString(), releasesUrl(), reply->errorString(), userInitiated);
+            Q_EMIT finished(false, QString(), releasesUrl(), reply->errorString(), m_pendingUserInitiated);
             return;
         }
 
@@ -81,12 +88,12 @@ void Updater::check(bool userInitiated)
         const QString tag = release.value(QStringLiteral("tag_name")).toString();
         if (tag.isEmpty()) {
             Q_EMIT finished(false, QString(), releasesUrl(),
-                            Locale::tr(QStringLiteral("err.badResponse")), userInitiated);
+                            Locale::tr(QStringLiteral("err.badResponse")), m_pendingUserInitiated);
             return;
         }
 
         const QString url = release.value(QStringLiteral("html_url")).toString(releasesUrl());
         const bool newer = compareVersions(tag, QCoreApplication::applicationVersion()) > 0;
-        Q_EMIT finished(newer, tag, url, QString(), userInitiated);
+        Q_EMIT finished(newer, tag, url, QString(), m_pendingUserInitiated);
     });
 }

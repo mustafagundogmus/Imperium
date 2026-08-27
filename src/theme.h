@@ -21,7 +21,18 @@ namespace Theme {
 // are looked up through Theme::palette() instead of being compile-time constants —
 // the names and their roles are unchanged, they just answer to the current appearance.
 
-enum class Appearance { Dark, Light };
+// The order here is the order the theme switch shows them in, and the numeric values are
+// never persisted (a name is — see schemeToString), so this can be reordered freely.
+enum class Appearance { Dark, Light, Midnight, Sepia, Ocean, Forest, Dusk, Rose };
+
+/// Which family a scheme belongs to, for the handful of decisions that turn on "is the
+/// ground light or dark" rather than on the exact palette — the accent wash's alpha, the
+/// darkened accent ink for readable text, the border glow. Midnight is a darker Dark;
+/// Sepia is a warmer Light.
+inline bool isLightFamily(Appearance a)
+{
+    return a == Appearance::Light || a == Appearance::Sepia;
+}
 
 struct Palette
 {
@@ -245,7 +256,6 @@ const QFont &kbd();                ///< "⌃K" badge              mono 9
 const QFont &categoryName();       ///< sidebar row             sans 12.5 / 450
 const QFont &categoryNameSelected();///< sidebar row, selected  sans 12.5 / 500
 const QFont &categoryCount();      ///< sidebar count           mono 10
-const QFont &link();               ///< "Yeni oluştur"          sans 10.5
 const QFont &pageTitle();          ///< "Gizlilik"              sans 15 / 600 / -.01em
 const QFont &pageSub();            ///< "31 tweak · 12 etkin ·" sans 11
 const QFont &segment();            ///< Tümü / Etkin / Değişen  sans 11

@@ -76,7 +76,12 @@ void drawText(QPainter *p, const QRectF &box, qreal baselineY, const QFont &f,
     const QFontMetricsF fm(f);
     qreal w = fm.horizontalAdvance(s);
     if (elide && w > box.width()) {
-        s = fm.elidedText(s, rtl ? Qt::ElideLeft : Qt::ElideRight, box.width());
+        // ElideRight for both: QFontMetrics elides the logical string, and the bidi
+        // reorder at paint time places the ellipsis on the reading-end side on its own
+        // — so an RTL label keeps its start and drops its tail, the same as an LTR one.
+        // Deriving the mode from the language double-flipped it and cut Arabic labels
+        // off at the front.
+        s = fm.elidedText(s, Qt::ElideRight, box.width());
         w = fm.horizontalAdvance(s);
     }
 
