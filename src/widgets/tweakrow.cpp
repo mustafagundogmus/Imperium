@@ -106,6 +106,27 @@ TweakRow::TweakRow(const Tweak &tweak, AppState *state, QWidget *parent)
             m_toggle->setEnabled(false);
     }
 
+    // Nothing in this row is a stock widget. The name and the description are drawn in
+    // paintEvent and the control beside them is custom too, so to a screen reader the row
+    // is an unnamed rectangle containing an unnamed thing — setAccessibleName appeared
+    // nowhere in src/ before this. The strings cost nothing to supply: the row is already
+    // holding them in order to paint them. The control is named as well as the row because
+    // the control is what takes focus, and a row that cannot say which switch is focused
+    // is a poor thing to hand somebody in a program that writes to the registry as
+    // administrator. A row that cannot be operated describes itself by the reason it
+    // cannot, which is what its greyed-out state and requirement line say to everyone else.
+    const QString detail = (m_applicable || m_requirement.isEmpty()) ? m_desc : m_requirement;
+    setAccessibleName(m_name);
+    setAccessibleDescription(detail);
+    for (QWidget *control : {static_cast<QWidget *>(m_toggle),
+                             static_cast<QWidget *>(m_segments),
+                             static_cast<QWidget *>(m_slider)}) {
+        if (!control)
+            continue;
+        control->setAccessibleName(m_name);
+        control->setAccessibleDescription(detail);
+    }
+
     positionToggle();
 }
 

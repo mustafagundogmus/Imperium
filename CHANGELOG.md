@@ -200,6 +200,20 @@ yanına konan bir `tbs.dll` yönetici yetkisiyle yüklenirdi. İkisi de artık
 `SetDefaultDllDirectories` **bilerek** konmadı — o, native dosya diyaloglarının yüklediği
 shell extension'ları da etkiler ve bu değişikliğin böyle bir takasa ihtiyacı yok.
 
+### Erişilebilirlik
+
+#### Tweak satırları artık ekran okuyucuya adlarını söylüyor
+
+Bir tweak satırındaki hiçbir şey hazır bir widget değil: ad ve açıklama `paintEvent`'te
+çiziliyor, yanındaki kontrol de özel. Yani bir ekran okuyucu için satır, içinde adsız bir şey
+olan adsız bir dikdörtgendi — `setAccessibleName` tüm `src/` içinde hiç geçmiyordu.
+
+Metinler zaten üye olarak duruyordu, çünkü satır onları çizmek için tutuyor. Hem satıra hem
+kontrole veriliyorlar; kontrole de, çünkü odağı alan o. Uygulanamayan bir satır ise kendini
+açıklaması yerine *neden* uygulanamadığıyla tanıtıyor — görsel tarafta soluk hâli ve gereksinim
+satırı zaten bunu söylüyor. Registry'ye yönetici yetkisiyle yazan bir programda hangi anahtarın
+odakta olduğunu söyleyememek kozmetik bir eksik değil.
+
 ---
 
 ## [0.9.10] — 2026-08-27
