@@ -234,6 +234,25 @@ Okuma ve yazma aynı kod sayfasında (`Get-Content` Windows PowerShell'de ANSI o
 giriyor. Altı çeviri anahtarı on dilde eklendi; 6. anahtar her dilde o dilin kendi action
 adını alıntılıyor.
 
+#### `tools/screenshots.ps1` — README'nin görsellerini tek komutla almak
+
+Depoda tek bir ekran görüntüsü yok, oysa uygulama kendini fotoğraflamayı zaten biliyor:
+`--screenshot <yol>` pencerenin PNG'sini yazıp çıkıyor, `--theme`, `--typeface`,
+`--category` ve `--search` de içinde ne olacağına karar veriyor. Eksik olan tek şey,
+tutmaya değer kareler listesiydi — script sadece o.
+
+Sekiz kare: Gizlilik (koyu), Görünüm (açık), Dosya Gezgini (okyanus), Debloat, Eylemler,
+Günlük, TrustedInstaller (gece) ve Ayarlar (sepya). Sürüm başına yenilemek bir komut.
+
+İki şeyi bilerek yapmıyor. **CI'da çalışmıyor**: uygulama `requireAdministrator` ve Genel
+Bakış sayfası canlı makineyi okuyor, yani runner'da alınan bir görüntü aktive edilmemiş bir
+Azure VM'in bilgilerini reklam ederdi. **Genel Bakış sayfasını istenmedikçe fotoğraflamıyor**:
+etkinleştirme durumu, BIOS/SMBIOS dizeleri, disk seri numaraları, BitLocker durumu ve makine
+adı orada. `-IncludeOverview` var, ama seçenek olsun diye — iyi fikir olduğu için değil.
+
+Yükseltilmiş bir kabuktan çalıştırılması öneriliyor: exe kim başlatırsa başlatsın yönetici
+hakkı istiyor, yani yükseltilmemiş bir kabukta sekiz kare sekiz onay demek.
+
 ---
 
 ## [0.9.10] — 2026-08-27
