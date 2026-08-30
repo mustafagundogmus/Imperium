@@ -146,6 +146,22 @@ olanla, 1254 ile okur. DISM, cleanmgr ve icacls'in her ASCII olmayan baytı hem 
 hem `actions.log`'da bozuk görünüyordu. Çözüm zaten depodaydı: `ownership.cpp` bunu bulup
 yerel olarak düzeltmişti. Artık `src/console.h` ortak evi ve ikisi de onu kullanıyor.
 
+### Değiştirildi
+
+#### `-Wall -Wextra -Wshadow` artık build'in kendisinde
+
+0.9.10 commit'i "compiles clean under -Wall -Wextra -Wshadow" diyordu ama `CMakeLists.txt`'de
+tek bir uyarı bayrağı yoktu: bu, elle hatırlanması gereken bir kontroldü. Ölçüldü — yirmi bin
+satırın tamamı bu üç bayrak altında **sıfır** uyarı veriyor. Yani korunacak durum zaten
+mevcut olan durum; bayraklar artık MinGW/GCC derlemelerinde her zaman açık.
+
+Bilerek fatal değil. İlk yeni uyarıyı bulan derleyici build'i bitirip onu göstermeli, orada
+durmamalı; okunacağı yer de CI log'u. `-Werror` oraya ait, ve ancak o job bir derleyici
+yükseltmesinden sessiz çıktıktan sonra: MSYS2 hangi GCC'yi taşıyorsa onu taşır ve bir salı
+günü gelen yeni bir major sürüm, kimsenin yazmadığı bir uyarıyı herkesin commit'inin
+düştüğü bir build'e çevirirdi. `ci.yml`'deki gerekçe de buna göre düzeltildi — orada
+"uyarı zemini temiz değil" yazıyordu, ki ölçüm bunun tersini söylüyor.
+
 ---
 
 ## [0.9.10] — 2026-08-27

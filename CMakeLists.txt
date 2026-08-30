@@ -190,6 +190,20 @@ else()
     target_compile_options(Arbitrium PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
 endif()
 
+# Warnings, which until now were something to remember to switch on by hand. Measured over
+# the whole tree: -Wall -Wextra -Wshadow produce exactly zero warnings across the twenty
+# thousand lines in src/, so the state worth protecting is the one that already exists.
+#
+# Deliberately not fatal. The compiler that finds the first new one should finish the build
+# and show it rather than stopping at it, and CI's log is where it gets read. -Werror
+# belongs there rather than here, and only once that job has survived a compiler bump —
+# MSYS2 ships whichever GCC it ships, and a new major arriving on a Tuesday would otherwise
+# fail everybody's commit over a warning nobody wrote. MSVC is left alone: this measurement
+# was taken with GCC, and the project ships a MinGW build.
+if(NOT MSVC)
+    target_compile_options(Arbitrium PRIVATE -Wall -Wextra -Wshadow)
+endif()
+
 # Copy the Qt runtime next to the executable after every link.
 #
 # Without this the build only runs from a shell that already has Qt's bin directory on

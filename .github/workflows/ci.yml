@@ -249,8 +249,12 @@ jobs:
 #   * clang-format. There is no .clang-format in this repository, so the first run would
 #     reformat twenty thousand lines and fail on all of them.
 #   * clang-tidy. Same: no .clang-tidy, and no agreed check list to put in one.
-#   * -Werror. The warning baseline is not clean. Turning it on here would fail every commit
-#     until somebody clears warnings that predate all of them.
+#   * -Werror. Not for the usual reason: -Wall -Wextra -Wshadow are on in CMakeLists.txt and
+#     the tree produces zero warnings under them, measured across all twenty thousand lines.
+#     The reason is that this job's compiler is not the one anybody develops against. MSYS2
+#     ships whichever GCC it ships, and a new major version landing on a Tuesday would turn
+#     a diagnostic nobody wrote into a build every commit fails. Worth turning on once this
+#     job has been through a compiler bump and stayed quiet.
 #   * A test runner. There is no test target yet; there is nothing for it to run.
 #
 # Each of those would fail on its first run for reasons that have nothing to do with the commit
