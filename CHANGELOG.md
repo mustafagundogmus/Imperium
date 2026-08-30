@@ -25,6 +25,28 @@ oradan tanıyor.
 - **`app.rc`'ye `LegalCopyright` eklendi**, böylece exe zip'inden çıkıp tek başına dolaştığında
   da bildirim Özellikler → Ayrıntılar altında görünüyor.
 
+### Düzeltildi
+
+#### Servis satırları, kullanıcının seçmediği bir Start değeri yazabiliyordu
+
+`Tweak::literal` tam olarak şu satırlar için var: `defaultOption`'ı Windows'un gönderdiği
+değerden değil, bu makinede bulunan durumdan türetenler. Böyle bir satırı varsayılan konumuna
+almak journal'a danışmamalı — kendi option verisini yazmalı. Başlangıç öğeleri bunu ayarlıyordu
+(`catalog.cpp:291`), servisler ayarlamıyordu, oysa `defaultOption`'ı tam aynı şekilde canlı
+makineden türetiyorlar.
+
+Sonuç: bir oturumda disable edilen servis için sonraki açılışta `defaultOption` Disabled olarak
+hesaplanır. Kullanıcı Auto seçip fikrini değiştirip Disabled'a dönerse `tweakengine.cpp:227`'deki
+`restoring` true olur ve motor journal'daki eski `Start`'ı yazar. Servis Auto'da kalır, satır ve
+uygulanan sayacı Disabled der. Kilitli servisler zaten dışarıda olduğu için makine bootsuz
+kalmıyordu, ama servis satırları katalogdaki en kalabalık grup.
+
+`AppState::applyOne()` artık başarılı bir yazmadan sonra `refreshFromMachine()` çağırıyor.
+"Yazma başarılı döndü" ile "makine artık o konumu okuyor" aynı iddia değil, ve yapıcı zaten
+ikincisine inanıyor: `m_applied`'ı `readAll()` ile dolduruyor. Motorun sözüne güvenmek, satırın
+oturum boyunca bir şey, bir sonraki açılışın başka bir şey söylemesine yol açıyordu — bu sınıf
+farklılığın tamamını kapatıyor.
+
 ---
 
 ## [0.9.10] — 2026-08-27

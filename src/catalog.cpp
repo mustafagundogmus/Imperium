@@ -228,6 +228,14 @@ void Catalog::appendServices()
         else
             t.defaultOption = service.start == 3 ? 2 : 3;
 
+        // …which is exactly why the baseline is not a stand-in the journal could improve
+        // on — see Tweak::literal. Every position here is already the literal Start and
+        // DelayedAutostart pair. Without this, picking the position the machine happened
+        // to be found in makes apply() consult the journal instead and write the Start an
+        // earlier session recorded, so the service stays where it was while the row and
+        // the applied count both say it moved.
+        t.literal = true;
+
         section.tweaks.append(t);
         ++m_total;
     }

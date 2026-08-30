@@ -189,6 +189,14 @@ AppState::StepOutcome AppState::applyOne(const QString &id)
         m_pending.remove(id);
 
         Q_EMIT pendingChanged();
+
+        // "The write returned success" and "the machine now reads as that position" are
+        // not the same claim, and the constructor already believes the second one: it
+        // seeds m_applied from readAll(). Taking the engine's word here instead left the
+        // row saying one thing for the rest of the session and the next launch saying
+        // another. Reading it back costs one tweak's worth of registry reads and returns
+        // early when they agree, which is the ordinary case.
+        refreshFromMachine(id);
     }
 
     return outcome;
