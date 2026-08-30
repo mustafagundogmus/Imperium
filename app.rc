@@ -25,6 +25,10 @@ BEGIN
             VALUE "FileDescription",  "Arbitrium"
             VALUE "FileVersion",      "0.9.10"
             VALUE "InternalName",     "Arbitrium"
+            // MIT asks that the notice travel with every copy; on Windows a copy of the
+            // binary alone is the common case, and this is where the shell shows it —
+            // Properties, Details, Copyright.
+            VALUE "LegalCopyright",   "Copyright (c) 2026 ShadesOfDeath. MIT License."
             VALUE "OriginalFilename", "Arbitrium.exe"
             VALUE "ProductName",      "Arbitrium"
             VALUE "ProductVersion",   "0.9.10"

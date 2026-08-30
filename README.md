@@ -10,7 +10,7 @@ Arbitrium is where you overrule them — 391 of them, one switch at a time.
 [![Windows 10 | 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?style=for-the-badge&logo=windows11&logoColor=white)](#)
 [![Portable](https://img.shields.io/badge/Install-Not%20Required-2ea44f?style=for-the-badge)](#)
 [![Languages](https://img.shields.io/badge/Languages-10-8957e5?style=for-the-badge)](#every-word-in-ten-languages)
-[![License](https://img.shields.io/badge/License-Open%20Source-d2a75a?style=for-the-badge)](#)
+[![License](https://img.shields.io/badge/License-MIT-d2a75a?style=for-the-badge)](LICENSE)
 
 </div>
 
@@ -145,8 +145,8 @@ Because a tool you'll actually open should be worth looking at.
 
 1. Download **`Arbitrium-vX.Y.Z-win64.exe`** from the [latest release](https://github.com/shadesofdeath/Arbitrium/releases/latest).
    That single file *is* the application — Qt is linked into it, so there is nothing to unpack
-   and nothing to put beside it. (The `.zip` next to it holds the same executable and this
-   README, for anyone whose browser dislikes a bare `.exe`.)
+   and nothing to put beside it. (The `.zip` next to it holds the same executable, this README
+   and the licence, for anyone whose browser dislikes a bare `.exe`.)
 2. Run it. **No installation, no setup wizard, no bundled toolbar.** One executable.
 3. On first launch, pick your language and your look.
 4. Flip what you want. Press **Apply** when you mean it.
@@ -164,6 +164,22 @@ an adult who read the description.
 
 Start with a restore point. Change things in small batches. The Log page is right there if
 something isn't what you expected.
+
+---
+
+## License
+
+Arbitrium is released under the **[MIT License](LICENSE)** — read it, fork it, ship it, build
+something else out of it. Keep the copyright notice with it and the rest is yours.
+
+Two pieces inside it carry licences of their own, and they stay with the binary:
+
+- **Qt 6.11** — statically linked, used under the [LGPL v3](https://www.qt.io/licensing). The
+  release workflow, [`.github/workflows/release.yml`](.github/workflows/release.yml), builds that
+  Qt from the upstream tarballs and records every configure flag it was built with — which is what
+  you need to reproduce this binary, or to relink it against a Qt of your own.
+- **IBM Plex** — the bundled typefaces, under the
+  [SIL Open Font License 1.1](resources/fonts/LICENSE-IBMPlex.txt).
 
 ---
 

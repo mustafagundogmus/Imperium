@@ -4,6 +4,29 @@ Bu dosya sürümler arasındaki dikkate değer değişiklikleri listeler.
 Biçim [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) temellidir ve
 proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
+## [Yayınlanmamış]
+
+### Eklendi
+
+#### MIT lisansı
+
+Depo bugüne kadar lisanssızdı: README'deki rozet "Open Source" diyordu ama hiçbir yere
+bağlanmıyordu ve kökte bir `LICENSE` dosyası yoktu — yani kaynak herkese açık olsa da kimsenin
+onu kullanma, değiştirme veya dağıtma izni yoktu. Artık kökte MIT var; GitHub da lisansı
+oradan tanıyor.
+
+- **`LICENSE`** — MIT metni, `Copyright (c) 2026 ShadesOfDeath`.
+- **README'deki rozet** artık MIT diyor ve dosyanın kendisine bağlanıyor. Sonuna bir **License**
+  bölümü eklendi; bölüm, binary'nin içinde taşınan iki üçüncü taraf lisansını da anıyor:
+  Qt 6.11 (LGPL v3 — statik linklendiği için, onu yeniden linklemeye yetecek her şeyin release
+  workflow'unda durduğu notuyla) ve IBM Plex (SIL OFL 1.1).
+- **Release zip'i artık `LICENSE`'ı da taşıyor.** MIT, bildirimin her kopyayla birlikte gitmesini
+  istiyor; zip'te bugüne kadar yalnızca exe ile README vardı.
+- **`app.rc`'ye `LegalCopyright` eklendi**, böylece exe zip'inden çıkıp tek başına dolaştığında
+  da bildirim Özellikler → Ayrıntılar altında görünüyor.
+
+---
+
 ## [0.9.10] — 2026-08-27
 
 Bir yeni araç, altı yeni tema, dört yeni vurgu rengi — ve 0.9.9'un kendi değişikliğinde
@@ -509,6 +532,7 @@ satırdan geniş bir değer sol kenardan taşarak çiziliyordu.
 
 ---
 
+[Yayınlanmamış]: https://github.com/shadesofdeath/Arbitrium/compare/v0.9.10...main
 [0.9.10]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.10
 [0.9.9]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.9
 [0.9.8]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.8

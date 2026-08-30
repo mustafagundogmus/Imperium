@@ -325,12 +325,12 @@ jobs:
           exe="Arbitrium-v$version-win64.exe"
 
           # Two assets, one build. The zip is the same executable under the same name plus
-          # the README — which is exactly what 0.9.5, 0.9.6 and 0.9.7 shipped, down to the
-          # two entries.
+          # the README — as 0.9.5 through 0.9.7 shipped it — and now LICENSE beside it,
+          # because MIT asks that the notice travel with every copy of the software.
           cp build/Arbitrium.exe "$exe"
           mkdir -p stage
-          cp "$exe" README.md stage/
-          (cd stage && zip -9 -X "../Arbitrium-v$version-win64.zip" "$exe" README.md)
+          cp "$exe" README.md LICENSE stage/
+          (cd stage && zip -9 -X "../Arbitrium-v$version-win64.zip" "$exe" README.md LICENSE)
 
           ls -l "Arbitrium-v$version-win64.exe" "Arbitrium-v$version-win64.zip"
           unzip -l "Arbitrium-v$version-win64.zip"
