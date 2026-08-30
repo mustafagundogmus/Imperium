@@ -109,6 +109,43 @@ Windows'un kendi Sistem Koruması penceresini açıyor, ve oradaki yorum bunun b
 söylüyor: nokta oluşturmak sistemi değiştirir, bu build ise istenmeden hiçbir şey yazmıyor.
 Uygulama içi metin (`settings.restore.point`) zaten dürüsttü; README onu takip ediyor artık.
 
+#### Action'lar başarısızlığı başarı olarak raporluyordu
+
+PowerShell'in varsayılanı bir cmdlet hatasını yazdırıp bir sonraki satıra geçmek ve 0 ile
+çıkmak. Buradaki her script de kendi sonuç satırını `Write-Output 'ARB|…'` ile basarak
+bitiyor — o bir cmdlet ve her zaman başarılı. Yani asıl işi başarısız olan bir action
+`exitCode == 0` döndürüyor (`actionengine.cpp:73`) ve kullanıcıya temiz koşu için yazılmış
+sonuç cümlesi gösteriliyordu.
+
+`Action::script()` artık script'in başına `$ErrorActionPreference = 'Stop'` koyuyor. Sessizce
+geçmesi *istenen* satırlar bunu kendileri `-ErrorAction SilentlyContinue` ile söylüyor ve
+parametre tercihi yeniyor — bu makinede ölçüldü: korumasız bir cmdlet hatası artık exit 1
+veriyor ve ARB satırına hiç gelinmiyor, `-EA SilentlyContinue` taşıyan aynı hata ise exit 0
+verip devam ediyor. Preamble `ActionEngine::run()` yerine `script()` içinde, çünkü onay
+diyaloğu bu metni gösteriyor ve `action.h`'nin başındaki söz "okuduğun şey çalışır".
+
+Yerel programlar `$ErrorActionPreference`'ı umursamaz, çıkış kodlarıyla konuşurlar. DISM'in
+"bitti, yeniden başlatma lazım" dediği 3010 kabul ediliyor, başka her sıfır olmayan kod
+action'ı düşürüyor. `cleanmgr`'ınki bilerek okunmuyor — silecek bir şey bulamadığında da
+sıfır olmayan dönüyor — ve script bunu kendi içinde yazıyor, çünkü onay diyaloğu okunuyor.
+
+`act-store-search`'te rapor komutla aynı satırdaydı, noktalı virgülden sonra: icacls bir şey
+yapmasa da basılıyordu. Ayrıldı ve `$LASTEXITCODE`'a bağlandı. Principal de artık SID ile
+adlandırılıyor (`*S-1-1-0`), hem komutta hem de on dildeki geri alma talimatında.
+
+Bu arada ölçülen ve `ownership.cpp`'deki yorumun tersini söyleyen bir şey: Türkçe bir kurulumda
+icacls **İngilizce** `Everyone` ve `Administrators` adlarını çözüyor, yerelleştirilmiş `Herkes`
+ve `Yöneticiler` ise 1332 ile başarısız oluyor. SID kullanmak yine doğru — hiçbir aramaya
+ihtiyaç duymuyor — ama gerekçesi yorumun yazdığı gerekçe değildi; düzeltildi.
+
+#### Action çıktısı yanlış kod sayfasıyla çözülüyordu
+
+`actionengine.cpp:72` `QString::fromLocal8Bit` kullanıyordu. Konsol programları çıktılarını
+bir pipe'a yazarken *konsol* çıkış kod sayfasını kullanır — Türkçe kurulumda 857 — Qt ise ANSI
+olanla, 1254 ile okur. DISM, cleanmgr ve icacls'in her ASCII olmayan baytı hem eylem panelinde
+hem `actions.log`'da bozuk görünüyordu. Çözüm zaten depodaydı: `ownership.cpp` bunu bulup
+yerel olarak düzeltmişti. Artık `src/console.h` ortak evi ve ikisi de onu kullanıyor.
+
 ---
 
 ## [0.9.10] — 2026-08-27

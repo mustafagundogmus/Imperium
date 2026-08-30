@@ -17,6 +17,7 @@ set(PROJECT_SOURCES
     src/theme.h                       src/theme.cpp
     src/i18n.h                         src/i18n.cpp
     src/css.h                         src/css.cpp
+    src/console.h                     src/console.cpp
     src/icons.h                       src/icons.cpp
     src/catalog.h                     src/catalog.cpp
     src/action.h                      src/action.cpp

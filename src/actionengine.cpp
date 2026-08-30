@@ -1,4 +1,5 @@
 #include "actionengine.h"
+#include "console.h"
 #include "i18n.h"
 
 #include "action.h"
@@ -69,7 +70,10 @@ void ActionEngine::onFinished(int exitCode)
     if (!m_process)
         return;
 
-    const QString output = QString::fromLocal8Bit(m_process->readAll()).trimmed();
+    // DISM, cleanmgr, icacls and powershell's own error text all reach here through one
+    // pipe, and the action page prints it verbatim. fromLocal8Bit read it with the ANSI
+    // code page while the console wrote it with the OEM one — see console.h.
+    const QString output = Console::decode(m_process->readAll()).trimmed();
     const bool ok = exitCode == 0;
 
     QFile log(m_logPath);

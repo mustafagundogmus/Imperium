@@ -528,16 +528,16 @@
   "tr": "Store önerilen arama sonuçlarını kapat"
  },
  "action.act-store-search.note": {
-  "ar": "يغيّر أذونات الملف باستخدام icacls؛ وللتراجع نفّذ /remove:d Everyone على الملف نفسه.",
-  "de": "Ändert eine Dateiberechtigung mit icacls; zum Rückgängigmachen wird für dieselbe Datei /remove:d Everyone ausgeführt.",
-  "en": "It changes a file permission with icacls; to undo it, run /remove:d Everyone on the same file.",
-  "es": "Cambia un permiso de archivo con icacls; para deshacerlo, ejecuta /remove:d Everyone en el mismo archivo.",
-  "fr": "Modifie une autorisation de fichier avec icacls ; pour annuler, exécutez /remove:d Everyone sur le même fichier.",
-  "it": "Modifica un'autorizzazione file con icacls; per annullare, esegui /remove:d Everyone sullo stesso file.",
-  "pl": "Zmienia uprawnienia pliku za pomocą narzędzia icacls; aby cofnąć zmianę, wykonaj /remove:d Everyone na tym samym pliku.",
-  "pt": "Altera uma permissão de arquivo com o icacls; para desfazer, execute /remove:d Everyone no mesmo arquivo.",
-  "ru": "Изменяет разрешение файла с помощью icacls; чтобы отменить, выполните /remove:d Everyone для того же файла.",
-  "tr": "icacls ile dosya izni değiştirir; geri almak için aynı dosyadan /remove:d Everyone yapılır."
+  "ar": "يغيّر أذونات الملف باستخدام icacls؛ وللتراجع نفّذ /remove:d *S-1-1-0 على الملف نفسه.",
+  "de": "Ändert eine Dateiberechtigung mit icacls; zum Rückgängigmachen wird für dieselbe Datei /remove:d *S-1-1-0 ausgeführt.",
+  "en": "It changes a file permission with icacls; to undo it, run /remove:d *S-1-1-0 on the same file.",
+  "es": "Cambia un permiso de archivo con icacls; para deshacerlo, ejecuta /remove:d *S-1-1-0 en el mismo archivo.",
+  "fr": "Modifie une autorisation de fichier avec icacls ; pour annuler, exécutez /remove:d *S-1-1-0 sur le même fichier.",
+  "it": "Modifica un'autorizzazione file con icacls; per annullare, esegui /remove:d *S-1-1-0 sullo stesso file.",
+  "pl": "Zmienia uprawnienia pliku za pomocą narzędzia icacls; aby cofnąć zmianę, wykonaj /remove:d *S-1-1-0 na tym samym pliku.",
+  "pt": "Altera uma permissão de arquivo com o icacls; para desfazer, execute /remove:d *S-1-1-0 no mesmo arquivo.",
+  "ru": "Изменяет разрешение файла с помощью icacls; чтобы отменить, выполните /remove:d *S-1-1-0 для того же файла.",
+  "tr": "icacls ile dosya izni değiştirir; geri almak için aynı dosyadan /remove:d *S-1-1-0 yapılır."
  },
  "action.act-svchost-threshold.desc": {
   "ar": "يجعل الحد الذي يقسّم عنده svchost الخدمات إلى عمليات منفصلة مساويًا لحجم ذاكرة الوصول العشوائي في الجهاز، فتُجمَّع الخدمات في عملية واحدة وينخفض استهلاك الذاكرة.",

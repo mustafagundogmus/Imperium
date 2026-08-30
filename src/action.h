@@ -24,7 +24,23 @@ struct Action
     QString note;              ///< the caveat the confirmation spells out
     QStringList run;           ///< PowerShell, one line per entry
 
-    QString script() const { return run.join(QLatin1Char('\n')); }
+    /// The whole script, preamble included.
+    ///
+    /// PowerShell's default is to print a cmdlet error, carry on to the next line, and
+    /// exit 0 — and every script here ends by printing its own ARB result line, which is
+    /// a cmdlet and always succeeds. So an action whose real work failed reported success,
+    /// and the line the user was shown was the one written for a clean run. `Stop` makes a
+    /// cmdlet error terminating, powershell.exe exits non-zero for that, and that is what
+    /// ActionEngine already reads. The lines that are *meant* to fail quietly say so
+    /// themselves with -ErrorAction SilentlyContinue, and a parameter beats the preference.
+    ///
+    /// Prepended here rather than in ActionEngine::run() on purpose: the confirmation
+    /// dialog shows this string, and the promise at the top of this file is that what you
+    /// read is what runs.
+    QString script() const
+    {
+        return QStringLiteral("$ErrorActionPreference = 'Stop'\n") + run.join(QLatin1Char('\n'));
+    }
 
     /// The text in the interface language, falling back to the Turkish in actions.json
     /// when this action has not been translated yet — same contract as Tweak's.

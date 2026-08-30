@@ -12,8 +12,8 @@
      "note": "Geri almak için paketleri Microsoft Store'dan yeniden kurmak gerekir.",
      "run": [
       "Get-Process *Widget* -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue",
-      "Get-AppxPackage Microsoft.WidgetsPlatformRuntime -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue",
-      "Get-AppxPackage MicrosoftWindows.Client.WebExperience -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue",
+      "Get-AppxPackage Microsoft.WidgetsPlatformRuntime -AllUsers -ErrorAction SilentlyContinue | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue",
+      "Get-AppxPackage MicrosoftWindows.Client.WebExperience -AllUsers -ErrorAction SilentlyContinue | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue",
       "Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue",
       "Write-Output 'ARB|widgetsRemoved'"
      ]
@@ -75,7 +75,10 @@
      "note": "Bileşen deposu sıkıştırıldıktan sonra yüklü güncellemeler kaldırılamaz. Uzun sürebilir.",
      "run": [
       "cleanmgr.exe /d C: /VERYLOWDISK",
+      "# cleanmgr is not asked for a verdict: it reports non-zero for having found nothing",
+      "# to delete as readily as for failing, so its code says nothing worth acting on.",
       "Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase",
+      "if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne 3010) { exit $LASTEXITCODE }",
       "Write-Output 'ARB|diskCleanupDone'"
      ]
     },
@@ -126,6 +129,9 @@
      "note": "Aynı komutun /State:Enabled biçimiyle geri alınır.",
      "run": [
       "DISM.exe /Online /Set-ReservedStorageState /State:Disabled",
+      "# 3010 is DISM for \"done, needs a restart\". Every other non-zero is a failure the",
+      "# user should hear about rather than a green tick.",
+      "if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne 3010) { exit $LASTEXITCODE }",
       "Write-Output 'ARB|reservedStorageOff'"
      ]
     },
@@ -250,10 +256,20 @@
      "name": "Store önerilen arama sonuçlarını kapat",
      "desc": "Microsoft Store'un öneri veritabanına erişimi kapatarak arama önerilerini durdurur.",
      "reversible": true,
-     "note": "icacls ile dosya izni değiştirir; geri almak için aynı dosyadan /remove:d Everyone yapılır.",
+     "note": "icacls ile dosya izni değiştirir; geri almak için aynı dosyadan /remove:d *S-1-1-0 yapılır.",
      "run": [
       "$db = \"$Env:LocalAppData\\Packages\\Microsoft.WindowsStore_8wekyb3d8bbwe\\LocalState\\store.db\"",
-      "if (Test-Path $db) { icacls $db /deny Everyone:F; Write-Output 'ARB|storeDbLocked' } else { Write-Output 'ARB|storeDbMissing' }"
+      "if (-not (Test-Path $db)) { Write-Output 'ARB|storeDbMissing'; exit 0 }",
+      "# The report used to sit on the same line as the command, after a semicolon,",
+      "# so it printed whether or not icacls had denied anything. $LASTEXITCODE is",
+      "# the only thing that knows.",
+      "# The principal is named by SID while we are here. icacls does accept the",
+      "# English Everyone on a Turkish install - measured: it is the localised Herkes",
+      "# that fails, with 1332 - but a SID needs no lookup on any locale, and it is",
+      "# how ownership.cpp names every principal it uses.",
+      "icacls $db /deny *S-1-1-0:F",
+      "if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }",
+      "Write-Output 'ARB|storeDbLocked'"
      ]
     }
    ]
