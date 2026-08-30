@@ -253,6 +253,69 @@ adı orada. `-IncludeOverview` var, ama seçenek olsun diye — iyi fikir olduğ
 Yükseltilmiş bir kabuktan çalıştırılması öneriliyor: exe kim başlatırsa başlatsın yönetici
 hakkı istiyor, yani yükseltilmemiş bir kabukta sekiz kare sekiz onay demek.
 
+#### Yayınlanan dosyalar artık nereden geldiklerini kanıtlıyor
+
+Release workflow'u her varlığa `actions/attest-build-provenance` ile bir **build provenance
+attestation** ekliyor: GitHub, exe ve zip'in özetlerini bu depoya, derlendikleri commit'e ve
+onları derleyen workflow koşusuna bağlayan bir ifadeyi kısa ömürlü bir Sigstore sertifikasıyla
+imzalıyor. Doğrulamak için kimseden anahtar gerekmiyor:
+
+```
+gh attestation verify Arbitrium-vX.Y.Z-win64.exe --repo shadesofdeath/Arbitrium
+```
+
+İmzasız, yönetici hakkı isteyen bir binary için bu, kullanıcının "bilinmeyen yayıncı" sorusuna
+kendi kontrol ettiği bir şeyle cevap verebildiği tek yer. `build` job'ında değil `publish`'te,
+iki sebeple: özetlenen baytlar tam olarak yüklenen baytlar, ve `id-token: write` bir saat
+boyunca üçüncü taraf action çalıştıran job'ın dışında kalıyor.
+
+Yanında bir **`.sha256`** dosyası da yayınlanıyor, ne olduğu açıkça yazılarak: bozuk inen bir
+indirmeyi yakalar, o kadar. Exe'yi değiştirebilen aynı hamlede onu da değiştirir. Provenance'ı
+kuran şey attestation.
+
+#### `contents: write` artık yalnızca yayınlayan job'da
+
+Workflow seviyesindeki tek `contents: write` satırı, üçüncü taraf action'ları çalıştıran
+`build` job'ına da release oluşturup tag taşıyabilen bir token veriyordu. Artık workflow
+seviyesi `contents: read`; `publish` kendi bloğunda `contents: write` + `id-token: write` +
+`attestations: write` istiyor. Job seviyesindeki blok workflow seviyesindekini **eklemez,
+değiştirir** — o yüzden her job'ın aldığı token tek tek izlendi.
+
+#### Qt tarball'ları artık doğrulanıyor, tag artık çapalı
+
+`curl … | tar -xJ` hiçbir kontrol yapmıyordu ve sonuç sonraki release'lerin linklediği cache'e
+yazılıyordu. Beklenen SHA-256'lar artık **depoda** sabit ve açılmadan önce kontrol ediliyor;
+host'un yanındaki `.sha256`'yı çekmek değil, çünkü o dosyayı da aynı host veriyor. Digest'ler
+bağımsız olarak indirilip doğrulandı (qtbase 50.648.500 bayt, qtsvg 2.336.944 bayt).
+
+Tag şekil kontrolü `case` glob'uydu (`v[0-9]*.[0-9]*.[0-9]*`); sondaki `*` her şeyi yakalıyor,
+yani `v0.9.1"; echo hi; #` şekil kontrolünden geçip sonraki adımlara yerleştiriliyordu. Artık
+çapalı bir regex, gerçek kabukta on bir örneğe karşı sınandı.
+
+#### Üçüncü taraf lisansları artık indirmeyle birlikte geliyor
+
+`resources/licenses/` altına LGPL-3.0 ve GPL-3.0 metinleri eklendi — qt/qtbase'in `v6.11.1`
+etiketinden birebir alındı. Bunlar ve `resources/fonts/` altındaki altı OFL dosyası artık zip
+içinde bir `licenses/` klasöründe. Bugüne kadar hepsi depoyla seyahat ediyordu, indirmeyle
+hiçbiri.
+
+Glob'un yapamadığı şeyi — bir şeyin *eksik* olduğunu fark etmek — `check` job'ındaki yeni bir
+adım yapıyor: sekiz dosya sayılıyor, eksikse adlarıyla birlikte otuz saniyede duruyor, bir
+saatlik Qt derlemesinden sonra değil.
+
+#### README: "Windows will warn you about this file"
+
+Getting started listesi "indir" → "çalıştır" diyordu; arada gerçekte olan iki diyalog hiçbir
+yerde yazmıyordu. Yeni bölüm ikisini de adıyla anlatıyor, binary'nin neden imzasız olduğunu
+özür dilemeden söylüyor (sertifika birkaç yüz dolar/yıl, Haziran 2023'ten beri donanım token'ı
+zorunlu, ve bireyin alabildiği türü *Bilinmeyen yayıncı*'yı **hukuki adla** değiştirir — üstelik
+SmartScreen itibar tabanlı olduğu için ilk gün o diyaloğu zaten geçmez), ve güven yerine
+doğrulama sunuyor: `Get-FileHash` ile sums karşılaştırması ve `gh attestation verify`. İki komut
+da bu makinede gerçek `gh` sürümüne karşı sınandı.
+
+License bölümü de düzeltildi: gömülü olan **altı** yazı tipi ailesi (IBM Plex, Monda, Open Sans,
+Oxygen, Red Hat Text, Saira), sadece IBM Plex değil.
+
 ---
 
 ## [0.9.10] — 2026-08-27

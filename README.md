@@ -147,14 +147,67 @@ Because a tool you'll actually open should be worth looking at.
 
 1. Download **`Arbitrium-vX.Y.Z-win64.exe`** from the [latest release](https://github.com/shadesofdeath/Arbitrium/releases/latest).
    That single file *is* the application — Qt is linked into it, so there is nothing to unpack
-   and nothing to put beside it. (The `.zip` next to it holds the same executable, this README
-   and the licence, for anyone whose browser dislikes a bare `.exe`.)
-2. Run it. **No installation, no setup wizard, no bundled toolbar.** One executable.
+   and nothing to put beside it. (The `.zip` next to it holds the same executable, this README,
+   the licence and a `licenses/` folder for everything inside the binary that is not this
+   project's to relicense — for anyone whose browser dislikes a bare `.exe`.)
+2. Run it. **No installation, no setup wizard, no bundled toolbar.** One executable. Windows will
+   stop you once on the way; [what it says, and what you can check instead of taking my word for
+   it](#windows-will-warn-you-about-this-file), is a section of its own.
 3. On first launch, pick your language and your look.
 4. Flip what you want. Press **Apply** when you mean it.
 
 > Arbitrium needs administrator rights — it edits system-level settings, and pretending otherwise
 > would be dishonest. It asks once, at launch.
+
+---
+
+## Windows will warn you about this file
+
+Between *download it* and *it opens* there are two dialogs the list above doesn't mention.
+
+The first is Microsoft Defender SmartScreen: a dialog headed **Windows protected your PC**, saying
+it *prevented an unrecognized app from starting*, with one button — **Don't run**. The way past it
+is **More info**, which unfolds the file name, *Publisher: Unknown publisher*, and a **Run anyway**
+button. The second is the administrator prompt, which for a file like this one asks whether you
+want to allow *this app from an unknown publisher* to make changes to your device.
+
+Both are telling you the truth. Arbitrium's executable carries no Authenticode signature, and that
+is a decision rather than an oversight. A certificate that changes those two dialogs starts at a
+couple of hundred dollars a year, has to be kept on a hardware token or a cloud HSM since the
+CA/Browser Forum began requiring that in June 2023, and — in the kind an individual can actually be
+issued — replaces *Unknown publisher* with a legal name, checked against documents a certificate
+authority keeps on file. It would not even clear that first dialog on day one: SmartScreen is
+reputation-based, and a certificate that has never signed anything has no reputation either.
+
+So instead of asking you to trust a pseudonym, here is what you can check. A release cut since
+[the release workflow](.github/workflows/release.yml) gained provenance carries three files rather
+than two — the executable, the zip, and `Arbitrium-vX.Y.Z-win64.sha256`.
+
+**The sums file tells you the download is whole.** It holds one line each for the executable and
+the zip, taken from the exact bytes that were uploaded.
+
+```powershell
+Get-FileHash Arbitrium-vX.Y.Z-win64.exe -Algorithm SHA256
+```
+
+Compare that against the matching line in the `.sha256` — PowerShell prints uppercase and the file
+is lowercase, and that should be the only difference. What it is worth is narrow enough to say out
+loud: it catches a download that arrived truncated or corrupted, and nothing else. Anyone who could
+replace the executable on a release could replace the sums file in the same motion.
+
+**The attestation tells you where the binary came from.** At publish time GitHub signs a statement
+binding the digest of the executable and of the zip to this repository, the commit they were built
+from, and the workflow run that built them. Checking that statement needs no key from anyone — only
+the GitHub CLI, signed in:
+
+```powershell
+gh attestation verify Arbitrium-vX.Y.Z-win64.exe --repo shadesofdeath/Arbitrium
+```
+
+A file that is not byte for byte what that run produced has no attestation for its digest, and the
+command fails. One that is prints back the repository and the workflow file that built it, with the
+commit itself one `--format json` away — and that repository is the one you are reading, which is a
+better reason to press **Run anyway** than a certificate would have given you.
 
 ---
 
@@ -179,9 +232,15 @@ Two pieces inside it carry licences of their own, and they stay with the binary:
 - **Qt 6.11** — statically linked, used under the [LGPL v3](https://www.qt.io/licensing). The
   release workflow, [`.github/workflows/release.yml`](.github/workflows/release.yml), builds that
   Qt from the upstream tarballs and records every configure flag it was built with — which is what
-  you need to reproduce this binary, or to relink it against a Qt of your own.
-- **IBM Plex** — the bundled typefaces, under the
-  [SIL Open Font License 1.1](resources/fonts/LICENSE-IBMPlex.txt).
+  you need to reproduce this binary, or to relink it against a Qt of your own. The LGPL-3.0 text
+  sits in [`resources/licenses/`](resources/licenses), beside the GPL-3.0 whose terms its own
+  opening paragraph incorporates.
+- **Six typefaces** — IBM Plex, Monda, Open Sans, Oxygen, Red Hat Text and Saira, every one of
+  them compiled into the executable through [`resources.qrc`](resources/resources.qrc) and every
+  one under the SIL Open Font License 1.1, with a [`LICENSE-*.txt`](resources/fonts) of its own.
+
+The release zip carries all eight of those files in a `licenses/` folder, so a downloaded copy is
+complete without the repository beside it.
 
 ---
 

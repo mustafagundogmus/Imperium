@@ -25,6 +25,20 @@
 #     wrong payload and no error anywhere: a release that exists without its binary is
 #     worse than a release that does not exist yet.
 #
+# Both files also get a build provenance attestation, and a third asset carries their
+# SHA-256 sums. Nothing is signed here in the sense Windows means it — the executable
+# carries no Authenticode signature and this workflow does not give it one — but the
+# attestation is a signed statement about the two files' digests, kept by GitHub against
+# this repository, so a user who has downloaded the executable can ask which commit and
+# which run of this workflow produced it:
+#
+#     gh attestation verify Arbitrium-v<version>-win64.exe --repo shadesofdeath/Arbitrium
+#
+# That matters more here than it would elsewhere. The executable is unsigned, so every
+# new user meets a SmartScreen warning, and the thing behind the warning then asks for
+# administrator rights and edits their registry. The attestation is the only answer this
+# project can currently give someone who wants to know where their copy came from.
+#
 # The notes come from docs/release-notes/<tag>.md when that file exists and from the
 # matching section of CHANGELOG.md when it does not, so a release never has to be written
 # twice.
@@ -48,8 +62,18 @@ on:
         default: false
         type: boolean
 
+# What a job gets unless it says otherwise, and read is all any job needs to check a
+# version, compile, or upload a build artefact. This said `contents: write` until now,
+# which meant the build job — an hour of compiling downloaded source, with third-party
+# actions in the same process — held a token that could create a release or move a tag,
+# neither of which it has ever had a reason to do.
+#
+# `publish` is the one job that needs more, and it names everything it needs itself: a
+# job-level permissions block REPLACES this one, it does not add to it, so a block that
+# lists only the two attestation scopes would silently take away the write that lets the
+# job create the release it exists to create.
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: release-${{ inputs.tag || github.ref_name }}
@@ -81,10 +105,22 @@ jobs:
           # Matched against the tag, not against the version stripped out of it — `v` is
           # part of the shape being checked, and testing the remainder would have let a
           # bare "0.9.9" through to a workflow whose every other step assumes the prefix.
-          case "$tag" in
-            v[0-9]*.[0-9]*.[0-9]*) ;;
-            *) echo "::error::'$tag' is not a vMAJOR.MINOR.PATCH tag"; exit 1 ;;
-          esac
+          #
+          # Anchored at both ends, and a regex rather than the shell `case` glob this was
+          # until now. That glob was v[0-9]*.[0-9]*.[0-9]*, and a glob's * matches
+          # anything at all, including nothing: 'v0.9.1"; echo hi; #' was a well-shaped
+          # tag as far as it was concerned, and $tag is substituted into the steps that
+          # publish. The pattern lives in a variable because inside [[ =~ ]] a quoted
+          # right-hand side is matched literally, which would silently accept nothing.
+          #
+          # Stricter than the glob in one more way: + and $ reject a suffix like -rc1
+          # here, with the error that names the shape, instead of three lines down where
+          # it would fail as a disagreement with CMakeLists.txt that it is not.
+          shape='^v[0-9]+\.[0-9]+\.[0-9]+$'
+          if ! [[ "$tag" =~ $shape ]]; then
+            echo "::error::'$tag' is not a vMAJOR.MINOR.PATCH tag"
+            exit 1
+          fi
           version="${tag#v}"
 
           echo "tag=$tag"         >> "$GITHUB_OUTPUT"
@@ -104,6 +140,44 @@ jobs:
           grep -q "version=\"$version\.0\"" resources/Arbitrium.manifest \
             || { echo "::error::the manifest does not carry $version.0"; exit 1; }
           echo "version $version checks out in all three files"
+
+      # Every one of these is copied into the zip by the Package step, which runs in
+      # `build`, most of an hour of Qt compilation later. Counted here instead, thirty
+      # seconds in and for the same reason the version check is here: a missing input is
+      # the cheapest thing in this workflow to find early and one of the most expensive
+      # to find late.
+      #
+      # A count rather than a list of names, because Package globs and a glob cannot
+      # report an absence. Add a seventh font family without its LICENSE-*.txt beside it
+      # and there are still six files for LICENSE-*.txt to match: the cp succeeds and the
+      # download quietly ships a typeface with no licence in it. The number is the only
+      # thing that notices. It catches the other direction too — resources/licenses/ is
+      # newer than the rest of this and is read by nothing but the packaging step, so a
+      # file that exists in a working tree and was never committed would otherwise go
+      # unnoticed until cp failed on the runner.
+      #
+      # Eight: one per font family compiled in through resources.qrc, which is six and
+      # not one per .ttf, since IBM Plex Sans and IBM Plex Mono are one family under one
+      # licence; plus LGPL-3.0, the licence the statically linked Qt is taken under, and
+      # the GPL-3.0 whose terms LGPL-3.0's own opening paragraph incorporates. Change
+      # the number in the commit that adds or removes one.
+      - name: Check the licences the download has to carry
+        shell: bash
+        run: |
+          set -euo pipefail
+          # nullglob so a directory that is absent, or present and empty, collapses to
+          # nothing — without it the pattern stays in the array literally and is counted
+          # as a file that exists, which is the failure this step is here to prevent.
+          shopt -s nullglob
+          licences=(resources/fonts/LICENSE-*.txt resources/licenses/*.txt)
+
+          expected=8
+          if [ "${#licences[@]}" -ne "$expected" ]; then
+            echo "::error::the zip has to carry $expected licence files, this commit has ${#licences[@]}"
+            printf '  %s\n' "${licences[@]:-(none)}"
+            exit 1
+          fi
+          printf '  %s\n' "${licences[@]}"
 
       # Collected here rather than in `publish`, and carried between the two as an
       # artefact. Doing it in both places meant two implementations of "are there notes for
@@ -207,10 +281,44 @@ jobs:
           base="https://download.qt.io/archive/qt/${QT_VERSION%.*}/$QT_VERSION/submodules"
           mkdir -p /d/qt-src && cd /d/qt-src
 
+          # The digests of the exact two tarballs this is allowed to compile. They are
+          # recorded here because this file is in the repository and download.qt.io is
+          # not: the fetch was `curl ... | tar -xJ` until now, which compiles whatever
+          # the host, a mirror of it, or anything on the way hands back — and the result
+          # does not stop at this run. It is installed, cached under QT_CACHE_KEY, and
+          # every release afterwards links its executable against that cache without
+          # fetching anything at all.
+          #
+          # Taken by downloading both tarballs and hashing the bytes, then cross-checked
+          # against the size and SHA-512 that Gentoo records for the same two files in
+          # dev-qt/qtbase and dev-qt/qtsvg — both matched. Deliberately not taken from
+          # the .sha256 that sits beside each tarball: that is served by the host whose
+          # honesty is the question, and agreeing with itself is not evidence.
+          #
+          # The filenames are written out rather than built from QT_VERSION on purpose.
+          # Change QT_VERSION and sha256sum is left looking for files that were never
+          # downloaded, so the job stops here instead of building an unchecked Qt — which
+          # is the right outcome, because the new tarballs have to be fetched and hashed
+          # by hand before this workflow can be trusted to compile them.
+          cat > expected.sha256 <<'DIGESTS'
+          d9594a31228aa23ad6b531719a29b45f0f3989fe6c136d45767ea179f233c1ac *qtbase-everywhere-src-6.11.1.tar.xz
+          7f3cf02f4824bf03c2c5859ea6db173bf1482a1daf24e6cdf7bc78cfa26a8a94 *qtsvg-everywhere-src-6.11.1.tar.xz
+          DIGESTS
+
           for m in qtbase qtsvg; do
             echo "fetching $m"
-            curl -fsSL "$base/$m-everywhere-src-$QT_VERSION.tar.xz" | tar -xJ
+            curl -fsSL -O "$base/$m-everywhere-src-$QT_VERSION.tar.xz"
+          done
+
+          # Both, before either is unpacked. Extracting the one that matched and then
+          # finding out about the other would leave a tree on disk that this step had
+          # already half-trusted.
+          sha256sum -c expected.sha256
+
+          for m in qtbase qtsvg; do
+            tar -xJf "$m-everywhere-src-$QT_VERSION.tar.xz"
             mv "$m-everywhere-src-$QT_VERSION" "$m"
+            rm -f "$m-everywhere-src-$QT_VERSION.tar.xz"
           done
 
           prefix="$QT_PREFIX"
@@ -328,9 +436,31 @@ jobs:
           # the README — as 0.9.5 through 0.9.7 shipped it — and now LICENSE beside it,
           # because MIT asks that the notice travel with every copy of the software.
           cp build/Arbitrium.exe "$exe"
-          mkdir -p stage
+          mkdir -p stage/licenses
           cp "$exe" README.md LICENSE stage/
-          (cd stage && zip -9 -X "../Arbitrium-v$version-win64.zip" "$exe" README.md LICENSE)
+
+          # And the licences of the code and the typefaces that are inside that
+          # executable, which are not this project's to relicense. All six font families
+          # in resources/fonts are compiled into the binary through resources.qrc and all
+          # six are under the SIL Open Font License, whose condition is that its notice
+          # travel with the software; Qt is linked statically here, so LGPL-3.0 applies,
+          # and its own opening paragraph incorporates the terms of GPL-3.0, which is why
+          # both texts are in resources/licenses and both go in. Until now every one of
+          # these travelled with the repository and none of them with the download.
+          #
+          # Globs, not a list, so the set is whatever the two directories hold rather
+          # than a list here that can fall behind them. What a glob cannot do is notice
+          # something missing — six licences still match LICENSE-*.txt after a seventh
+          # family arrives without one — so the count that catches that lives in `check`,
+          # an hour of Qt earlier. This cp is the backstop for a whole directory going
+          # away: a glob that matches nothing stays literal and cp exits non-zero.
+          cp resources/fonts/LICENSE-*.txt resources/licenses/*.txt stage/licenses/
+
+          # -r because licenses/ is a directory. All four top-level entries are named,
+          # rather than zipping the whole of stage/, so nothing a later step leaves lying
+          # in the staging tree can find its way into the download.
+          (cd stage && zip -9 -X -r "../Arbitrium-v$version-win64.zip" \
+             "$exe" README.md LICENSE licenses)
 
           ls -l "Arbitrium-v$version-win64.exe" "Arbitrium-v$version-win64.zip"
           unzip -l "Arbitrium-v$version-win64.zip"
@@ -351,6 +481,33 @@ jobs:
     needs: [check, build]
     if: ${{ !inputs.dry_run }}
     runs-on: ubuntu-latest
+    # This block replaces the workflow-level one rather than extending it, so everything
+    # this job needs is here or it does not have it:
+    #
+    #   * contents: write — creates the release, moves the tag, uploads the assets and
+    #     reads the asset list back off it. Write includes read, so there is no second
+    #     line for that, and this project has the evidence rather than the assumption:
+    #     every release up to 0.9.10 was cut with `contents: write` as the only scope in
+    #     the file, and both the checkout in `build` and `gh release view` here worked
+    #     under it. `check` and `build` declare no block at all and inherit the
+    #     workflow-level read.
+    #   * id-token: write — lets the attestation step mint the OIDC token that Sigstore
+    #     exchanges for the short-lived certificate it signs with. Without it there is
+    #     nothing to sign the provenance with.
+    #   * attestations: write — lets the signed statement be stored against this
+    #     repository, which is where `gh attestation verify` goes looking for it.
+    #
+    # Not artifact-metadata: write, which actions/attest lists beside these three in the
+    # opening example of its README. Its own "Artifact Metadata Storage Records" section
+    # is the narrower statement and the one that applies: the record is emitted only
+    # when push-to-registry is true, and this workflow pushes no image. That section
+    # adds that storage records can only be created for artifacts built from
+    # organization-owned repositories, and shadesofdeath/Arbitrium belongs to a user
+    # account, so there is nothing here for the scope to authorise either way.
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
     steps:
       # No checkout. This job needs the two artefacts and nothing else — the notes were
       # written by `check`, which had the repository. Every gh call therefore names the
@@ -383,7 +540,55 @@ jobs:
             echo "$tag does not exist yet; the release step creates it"
           fi
 
-      - name: Publish the release and attach both files
+      # Written here rather than in `build` because these are the bytes that reach the
+      # release: they are hashed after coming back out of the artifact store, so the sums
+      # describe the file a user downloads and not one that resembles it.
+      #
+      # What this is worth, plainly: it catches a download that arrived truncated or
+      # corrupted, and nothing else. Anyone able to replace the executable on the release
+      # is able to replace this file in the same motion — it is the same release, the
+      # same account, the same button — so it is not evidence of anything about where the
+      # executable came from. The attestation below is the part that is. This only says
+      # the copy in front of you is the whole of what was uploaded.
+      - name: Write the SHA-256 sums
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${{ needs.check.outputs.version }}"
+          sha256sum "Arbitrium-v$version-win64.exe" "Arbitrium-v$version-win64.zip" \
+            > "Arbitrium-v$version-win64.sha256"
+          cat "Arbitrium-v$version-win64.sha256"
+
+      # Binds each file's digest to this repository, this commit and this run of this
+      # workflow, signs that statement with a short-lived Sigstore certificate, and
+      # stores it against the repository. Verifying it needs no key from anyone:
+      #
+      #     gh attestation verify Arbitrium-v<version>-win64.exe --repo shadesofdeath/Arbitrium
+      #
+      # Free on a public repository, and worth more to this project than to most: the
+      # executable is unsigned, so a new user is asked by SmartScreen to decide whether
+      # to trust an unknown publisher that then wants administrator rights, and this is
+      # the only thing that lets them answer with something they checked themselves.
+      #
+      # In this job rather than in `build`, for two reasons. These are the files that are
+      # about to be uploaded, byte for byte, so the digests are of the release assets
+      # themselves. And it keeps id-token: write out of the job that spends most of an
+      # hour running third-party actions over source fetched off the network.
+      #
+      # Before the upload rather than after, on the same principle as the release being
+      # created after the build: an asset on the release with no attestation behind it is
+      # the failure worth avoiding, and in this order it cannot happen.
+      #
+      # The sums file is deliberately not a subject. It is not what establishes
+      # provenance, and attesting it would imply that it was.
+      - name: Attest the executable and the zip
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: |
+            Arbitrium-v${{ needs.check.outputs.version }}-win64.exe
+            Arbitrium-v${{ needs.check.outputs.version }}-win64.zip
+
+      - name: Publish the release and attach all three files
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -393,6 +598,7 @@ jobs:
           version="${{ needs.check.outputs.version }}"
           exe="Arbitrium-v$version-win64.exe"
           zip="Arbitrium-v$version-win64.zip"
+          sums="Arbitrium-v$version-win64.sha256"
 
           # gh creates the tag itself from --target, which is one less thing to get wrong:
           # `git tag` on a runner needs a committer identity nobody has configured, and
@@ -408,7 +614,7 @@ jobs:
               --notes-file notes.md
           fi
 
-          gh release upload "$tag" -R "$GITHUB_REPOSITORY" "$exe" "$zip" --clobber
+          gh release upload "$tag" -R "$GITHUB_REPOSITORY" "$exe" "$zip" "$sums" --clobber
 
       - name: Read the assets back off the release
         env:
@@ -427,13 +633,22 @@ jobs:
             --jq '.assets[] | "\(.name) \(.size)"' > assets.txt
           cat assets.txt
 
-          for name in "Arbitrium-v$version-win64.exe" "Arbitrium-v$version-win64.zip"; do
+          # Each name carries its own floor, because the three are not within orders of
+          # magnitude of each other: the executable and the zip are tens of megabytes, and
+          # two lines of sha256sum output come to a little under two hundred bytes. A
+          # megabyte floor on the sums file would fail every release; no floor at all
+          # would accept the empty asset a half-finished upload leaves behind.
+          for spec in "Arbitrium-v$version-win64.exe:1000000" \
+                      "Arbitrium-v$version-win64.zip:1000000" \
+                      "Arbitrium-v$version-win64.sha256:100"; do
+            name="${spec%:*}"
+            floor="${spec##*:}"
             size=$(awk -v n="$name" '$1 == n { print $2 }' assets.txt)
             if [ -z "$size" ]; then
               echo "::error::$name is not on the release"
               exit 1
             fi
-            if [ "$size" -lt 1000000 ]; then
+            if [ "$size" -lt "$floor" ]; then
               echo "::error::$name is on the release but is only $size bytes"
               exit 1
             fi
