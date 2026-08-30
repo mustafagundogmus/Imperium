@@ -1,0 +1,259 @@
+# Compiles every commit, so that finding out whether the code builds stops costing a release.
+#
+# Between 0.9.9 and 0.9.10 eleven commits in a row did nothing but fix the build — the plugin
+# list, the link order, a missing rpcrt4, a library suffix set before project() instead of
+# after it — and every one of them could only be tested by tagging and watching a release run
+# to the end. This workflow answers the cheap half of that question in a few minutes: does the
+# commit configure, does it compile, does it link, and are the three data files the binary is
+# built around still readable.
+#
+# It does not answer the expensive half, on purpose. release.yml builds a static Qt from
+# upstream tarballs — most of an hour on a cold cache — because the shipped executable has to
+# be one file that imports nothing but Windows. Several of those eleven commits were failures
+# of exactly that link, and this workflow would not have caught them. Reproducing it here would
+# put an hour on every push, and a check that slow is a check somebody switches off. So CI
+# builds against a prebuilt shared Qt of the same series instead: the compiler sees the same
+# headers and the same API, which is what catches a compile error, and everything peculiar to
+# the static link stays where it belongs, in the release.
+#
+# That prebuilt Qt comes from MSYS2 rather than from jurplel/install-qt-action and Qt's own
+# binaries, for two reasons that were checked against the real thing rather than assumed:
+#
+#   * aqtinstall cannot install Qt 6.11 on Windows at all. Qt split the 6.11 online repository
+#     into one directory per toolchain — .../desktop/qt6_6111/qt6_6111_mingw/ — where 6.10 and
+#     everything before it had a single .../desktop/qt6_6101/qt6_6101/ holding every
+#     architecture. aqtinstall still builds the old path, so `aqt install-qt windows desktop
+#     6.11.1 win64_mingw` answers "Failed to locate XML data for Qt version '6.11.1'" and
+#     stops before it downloads anything.
+#     That is true of 3.3.0, which is both the newest release on PyPI and the version
+#     install-qt-action pins by default; the fix exists on aqtinstall's master branch and in
+#     no tag. Pointing CI at a Qt the installer cannot fetch is a workflow that is red on its
+#     first run for a reason that has nothing to do with this repository.
+#   * Even with a Qt in hand, the runner has no compiler to match it. windows-latest installs
+#     exactly one MinGW, at C:\mingw64, and that one is built against UCRT
+#     (x86_64-15.x-release-posix-seh-ucrt, from niXman/mingw-builds-binaries). Qt's own
+#     win64_mingw packages are built with MinGW 13.1.0 against msvcrt — the runtime archive
+#     named in the package's own file list is
+#     MinGW-w64-x86_64-13.1.0-release-posix-seh-msvcrt-rt_v11-rev1-runtime.7z — and the two C
+#     runtimes are not link-compatible. The image's MSYS2 at C:\msys64 is not on PATH and, on
+#     the 2025 image, has no mingw packages installed in it either.
+#
+# MSYS2 answers both at once: gcc, Qt, windres and ninja come out of one repository and so
+# agree by construction, and release.yml already builds on msys2/setup-msys2, so this is
+# machinery this repository has run on this runner before rather than something new to debug.
+#
+# Every action below is pinned to a released major tag rather than a commit SHA. A major tag
+# can be moved by whoever owns it, which is how a compromised action gets in — but the worst a
+# run of this workflow can do is read a repository that is already public: `contents: read`, no
+# secrets, nothing published, nothing cached that a later release consumes. release.yml's
+# publish job runs with `contents: write` and a token that can create a release and move a tag,
+# and that is where the stricter pinning would have to go first.
+
+name: CI
+
+on:
+  # No tags. release.yml owns `v*`, and a tag push carries no branch, so it cannot match the
+  # filter below — which is what stops every release building twice for one commit.
+  push:
+    branches: [main]
+  pull_request:
+
+# Nothing here publishes, uploads, or comments. It reads the repository and builds it.
+permissions:
+  contents: read
+
+# Grouped by github.ref rather than ref_name so that refs/pull/N/merge and refs/heads/main
+# cannot collide, and prefixed `ci-` so it can never share a group with release.yml — a
+# concurrency group is repository-wide, not per workflow.
+#
+# Cancelling is limited to pull requests. On a branch under review the only product is a
+# verdict on one commit, and once a newer push has replaced that commit the verdict is
+# worthless, so the run should give the runner up to its successor rather than make it wait.
+# A commit already on main is the opposite case: it is what the next tag will be cut from, and
+# if two land in quick succession and the first run is cancelled, nobody can say which of them
+# broke the build. That is the exact question this workflow exists to answer, so main runs to
+# the end. (release.yml sets cancel-in-progress: false everywhere, for a third reason again —
+# cancelling a release halfway leaves a tag, or a published release, without its binary.)
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  data:
+    name: Data files
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # No `needs:`. The catalogue, the action list and the translations are read at runtime out
+    # of the resources compiled into the executable, so a malformed one is not a build error —
+    # it is a page that comes up empty, or a crash, in a build that compiled perfectly. That is
+    # worth hearing about even on a commit whose build is broken for an unrelated reason, which
+    # is why this is a separate job and not a step in the Windows one. Two jobs, two verdicts.
+    steps:
+      - uses: actions/checkout@v4
+
+      # Named rather than taken from whatever the image happens to carry, so the interpreter
+      # under a check that is supposed to be deterministic changes when this line changes and
+      # not when the runner is rebuilt. The script is standard library only; there is no
+      # dependency step to go with this one.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check catalog.json, actions.json and i18n.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          # No --repo. The script's default is worked out from its own location rather than
+          # from the working directory, so it is already right for a checkout and naming it
+          # here would only add a second place for the path to be wrong.
+          #
+          # The script's exit status is the step's: it is the last command, and `set -e` would
+          # stop the step on a non-zero anyway. tools/check-data.py returns 1 from main() the
+          # moment its report holds an error, so a bad catalogue fails the run rather than
+          # scrolling past in green.
+          python tools/check-data.py
+
+  build:
+    name: Windows build
+    runs-on: windows-latest
+    # 45 rather than 30 because the first run has a cold MSYS2 package cache and has to pull
+    # Qt down before it compiles a line. A build that overruns this has hung, not slowed down.
+    timeout-minutes: 45
+    defaults:
+      run:
+        # Same shell as release.yml's build job. setup-msys2 defaults to path-type: minimal,
+        # so every step below sees /mingw64/bin and /usr/bin and almost nothing of the
+        # runner's own PATH — which is the whole point, and the reason cmake and ninja are in
+        # the package list rather than taken from the image.
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      # The same action and the same msystem release.yml uses, with Qt added to the package
+      # list. MINGW64 rather than UCRT64 for no reason beyond matching release.yml: the two
+      # are separate MSYS2 repositories with separate C runtimes, and having CI and the
+      # release disagree about which one is how the whole class of problem in the header
+      # comment starts.
+      #
+      # No qt6-tools. windeployqt.exe is in qt6-base, which is what CMakeLists.txt looks for
+      # after the link when Qt is shared; qt6-tools is Designer, Assistant and Linguist, and
+      # nothing here runs any of them.
+      #
+      # Two Qt packages and no more: Widgets and Network are both inside qt6-base, and Svg is
+      # the only one of the three CMakeLists.txt asks for that MSYS2 packages separately. Note
+      # that this is the opposite of the rule under install-qt-action, where naming Svg is what
+      # killed the 0.9.8 release workflow — "The packages ['qtsvg'] were not found", before it
+      # compiled a line — because there Svg ships inside the base archive set. Same module,
+      # opposite answer, depending on who packaged the Qt.
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: false
+          cache: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-qt6-base
+            mingw-w64-x86_64-qt6-svg
+
+      - name: Toolchain
+        run: |
+          set -euo pipefail
+          # Printed whole rather than piped through head: `pipefail` is on, and a reader that
+          # closes the pipe after one line can hand the writer a SIGPIPE and fail the step over
+          # nothing. Three extra lines of version banner cost less than that race.
+          cmake --version
+          ninja --version
+
+          # The runner image installs its own MinGW at C:\mingw64 and puts it on the machine
+          # PATH, and since the 2025 image that one is a UCRT build. This Qt is msvcrt. Mixing
+          # them gives an undefined reference to something like __acrt_iob_func, a long way
+          # from anything in this repository, so say which compiler was picked while there is
+          # still nothing else on screen. path-type: minimal should already have kept the
+          # image's MinGW out of this shell; this is the assertion that it did.
+          gxx=$(command -v g++)
+          echo "g++: $gxx"
+          case "$gxx" in
+            /mingw64/bin/*) ;;
+            *) echo "::error::g++ resolved to $gxx, not the MINGW64 toolchain"; exit 1 ;;
+          esac
+          g++ --version
+
+          # Which Qt this is, and whether it is still the one the release links against.
+          # A warning and not an error on purpose: MSYS2 moves to a new Qt before release.yml
+          # does, every time, and a check that goes red because somebody else shipped a point
+          # release is a check that gets switched off. What matters is that the series match,
+          # because that is what makes a compile error here mean something there.
+          qt_ci=$(qmake6 -query QT_VERSION)
+          qt_release=$(awk -F'"' '/^ *QT_VERSION:/ { print $2; exit }' \
+                       .github/workflows/release.yml)
+          echo "Qt here: $qt_ci — Qt in release.yml: $qt_release"
+          if [ "${qt_ci%.*}" != "${qt_release%.*}" ]; then
+            echo "::warning::CI compiles against Qt $qt_ci, release.yml builds Qt $qt_release"
+          fi
+
+      - name: Configure and build
+        run: |
+          set -euo pipefail
+
+          # The cmake in this shell is a native Windows binary and does not read /mingw64, so
+          # the prefix goes in as the mixed form CMake writes everywhere else. cygpath rather
+          # than a shell substitution: the obvious `${VAR//\\//}` does not mean what it looks
+          # like inside double quotes, and what it does mean has changed between bash releases.
+          # This is the one tool on the runner whose whole job is this question.
+          qt_prefix=$(cygpath -m /mingw64)
+          echo "Qt prefix: $qt_prefix"
+
+          # CMAKE_CXX_COMPILER is named because CMake looks for cl before g++ on Windows, and
+          # an MSVC build is not the build this project ships. CMakeLists.txt takes a visibly
+          # different path under each — -static-libgcc, --gc-sections and windres on one side,
+          # /MANIFEST:NO and /utf-8 on the other — so letting CMake pick would mean compiling
+          # the half nobody releases and letting a MinGW-only error through to the tag.
+          #
+          # CMAKE_RC_COMPILER for the reason release.yml gives: a Ninja generator on Windows
+          # does not always find windres on its own, and the app icon, the version block and
+          # the elevation manifest all reach the executable through app.rc.
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH="$qt_prefix" \
+            -DCMAKE_CXX_COMPILER=g++ \
+            -DCMAKE_RC_COMPILER=windres
+          cmake --build build --parallel
+
+      - name: Check the executable came out
+        run: |
+          set -euo pipefail
+          exe=build/Arbitrium.exe
+          test -f "$exe" || { echo "::error::the build produced no executable"; exit 1; }
+
+          bytes=$(stat -c%s "$exe")
+          echo "$exe is $bytes bytes"
+
+          # Deliberately not release.yml's 20MB floor. That number is asking a real question —
+          # did a static Qt actually go into the executable — and it can ask it because the
+          # answer is worth fifteen megabytes. Here Qt is beside the binary as DLLs, because
+          # CMakeLists runs windeployqt after the link when Qt is shared, so the only thing a
+          # size can establish is that the linker produced a program rather than a stub. The
+          # floor is far under what a real build weighs (resources.qrc alone names 3.7MB of
+          # fonts and JSON, before a line of code); a threshold set close to the truth is one
+          # that fails on the commit that adds a typeface, which is the sort of failure that
+          # gets a check deleted.
+          if [ "$bytes" -lt 1000000 ]; then
+            echo "::error::$bytes bytes is too small to be a real link"
+            exit 1
+          fi
+
+# Two jobs, and no third. Absent on purpose, so this reads as a decision and not an oversight:
+#
+#   * clang-format. There is no .clang-format in this repository, so the first run would
+#     reformat twenty thousand lines and fail on all of them.
+#   * clang-tidy. Same: no .clang-tidy, and no agreed check list to put in one.
+#   * -Werror. The warning baseline is not clean. Turning it on here would fail every commit
+#     until somebody clears warnings that predate all of them.
+#   * A test runner. There is no test target yet; there is nothing for it to run.
+#
+# Each of those would fail on its first run for reasons that have nothing to do with the commit
+# that triggered it, and a check that is red on day one is a check somebody deletes in week
+# two — after it has spent a fortnight teaching everybody to ignore a red tick. They are worth
+# adding the moment the thing they check exists, and not before.

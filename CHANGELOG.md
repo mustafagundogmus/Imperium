@@ -25,6 +25,60 @@ oradan tanıyor.
 - **`app.rc`'ye `LegalCopyright` eklendi**, böylece exe zip'inden çıkıp tek başına dolaştığında
   da bildirim Özellikler → Ayrıntılar altında görünüyor.
 
+#### Her commit artık derleniyor: `.github/workflows/ci.yml`
+
+Bugüne kadar bir commit'i ilk derleyen makine, release'i kesen makineydi. Bunun faturası
+0.9.9 ile 0.9.10 arasında duruyor: arka arkaya on bir tane sadece-build-düzeltmesi commit'i,
+her biri ancak tag atıp tam bir release koşusunu sonuna kadar izleyerek sınanabilmiş.
+
+Yeni workflow `main`'e push'ta ve pull request'te çalışıyor, tag'lerde çalışmıyor — `v*`
+release.yml'in işi ve her sürümü iki kez derlemenin anlamı yok. İki iş, iki ayrı hüküm:
+
+- **`data`** (ubuntu) — `tools/check-data.py`. Derleyici yok, Qt yok, birkaç saniye. Build
+  bozukken de rapor verebilmesi için ayrı bir job: veri dosyaları binary'ye gömülü olduğundan
+  bozuk bir katalog derleme hatası değil, kusursuz derlenen bir build'de boş açılan sayfadır.
+- **`build`** (windows) — MSYS2'den önceden derlenmiş paylaşımlı Qt ile yapılandır, derle,
+  exe'nin çıktığını doğrula.
+
+Statik Qt bilerek yeniden derlenmiyor: cold cache'te bir saate yakın sürüyor ve o kadar yavaş
+bir kontrol, birinin kapattığı kontroldür. CI "bu commit derleniyor mu" sorusunu cevaplıyor;
+statik linke özgü her şey release'de kalıyor.
+
+Qt'nin kendi binary'leri yerine MSYS2 kullanılmasının iki nedeni var, ikisi de varsayılmadan
+denenerek bulundu: **(1)** aqtinstall Windows'ta Qt 6.11'i hiç kuramıyor — Qt 6.11'de online
+depoyu araç zinciri başına bir dizine böldü (`qt6_6111/qt6_6111_mingw/`), aqtinstall hâlâ eski
+yolu kuruyor ve `Failed to locate XML data for Qt version '6.11.1'` ile duruyor; düzeltme
+master'da, hiçbir tag'de değil. **(2)** Qt elde olsa bile runner'da ona uyan derleyici yok:
+`windows-latest`'in tek PATH'teki MinGW'si UCRT, Qt'nin `win64_mingw` paketleri msvcrt — iki
+C runtime link uyumlu değil. MSYS2 ikisini birden çözüyor ve release.yml zaten onu kullanıyor.
+
+`clang-format`, `clang-tidy`, `-Werror` ve bir test koşucusu bilerek yok — dördü de ilk gün,
+tetikleyen commit'le ilgisi olmayan sebeplerle kırmızı yanardı, ve ilk günden kırmızı bir
+kontrol iki hafta içinde silinen kontroldür. Dosyada, bir okuyucunun onları arayacağı yerde
+gerekçesiyle yazıyor.
+
+#### `tools/check-data.py` — veri dosyaları için derleyicisiz doğrulayıcı
+
+Katalog, action listesi ve çeviriler elle düzenlenen JSON ve bugüne kadar hiçbir şey onları
+denetlemiyordu. Script yalnızca standart kütüphane kullanıyor, 70 ms sürüyor, ve şemayı
+tahmin etmek yerine kaynaktan okuyor: diller `i18n.cpp`'deki `Languages`'tan, hive
+yazımları `hiveFromString()`'in gövdesinden, riskli servisler `services.cpp`'deki
+`RiskyServices[]`'ten geliyor — onbirinci bir dil eklenince burada düzeltilecek bir şey yok.
+
+On kontrol. En önemlisi ikincisi: bir option'ın `data` dizisi `reg` dizisinden kısa olduğunda
+`catalog.cpp:386` aradaki farkı boş string'le dolduruyor, `registry.cpp` de onu
+`data.toUInt()` ile okuyor — yani gerçek bir anahtara sessizce DWORD 0 yazılıyor. Aynı sessiz
+sıfır, bir switch'in `off`/`on` alanına hex ya da boş değer yazıldığında da oluşuyor; kontrol
+her ikisini de kapsıyor (90 listelenmiş pozisyon + 714 switch pozisyonu). Diğerleri: tweak id
+çakışması, bilinmeyen hive ve tip, eksik zorunlu alanlar, grid dışına düşen range varsayılanı,
+her dil için eksik ya da boş i18n değeri, `RiskyServices[]`'in `svc.risk.<Key>` karşılıkları,
+`Locale::tr`/`Locale::content`'e verilen her literal'in çözülmesi, ve actions.json'un alanları
+ile `ARB|` sonuç token'ları.
+
+Bugün on kontrolün onu da geçiyor: 391 tweak, 0 çift id, 557 registry girdisi, 24 range,
+1575 × 10 çeviri, 28 risk notu, 18 action. Amaç zaten bu — script temiz bir durumu bozulmaktan
+korumak için var, bozuk bir durumu düzeltmek için değil.
+
 ### Düzeltildi
 
 #### Servis satırları, kullanıcının seçmediği bir Start değeri yazabiliyordu
