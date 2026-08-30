@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(Arbitrium VERSION 0.9.10 LANGUAGES CXX)
+project(Arbitrium VERSION 0.10.0 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -21,6 +21,7 @@ set(PROJECT_SOURCES
     src/icons.h                       src/icons.cpp
     src/catalog.h                     src/catalog.cpp
     src/action.h                      src/action.cpp
+    src/settingslinks.h               src/settingslinks.cpp
     src/actionengine.h                src/actionengine.cpp
     src/appstate.h                    src/appstate.cpp
     src/sysinfo.h                     src/sysinfo.cpp
@@ -68,6 +69,7 @@ set(PROJECT_SOURCES
     src/views/actionpage.h            src/views/actionpage.cpp
     src/views/tilauncherpage.h        src/views/tilauncherpage.cpp
     src/views/debloatpage.h           src/views/debloatpage.cpp
+    src/views/godmodepage.h           src/views/godmodepage.cpp
     src/views/journalpage.h           src/views/journalpage.cpp
     src/views/settingspage.h          src/views/settingspage.cpp
     src/views/aboutpage.h             src/views/aboutpage.cpp

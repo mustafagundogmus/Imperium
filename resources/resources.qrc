@@ -32,6 +32,7 @@
     <qresource prefix="/data">
         <file alias="catalog.json">data/catalog.json</file>
         <file alias="actions.json">data/actions.json</file>
+        <file alias="settings-links.json">data/settings-links.json</file>
         <file alias="i18n.json">data/i18n.json</file>
     </qresource>
 </RCC>

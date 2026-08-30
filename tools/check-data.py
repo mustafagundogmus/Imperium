@@ -50,26 +50,36 @@ from pathlib import Path
 # (i18n.cpp:107 and i18n.cpp:128), and the key is the first thing either of them is handed.
 # key_expressions() reads the first argument of each call and keys_in() decides which of
 # its literals are keys — see both for why that is not a single regex.
-TR_CALL = re.compile(r"Locale::(?:tr|content)\(")
+#
+# SearchField::setPlaceholderKey is the third name here because it is one of those doors
+# with a delay on it: it stores a key and hands it to Locale::tr on every language change
+# (searchfield.cpp:92, :82), so the literal at the call site is every bit as much a key as
+# the ones inside a tr(). The God Mode page's "godmode.search.placeholder" arrived through
+# it, and until this pattern was listed here it was a user-visible string that no check in
+# this file could see.
+TR_CALL = re.compile(r"(?:Locale::(?:tr|content)|setPlaceholderKey)\(")
 QSTRING_LITERAL = re.compile(r'QStringLiteral\("([^"]*)"\)')
 
-# The five literals that are not keys. Each is concatenated with something the table cannot
+# The seven literals that are not keys. Each is concatenated with something the table cannot
 # see — a catalogue id, a section heading, an option label — so the literal itself will
 # never resolve, and a check that did not know them would have failed on the day it was
 # written:
 #
-#   "tweak."     catalog.cpp:78, :87   + <tweak id> + ".name" / ".desc"
-#   "opt."       catalog.cpp:42        + the option's own Turkish label
-#   "section."   catalog.cpp:94,
-#                action.cpp:32         + the section's own Turkish heading
-#   "category."  mainwindow.cpp:322    + the category id
-#   "action."    action.cpp:15, :20,
-#                :27                   + <action id> + ".name" / ".desc" / ".note"
+#   "tweak."          catalog.cpp:78, :87   + <tweak id> + ".name" / ".desc"
+#   "opt."            catalog.cpp:42        + the option's own Turkish label
+#   "section."        catalog.cpp:94,
+#                     action.cpp:32         + the section's own Turkish heading
+#   "category."       mainwindow.cpp:322    + the category id
+#   "action."         action.cpp:15, :20,
+#                     :27                   + <action id> + ".name" / ".desc" / ".note"
+#   "godmode."        godmodepage.cpp       + the settings link's id
+#   "godmode.group."  godmodepage.cpp       + the link group's id
 #
 # The keys those calls actually build are checked instead, from the data files, further
-# down. Keep this set closed: a sixth prefix appearing here means a new family of keys that
-# nothing is checking.
-RUNTIME_PREFIXES = frozenset(["tweak.", "opt.", "section.", "category.", "action."])
+# down. Keep this set closed: an eighth prefix appearing here means a new family of keys
+# that nothing is checking.
+RUNTIME_PREFIXES = frozenset(["tweak.", "opt.", "section.", "category.", "action.",
+                              "godmode.", "godmode.group."])
 
 # Registry::write's ladder of type names (registry.cpp:228-270). SZ is not in the ladder —
 # it is the fall-through, which is the whole reason unknown type strings have to be caught
@@ -861,6 +871,37 @@ def collect_risk_keys(repo, report):
     return names
 
 
+def collect_sidebar_group_keys(repo, report):
+    """The headings the sidebar's Groups[] table hands to Locale::tr.
+
+    Check 8 finds keys by reading the literal inside a tr() call, and these are not written
+    that way: they are `const char *` in a table, completed with QString::fromLatin1() at
+    the call (sidebar.cpp:183), so the key never stands next to a tr() anywhere in src/ and
+    the scanner walks straight past it. Check 9 has always said so out loud, and for years
+    that was harmless because the headings in the table were all long since translated.
+
+    It stopped being harmless the day a heading was added. "sidebar.group.tools" arrived
+    with the God Mode page and no check in this file could see it, and a heading that is
+    not in the table is not an untranslated word — it is the literal "sidebar.group.tools"
+    drawn over a group of rows, in all ten languages, until somebody notices.
+
+    Read out of the C++ for the same reason collect_risk_keys() is: a copy here would be
+    the drift it is meant to catch.
+    """
+    body = read_source_table(repo / "src/views/sidebar.cpp", "constexpr GroupDef Groups[] = {",
+                             report, "the sidebar's group headings")
+    if body is None:
+        return []
+    # `{ "sidebar.group.tools", {"godmode", …} }` — the heading is the string that has the
+    # id array after it, which is what tells it apart from the ids themselves. The Genel
+    # Bakış row carries nullptr there and is meant to match nothing: it has no heading.
+    keys = re.findall(r'\{\s*"([^"]+)"\s*,\s*\{', body)
+    if not keys:
+        report.fatal("the Groups[] table in src/views/sidebar.cpp does not have the shape "
+                     "tools/check-data.py reads; teach it the new one")
+    return keys
+
+
 def check_service_risk_keys(report, i18n, risky):
     c = report.check(7, "i18n.json — every RiskyServices[] row has its svc.risk key")
     for name in risky:
@@ -928,14 +969,22 @@ def keys_in(expression):
     return literals
 
 
-def collect_source_keys(sources):
-    """Every literal handed straight to Locale::tr or Locale::content, with where it was."""
+def collect_source_keys(sources, group_keys=()):
+    """Every literal handed straight to Locale::tr or Locale::content, with where it was.
+
+    `group_keys` are the sidebar headings, which reach tr() through a table rather than
+    through a call the scanner can read — see collect_sidebar_group_keys(). They are merged
+    in here rather than checked separately so that a missing one is reported in the same
+    voice, at the same check, as every other key src/ asks for.
+    """
     found = collections.OrderedDict()
     for name, text in sources:
         for offset, expression in key_expressions(text):
             line = text.count("\n", 0, offset) + 1
             for key in keys_in(expression):
                 found.setdefault(key, []).append("%s:%d" % (name, line))
+    for key in group_keys:
+        found.setdefault(key, []).append("src/views/sidebar.cpp, the Groups[] table")
     return found
 
 
@@ -959,11 +1008,12 @@ def check_source_keys(report, i18n, source_keys):
               " ".join(sorted(RUNTIME_PREFIXES))))
 
 
-def collect_data_keys(catalog, actions):
+def collect_data_keys(catalog, actions, links):
     """The keys the data files build at run time, spelled out.
 
-    These are the other half of check 8: the five prefixes above are completed with a
-    catalogue id, a section heading or an option label, none of which appear in src/ at all.
+    These are the other half of check 8: the prefixes above are completed with a catalogue
+    id, a section heading, an option label or a settings-link id, none of which appear in
+    src/ at all.
     """
     def text(node, field):
         value = node.get(field)
@@ -997,6 +1047,12 @@ def collect_data_keys(catalog, actions):
             keys.add("action." + action["id"] + ".desc")          # action.cpp:20
             if action.get("note"):
                 keys.add("action." + action["id"] + ".note")      # action.cpp:27
+    for group in objects(links.get("groups")):
+        if text(group, "id"):
+            keys.add("godmode.group." + group["id"])              # godmodepage.cpp, build()
+        for item in objects(group.get("items")):
+            if text(item, "id"):
+                keys.add("godmode." + item["id"])                 # godmodepage.cpp, label()
     return keys
 
 
@@ -1046,6 +1102,18 @@ def check_actions(report, actions, i18n):
         if not isinstance(section.get("title"), str) or not section["title"]:
             c.error("section", "actions.json", s_where,
                     "no `title`; ActionSection::displayTitle() looks up section. + title")
+        else:
+            # displayTitle() is Locale::content (action.cpp:32), so a heading with no key
+            # falls back to the Turkish in this file rather than showing itself — which
+            # made it the one string on the page that could ship untranslated with nothing
+            # on screen looking wrong. The Yeniden başlatma section was added with no key
+            # and the only thing that noticed was a person reading the diff; that is not a
+            # mechanism. Same reasoning as the action.<id>.name check further down.
+            key = "section." + section["title"]
+            if key not in i18n:
+                c.error("missing key", "i18n.json", key,
+                        "actions.json's section \"%s\" is looked up as %s and the table "
+                        "has no heading for it" % (section["title"], key))
         raw_actions = section.get("actions")
         for a_index, action in enumerate(raw_actions if isinstance(raw_actions, list) else []):
             count += 1
@@ -1123,6 +1191,116 @@ def check_actions(report, actions, i18n):
            % (count, len(sections), tokens))
 
 
+def check_settings_links(report, links, i18n):
+    c = report.check(11, "settings-links.json — ids are unique and every one has its "
+                         "godmode key")
+
+    # The God Mode page has no Turkish of its own to fall back on. A tweak or an action
+    # carries its name in catalog.json / actions.json, so Locale::content can show that when
+    # a translation is missing (i18n.cpp:136); a settings link carries only an id, and
+    # godmodepage.cpp asks Locale::tr for "godmode.<id>" — which renders a missing key as
+    # itself (i18n.cpp:111). So the failure here is not an untranslated row, it is a row
+    # labelled "godmode.taskschd" in all ten languages.
+    #
+    # Presence is all this checks. Whether the ten columns are actually filled in is check
+    # 6's business: it measures every key in the table, so a key that exists here and is
+    # blank in Polish fails there rather than being reported twice in two voices.
+
+    groups = links.get("groups")
+    if not isinstance(groups, list) or not groups:
+        c.error("catalogue", "settings-links.json", "groups",
+                "no groups array; SettingsLinks::groups() would come back empty and the "
+                "page would draw nothing but its search box")
+        return
+
+    seen_links = collections.Counter()
+    seen_groups = collections.Counter()
+    count = 0
+    for g_index, group in enumerate(groups):
+        g_where = "group %d" % g_index
+        if not isinstance(group, dict):
+            c.error("group", "settings-links.json", g_where,
+                    "is %r, not an object; toObject() gives it no id and settingslinks.cpp "
+                    "drops it" % (group,))
+            continue
+        group_id = group["id"] if isinstance(group.get("id"), str) else ""
+        where = group_id or g_where
+        if not group_id:
+            # settingslinks.cpp drops a group with no id, so this does not fail anything —
+            # it removes a whole section from the page.
+            c.error("group", "settings-links.json", where,
+                    "no `id`; the group is dropped and its links go with it")
+        else:
+            seen_groups[group_id] += 1
+            key = "godmode.group." + group_id
+            if key not in i18n:
+                c.error("missing key", "i18n.json", key,
+                        "settings-links.json defines group %s but the table has no heading "
+                        "for it" % group_id)
+
+        items = group.get("items")
+        if not isinstance(items, list) or not items:
+            c.error("group", "settings-links.json", where,
+                    "`items` is %r; a group with nothing under it is dropped and its "
+                    "heading never appears" % (items,))
+            continue
+
+        for i_index, item in enumerate(items):
+            count += 1
+            i_where = "%s / item %d" % (where, i_index)
+            if not isinstance(item, dict):
+                c.error("link", "settings-links.json", i_where,
+                        "is %r, not an object; it has neither an id nor a target and is "
+                        "dropped" % (item,))
+                continue
+            link_id = item["id"] if isinstance(item.get("id"), str) else ""
+            target = item["target"] if isinstance(item.get("target"), str) else ""
+            if not link_id:
+                c.error("link", "settings-links.json", i_where,
+                        "no `id`; there is no label to look up and the row is dropped")
+            if not target:
+                c.error("link", "settings-links.json", link_id or i_where,
+                        "no `target`; there is nothing to open and the row is dropped")
+            # kindOf() reads a colon as a scheme and sends the target to
+            # QDesktopServices or to explorer.exe; everything else is a file name, and
+            # resolveSystemFile() turns it into an absolute path under System32 before
+            # anything is launched. That resolution is the whole reason this page is safe
+            # in a process that always runs elevated out of Downloads — the same
+            # search-order class this project already fixed for tbs.dll. A target that
+            # carries a path of its own quietly gets around it: it still resolves, just to
+            # somewhere nobody audited. Bare file names only.
+            elif ":" not in target and re.search(r"[\\/]", target):
+                c.error("link", "settings-links.json", link_id or i_where,
+                        "target \"%s\" is a path rather than a bare file name; "
+                        "resolveSystemFile() joins it to System32 and the search-order "
+                        "guarantee this page rests on stops meaning anything" % target)
+            if not link_id:
+                continue
+
+            seen_links[link_id] += 1
+            key = "godmode." + link_id
+            if key not in i18n:
+                c.error("missing key", "i18n.json", key,
+                        "settings-links.json defines %s but the table has no label for it; "
+                        "Locale::tr would draw the key itself" % link_id)
+
+    for link_id, n in sorted(seen_links.items()):
+        if n > 1:
+            # Two rows sharing an id share their label, so the page shows the same name
+            # twice over two different targets — and there is only one godmode.<id> key to
+            # write, which means no wording can tell them apart.
+            c.error("duplicate ids", "settings-links.json", link_id,
+                    "appears %d times; both rows would draw the same label over different "
+                    "targets" % n)
+    for group_id, n in sorted(seen_groups.items()):
+        if n > 1:
+            c.error("duplicate ids", "settings-links.json", group_id,
+                    "is the id of %d groups; both would draw the same heading" % n)
+
+    c.note("%d links in %d groups, %d distinct ids"
+           % (count, len(groups), len(seen_links)))
+
+
 def script_lines(action):
     """One action's script as action.cpp:79-81 assembles it.
 
@@ -1179,7 +1357,8 @@ def main():
     # means copying all of src/ next to it so that the language, hive and risky-service
     # tables can still be read.
     parser.add_argument("--data", type=Path, default=None,
-                        help="directory holding catalog.json, actions.json and i18n.json "
+                        help="directory holding catalog.json, actions.json, "
+                             "settings-links.json and i18n.json "
                              "(default: <repo>/resources/data)")
     args = parser.parse_args()
     repo = args.repo.resolve()
@@ -1201,6 +1380,7 @@ def main():
     report = Report()
     catalog = read_json(data / "catalog.json", report)
     actions = read_json(data / "actions.json", report)
+    links = read_json(data / "settings-links.json", report)
     i18n = read_json(data / "i18n.json", report)
     if report.fatal_message:
         return report.emit()
@@ -1212,6 +1392,7 @@ def main():
     languages = read_languages(repo, report)
     hives = read_hives(repo, report)
     risky = collect_risk_keys(repo, report)
+    group_keys = collect_sidebar_group_keys(repo, report)
     if report.fatal_message:
         return report.emit()
 
@@ -1223,14 +1404,15 @@ def main():
     check_i18n_coverage(report, i18n, languages)
     check_service_risk_keys(report, i18n, risky)
 
-    source_keys = collect_source_keys(sources)
-    data_keys = collect_data_keys(catalog, actions)
+    source_keys = collect_source_keys(sources, group_keys)
+    data_keys = collect_data_keys(catalog, actions, links)
     result_keys = collect_result_keys(actions)
     risk_keys = ["svc.risk." + name for name in risky]
 
     check_source_keys(report, i18n, source_keys)
     check_orphans(report, i18n, source_keys, data_keys, result_keys, risk_keys, sources)
     check_actions(report, actions, i18n)
+    check_settings_links(report, links, i18n)
 
     return report.emit()
 

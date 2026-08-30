@@ -1,0 +1,82 @@
+{
+  "groups": [
+    {
+      "id": "alltasks",
+      "items": [
+        { "id": "alltasks", "target": "shell:::{ED7BA470-8E54-465E-825C-99712043E01C}" }
+      ]
+    },
+    {
+      "id": "system",
+      "items": [
+        { "id": "windowsupdate",   "target": "ms-settings:windowsupdate" },
+        { "id": "windowsdefender", "target": "ms-settings:windowsdefender" },
+        { "id": "activation",      "target": "ms-settings:activation" },
+        { "id": "recovery",        "target": "ms-settings:recovery" },
+        { "id": "about",           "target": "ms-settings:about" },
+        { "id": "storagesense",    "target": "ms-settings:storagesense" },
+        { "id": "powersleep",      "target": "ms-settings:powersleep" }
+      ]
+    },
+    {
+      "id": "privacy",
+      "items": [
+        { "id": "privacy",                 "target": "ms-settings:privacy" },
+        { "id": "privacy-location",        "target": "ms-settings:privacy-location" },
+        { "id": "privacy-webcam",          "target": "ms-settings:privacy-webcam" },
+        { "id": "privacy-microphone",      "target": "ms-settings:privacy-microphone" },
+        { "id": "privacy-feedback",        "target": "ms-settings:privacy-feedback" },
+        { "id": "privacy-activityhistory", "target": "ms-settings:privacy-activityhistory" }
+      ]
+    },
+    {
+      "id": "apps",
+      "items": [
+        { "id": "appsfeatures",     "target": "ms-settings:appsfeatures" },
+        { "id": "startupapps",      "target": "ms-settings:startupapps" },
+        { "id": "optionalfeatures", "target": "ms-settings:optionalfeatures" },
+        { "id": "defaultapps",      "target": "ms-settings:defaultapps" }
+      ]
+    },
+    {
+      "id": "network",
+      "items": [
+        { "id": "network-status", "target": "ms-settings:network-status" },
+        { "id": "ncpa",           "target": "ncpa.cpl" },
+        { "id": "network-proxy",  "target": "ms-settings:network-proxy" }
+      ]
+    },
+    {
+      "id": "personalisation",
+      "items": [
+        { "id": "personalization-background", "target": "ms-settings:personalization-background" },
+        { "id": "colors",                     "target": "ms-settings:colors" },
+        { "id": "taskbar",                    "target": "ms-settings:taskbar" },
+        { "id": "themes",                     "target": "ms-settings:themes" }
+      ]
+    },
+    {
+      "id": "accounts",
+      "items": [
+        { "id": "signinoptions", "target": "ms-settings:signinoptions" },
+        { "id": "otherusers",    "target": "ms-settings:otherusers" },
+        { "id": "netplwiz",      "target": "netplwiz.exe" }
+      ]
+    },
+    {
+      "id": "consoles",
+      "items": [
+        { "id": "devmgmt",  "target": "devmgmt.msc" },
+        { "id": "diskmgmt", "target": "diskmgmt.msc" },
+        { "id": "services", "target": "services.msc" },
+        { "id": "taskschd", "target": "taskschd.msc" },
+        { "id": "eventvwr", "target": "eventvwr.msc" },
+        { "id": "gpedit",   "target": "gpedit.msc" },
+        { "id": "appwiz",   "target": "appwiz.cpl" },
+        { "id": "sysdm",    "target": "sysdm.cpl" },
+        { "id": "powercfg", "target": "powercfg.cpl" },
+        { "id": "regedit",  "target": "regedit.exe" }
+      ]
+    }
+  ]
+}

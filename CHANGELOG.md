@@ -4,7 +4,7 @@ Bu dosya sürümler arasındaki dikkate değer değişiklikleri listeler.
 Biçim [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) temellidir ve
 proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
-## [Yayınlanmamış]
+## [0.10.0] — 2026-08-31
 
 ### Eklendi
 
@@ -79,6 +79,148 @@ Bugün on kontrolün onu da geçiyor: 391 tweak, 0 çift id, 557 registry girdis
 1575 × 10 çeviri, 28 risk notu, 18 action. Amaç zaten bu — script temiz bir durumu bozulmaktan
 korumak için var, bozuk bir durumu düzeltmek için değil.
 
+#### `tools/screenshots.ps1` — README'nin görsellerini tek komutla almak
+
+Depoda tek bir ekran görüntüsü yok, oysa uygulama kendini fotoğraflamayı zaten biliyor:
+`--screenshot <yol>` pencerenin PNG'sini yazıp çıkıyor, `--theme`, `--typeface`,
+`--category` ve `--search` de içinde ne olacağına karar veriyor. Eksik olan tek şey,
+tutmaya değer kareler listesiydi — script sadece o.
+
+Sekiz kare: Gizlilik (koyu), Görünüm (açık), Dosya Gezgini (okyanus), Debloat, Eylemler,
+Günlük, TrustedInstaller (gece) ve Ayarlar (sepya). Sürüm başına yenilemek bir komut.
+
+İki şeyi bilerek yapmıyor. **CI'da çalışmıyor**: uygulama `requireAdministrator` ve Genel
+Bakış sayfası canlı makineyi okuyor, yani runner'da alınan bir görüntü aktive edilmemiş bir
+Azure VM'in bilgilerini reklam ederdi. **Genel Bakış sayfasını istenmedikçe fotoğraflamıyor**:
+etkinleştirme durumu, BIOS/SMBIOS dizeleri, disk seri numaraları, BitLocker durumu ve makine
+adı orada. `-IncludeOverview` var, ama seçenek olsun diye — iyi fikir olduğu için değil.
+
+Yükseltilmiş bir kabuktan çalıştırılması öneriliyor: exe kim başlatırsa başlatsın yönetici
+hakkı istiyor, yani yükseltilmemiş bir kabukta sekiz kare sekiz onay demek.
+
+#### Üçüncü taraf lisansları artık indirmeyle birlikte geliyor
+
+`resources/licenses/` altına LGPL-3.0 ve GPL-3.0 metinleri eklendi — qt/qtbase'in `v6.11.1`
+etiketinden birebir alındı. Bunlar ve `resources/fonts/` altındaki altı OFL dosyası artık zip
+içinde bir `licenses/` klasöründe. Bugüne kadar hepsi depoyla seyahat ediyordu, indirmeyle
+hiçbiri.
+
+Glob'un yapamadığı şeyi — bir şeyin *eksik* olduğunu fark etmek — `check` job'ındaki yeni bir
+adım yapıyor: sekiz dosya sayılıyor, eksikse adlarıyla birlikte otuz saniyede duruyor, bir
+saatlik Qt derlemesinden sonra değil.
+
+#### README: "Windows will warn you about this file"
+
+Getting started listesi "indir" → "çalıştır" diyordu; arada gerçekte olan iki diyalog hiçbir
+yerde yazmıyordu. Yeni bölüm ikisini de adıyla anlatıyor, binary'nin neden imzasız olduğunu
+özür dilemeden söylüyor (sertifika birkaç yüz dolar/yıl, Haziran 2023'ten beri donanım token'ı
+zorunlu, ve bireyin alabildiği türü *Bilinmeyen yayıncı*'yı **hukuki adla** değiştirir — üstelik
+SmartScreen itibar tabanlı olduğu için ilk gün o diyaloğu zaten geçmez), ve güven yerine
+doğrulama sunuyor: `Get-FileHash` ile sums karşılaştırması ve `gh attestation verify`. İki komut
+da bu makinede gerçek `gh` sürümüne karşı sınandı.
+
+License bölümü de düzeltildi: gömülü olan **altı** yazı tipi ailesi (IBM Plex, Monda, Open Sans,
+Oxygen, Red Hat Text, Saira), sadece IBM Plex değil.
+
+#### God Mode — Windows'un kendi ayarlarını aramak
+
+Yeni bir sayfa: sekiz grupta 38 kısayol — Windows ayar sayfaları, denetim masası apletleri ve
+yönetim konsolları — üstünde bir arama kutusu, her satırın altında neyi açtığı aynen yazılı.
+Windows'un kendi "Tüm görevler" (God Mode) klasörünü açan satır da burada.
+
+Sayfa makinede hiçbir şey değiştirmiyor; yalnızca Windows'un kendi penceresini açıyor. Liste
+`resources/data/settings-links.json`'da ve katalogla aynı disiplinle **yalnızca derlenmiş qrc'den**
+okunuyor: exe'nin yanına bırakılmış bir dosya, yükseltilmiş bir sürecin ne açacağını yönlendiremez.
+
+25 `ms-settings:` hedefinin tamamı, Windows'un kendi `SystemSettings.dll`'inin bildirdiği 268
+URI'lik listeye karşı **ölçülerek** doğrulandı. Konsol ve applet satırları `mmc.exe`/`control.exe`
+üzerinden, System32'den **mutlak yolla** başlatılıyor — çıplak adla değil; bu, tbs.dll ve
+netapi32.dll için zaten düzeltilmiş olan arama sırası sınıfının aynısı. `explorer.exe` ve
+`regedit.exe` System32'de değil `C:\Windows`'ta olduğu için çözücü ikinci bir dizine daha bakıyor.
+Makinede bulunmayan bir hedefin (ör. Home sürümünde `gpedit.msc`) satırı sebebiyle birlikte soluk
+çiziliyor, tıklanınca başarısız olmuyor.
+
+`tools/check-data.py`'ye 11. kontrol eklendi: her id'nin `godmode.<id>` karşılığı olmalı, id'ler
+benzersiz olmalı, ve bir hedef kendi yolunu taşımamalı — `"..\\Temp\\x.exe"` gibi bir giriş
+System32 garantisini sessizce anlamsızlaştırırdı.
+
+Kenar çubuğunda yeni bir **Araçlar** grubu var; alttaki sabit şeride dokunulmadı, çünkü oranın
+geometrisi elle bağlı bir zincir. `debloat`'un katalog dışı bir id olarak nasıl taşındıysa aynen.
+
+#### Gelişmiş yeniden başlatma
+
+Eylemler sayfasına altı yeni giriş: normal yeniden başlatma, **Gelişmiş başlatma** (WinRE kurtarma
+menüsü), doğrudan **UEFI/BIOS** kurulumuna, **Güvenli mod**, **ağ ile güvenli mod**, ve
+**güvenli mod başlatmayı kaldır**.
+
+Yeni bir sayfa değil, veri: `ActionPage` zaten çalışacak betiği onay diyaloğunda tam metin
+gösteriyor ve yalnızca onaylanınca çalıştırıyor. "Ne çalışacağını oku, sonra karar ver" sözleşmesi
+tam da bu komutların ihtiyacı olan şey.
+
+Güvenli mod **kalıcıdır** ve notu bunu büyük harfle söylüyor: `bcdedit` önyükleme yapılandırmasına
+yazdığı için makine, ayar silinene kadar her açılışta güvenli moda girer. Çıkış yolu aynı sayfada,
+adıyla veriliyor. Ve `$LASTEXITCODE` kontrolü `bcdedit` ile `shutdown` **arasında** duruyor:
+reddedilen bir `bcdedit`'in ardından yine de yeniden başlatmak, bu değişikliğin verebileceği en kötü
+sonuçtu — makine iner, aynı şekilde geri gelir, kullanıcı güvenli modda olduğunu sanır.
+
+UEFI komutu eski BIOS'lu makinelerde `shutdown` hata döndürerek durur; hatayı gizlemek yerine
+gösteriyor.
+
+#### Ön ayarlar artık görünümü ve ayarları da taşıyor, ve yalnızca değiştirdiklerini yazıyor
+
+Ön ayar dosyası sürüm 3. İki yeni isteğe bağlı blok: `<appearance>` (tema, vurgu rengi, yazı tipi,
+metin boyutu, yoğunluk, arayüz dili) ve `<settings>` (yumuşak kaydırma, kenar parıltısı, açılışta
+güncelleme denetimi, uygulamadan önce onay). v1 ve v2 dosyaları aynen yükleniyor; blokların ikisi
+de isteğe bağlı, yani hiçbirini taşımayan bir dosya sıradan bir dosya.
+
+Export artık katalogdaki **her** id'yi yazmıyor. Eskiden bu makinede 706 satırdı — 390 katalog
+tweak'i artı canlı makineden sentezlenen 307 servis ve 9 başlangıç öğesi — yani kullanıcının
+"benim kırk tweak'im" sandığı dosya yedi yüz satırdı ve A makinesinin tüm servis yapılandırmasını
+B makinesine taşıyordu. Artık yalnızca Windows'un gönderdiği konumda **olmayanlar** ve kuyruktakiler
+yazılıyor.
+
+İçe aktarma tweak konumlarını eskisi gibi yalnızca **kuyruğa alıyor** — Uygula'ya basılana kadar
+hiçbir şey yazılmıyor, bu değişiklik o söze dokunmuyor. Görünüm ve ayar blokları ise uygulamanın
+kendi tercihleri olduğu için hemen geçerli olur; bu yüzden dosya böyle bir blok taşıyorsa bir kez,
+iki düğmeli bir diyalogla soruluyor. Hangi düğmeye basılırsa basılsın tweak'ler kuyruğa alınıyor.
+
+Bu build'in tanımadığı bir tema ya da yazı tipi adı — daha yeni bir sürümden gelen dosya — yok
+sayılıyor, çünkü bilinmeyen bir değer, olmayan bir değerden daha kötü davranmamalı: kullanıcının
+temasını sıfırlamak yerine olduğu gibi bırakıyor.
+
+### Değiştirildi
+
+#### `-Wall -Wextra -Wshadow` artık build'in kendisinde
+
+0.9.10 commit'i "compiles clean under -Wall -Wextra -Wshadow" diyordu ama `CMakeLists.txt`'de
+tek bir uyarı bayrağı yoktu: bu, elle hatırlanması gereken bir kontroldü. Ölçüldü — yirmi bin
+satırın tamamı bu üç bayrak altında **sıfır** uyarı veriyor. Yani korunacak durum zaten
+mevcut olan durum; bayraklar artık MinGW/GCC derlemelerinde her zaman açık.
+
+Bilerek fatal değil. İlk yeni uyarıyı bulan derleyici build'i bitirip onu göstermeli, orada
+durmamalı; okunacağı yer de CI log'u. `-Werror` oraya ait, ve ancak o job bir derleyici
+yükseltmesinden sessiz çıktıktan sonra: MSYS2 hangi GCC'yi taşıyorsa onu taşır ve bir salı
+günü gelen yeni bir major sürüm, kimsenin yazmadığı bir uyarıyı herkesin commit'inin
+düştüğü bir build'e çevirirdi. `ci.yml`'deki gerekçe de buna göre düzeltildi — orada
+"uyarı zemini temiz değil" yazıyordu, ki ölçüm bunun tersini söylüyor.
+
+### Kaldırıldı
+
+#### `sec-powershell-v2` — adının söylediği şeyi yapmıyordu
+
+Satırın adı "PowerShell 2.0 motoru", açıklaması eski motoru kapattığını söylüyordu. Yazdığı
+değer ise `HKLM\SOFTWARE\Policies\Microsoft\Windows\PowerShell\EnableScripts = 1` — bu,
+yürütme politikasının **MachinePolicy** kapsamını açan değer (`Get-ExecutionPolicy -List`'in
+ilk satırı), ve kardeşi olan `ExecutionPolicy` REG_SZ değeri olmadan tek başına etkisiz.
+PowerShell 2.0 motorunun registry anahtarı yok; o bir Windows optional feature'ı, yani DISM
+işi — motorun kendi kayıt yeri (`HKLM\SOFTWARE\Microsoft\PowerShell\PowerShellEngine`)
+bu makinede hiç bulunmuyor.
+
+391 satır içinde metniyle yazdığı değer başka bir alt sisteme ait olan tek satırdı. Hiçbir
+zaman vaat ettiği şeyi yapmadığı, yaptığı şeyin de etkisiz olduğu için satır kaldırıldı;
+on dildeki iki çevirisi de onunla gitti. Gerçekten PowerShell 2.0'ı kapatan bir şey istenirse
+yeri katalog değil, `actions.json`'daki bir DISM tek-atışı.
+
 ### Düzeltildi
 
 #### Servis satırları, kullanıcının seçmediği bir Start değeri yazabiliyordu
@@ -146,38 +288,61 @@ olanla, 1254 ile okur. DISM, cleanmgr ve icacls'in her ASCII olmayan baytı hem 
 hem `actions.log`'da bozuk görünüyordu. Çözüm zaten depodaydı: `ownership.cpp` bunu bulup
 yerel olarak düzeltmişti. Artık `src/console.h` ortak evi ve ikisi de onu kullanıyor.
 
-### Değiştirildi
+#### `act-block-adobe` artık işaretçilerle yazıyor ve geri alınabiliyor
 
-#### `-Wall -Wextra -Wshadow` artık build'in kendisinde
+Bu, uygulamada çalışma zamanında internetten gelen verinin ayrıcalıklı bir yazmaya ulaştığı
+**tek** yerdi ve üç ayrı sorunu vardı: indirilen dosya olduğu gibi hosts'a ekleniyordu,
+iki kez çalıştırılırsa liste iki kez giriyordu, ve `reversible: false` ile "hosts dosyasını
+elle düzenleyin" notu taşıyordu.
 
-0.9.10 commit'i "compiles clean under -Wall -Wextra -Wshadow" diyordu ama `CMakeLists.txt`'de
-tek bir uyarı bayrağı yoktu: bu, elle hatırlanması gereken bir kontroldü. Ölçüldü — yirmi bin
-satırın tamamı bu üç bayrak altında **sıfır** uyarı veriyor. Yani korunacak durum zaten
-mevcut olan durum; bayraklar artık MinGW/GCC derlemelerinde her zaman açık.
+Artık indirilen metinden yalnızca host satırları alınıyor — `0.0.0.0` veya `127.0.0.1` ile
+başlayıp tek bir ad taşıyan satırlar — ve bunlar `# ARBITRIUM-ADOBE-BEGIN` /
+`# ARBITRIUM-ADOBE-END` işaretçileri arasına, blok bütün olarak yeniden yazılarak konuyor.
+Yeni `act-unblock-adobe` action'ı da tam olarak o bloğu siliyor. Sahte bir hosts dosyasında
+ölçüldü: iki kez çalıştırmak satır sayısını değiştirmiyor, filtre indirilen dosyadaki yorum
+satırlarını ve `0.0.0.0 evil.example && calc.exe` gibi enjeksiyon denemelerini reddediyor,
+kullanıcının kendi satırları duruyor, ve kaldırma dosyayı bayt bayt eski hâline döndürüyor.
 
-Bilerek fatal değil. İlk yeni uyarıyı bulan derleyici build'i bitirip onu göstermeli, orada
-durmamalı; okunacağı yer de CI log'u. `-Werror` oraya ait, ve ancak o job bir derleyici
-yükseltmesinden sessiz çıktıktan sonra: MSYS2 hangi GCC'yi taşıyorsa onu taşır ve bir salı
-günü gelen yeni bir major sürüm, kimsenin yazmadığı bir uyarıyı herkesin commit'inin
-düştüğü bir build'e çevirirdi. `ci.yml`'deki gerekçe de buna göre düzeltildi — orada
-"uyarı zemini temiz değil" yazıyordu, ki ölçüm bunun tersini söylüyor.
+Okuma ve yazma aynı kod sayfasında (`Get-Content` Windows PowerShell'de ANSI okur, bu yüzden
+`Set-Content -Encoding Default` deniyor), yani dosyada zaten olan her şey çıktığı gibi geri
+giriyor. Altı çeviri anahtarı on dilde eklendi; 6. anahtar her dilde o dilin kendi action
+adını alıntılıyor.
 
-### Kaldırıldı
+#### Explorer yeniden başlatma Windows 10'da kabuğu geri getirmiyordu
 
-#### `sec-powershell-v2` — adının söylediği şeyi yapmıyordu
+Bazı tweak'ler ancak kabuk registry'yi yeniden okuduğunda etkili oluyor, yani Explorer'ın yeniden
+başlatılması gerekiyor. Windows 11'de süreci öldürdüğünüzde kabuk kendiliğinden geri geliyordu;
+Windows 10'da öylece ölü kalıyordu ve kullanıcı masaüstsüz, görev çubuksuz kalıyordu.
 
-Satırın adı "PowerShell 2.0 motoru", açıklaması eski motoru kapattığını söylüyordu. Yazdığı
-değer ise `HKLM\SOFTWARE\Policies\Microsoft\Windows\PowerShell\EnableScripts = 1` — bu,
-yürütme politikasının **MachinePolicy** kapsamını açan değer (`Get-ExecutionPolicy -List`'in
-ilk satırı), ve kardeşi olan `ExecutionPolicy` REG_SZ değeri olmadan tek başına etkisiz.
-PowerShell 2.0 motorunun registry anahtarı yok; o bir Windows optional feature'ı, yani DISM
-işi — motorun kendi kayıt yeri (`HKLM\SOFTWARE\Microsoft\PowerShell\PowerShellEngine`)
-bu makinede hiç bulunmuyor.
+Sebep, sanıldığından incelikli. Arbitrium her zaman yükseltilmiş çalışıyor, dolayısıyla
+`startDetached("explorer.exe")` yükseltilmiş bir Explorer istiyor — ve Explorer yükseltilmişken
+kabuk rolünü üstlenmiyor. Ama işi öylece bırakmıyor da: kendini kullanıcı olarak yeniden başlatan
+`CreateExplorerShellUnelevatedTask` adlı zamanlanmış göreve devrediyor. O görev **ilk yükseltilmiş
+açılışta oluşturulduğu** için silinmiş, devre dışı bırakılmış ya da tam da bu uygulamanın yaptığı
+türden bir debloat sırasında budanmış olabiliyor. Başarısızlık koşullu, bu yüzden başkalarının
+Windows 10 makinelerinde görünüp geliştiricinin Windows 11'inde görünmüyordu.
 
-391 satır içinde metniyle yazdığı değer başka bir alt sisteme ait olan tek satırdı. Hiçbir
-zaman vaat ettiği şeyi yapmadığı, yaptığı şeyin de etkisiz olduğu için satır kaldırıldı;
-on dildeki iki çevirisi de onunla gitti. Gerçekten PowerShell 2.0'ı kapatan bir şey istenirse
-yeri katalog değil, `actions.json`'daki bir DISM tek-atışı.
+`Shell::restartExplorer()` yeniden yazıldı ve artık adım atmak yerine **kontrol etmek** üzerine
+kurulu:
+
+- Kabuk önce **çıkması isteniyor** — gizli "Exit Explorer" menüsünün gönderdiği mesajla — ki
+  masaüstü düzenini, görev çubuğu durumunu ve açık tuttuğu simge/küçük resim veritabanlarını
+  düzgün kapatabilsin. Gitmezse ancak o zaman sonlandırılıyor, üstelik **yalnızca o tek süreç**:
+  eski `taskkill /F /IM explorer.exe` makinedeki her Explorer'ı ada göre öldürüyordu, oturum açmış
+  ikinci bir kullanıcının kabuğu dahil.
+- Kabuk **yükseltilmemiş** geri geliyor: yeni süreç, oturumdaki sıradan bir sürecin çocuğu olarak
+  yaratılıyor ve onun token'ını miras alıyor.
+- Sonuç **doğrulanıyor**: `GetShellWindow()` sınırlı süre yoklanıyor ve ancak gerçekten bir kabuk
+  masaüstünü tuttuğunda başarı deniyor. Görmediği bir başarıyı rapor eden hiçbir dal kalmadı.
+
+Başarısız olduğunda hata, hangi aşamanın düştüğünü söylüyor — ve kullanıcı gerçekten masaüstsüz
+kaldıysa Görev Yöneticisi'nden elle nasıl geri getireceğini de. `explorer.exe` artık
+`GetWindowsDirectoryW`'dan mutlak yolla çözülüyor; çıplak ad, yükseltilmiş bir sürecin miras aldığı
+PATH'e güvenmek demekti.
+
+`actions.json`'daki üç action da kabuğu artık kendisi öldürmüyor: yükseltilmiş PowerShell'den
+başlatılan bir Explorer aynı sorunu yaşıyor. Gerekiyorsa sonuç satırında söyleyip yeniden başlatmayı
+uygulama içindeki düğmeye bırakıyorlar — `shell.cpp` artık explorer'a dokunan tek yer.
 
 ### Güvenlik
 
@@ -199,59 +364,6 @@ yanına konan bir `tbs.dll` yönetici yetkisiyle yüklenirdi. İkisi de artık
 `LOAD_LIBRARY_SEARCH_SYSTEM32` ile System32'ye sabitlenmiş durumda. Process geneli
 `SetDefaultDllDirectories` **bilerek** konmadı — o, native dosya diyaloglarının yüklediği
 shell extension'ları da etkiler ve bu değişikliğin böyle bir takasa ihtiyacı yok.
-
-### Erişilebilirlik
-
-#### Tweak satırları artık ekran okuyucuya adlarını söylüyor
-
-Bir tweak satırındaki hiçbir şey hazır bir widget değil: ad ve açıklama `paintEvent`'te
-çiziliyor, yanındaki kontrol de özel. Yani bir ekran okuyucu için satır, içinde adsız bir şey
-olan adsız bir dikdörtgendi — `setAccessibleName` tüm `src/` içinde hiç geçmiyordu.
-
-Metinler zaten üye olarak duruyordu, çünkü satır onları çizmek için tutuyor. Hem satıra hem
-kontrole veriliyorlar; kontrole de, çünkü odağı alan o. Uygulanamayan bir satır ise kendini
-açıklaması yerine *neden* uygulanamadığıyla tanıtıyor — görsel tarafta soluk hâli ve gereksinim
-satırı zaten bunu söylüyor. Registry'ye yönetici yetkisiyle yazan bir programda hangi anahtarın
-odakta olduğunu söyleyememek kozmetik bir eksik değil.
-
-#### `act-block-adobe` artık işaretçilerle yazıyor ve geri alınabiliyor
-
-Bu, uygulamada çalışma zamanında internetten gelen verinin ayrıcalıklı bir yazmaya ulaştığı
-**tek** yerdi ve üç ayrı sorunu vardı: indirilen dosya olduğu gibi hosts'a ekleniyordu,
-iki kez çalıştırılırsa liste iki kez giriyordu, ve `reversible: false` ile "hosts dosyasını
-elle düzenleyin" notu taşıyordu.
-
-Artık indirilen metinden yalnızca host satırları alınıyor — `0.0.0.0` veya `127.0.0.1` ile
-başlayıp tek bir ad taşıyan satırlar — ve bunlar `# ARBITRIUM-ADOBE-BEGIN` /
-`# ARBITRIUM-ADOBE-END` işaretçileri arasına, blok bütün olarak yeniden yazılarak konuyor.
-Yeni `act-unblock-adobe` action'ı da tam olarak o bloğu siliyor. Sahte bir hosts dosyasında
-ölçüldü: iki kez çalıştırmak satır sayısını değiştirmiyor, filtre indirilen dosyadaki yorum
-satırlarını ve `0.0.0.0 evil.example && calc.exe` gibi enjeksiyon denemelerini reddediyor,
-kullanıcının kendi satırları duruyor, ve kaldırma dosyayı bayt bayt eski hâline döndürüyor.
-
-Okuma ve yazma aynı kod sayfasında (`Get-Content` Windows PowerShell'de ANSI okur, bu yüzden
-`Set-Content -Encoding Default` deniyor), yani dosyada zaten olan her şey çıktığı gibi geri
-giriyor. Altı çeviri anahtarı on dilde eklendi; 6. anahtar her dilde o dilin kendi action
-adını alıntılıyor.
-
-#### `tools/screenshots.ps1` — README'nin görsellerini tek komutla almak
-
-Depoda tek bir ekran görüntüsü yok, oysa uygulama kendini fotoğraflamayı zaten biliyor:
-`--screenshot <yol>` pencerenin PNG'sini yazıp çıkıyor, `--theme`, `--typeface`,
-`--category` ve `--search` de içinde ne olacağına karar veriyor. Eksik olan tek şey,
-tutmaya değer kareler listesiydi — script sadece o.
-
-Sekiz kare: Gizlilik (koyu), Görünüm (açık), Dosya Gezgini (okyanus), Debloat, Eylemler,
-Günlük, TrustedInstaller (gece) ve Ayarlar (sepya). Sürüm başına yenilemek bir komut.
-
-İki şeyi bilerek yapmıyor. **CI'da çalışmıyor**: uygulama `requireAdministrator` ve Genel
-Bakış sayfası canlı makineyi okuyor, yani runner'da alınan bir görüntü aktive edilmemiş bir
-Azure VM'in bilgilerini reklam ederdi. **Genel Bakış sayfasını istenmedikçe fotoğraflamıyor**:
-etkinleştirme durumu, BIOS/SMBIOS dizeleri, disk seri numaraları, BitLocker durumu ve makine
-adı orada. `-IncludeOverview` var, ama seçenek olsun diye — iyi fikir olduğu için değil.
-
-Yükseltilmiş bir kabuktan çalıştırılması öneriliyor: exe kim başlatırsa başlatsın yönetici
-hakkı istiyor, yani yükseltilmemiş bir kabukta sekiz kare sekiz onay demek.
 
 #### Yayınlanan dosyalar artık nereden geldiklerini kanıtlıyor
 
@@ -292,32 +404,21 @@ Tag şekil kontrolü `case` glob'uydu (`v[0-9]*.[0-9]*.[0-9]*`); sondaki `*` her
 yani `v0.9.1"; echo hi; #` şekil kontrolünden geçip sonraki adımlara yerleştiriliyordu. Artık
 çapalı bir regex, gerçek kabukta on bir örneğe karşı sınandı.
 
-#### Üçüncü taraf lisansları artık indirmeyle birlikte geliyor
+### Erişilebilirlik
 
-`resources/licenses/` altına LGPL-3.0 ve GPL-3.0 metinleri eklendi — qt/qtbase'in `v6.11.1`
-etiketinden birebir alındı. Bunlar ve `resources/fonts/` altındaki altı OFL dosyası artık zip
-içinde bir `licenses/` klasöründe. Bugüne kadar hepsi depoyla seyahat ediyordu, indirmeyle
-hiçbiri.
+#### Tweak satırları artık ekran okuyucuya adlarını söylüyor
 
-Glob'un yapamadığı şeyi — bir şeyin *eksik* olduğunu fark etmek — `check` job'ındaki yeni bir
-adım yapıyor: sekiz dosya sayılıyor, eksikse adlarıyla birlikte otuz saniyede duruyor, bir
-saatlik Qt derlemesinden sonra değil.
+Bir tweak satırındaki hiçbir şey hazır bir widget değil: ad ve açıklama `paintEvent`'te
+çiziliyor, yanındaki kontrol de özel. Yani bir ekran okuyucu için satır, içinde adsız bir şey
+olan adsız bir dikdörtgendi — `setAccessibleName` tüm `src/` içinde hiç geçmiyordu.
 
-#### README: "Windows will warn you about this file"
-
-Getting started listesi "indir" → "çalıştır" diyordu; arada gerçekte olan iki diyalog hiçbir
-yerde yazmıyordu. Yeni bölüm ikisini de adıyla anlatıyor, binary'nin neden imzasız olduğunu
-özür dilemeden söylüyor (sertifika birkaç yüz dolar/yıl, Haziran 2023'ten beri donanım token'ı
-zorunlu, ve bireyin alabildiği türü *Bilinmeyen yayıncı*'yı **hukuki adla** değiştirir — üstelik
-SmartScreen itibar tabanlı olduğu için ilk gün o diyaloğu zaten geçmez), ve güven yerine
-doğrulama sunuyor: `Get-FileHash` ile sums karşılaştırması ve `gh attestation verify`. İki komut
-da bu makinede gerçek `gh` sürümüne karşı sınandı.
-
-License bölümü de düzeltildi: gömülü olan **altı** yazı tipi ailesi (IBM Plex, Monda, Open Sans,
-Oxygen, Red Hat Text, Saira), sadece IBM Plex değil.
+Metinler zaten üye olarak duruyordu, çünkü satır onları çizmek için tutuyor. Hem satıra hem
+kontrole veriliyorlar; kontrole de, çünkü odağı alan o. Uygulanamayan bir satır ise kendini
+açıklaması yerine *neden* uygulanamadığıyla tanıtıyor — görsel tarafta soluk hâli ve gereksinim
+satırı zaten bunu söylüyor. Registry'ye yönetici yetkisiyle yazan bir programda hangi anahtarın
+odakta olduğunu söyleyememek kozmetik bir eksik değil.
 
 ---
-
 ## [0.9.10] — 2026-08-27
 
 Bir yeni araç, altı yeni tema, dört yeni vurgu rengi — ve 0.9.9'un kendi değişikliğinde
@@ -823,7 +924,7 @@ satırdan geniş bir değer sol kenardan taşarak çiziliyordu.
 
 ---
 
-[Yayınlanmamış]: https://github.com/shadesofdeath/Arbitrium/compare/v0.9.10...main
+[0.10.0]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.10.0
 [0.9.10]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.10
 [0.9.9]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.9
 [0.9.8]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.8

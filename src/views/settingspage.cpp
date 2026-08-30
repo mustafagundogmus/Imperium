@@ -25,7 +25,12 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QHBoxLayout>
+#include <QMessageBox>
 #include <QProcess>
+// QMessageBox::addButton hands back a QPushButton*, so the type has to be complete for the
+// QAbstractButton* the comparison below is written against — the same pair mainwindow.cpp
+// carries for the two dialogs it puts up.
+#include <QPushButton>
 #include <QStandardPaths>
 #include <QUrl>
 #include <QVBoxLayout>
@@ -359,15 +364,55 @@ void SettingsPage::onExportPreset()
     if (path.isEmpty())
         return;
 
+    // What the user changed, not the whole catalogue. This used to insert every id the
+    // catalogue holds — 706 of them on the machine this was measured on: the catalogued
+    // tweaks plus one row per installed service and one per startup entry, both
+    // synthesised from the live machine — so a file the user thought of as "my settings"
+    // was seven hundred lines and carried machine A's entire service configuration onto
+    // machine B.
+    //
+    // The predicate is isOn(): the tweak is not sitting where Windows ships it. That is
+    // the same question the "Etkin" filter and the overview's count already ask, so what
+    // lands in the file is what the app has been calling changed all along. On the same
+    // machine it selects 99 of the 706.
+    //
+    // Deliberately isOn() rather than isPending(). Pending is selected != *applied*, and
+    // pressing Uygula empties the pending set by definition — measured on that machine it
+    // is zero the moment the app has finished reading the registry. A preset exported the
+    // way a preset is actually exported, from a machine the user has just finished setting
+    // up and applying, would have contained nothing at all. isPending() is still OR'd in
+    // for the other direction: a tweak queued back to the position Windows ships is a
+    // deliberate choice that has not been applied yet, and it belongs in the file at the
+    // position the user picked.
+    //
+    // What this leaves out is the part worth being careful about, because it is the whole
+    // reason the file is a hundred lines instead of seven hundred. A service's
+    // defaultOption is not a constant: catalog.cpp's appendServices() derives it from the
+    // Start value actually found on this machine — "there is no universal default for a
+    // service" — so isOn() is false for every service the user has not moved himself, and
+    // all 307 of them drop out on their own. Measured: 0 exported.
+    //
+    // Startup entries do not work that way and the difference is deliberate here too.
+    // appendStartup() sets a fixed defaultOption of 1, because Windows does run a startup
+    // entry unless something says otherwise, so an entry that is disabled on this machine
+    // travels whoever disabled it — 8 of 9 on the machine above. That is the honest
+    // answer rather than an accident: every other count in the app calls a disabled
+    // startup entry changed, and a second machine set up from this file is meant to end up
+    // with the same programs not launching.
+    //
+    // (`literal` is a third thing and decides none of this. It tells the engine to write
+    // the position's own bytes instead of consulting the journal; both kinds of
+    // synthesised row set it, for two different reasons of their own.)
     QHash<QString, int> positions;
-    for (const Category &c : Catalog::instance().categories())
-        for (const Section &s : c.sections)
-            for (const Tweak &t : s.tweaks)
-                positions.insert(t.id, m_state->selected(t.id));
+    forEachTweak(Catalog::instance(), [&](const Tweak &t) {
+        if (m_state->isOn(t.id) || m_state->isPending(t.id))
+            positions.insert(t.id, m_state->selected(t.id));
+    });
 
     QString error;
     const QString name = QFileInfo(path).completeBaseName();
-    if (Preset::save(path, name, positions, &error))
+    if (Preset::save(path, name, positions, Preset::Scope::Changed,
+                     Preset::currentAppearance(), Preset::currentSettings(), &error))
         Q_EMIT notice(Locale::tr(QStringLiteral("settings.preset.saved")).arg(positions.size()));
     else
         Q_EMIT notice(Locale::tr(QStringLiteral("settings.preset.saveFailed")).arg(error));
@@ -396,6 +441,51 @@ void SettingsPage::onImportPreset()
         ++changed;
     }
 
+    // The appearance and the four switches cannot be queued behind Uygula the way the
+    // positions above are, because there is nothing for Uygula to write: they are the app's
+    // own preferences, not machine writes, so they take effect the moment they are applied.
+    // Which is precisely why the user is asked first — repainting somebody's window and
+    // switching its language because they opened a file is its own kind of surprise. Asked
+    // once, for both elements together, since answering "yes, make this machine look like
+    // that one" twice is not a finer-grained choice, only a longer one. The tweak positions
+    // are queued either way; this dialog can only decline the preferences.
+    if (result.appearance.present || result.settings.present) {
+        QMessageBox box(this);
+        box.setWindowTitle(QCoreApplication::applicationName());
+        box.setIcon(QMessageBox::NoIcon);
+        box.setText(Locale::tr(QStringLiteral("settings.preset.prefs.title")));
+        box.setInformativeText(Locale::tr(QStringLiteral("settings.preset.prefs.body")));
+        QAbstractButton *adopt = box.addButton(Locale::tr(QStringLiteral("settings.preset.prefs.apply")),
+                                               QMessageBox::AcceptRole);
+        box.addButton(Locale::tr(QStringLiteral("settings.preset.prefs.keep")),
+                      QMessageBox::RejectRole);
+        box.exec();
+        if (box.clickedButton() == adopt) {
+            // The four switches first. applyAppearance() finishes with the language, and
+            // a language change tears this page down and builds it again through
+            // rebuild() — which reads Settings::instance() to decide where the smooth
+            // scroll and border glow toggles sit. Applied the other way round, the rebuilt
+            // rows would be drawn from the values the preset was about to replace.
+            Preset::applySettings(result.settings);
+            Preset::applyAppearance(result.appearance);
+
+            // And a rebuild of our own, because a preset that moves the density, the text
+            // size or any of the four switches without moving the language changes nothing
+            // on screen otherwise. Those five controls are read out of Theme and Settings
+            // once, when the row is built, and have no signal to follow afterwards —
+            // unlike the theme, accent, typeface and language pickers, which repaint
+            // themselves off Theme::notifier() and were the only reason this looked like
+            // it worked. Calling it from inside the button handler that got us here is
+            // safe for the reason rebuild() itself gives: it hides and unparents now and
+            // defers every delete to the next spin of the event loop. When the language
+            // did change this is the second rebuild rather than the first, which costs one
+            // wasted pass over four sections and keeps the rule simple.
+            rebuild();
+        }
+    }
+
+    // Emitted last so the notice the window writes is in the language the preset just
+    // asked for, rather than the one the user was reading a moment ago.
     Q_EMIT presetApplied(result.meta.name.isEmpty() ? QFileInfo(path).completeBaseName()
                                                     : result.meta.name,
                          changed, result.unknownIds);

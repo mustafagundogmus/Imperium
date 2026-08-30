@@ -9,11 +9,16 @@
 // place to navigate to, so it lives on the settings page now.
 //
 // The catalogue's own category order is a flat list of twelve — Genel Bakış and eleven
-// others with nothing to say which of them are related. Grouped into five clusters with
+// others with nothing to say which of them are related. Grouped into six clusters with
 // a small header over each, the same list reads instead of just being scanned. Genel
 // Bakış stays outside every cluster: it is the one row that is not a settings area, it
 // is the dashboard, and grouping it with anything else would say it belongs to a
 // category the way the others do.
+//
+// Two of the rows inside those clusters are not catalogue categories at all: Uygulamalar
+// under Sistem and God Mode under Araçlar. Where a row belongs is a question about what
+// the user came to do, not about which file its data lives in, so both sit where they
+// read rather than in the pinned strip at the bottom. buildList() names both.
 //
 // Geometry is assigned by hand rather than by a QLayout: the design specifies the
 // margins in CSS terms (a margin that collapses into the parent's padding) and hand
@@ -51,6 +56,11 @@ public:
     /// scan, not a real position in the catalogue, so it still needs its own id here.
     static QString debloatId() { return QStringLiteral("debloat"); }
 
+    /// …and the settings launcher, filed under the new Araçlar group at the end of the
+    /// list. Also not a catalogue category: it changes nothing, it opens Windows' own
+    /// pages, so there is no tweak for the catalogue to carry.
+    static QString godModeId() { return QStringLiteral("godmode"); }
+
     /// …and the write history, which is not a category either.
     static QString journalId() { return QStringLiteral("journal"); }
 
@@ -58,14 +68,19 @@ public:
     /// starts a program under the account that owns the files an administrator cannot.
     static QString tiLauncherId() { return QStringLiteral("tilauncher"); }
 
-    /// True for any of the pinned rows above: pages of their own, none of which the
-    /// catalogue knows about. The five comparisons were written out at three separate
-    /// call sites in MainWindow, which is three places to forget one when a sixth
-    /// pinned row shows up.
+    /// True for any of the ids above: pages of their own, none of which the catalogue
+    /// knows about. The comparisons were written out at three separate call sites in
+    /// MainWindow, which is three places to forget one when the next such page shows up.
+    ///
+    /// "Pinned" is now half a misnomer — debloat and godmode ride in the scrolling list
+    /// rather than in the bottom strip — but what every caller of this actually asks is
+    /// "is this a page the catalogue cannot answer for", and that is still exactly the
+    /// set. Renaming it would touch more than it would explain.
     static bool isPinnedPage(const QString &id)
     {
         return id == settingsId() || id == actionsId() || id == debloatId()
-               || id == journalId() || id == tiLauncherId() || id == aboutId();
+               || id == godModeId() || id == journalId() || id == tiLauncherId()
+               || id == aboutId();
     }
 
     /// …and who built it, which is not a category, a setting, or anything you would come

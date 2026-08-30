@@ -14,6 +14,7 @@
 #include "views/aboutpage.h"
 #include "views/actionpage.h"
 #include "views/debloatpage.h"
+#include "views/godmodepage.h"
 #include "views/journalpage.h"
 #include "views/settingspage.h"
 #include "views/statusbar.h"
@@ -189,6 +190,10 @@ void MainWindow::buildUi()
     m_debloat = new DebloatPage(m_debloatScroll);
     m_debloatScroll->setWidget(m_debloat);
 
+    m_godModeScroll = new SmoothScrollArea(m_stack);
+    m_godMode = new GodModePage(m_godModeScroll);
+    m_godModeScroll->setWidget(m_godMode);
+
     m_journalScroll = new SmoothScrollArea(m_stack);
     m_journal = new JournalPage(m_engine, m_state, m_journalScroll);
     m_journalScroll->setWidget(m_journal);
@@ -203,6 +208,7 @@ void MainWindow::buildUi()
     m_stack->addWidget(m_actionScroll);
     m_stack->addWidget(m_tiScroll);
     m_stack->addWidget(m_debloatScroll);
+    m_stack->addWidget(m_godModeScroll);
     m_stack->addWidget(m_journalScroll);
     m_stack->addWidget(m_aboutScroll);
     main->addWidget(m_stack, 1);
@@ -239,6 +245,7 @@ void MainWindow::wire()
     connect(m_actions, &ActionPage::notice, m_statusBar, &StatusBar::setNotice);
     connect(m_tiLauncher, &TiLauncherPage::notice, m_statusBar, &StatusBar::setNotice);
     connect(m_debloat, &DebloatPage::notice, m_statusBar, &StatusBar::setNotice);
+    connect(m_godMode, &GodModePage::notice, m_statusBar, &StatusBar::setNotice);
     connect(m_journal, &JournalPage::notice, m_statusBar, &StatusBar::setNotice);
     // The scan runs in the background from construction on; if it lands while this page
     // happens to be the one on screen, the header's "N uygulama bulundu" needs a refresh.
@@ -369,12 +376,14 @@ void MainWindow::refreshView()
     const bool settings = !searching && current == Sidebar::settingsId();
     const bool actions = !searching && current == Sidebar::actionsId();
     const bool debloat = !searching && current == Sidebar::debloatId();
+    const bool godMode = !searching && current == Sidebar::godModeId();
     const bool journal = !searching && current == Sidebar::journalId();
     const bool tiLauncher = !searching && current == Sidebar::tiLauncherId();
     const bool about = !searching && current == Sidebar::aboutId();
     const bool overview = !searching && category && category->isOverview();
 
-    m_header->setControlsVisible(!overview && !settings && !about && !debloat && !tiLauncher);
+    m_header->setControlsVisible(!overview && !settings && !about && !debloat && !tiLauncher
+                                 && !godMode);
 
     if (about) {
         m_header->setTitle(Locale::tr(QStringLiteral("sidebar.about")));
@@ -411,6 +420,15 @@ void MainWindow::refreshView()
         m_header->setSubtitle(Locale::tr(QStringLiteral("ti.subtitle")));
         m_header->setPendingLabel({});
         m_stack->setCurrentWidget(m_tiScroll);
+        return;
+    }
+
+    if (godMode) {
+        m_header->setTitle(Locale::tr(QStringLiteral("godmode.title")));
+        m_header->setSubtitle(Locale::tr(QStringLiteral("godmode.subtitle"))
+                                  .arg(m_godMode->rowCount()));
+        m_header->setPendingLabel({});
+        m_stack->setCurrentWidget(m_godModeScroll);
         return;
     }
 

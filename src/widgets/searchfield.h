@@ -25,6 +25,16 @@ public:
     void clearText();
     void focusField();
 
+    /// The i18n key the placeholder is looked up under, so a second field can say what it
+    /// actually searches. Stored rather than applied once: the field re-reads it on every
+    /// language change, which is why this takes a key and not a finished sentence.
+    void setPlaceholderKey(const QString &key);
+
+    /// Hides the trailing "⌃K" badge. That badge advertises the shortcut that focuses the
+    /// *sidebar* search (mainwindow.cpp wires it there and nowhere else), so on any other
+    /// field it would be pointing at a key that does nothing for it.
+    void setShortcutBadgeVisible(bool visible);
+
 private Q_SLOTS:
     void applyStyle();
 
@@ -47,5 +57,7 @@ private:
     int preferredHeight() const;
 
     QLineEdit *m_edit = nullptr;
+    QString m_placeholderKey;
     bool m_focused = false;
+    bool m_badgeVisible = true;
 };

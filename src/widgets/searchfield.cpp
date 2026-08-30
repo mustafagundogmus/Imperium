@@ -46,6 +46,7 @@ qreal drawnChevronWidth()
 
 SearchField::SearchField(QWidget *parent)
     : QWidget(parent)
+    , m_placeholderKey(QStringLiteral("sidebar.search.placeholder"))
 {
     setCursor(Qt::IBeamCursor);
     setFixedHeight(preferredHeight());
@@ -53,7 +54,7 @@ SearchField::SearchField(QWidget *parent)
     m_edit = new QLineEdit(this);
     m_edit->setFrame(false);
     m_edit->setFont(Theme::Font::searchText());
-    m_edit->setPlaceholderText(Locale::tr(QStringLiteral("sidebar.search.placeholder")));
+    m_edit->setPlaceholderText(Locale::tr(m_placeholderKey));
     m_edit->setAttribute(Qt::WA_MacShowFocusRect, false);
     // Don't let the field claim focus just for being the first focusable widget — the
     // window should open with the placeholder showing, not a blinking caret. ⌃K and a
@@ -77,11 +78,29 @@ SearchField::SearchField(QWidget *parent)
         layoutEditor();
         update();
     });
-    connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, [this] {
-        m_edit->setPlaceholderText(Locale::tr(QStringLiteral("sidebar.search.placeholder")));
-    });
+    connect(Locale::notifier(), &Locale::Notifier::languageChanged, this,
+            [this] { m_edit->setPlaceholderText(Locale::tr(m_placeholderKey)); });
 
     layoutEditor();
+}
+
+void SearchField::setPlaceholderKey(const QString &key)
+{
+    if (key.isEmpty() || m_placeholderKey == key)
+        return;
+    m_placeholderKey = key;
+    m_edit->setPlaceholderText(Locale::tr(m_placeholderKey));
+}
+
+void SearchField::setShortcutBadgeVisible(bool visible)
+{
+    if (m_badgeVisible == visible)
+        return;
+    m_badgeVisible = visible;
+    // The badge is painted, not a child widget, but it is also the right-hand inset the
+    // editor is laid out against — so dropping it has to give the text that width back.
+    layoutEditor();
+    update();
 }
 
 int SearchField::preferredHeight() const
@@ -147,7 +166,7 @@ void SearchField::resizeEvent(QResizeEvent *e)
 void SearchField::layoutEditor()
 {
     const int x = qRound(PadX + IconSize + Gap);
-    const int right = qRound(PadX + badgeWidth() + Gap);
+    const int right = m_badgeVisible ? qRound(PadX + badgeWidth() + Gap) : qRound(PadX);
     m_edit->setGeometry(x, 0, qMax(0, width() - x - right), height());
 }
 
@@ -192,6 +211,9 @@ void SearchField::paintEvent(QPaintEvent *)
     p.drawPixmap(QPointF(PadX, std::round((height() - IconSize) / 2.0)), glass);
 
     // ⌃K badge
+    if (!m_badgeVisible)
+        return;
+
     const QFont &kbdFont = Font::kbd();
     const qreal bw = badgeWidth();
     const qreal bh = 2 * BadgePadY + 2 + Css::normalLine(kbdFont);

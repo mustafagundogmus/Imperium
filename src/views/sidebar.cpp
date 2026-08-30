@@ -43,6 +43,12 @@ const QString DebloatIcon = QStringLiteral(
     "M2.3 3.4h7.4M4.3 3.4v-1a.7.7 0 01.7-.7h2a.7.7 0 01.7.7v1"
     "M3 3.4l.5 6.3a.9.9 0 00.9.8h3.2a.9.9 0 00.9-.8l.5-6.3"
     "M5 5.1v3.4M7 5.1v3.4");
+// A window with its corner opened and an arrow leaving through it. The God Mode page runs
+// nothing of its own — every row hands a target to Windows and Windows draws the dialog —
+// so the glyph says "this leads out of here" rather than naming any one kind of setting.
+const QString GodModeIcon = QStringLiteral(
+    "M9.5 6.6v3.2a.7.7 0 01-.7.7H2.9a.7.7 0 01-.7-.7V3.9a.7.7 0 01.7-.7h3.2"
+    "M7.6 2.2h2.7v2.7M10.3 2.2L5.7 6.8");
 // A cog: a toothed ring around a hub. What was here before was a disc with eight detached
 // rays — the same drawing as the Görsel Efektler category, i.e. a brightness icon.
 const QString SettingsIcon = QStringLiteral(
@@ -82,7 +88,28 @@ constexpr GroupDef Groups[] = {
     { "sidebar.group.privacynet",     {"priv", "sec", "net", "", "", "", "", ""} },
     { "sidebar.group.files",          {"exp", "ctx", "cln", "", "", "", "", ""} },
     { "category.adv",                 {"adv", "", "", "", "", "", "", ""} },
+    // Araçlar: pages that are neither a tweak category nor a meta page. "godmode" is the
+    // second non-catalogue id buildList() special-cases, and it went here rather than into
+    // the pinned strip at the bottom on purpose — that strip's geometry is a hand-linked
+    // chain of xRowTop() methods where adding a row means editing every one of them, and
+    // a launcher is something you go and use, not a meta page like Günlük or Hakkında.
+    { "sidebar.group.tools",          {"godmode", "", "", "", "", "", "", ""} },
 };
+
+/// What a row in the scrolling list is called.
+///
+/// Two of the ids in Groups[] are not catalogue categories and so have no `category.<id>`
+/// entry to complete; each carries its own key instead. Written once because buildList()
+/// and the language-change handler both need the answer, and the handler having its own
+/// copy of the debloat special case is how a third one would get missed.
+QString listRowLabel(const QString &id)
+{
+    if (id == Sidebar::debloatId())
+        return Locale::tr(QStringLiteral("sidebar.debloat"));
+    if (id == Sidebar::godModeId())
+        return Locale::tr(QStringLiteral("sidebar.godmode"));
+    return Locale::tr(QStringLiteral("category.") + id);
+}
 
 } // namespace
 
@@ -130,11 +157,8 @@ Sidebar::Sidebar(AppState *state, QWidget *parent)
     setSelected(state->selectedCategory());
 
     connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, [this] {
-        for (CategoryRow *row : std::as_const(m_rows)) {
-            row->setName(row->categoryId() == debloatId()
-                             ? Locale::tr(QStringLiteral("sidebar.debloat"))
-                             : Locale::tr(QStringLiteral("category.") + row->categoryId()));
-        }
+        for (CategoryRow *row : std::as_const(m_rows))
+            row->setName(listRowLabel(row->categoryId()));
         retranslateGroups();
         m_journal->setName(Locale::tr(QStringLiteral("sidebar.journal")));
         m_actions->setName(Locale::tr(QStringLiteral("sidebar.actions")));
@@ -170,12 +194,16 @@ void Sidebar::buildList()
             if (id == debloatId()) {
                 // Not a catalogue category — a live machine scan behind the same row
                 // shape, so it reads as part of the list instead of a special case.
-                row = new CategoryRow(id, Locale::tr(QStringLiteral("sidebar.debloat")),
-                                      DebloatIcon, QString(), m_list);
+                row = new CategoryRow(id, listRowLabel(id), DebloatIcon, QString(), m_list);
+            } else if (id == godModeId()) {
+                // Nor is this one — it opens Windows' own settings pages and writes
+                // nothing, so there is no tweak for the catalogue to carry. Same row
+                // shape again, and no count: the number of shortcuts is not a number
+                // anybody navigates by.
+                row = new CategoryRow(id, listRowLabel(id), GodModeIcon, QString(), m_list);
             } else if (const Category *category = catalog.category(id)) {
                 const int count = category->tweakCount();
-                row = new CategoryRow(category->id,
-                                      Locale::tr(QStringLiteral("category.") + category->id),
+                row = new CategoryRow(category->id, listRowLabel(category->id),
                                       category->icon,
                                       count > 0 ? QString::number(count) : QString(), m_list);
             } else {
