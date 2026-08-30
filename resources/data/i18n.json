@@ -108,16 +108,16 @@
   "tr": "Adobe telemetri adreslerini engelle"
  },
  "action.act-block-adobe.note": {
-  "ar": "ينزّل القائمة من الإنترنت ويضيفها إلى ملف hosts لديك؛ وللتراجع عن ذلك عليك تحرير ملف hosts يدويًا.",
-  "de": "Die Liste wird aus dem Internet heruntergeladen und an Ihre hosts-Datei angehängt; zum Rückgängigmachen müssen Sie die hosts-Datei manuell bearbeiten.",
-  "en": "It downloads the list from the internet and appends it to your hosts file; undoing this requires editing the hosts file manually.",
-  "es": "Descarga la lista de Internet y la agrega a tu archivo hosts; para deshacerlo tendrás que editar el archivo hosts manualmente.",
-  "fr": "La liste est téléchargée depuis Internet et ajoutée à votre fichier hosts ; pour annuler, vous devez modifier ce fichier manuellement.",
-  "it": "Scarica l'elenco da Internet e lo aggiunge al file hosts; per annullare l'operazione devi modificare manualmente il file hosts.",
-  "pl": "Pobiera listę z Internetu i dopisuje ją do pliku hosts; aby cofnąć zmianę, trzeba ręcznie edytować ten plik.",
-  "pt": "Baixa a lista da Internet e a acrescenta ao seu arquivo hosts; para desfazer, é preciso editar o arquivo hosts manualmente.",
-  "ru": "Список загружается из Интернета и дописывается в файл hosts; чтобы отменить это, файл hosts придётся править вручную.",
-  "tr": "İnternetten liste indirir ve hosts dosyanıza ekler; geri almak için hosts dosyasını elle düzenlemeniz gerekir."
+  "ar": "ينزّل القائمة من الإنترنت ويكتبها في ملف hosts لديك بين علامات خاصة به؛ و«إلغاء حظر Adobe» يحذف تلك الكتلة كاملةً.",
+  "de": "Die Liste wird aus dem Internet heruntergeladen und zwischen eigenen Markierungen in Ihre hosts-Datei geschrieben; „Adobe-Sperre aufheben“ löscht diesen Block als Ganzes.",
+  "en": "It downloads the list from the internet and writes it into your hosts file between markers of its own; 'Remove the Adobe block' deletes that block in one piece.",
+  "es": "Descarga la lista de Internet y la escribe en tu archivo hosts entre sus propios marcadores; «Quitar el bloqueo de Adobe» elimina ese bloque entero.",
+  "fr": "La liste est téléchargée depuis Internet et écrite dans votre fichier hosts, encadrée par ses propres marqueurs ; « Lever le blocage Adobe » supprime ce bloc en entier.",
+  "it": "Scarica l'elenco da Internet e lo scrive nel file hosts tra i propri marcatori; «Rimuovi il blocco di Adobe» elimina quel blocco per intero.",
+  "pl": "Pobiera listę z Internetu i zapisuje ją w pliku hosts między własnymi znacznikami; „Usuń blokadę Adobe” usuwa ten blok w całości.",
+  "pt": "Baixa a lista da Internet e a escreve no seu arquivo hosts entre marcadores próprios; «Remover o bloqueio da Adobe» exclui esse bloco por inteiro.",
+  "ru": "Список загружается из Интернета и записывается в файл hosts между метками приложения; «Снять блокировку Adobe» удаляет этот блок целиком.",
+  "tr": "İnternetten liste indirir ve hosts dosyanıza kendi işaretçileri arasına yazar; \"Adobe engellemesini kaldır\" o bloğu bütün olarak siler."
  },
  "action.act-disable-bitlocker.desc": {
   "ar": "يفك تشفير محرك أقراص النظام.",
@@ -671,6 +671,42 @@
   "ru": "Удалить схему электропитания Ultimate Performance",
   "tr": "Ultimate Performance güç planını kaldır"
  },
+ "action.act-unblock-adobe.desc": {
+  "ar": "يحذف كتلة Adobe الواقعة بين علامات Arbitrium في ملف hosts. ولا يمسّ بقية الملف.",
+  "de": "Löscht den Adobe-Block zwischen den Arbitrium-Markierungen in der hosts-Datei. Der Rest der Datei bleibt unangetastet.",
+  "en": "Deletes the Adobe block between the Arbitrium markers in the hosts file. The rest of the file is left untouched.",
+  "es": "Elimina el bloque de Adobe situado entre los marcadores de Arbitrium en el archivo hosts. El resto del archivo queda intacto.",
+  "fr": "Supprime le bloc Adobe placé entre les marqueurs Arbitrium dans le fichier hosts. Le reste du fichier n'est pas touché.",
+  "it": "Elimina il blocco Adobe compreso tra i marcatori Arbitrium nel file hosts. Il resto del file resta intatto.",
+  "pl": "Usuwa blok Adobe znajdujący się między znacznikami Arbitrium w pliku hosts. Reszta pliku pozostaje nietknięta.",
+  "pt": "Remove o bloco da Adobe situado entre os marcadores do Arbitrium no arquivo hosts. O resto do arquivo permanece intacto.",
+  "ru": "Удаляет блок Adobe между метками Arbitrium в файле hosts. Остальная часть файла остаётся нетронутой.",
+  "tr": "hosts dosyasındaki Arbitrium işaretçileri arasındaki Adobe bloğunu siler. Dosyanın geri kalanına dokunmaz."
+ },
+ "action.act-unblock-adobe.name": {
+  "ar": "إلغاء حظر Adobe",
+  "de": "Adobe-Sperre aufheben",
+  "en": "Remove the Adobe block",
+  "es": "Quitar el bloqueo de Adobe",
+  "fr": "Lever le blocage Adobe",
+  "it": "Rimuovi il blocco di Adobe",
+  "pl": "Usuń blokadę Adobe",
+  "pt": "Remover o bloqueio da Adobe",
+  "ru": "Снять блокировку Adobe",
+  "tr": "Adobe engellemesini kaldır"
+ },
+ "action.act-unblock-adobe.note": {
+  "ar": "لا يُحذف سوى الكتلة التي كتبها هذا التطبيق؛ وتبقى الأسطر التي أضفتها يدويًا.",
+  "de": "Es wird nur der Block gelöscht, den diese App geschrieben hat; manuell hinzugefügte Zeilen bleiben erhalten.",
+  "en": "Only the block this app wrote is deleted; lines you added by hand are left in place.",
+  "es": "Solo se elimina el bloque que escribió esta aplicación; las líneas que hayas añadido manualmente se conservan.",
+  "fr": "Seul le bloc écrit par cette application est supprimé ; les lignes que vous avez ajoutées manuellement sont conservées.",
+  "it": "Viene eliminato solo il blocco scritto da questa app; le righe aggiunte manualmente restano al loro posto.",
+  "pl": "Usuwany jest tylko blok zapisany przez tę aplikację; wiersze dodane ręcznie pozostają.",
+  "pt": "Só é removido o bloco escrito por esta aplicação; as linhas que adicionou manualmente permanecem.",
+  "ru": "Удаляется только блок, записанный этим приложением; строки, добавленные вручную, остаются.",
+  "tr": "Yalnızca bu uygulamanın yazdığı blok silinir; elle eklediğiniz satırlar kalır."
+ },
  "actions.cancel": {
   "ar": "إلغاء",
   "de": "Abbrechen",
@@ -778,6 +814,30 @@
   "pt": "Lista de bloqueio da Adobe adicionada ao ficheiro hosts.",
   "ru": "Список блокировки Adobe добавлен в файл hosts.",
   "tr": "Adobe engelleme listesi hosts dosyasına eklendi."
+ },
+ "actions.result.adobeNotBlocked": {
+  "ar": "لم تكن هناك كتلة Adobe في ملف hosts.",
+  "de": "In der hosts-Datei war kein Adobe-Block vorhanden.",
+  "en": "There was no Adobe block in the hosts file.",
+  "es": "No había ningún bloque de Adobe en el archivo hosts.",
+  "fr": "Aucun bloc Adobe n'était présent dans le fichier hosts.",
+  "it": "Nel file hosts non era presente alcun blocco Adobe.",
+  "pl": "W pliku hosts nie było bloku Adobe.",
+  "pt": "Não havia nenhum bloco da Adobe no ficheiro hosts.",
+  "ru": "Блока Adobe в файле hosts не было.",
+  "tr": "Adobe bloğu hosts dosyasında yoktu."
+ },
+ "actions.result.adobeUnblocked": {
+  "ar": "تمت إزالة قائمة حظر Adobe من ملف hosts.",
+  "de": "Adobe-Sperrliste aus der hosts-Datei entfernt.",
+  "en": "Adobe block list removed from the hosts file.",
+  "es": "Lista de bloqueo de Adobe eliminada del archivo hosts.",
+  "fr": "Liste de blocage Adobe supprimée du fichier hosts.",
+  "it": "Elenco di blocco Adobe rimosso dal file hosts.",
+  "pl": "Usunięto listę blokowania Adobe z pliku hosts.",
+  "pt": "Lista de bloqueio da Adobe removida do ficheiro hosts.",
+  "ru": "Список блокировки Adobe удалён из файла hosts.",
+  "tr": "Adobe engelleme listesi hosts dosyasından silindi."
  },
  "actions.result.bitlockerStarted": {
   "ar": "بدأ فك تشفير BitLocker.",

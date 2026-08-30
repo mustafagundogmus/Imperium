@@ -214,6 +214,26 @@ açıklaması yerine *neden* uygulanamadığıyla tanıtıyor — görsel taraft
 satırı zaten bunu söylüyor. Registry'ye yönetici yetkisiyle yazan bir programda hangi anahtarın
 odakta olduğunu söyleyememek kozmetik bir eksik değil.
 
+#### `act-block-adobe` artık işaretçilerle yazıyor ve geri alınabiliyor
+
+Bu, uygulamada çalışma zamanında internetten gelen verinin ayrıcalıklı bir yazmaya ulaştığı
+**tek** yerdi ve üç ayrı sorunu vardı: indirilen dosya olduğu gibi hosts'a ekleniyordu,
+iki kez çalıştırılırsa liste iki kez giriyordu, ve `reversible: false` ile "hosts dosyasını
+elle düzenleyin" notu taşıyordu.
+
+Artık indirilen metinden yalnızca host satırları alınıyor — `0.0.0.0` veya `127.0.0.1` ile
+başlayıp tek bir ad taşıyan satırlar — ve bunlar `# ARBITRIUM-ADOBE-BEGIN` /
+`# ARBITRIUM-ADOBE-END` işaretçileri arasına, blok bütün olarak yeniden yazılarak konuyor.
+Yeni `act-unblock-adobe` action'ı da tam olarak o bloğu siliyor. Sahte bir hosts dosyasında
+ölçüldü: iki kez çalıştırmak satır sayısını değiştirmiyor, filtre indirilen dosyadaki yorum
+satırlarını ve `0.0.0.0 evil.example && calc.exe` gibi enjeksiyon denemelerini reddediyor,
+kullanıcının kendi satırları duruyor, ve kaldırma dosyayı bayt bayt eski hâline döndürüyor.
+
+Okuma ve yazma aynı kod sayfasında (`Get-Content` Windows PowerShell'de ANSI okur, bu yüzden
+`Set-Content -Encoding Default` deniyor), yani dosyada zaten olan her şey çıktığı gibi geri
+giriyor. Altı çeviri anahtarı on dilde eklendi; 6. anahtar her dilde o dilin kendi action
+adını alıntılıyor.
+
 ---
 
 ## [0.9.10] — 2026-08-27
