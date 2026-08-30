@@ -101,6 +101,14 @@ ikincisine inanıyor: `m_applied`'ı `readAll()` ile dolduruyor. Motorun sözün
 oturum boyunca bir şey, bir sonraki açılışın başka bir şey söylemesine yol açıyordu — bu sınıf
 farklılığın tamamını kapatıyor.
 
+#### README, uygulamanın yapmadığı bir şeyi yaptığını söylüyordu
+
+İki yerde: *"Create a System Restore point straight from the app"* ve özelliklerin arasında
+sayılan *"restore points"*. Uygulama geri yükleme noktası oluşturmuyor — `settingspage.cpp:310`
+Windows'un kendi Sistem Koruması penceresini açıyor, ve oradaki yorum bunun bilinçli olduğunu
+söylüyor: nokta oluşturmak sistemi değiştirir, bu build ise istenmeden hiçbir şey yazmıyor.
+Uygulama içi metin (`settings.restore.point`) zaten dürüsttü; README onu takip ediyor artık.
+
 ---
 
 ## [0.9.10] — 2026-08-27

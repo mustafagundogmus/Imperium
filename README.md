@@ -111,10 +111,12 @@ tweak, service and startup entry in one file, each remembered as the *position* 
 than a bare on/off. Or export just your pending changes as a plain **`.reg`** file that Windows
 understands without Arbitrium anywhere in sight. Your setup shouldn't be a hostage.
 
-### 🛡️ A safety net, on by default
+### 🛡️ A safety net you can see the state of
 
-Create a System Restore point straight from the app before you start. Because "reversible" is a
-promise worth backing twice.
+Settings shows the date of your last System Restore point and puts Windows' own System Protection
+window one click away. Arbitrium does not create the point for you: creating one changes the
+system, and this build writes nothing you did not ask it to. Knowing whether you have a net, and
+being one click from making one, is the part software can honestly do for you.
 
 ---
 
@@ -159,8 +161,8 @@ Because a tool you'll actually open should be worth looking at.
 ## Fair warning
 
 This tool changes real Windows settings, and some of them matter. It gives you a log, per-change
-revert, restore points, and a confirmation on everything destructive — but it also assumes you're
-an adult who read the description.
+revert, a shortcut to Windows' System Protection, and a confirmation on everything destructive —
+but it also assumes you're an adult who read the description.
 
 Start with a restore point. Change things in small batches. The Log page is right there if
 something isn't what you expected.
