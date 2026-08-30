@@ -15431,30 +15431,6 @@
   "ru": "Установка драйверов Point and Print",
   "tr": "Point and Print sürücü kurulumu"
  },
- "tweak.sec-powershell-v2.desc": {
-  "ar": "يعطّل محرّك PowerShell القديم المستخدَم لتجاوز تسجيل كتل النصوص وقيود اللغة. ولا يتأثر PowerShell الحديث.",
-  "de": "Deaktiviert das alte PowerShell-Modul, mit dem sich Skriptblockprotokollierung und Sprachbeschränkungen umgehen lassen. Modernes PowerShell bleibt unberührt.",
-  "en": "Turns off the old PowerShell engine used to slip past script block logging and language restrictions. Modern PowerShell is untouched.",
-  "es": "Desactiva el antiguo motor de PowerShell usado para eludir el registro de bloques de script y las restricciones de lenguaje. PowerShell moderno no se ve afectado.",
-  "fr": "Désactive l'ancien moteur PowerShell utilisé pour contourner la journalisation des blocs de script et les restrictions de langage. PowerShell moderne n'est pas affecté.",
-  "it": "Disattiva il vecchio motore PowerShell usato per aggirare la registrazione dei blocchi di script e le restrizioni di linguaggio. PowerShell moderno non è toccato.",
-  "pl": "Wyłącza stary aparat PowerShell używany do obchodzenia rejestrowania bloków skryptu i ograniczeń języka. Nowoczesny PowerShell pozostaje nietknięty.",
-  "pt": "Desativa o antigo motor do PowerShell usado para contornar o registo de blocos de script e as restrições de linguagem. O PowerShell moderno não é afetado.",
-  "ru": "Отключает старый модуль PowerShell, которым обходят журналирование блоков сценариев и языковые ограничения. Современный PowerShell не затрагивается.",
-  "tr": "Betik blok kaydını ve dil kısıtlamalarını atlatmak için kullanılan eski PowerShell motorunu kapatır. Modern PowerShell etkilenmez."
- },
- "tweak.sec-powershell-v2.name": {
-  "ar": "محرّك PowerShell 2.0",
-  "de": "PowerShell-2.0-Modul",
-  "en": "PowerShell 2.0 engine",
-  "es": "Motor de PowerShell 2.0",
-  "fr": "Moteur PowerShell 2.0",
-  "it": "Motore PowerShell 2.0",
-  "pl": "Aparat PowerShell 2.0",
-  "pt": "Motor do PowerShell 2.0",
-  "ru": "Модуль PowerShell 2.0",
-  "tr": "PowerShell 2.0 motoru"
- },
  "tweak.sec-print-spooler-remote.desc": {
   "ar": "يمنع مخزن الطباعة من قبول طلبات الطباعة من الشبكة. وهنا تُغلق عائلة ثغرات PrintNightmare؛ وتظل الطباعة المحلية تعمل.",
   "de": "Verhindert, dass die Druckwarteschlange Druckaufträge aus dem Netzwerk annimmt. Hier wird die PrintNightmare-Lückenfamilie geschlossen; lokales Drucken funktioniert weiter.",

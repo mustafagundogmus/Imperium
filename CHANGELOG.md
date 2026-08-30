@@ -162,6 +162,23 @@ günü gelen yeni bir major sürüm, kimsenin yazmadığı bir uyarıyı herkesi
 düştüğü bir build'e çevirirdi. `ci.yml`'deki gerekçe de buna göre düzeltildi — orada
 "uyarı zemini temiz değil" yazıyordu, ki ölçüm bunun tersini söylüyor.
 
+### Kaldırıldı
+
+#### `sec-powershell-v2` — adının söylediği şeyi yapmıyordu
+
+Satırın adı "PowerShell 2.0 motoru", açıklaması eski motoru kapattığını söylüyordu. Yazdığı
+değer ise `HKLM\SOFTWARE\Policies\Microsoft\Windows\PowerShell\EnableScripts = 1` — bu,
+yürütme politikasının **MachinePolicy** kapsamını açan değer (`Get-ExecutionPolicy -List`'in
+ilk satırı), ve kardeşi olan `ExecutionPolicy` REG_SZ değeri olmadan tek başına etkisiz.
+PowerShell 2.0 motorunun registry anahtarı yok; o bir Windows optional feature'ı, yani DISM
+işi — motorun kendi kayıt yeri (`HKLM\SOFTWARE\Microsoft\PowerShell\PowerShellEngine`)
+bu makinede hiç bulunmuyor.
+
+391 satır içinde metniyle yazdığı değer başka bir alt sisteme ait olan tek satırdı. Hiçbir
+zaman vaat ettiği şeyi yapmadığı, yaptığı şeyin de etkisiz olduğu için satır kaldırıldı;
+on dildeki iki çevirisi de onunla gitti. Gerçekten PowerShell 2.0'ı kapatan bir şey istenirse
+yeri katalog değil, `actions.json`'daki bir DISM tek-atışı.
+
 ---
 
 ## [0.9.10] — 2026-08-27

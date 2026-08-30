@@ -3957,23 +3957,6 @@
        ],
        "applied": false,
        "on": false
-      },
-      {
-       "id": "sec-powershell-v2",
-       "name": "PowerShell 2.0 motoru",
-       "desc": "Betik blok kaydını ve dil kısıtlamalarını atlatmak için kullanılan eski PowerShell motorunu kapatır. Modern PowerShell etkilenmez.",
-       "reg": [
-        {
-         "hive": "HKLM",
-         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\PowerShell",
-         "value": "EnableScripts",
-         "type": "DWORD",
-         "on": "1",
-         "off": "DELETE"
-        }
-       ],
-       "applied": false,
-       "on": false
       }
      ]
     },
