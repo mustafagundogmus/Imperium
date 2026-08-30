@@ -179,6 +179,27 @@ zaman vaat ettiği şeyi yapmadığı, yaptığı şeyin de etkisiz olduğu içi
 on dildeki iki çevirisi de onunla gitti. Gerçekten PowerShell 2.0'ı kapatan bir şey istenirse
 yeri katalog değil, `actions.json`'daki bir DISM tek-atışı.
 
+### Güvenlik
+
+#### Yükseltilmiş process, kendi yazmadığı iki girdiyi artık sorguluyor
+
+**Güncelleme adresi.** `updater.h`'nin başındaki söz net: kontrol hiçbir şey indirmez ve
+çalıştırmaz, kullanıcıya sürüm sayfasını verir. Ama o sayfanın adresi GitHub API yanıtındaki
+`html_url` alanından olduğu gibi alınıp `QDesktopServices::openUrl`'e veriliyordu — Windows'ta
+bu `ShellExecute` demek, ve bu process her zaman yönetici. Programdaki diğer sekiz `openUrl`
+çağrısının hepsi kaynakta yazılı sabitler; ağdan gelen tek adres buydu. Artık şeması `https`
+ve host'u `github.com` değilse `releasesUrl()`'e düşüyor. Garanti, adresi tüketen sayfada
+değil, üreten `Updater`'da — böylece ileride başka bir yer de onu kullanırsa taşınıyor.
+
+**İki DLL yüklemesi.** `sysinfo.cpp`'de TPM (`tbs.dll`) ve son oturum zamanı
+(`netapi32.dll`) için yapılan `LoadLibraryW` çağrıları varsayılan arama sırasını
+kullanıyordu; o sıra, exe'nin başlatıldığı klasörü System32'den önce yoklar. Arbitrium
+İndirilenler klasöründen çalıştırılan tek bir taşınabilir dosya ve her zaman yükseltilmiş:
+yanına konan bir `tbs.dll` yönetici yetkisiyle yüklenirdi. İkisi de artık
+`LOAD_LIBRARY_SEARCH_SYSTEM32` ile System32'ye sabitlenmiş durumda. Process geneli
+`SetDefaultDllDirectories` **bilerek** konmadı — o, native dosya diyaloglarının yüklediği
+shell extension'ları da etkiler ve bu değişikliğin böyle bir takasa ihtiyacı yok.
+
 ---
 
 ## [0.9.10] — 2026-08-27

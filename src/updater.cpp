@@ -8,10 +8,28 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QRegularExpression>
+#include <QUrl>
 
 namespace {
 const QString Owner = QStringLiteral("shadesofdeath");
 const QString Repo = QStringLiteral("Arbitrium");
+
+/// The one address in the program that is not written into the program.
+///
+/// Every other URL handed to QDesktopServices::openUrl is a literal in the source. This
+/// one arrives in a JSON body off the network and is opened by a process that always runs
+/// as administrator, and openUrl on Windows is ShellExecute — so a scheme this program
+/// never meant to launch would be launched, elevated, by the shell. GitHub's own html_url
+/// is always https on github.com; anything else is either not GitHub answering or not the
+/// answer it meant to give. The releases page is the honest substitute in both cases,
+/// because it is where the user was being sent anyway.
+QString trustedReleaseUrl(const QString &candidate)
+{
+    const QUrl url(candidate);
+    if (url.scheme() == QLatin1String("https") && url.host() == QLatin1String("github.com"))
+        return candidate;
+    return Updater::releasesUrl();
+}
 }
 
 Updater::Updater(QObject *parent)
@@ -92,7 +110,8 @@ void Updater::check(bool userInitiated)
             return;
         }
 
-        const QString url = release.value(QStringLiteral("html_url")).toString(releasesUrl());
+        const QString url =
+            trustedReleaseUrl(release.value(QStringLiteral("html_url")).toString(releasesUrl()));
         const bool newer = compareVersions(tag, QCoreApplication::applicationVersion()) > 0;
         Q_EMIT finished(newer, tag, url, QString(), m_pendingUserInitiated);
     });

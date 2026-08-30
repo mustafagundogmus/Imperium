@@ -83,7 +83,13 @@ QString tpmVersion()
     };
     using GetDeviceInfoFn = UINT32(WINAPI *)(UINT32, PVOID);
 
-    HMODULE tbs = LoadLibraryW(L"tbs.dll");
+    // Pinned to System32 rather than left to the default search order, which looks in the
+    // directory the executable was started from first. Arbitrium is one portable file that
+    // people run out of Downloads, and it always runs elevated: a tbs.dll next to it would
+    // otherwise be loaded into an administrator process. Only these call sites are pinned —
+    // a process-wide SetDefaultDllDirectories would also apply to the shell extensions the
+    // native file dialogs load, which is not a trade this needs to make.
+    HMODULE tbs = LoadLibraryExW(L"tbs.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
     if (!tbs)
         return Locale::tr(QStringLiteral("sys.none"));
 
@@ -282,7 +288,13 @@ QDateTime lastLogonTime()
     using NetUserGetInfoFn = DWORD(WINAPI *)(LPCWSTR, LPCWSTR, DWORD, LPBYTE *);
     using NetApiBufferFreeFn = DWORD(WINAPI *)(LPVOID);
 
-    HMODULE net = LoadLibraryW(L"netapi32.dll");
+    // Pinned to System32 rather than left to the default search order, which looks in the
+    // directory the executable was started from first. Arbitrium is one portable file that
+    // people run out of Downloads, and it always runs elevated: a netapi32.dll next to it would
+    // otherwise be loaded into an administrator process. Only these call sites are pinned —
+    // a process-wide SetDefaultDllDirectories would also apply to the shell extensions the
+    // native file dialogs load, which is not a trade this needs to make.
+    HMODULE net = LoadLibraryExW(L"netapi32.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
     if (!net)
         return {};
 
