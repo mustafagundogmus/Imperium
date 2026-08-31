@@ -6,6 +6,7 @@
 #include "../widgets/searchfield.h"
 #include "../widgets/sectionheader.h"
 #include "../widgets/settingrow.h"
+#include "../winpaths.h"
 
 #include <QDesktopServices>
 #include <QDir>
@@ -54,39 +55,6 @@ Kind kindOf(const QString &target)
     return Kind::Program;
 }
 
-/// %SystemRoot%\System32, asked of the API rather than read out of the environment.
-///
-/// tilauncherpage.cpp reads $SystemRoot for the same job, and for a path the user is about
-/// to see in a text field that is fine. This one is different: the result is fed straight
-/// to CreateProcess in an elevated token, and an environment block is inherited — whoever
-/// started this process chose what SystemRoot says. GetSystemDirectoryW cannot be lied to
-/// that way. The literal fallback is for the case where even that fails, which in practice
-/// means a machine already too broken to launch anything.
-QString systemDirectory()
-{
-#ifdef Q_OS_WIN
-    wchar_t buffer[MAX_PATH] = {};
-    const UINT written = GetSystemDirectoryW(buffer, MAX_PATH);
-    if (written > 0 && written < MAX_PATH)
-        return QString::fromWCharArray(buffer, int(written));
-#endif
-    return QStringLiteral("C:\\Windows\\System32");
-}
-
-/// …and %SystemRoot% itself, which is not the same directory and is where two of these
-/// live. regedit.exe in particular is in C:\Windows and has never been in System32 — what
-/// System32 has is regedt32.exe, a stub that launches the real one.
-QString windowsDirectory()
-{
-#ifdef Q_OS_WIN
-    wchar_t buffer[MAX_PATH] = {};
-    const UINT written = GetWindowsDirectoryW(buffer, MAX_PATH);
-    if (written > 0 && written < MAX_PATH)
-        return QString::fromWCharArray(buffer, int(written));
-#endif
-    return QStringLiteral("C:\\Windows");
-}
-
 /// One system file's absolute path, or an empty string when it is not on this machine.
 ///
 /// System32 first, then the Windows directory; never the bare name. An empty answer is a
@@ -94,10 +62,10 @@ QString windowsDirectory()
 /// a Home edition this is the function that finds out, rather than a failed launch later.
 QString resolveSystemFile(const QString &fileName)
 {
-    const QString inSystem = systemDirectory() + QLatin1Char('\\') + fileName;
+    const QString inSystem = WinPaths::system32() + QLatin1Char('\\') + fileName;
     if (QFileInfo::exists(inSystem))
         return inSystem;
-    const QString inWindows = windowsDirectory() + QLatin1Char('\\') + fileName;
+    const QString inWindows = WinPaths::windows() + QLatin1Char('\\') + fileName;
     if (QFileInfo::exists(inWindows))
         return inWindows;
     return QString();

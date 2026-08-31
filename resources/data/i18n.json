@@ -3275,6 +3275,30 @@
   "ru": "записано %1",
   "tr": "%1 yazıldı"
  },
+ "dialog.details": {
+  "ar": "التفاصيل",
+  "de": "Details",
+  "en": "Details",
+  "es": "Detalles",
+  "fr": "Détails",
+  "it": "Dettagli",
+  "pl": "Szczegóły",
+  "pt": "Detalhes",
+  "ru": "Подробности",
+  "tr": "Ayrıntılar"
+ },
+ "dialog.details.hide": {
+  "ar": "إخفاء التفاصيل",
+  "de": "Details ausblenden",
+  "en": "Hide details",
+  "es": "Ocultar detalles",
+  "fr": "Masquer les détails",
+  "it": "Nascondi dettagli",
+  "pl": "Ukryj szczegóły",
+  "pt": "Ocultar detalhes",
+  "ru": "Скрыть подробности",
+  "tr": "Ayrıntıları gizle"
+ },
  "err.badHive": {
   "ar": "خلية سجل غير صالحة",
   "de": "ungültige Registrierungsstruktur",
@@ -3406,6 +3430,18 @@
   "pt": "são necessários direitos de administrador",
   "ru": "требуются права администратора",
   "tr": "yönetici yetkisi gerekiyor"
+ },
+ "err.noPowerShell": {
+  "ar": "لم يُعثر على Windows PowerShell في موضعه المتوقَّع على هذا الجهاز",
+  "de": "Windows PowerShell wurde auf diesem Gerät nicht an der erwarteten Stelle gefunden",
+  "en": "Windows PowerShell was not found where it is expected on this machine",
+  "es": "No se encontró Windows PowerShell en la ubicación esperada de este equipo",
+  "fr": "Windows PowerShell est introuvable à l'emplacement attendu sur cette machine",
+  "it": "Windows PowerShell non è stato trovato nella posizione prevista su questa macchina",
+  "pl": "Nie znaleziono programu Windows PowerShell w oczekiwanym miejscu na tym komputerze",
+  "pt": "O Windows PowerShell não foi encontrado no local esperado neste computador",
+  "ru": "Windows PowerShell не найден там, где ожидается на этом компьютере",
+  "tr": "Windows PowerShell bu makinede beklenen yerinde bulunamadı"
  },
  "err.noRegDef": {
   "ar": "تعريف السجل مفقود",
@@ -4595,6 +4631,78 @@
   "ru": "Приглушить на 80%",
   "tr": "%80 kıs"
  },
+ "opt.1 dakika": {
+  "ar": "دقيقة واحدة",
+  "de": "1 Minute",
+  "en": "1 minute",
+  "es": "1 minuto",
+  "fr": "1 minute",
+  "it": "1 minuto",
+  "pl": "1 minuta",
+  "pt": "1 minuto",
+  "ru": "1 минута",
+  "tr": "1 dakika"
+ },
+ "opt.15 saniye": {
+  "ar": "15 ثانية",
+  "de": "15 Sekunden",
+  "en": "15 seconds",
+  "es": "15 segundos",
+  "fr": "15 secondes",
+  "it": "15 secondi",
+  "pl": "15 sekund",
+  "pt": "15 segundos",
+  "ru": "15 секунд",
+  "tr": "15 saniye"
+ },
+ "opt.30 saniye": {
+  "ar": "30 ثانية",
+  "de": "30 Sekunden",
+  "en": "30 seconds",
+  "es": "30 segundos",
+  "fr": "30 secondes",
+  "it": "30 secondi",
+  "pl": "30 sekund",
+  "pt": "30 segundos",
+  "ru": "30 секунд",
+  "tr": "30 saniye"
+ },
+ "opt.5 dakika": {
+  "ar": "5 دقائق",
+  "de": "5 Minuten",
+  "en": "5 minutes",
+  "es": "5 minutos",
+  "fr": "5 minutes",
+  "it": "5 minuti",
+  "pl": "5 minut",
+  "pt": "5 minutos",
+  "ru": "5 минут",
+  "tr": "5 dakika"
+ },
+ "opt.5 saniye": {
+  "ar": "5 ثوانٍ",
+  "de": "5 Sekunden",
+  "en": "5 seconds",
+  "es": "5 segundos",
+  "fr": "5 secondes",
+  "it": "5 secondi",
+  "pl": "5 sekund",
+  "pt": "5 segundos",
+  "ru": "5 секунд",
+  "tr": "5 saniye"
+ },
+ "opt.7 saniye": {
+  "ar": "7 ثوانٍ",
+  "de": "7 Sekunden",
+  "en": "7 seconds",
+  "es": "7 segundos",
+  "fr": "7 secondes",
+  "it": "7 secondi",
+  "pl": "7 sekund",
+  "pt": "7 segundos",
+  "ru": "7 секунд",
+  "tr": "7 saniye"
+ },
  "opt.Asla": {
   "ar": "أبدًا",
   "de": "Nie",
@@ -4606,6 +4714,18 @@
   "pt": "Nunca",
   "ru": "Никогда",
   "tr": "Asla"
+ },
+ "opt.Ayarlar": {
+  "ar": "الإعدادات",
+  "de": "Einstellungen",
+  "en": "Settings",
+  "es": "Configuración",
+  "fr": "Paramètres",
+  "it": "Impostazioni",
+  "pl": "Ustawienia",
+  "pt": "Definições",
+  "ru": "Параметры",
+  "tr": "Ayarlar"
  },
  "opt.Basit · eş yok": {
   "ar": "بسيط · بدون أقران",
@@ -4715,6 +4835,18 @@
   "ru": "Ослабленный (70)",
   "tr": "Gevşek (70)"
  },
+ "opt.Girdi kapalı": {
+  "ar": "بدون إدخال",
+  "de": "Ohne Eingabe",
+  "en": "Input disabled",
+  "es": "Sin entrada",
+  "fr": "Sans saisie",
+  "it": "Senza input",
+  "pl": "Bez wprowadzania",
+  "pt": "Sem entrada",
+  "ru": "Без ввода",
+  "tr": "Girdi kapalı"
+ },
  "opt.Giriş": {
   "ar": "الصفحة الرئيسية",
   "de": "Startseite",
@@ -4727,6 +4859,18 @@
   "ru": "Главная",
   "tr": "Giriş"
  },
+ "opt.Gizle": {
+  "ar": "إخفاء",
+  "de": "Ausblenden",
+  "en": "Hide",
+  "es": "Ocultar",
+  "fr": "Masquer",
+  "it": "Nascondi",
+  "pl": "Ukryj",
+  "pt": "Ocultar",
+  "ru": "Скрывать",
+  "tr": "Gizle"
+ },
  "opt.Görünüm": {
   "ar": "المظهر",
   "de": "Darstellung",
@@ -4738,6 +4882,18 @@
   "pt": "Aspeto",
   "ru": "Оформление",
   "tr": "Görünüm"
+ },
+ "opt.Göster": {
+  "ar": "إظهار",
+  "de": "Anzeigen",
+  "en": "Show",
+  "es": "Mostrar",
+  "fr": "Afficher",
+  "it": "Mostra",
+  "pl": "Pokaż",
+  "pt": "Mostrar",
+  "ru": "Показывать",
+  "tr": "Göster"
  },
  "opt.Her ay": {
   "ar": "كل شهر",
@@ -4931,6 +5087,18 @@
   "ru": "Рабочий стол · по умолчанию (2)",
   "tr": "Masaüstü · varsayılan (2)"
  },
+ "opt.Neredeyse hiçbir zaman": {
+  "ar": "نادراً جداً",
+  "de": "Fast nie",
+  "en": "Almost never",
+  "es": "Casi nunca",
+  "fr": "Presque jamais",
+  "it": "Quasi mai",
+  "pl": "Prawie nigdy",
+  "pt": "Quase nunca",
+  "ru": "Почти никогда",
+  "tr": "Neredeyse hiçbir zaman"
+ },
  "opt.Normal": {
   "ar": "عادي",
   "de": "Normal",
@@ -4990,6 +5158,18 @@
   "pt": "Sem fixação",
   "ru": "Без закрепления",
   "tr": "Sabitleme yok"
+ },
+ "opt.Satır içi": {
+  "ar": "ضمن السطر",
+  "de": "Inline",
+  "en": "Inline",
+  "es": "En línea",
+  "fr": "En ligne",
+  "it": "In linea",
+  "pl": "W tym samym oknie",
+  "pt": "Na mesma linha",
+  "ru": "В той же строке",
+  "tr": "Satır içi"
  },
  "opt.Seçeneği göster": {
   "ar": "إظهار الخيار",
@@ -5062,6 +5242,18 @@
   "pt": "Teredo desativado",
   "ru": "Teredo выкл.",
   "tr": "Teredo kapalı"
+ },
+ "opt.Terminal": {
+  "ar": "الطرفية",
+  "de": "Terminal",
+  "en": "Terminal",
+  "es": "Terminal",
+  "fr": "Terminal",
+  "it": "Terminale",
+  "pl": "Terminal",
+  "pt": "Terminal",
+  "ru": "Терминал",
+  "tr": "Terminal"
  },
  "opt.Tüm bildirimler kapalı": {
   "ar": "جميع الإشعارات معطّلة",
@@ -5195,6 +5387,18 @@
   "ru": "Только загрузка",
   "tr": "Yalnızca önyükleme"
  },
+ "opt.Yeni pencerede": {
+  "ar": "في نافذة جديدة",
+  "de": "In neuem Fenster",
+  "en": "In a new window",
+  "es": "En una ventana nueva",
+  "fr": "Dans une nouvelle fenêtre",
+  "it": "In una nuova finestra",
+  "pl": "W nowym oknie",
+  "pt": "Numa nova janela",
+  "ru": "В новом окне",
+  "tr": "Yeni pencerede"
+ },
  "opt.Yerel ağ": {
   "ar": "الشبكة المحلية",
   "de": "Lokales Netzwerk",
@@ -5326,6 +5530,18 @@
   "pt": "Internet incluído",
   "ru": "Включая интернет",
   "tr": "İnternet dahil"
+ },
+ "opt.İzin ver": {
+  "ar": "السماح",
+  "de": "Zulassen",
+  "en": "Allow",
+  "es": "Permitir",
+  "fr": "Autoriser",
+  "it": "Consenti",
+  "pl": "Zezwalaj",
+  "pt": "Permitir",
+  "ru": "Разрешать",
+  "tr": "İzin ver"
  },
  "ov.agGecidi": {
   "ar": "البوابة",
@@ -9143,6 +9359,66 @@
   "ru": "arbitrium",
   "tr": "arbitrium"
  },
+ "splash.stage.catalog": {
+  "ar": "قراءة الفهرس",
+  "de": "Katalog wird gelesen",
+  "en": "Reading the catalogue",
+  "es": "Leyendo el catálogo",
+  "fr": "Lecture du catalogue",
+  "it": "Lettura del catalogo",
+  "pl": "Odczytywanie katalogu",
+  "pt": "A ler o catálogo",
+  "ru": "Чтение каталога",
+  "tr": "Katalog okunuyor"
+ },
+ "splash.stage.facts": {
+  "ar": "قراءة معلومات النظام",
+  "de": "Systeminformationen werden gelesen",
+  "en": "Reading system information",
+  "es": "Leyendo la información del sistema",
+  "fr": "Lecture des informations système",
+  "it": "Lettura delle informazioni di sistema",
+  "pl": "Odczytywanie informacji o systemie",
+  "pt": "A ler as informações do sistema",
+  "ru": "Чтение сведений о системе",
+  "tr": "Sistem bilgileri okunuyor"
+ },
+ "splash.stage.services": {
+  "ar": "فحص الخدمات",
+  "de": "Dienste werden geprüft",
+  "en": "Scanning services",
+  "es": "Examinando los servicios",
+  "fr": "Analyse des services",
+  "it": "Analisi dei servizi",
+  "pl": "Skanowanie usług",
+  "pt": "A analisar os serviços",
+  "ru": "Проверка служб",
+  "tr": "Hizmetler taranıyor"
+ },
+ "splash.stage.state": {
+  "ar": "قراءة حالة الإعدادات",
+  "de": "Zustand der Einstellungen wird gelesen",
+  "en": "Reading the state of each setting",
+  "es": "Leyendo el estado de cada ajuste",
+  "fr": "Lecture de l'état des réglages",
+  "it": "Lettura dello stato delle impostazioni",
+  "pl": "Odczytywanie stanu ustawień",
+  "pt": "A ler o estado de cada definição",
+  "ru": "Чтение состояния параметров",
+  "tr": "Ayarların durumu okunuyor"
+ },
+ "splash.stage.ui": {
+  "ar": "تهيئة الواجهة",
+  "de": "Oberfläche wird aufgebaut",
+  "en": "Building the interface",
+  "es": "Preparando la interfaz",
+  "fr": "Construction de l'interface",
+  "it": "Preparazione dell'interfaccia",
+  "pl": "Przygotowywanie interfejsu",
+  "pt": "A preparar a interface",
+  "ru": "Подготовка интерфейса",
+  "tr": "Arayüz hazırlanıyor"
+ },
  "splash.tagline": {
   "ar": "windows tweaker",
   "de": "windows-tweaker",
@@ -10103,6 +10379,18 @@
   "ru": "Да",
   "tr": "Var"
  },
+ "theme.contrast": {
+  "ar": "تباين عالٍ",
+  "de": "Hoher Kontrast",
+  "en": "High contrast",
+  "es": "Alto contraste",
+  "fr": "Contraste élevé",
+  "it": "Contrasto elevato",
+  "pl": "Wysoki kontrast",
+  "pt": "Alto contraste",
+  "ru": "Высокий контраст",
+  "tr": "Yüksek karşıtlık"
+ },
  "theme.dark": {
   "ar": "داكن",
   "de": "Dunkel",
@@ -10151,6 +10439,30 @@
   "ru": "Светлая",
   "tr": "Açık"
  },
+ "theme.lilac": {
+  "ar": "ليلكي",
+  "de": "Flieder",
+  "en": "Lilac",
+  "es": "Lila",
+  "fr": "Lilas",
+  "it": "Lillà",
+  "pl": "Liliowy",
+  "pt": "Lilás",
+  "ru": "Сирень",
+  "tr": "Leylak"
+ },
+ "theme.meadow": {
+  "ar": "مرج",
+  "de": "Wiese",
+  "en": "Meadow",
+  "es": "Pradera",
+  "fr": "Prairie",
+  "it": "Prato",
+  "pl": "Łąka",
+  "pt": "Prado",
+  "ru": "Луг",
+  "tr": "Çayır"
+ },
  "theme.midnight": {
   "ar": "منتصف الليل",
   "de": "Mitternacht",
@@ -10162,6 +10474,18 @@
   "pt": "Meia-noite",
   "ru": "Полночь",
   "tr": "Gece"
+ },
+ "theme.mist": {
+  "ar": "ضباب",
+  "de": "Nebel",
+  "en": "Mist",
+  "es": "Bruma",
+  "fr": "Brume",
+  "it": "Nebbia",
+  "pl": "Mgła",
+  "pt": "Névoa",
+  "ru": "Туман",
+  "tr": "Sis"
  },
  "theme.ocean": {
   "ar": "محيط",
@@ -10919,6 +11243,78 @@
   "ru": "Список учетных записей администраторов",
   "tr": "Yönetici hesap listesi"
  },
+ "tweak.adv-prevent-device-encryption.desc": {
+  "ar": "تبقى البيانات على قرص مسروق أو منزوع بلا حماية — ولا توصي Microsoft بهذا الإعداد، وبخاصة على جهاز يحتوي على Recall. وهو يمنع Windows من تشفير قرص النظام من تلقاء نفسه بعد التثبيت ومن رفع مفتاح الاسترداد إلى حساب Microsoft. وهو وقائي لا تراجعي: فلا يفكّ تشفير قرص مشفَّر سلفًا ولا يمسّ حماية قائمة. يتطلب إعادة التشغيل.",
+  "de": "Daten auf einer gestohlenen oder ausgebauten Festplatte bleiben ungeschützt — Microsoft empfiehlt diese Einstellung nicht, am wenigsten auf einem Gerät mit Recall. Sie verhindert, dass Windows die Systemfestplatte nach der Installation von selbst verschlüsselt und den Wiederherstellungsschlüssel in ein Microsoft-Konto hochlädt. Sie wirkt vorbeugend, nicht rückgängig machend: eine bereits verschlüsselte Festplatte wird nicht entschlüsselt und bestehender Schutz nicht angetastet. Erfordert einen Neustart.",
+  "en": "Data on a stolen or removed drive is left unprotected — Microsoft does not recommend this setting, least of all on a device carrying Recall. It stops Windows encrypting the system drive by itself after installation and uploading the recovery key to a Microsoft account. It is preventive, not undoing: it does not decrypt a drive that is already encrypted and does not touch protection already in place. Requires a restart.",
+  "es": "Los datos de un disco robado o extraído quedan sin protección; Microsoft no recomienda este ajuste, y menos aún en un dispositivo con Recall. Impide que Windows cifre por su cuenta el disco del sistema tras la instalación y suba la clave de recuperación a una cuenta Microsoft. Es preventivo, no reparador: no descifra un disco ya cifrado ni toca la protección existente. Requiere reiniciar.",
+  "fr": "Les données d'un disque volé ou retiré restent sans protection — Microsoft ne recommande pas ce réglage, encore moins sur un appareil portant Recall. Il empêche Windows de chiffrer de lui-même le disque système après l'installation et d'envoyer la clé de récupération vers un compte Microsoft. C'est préventif et non réparateur : cela ne déchiffre pas un disque déjà chiffré et ne touche pas à une protection en place. Nécessite un redémarrage.",
+  "it": "I dati su un disco rubato o rimosso restano senza protezione — Microsoft non consiglia questa impostazione, tanto meno su un dispositivo che ospita Recall. Impedisce a Windows di crittografare da sé il disco di sistema dopo l'installazione e di caricare la chiave di ripristino su un account Microsoft. È preventiva, non correttiva: non decrittografa un disco già crittografato e non tocca la protezione già attiva. Richiede un riavvio.",
+  "pl": "Dane na skradzionym lub wyjętym dysku pozostają bez ochrony — Microsoft nie zaleca tego ustawienia, a już najmniej na urządzeniu z funkcją Recall. Powstrzymuje system Windows przed samodzielnym zaszyfrowaniem dysku systemowego po instalacji i przesłaniem klucza odzyskiwania na konto Microsoft. Działa zapobiegawczo, a nie cofająco: nie odszyfrowuje dysku już zaszyfrowanego i nie narusza istniejącej ochrony. Wymaga ponownego uruchomienia.",
+  "pt": "Os dados num disco roubado ou retirado ficam sem proteção — a Microsoft não recomenda esta definição, muito menos num dispositivo com o Recall. Impede o Windows de encriptar sozinho o disco do sistema após a instalação e de carregar a chave de recuperação para uma conta Microsoft. É preventiva, não reparadora: não desencripta um disco já encriptado nem toca na proteção existente. Requer reiniciar.",
+  "ru": "Данные на украденном или извлечённом диске остаются без защиты — Microsoft не рекомендует этот параметр, тем более на устройстве с Recall. Он не даёт Windows самостоятельно зашифровать системный диск после установки и выгрузить ключ восстановления в учётную запись Microsoft. Он предупреждающий, а не отменяющий: уже зашифрованный диск не расшифровывается, действующая защита не затрагивается. Требуется перезагрузка.",
+  "tr": "Çalınan ya da sökülen diskteki veriler korumasız kalır — Microsoft bu ayarı, özellikle Recall bulunan cihazlarda, önermiyor. Windows'un kurulumdan sonra sistem diskini kendiliğinden şifrelemesini ve kurtarma anahtarını Microsoft hesabına yüklemesini engeller. Önleyicidir, geri alıcı değil: hâlihazırda şifreli bir diski çözmez ve mevcut korumaya dokunmaz. Yeniden başlatma gerekir."
+ },
+ "tweak.adv-prevent-device-encryption.name": {
+  "ar": "منع تشفير الجهاز تلقائيًا",
+  "de": "Automatische Geräteverschlüsselung verhindern",
+  "en": "Prevent automatic device encryption",
+  "es": "Impedir el cifrado automático del dispositivo",
+  "fr": "Empêcher le chiffrement automatique de l'appareil",
+  "it": "Impedisci la crittografia automatica del dispositivo",
+  "pl": "Zapobiegaj automatycznemu szyfrowaniu urządzenia",
+  "pt": "Impedir a encriptação automática do dispositivo",
+  "ru": "Запретить автоматическое шифрование устройства",
+  "tr": "Otomatik aygıt şifrelemesini engelle"
+ },
+ "tweak.adv-registry-periodic-backup.desc": {
+  "ar": "تبقى نسخة غير مشفَّرة من خليتَي SAM وSECURITY على القرص داخل مجلد RegBack؛ وعلى جهاز بلا تشفير للقرص يُعدّ ذلك سطح هجوم حقيقي. وفي المقابل يعيد تشغيل النسخ الاحتياطي التلقائي للخلايا الذي أُلغي في Windows 10 إصدار 1803: إذ يُنسخ السجل إلى RegBack عبر عمليات إعادة التشغيل، وتتولى المهمة RegIdleBackup إدارة النسخ التالية. بضع مئات من الميغابايت على القرص وعمليات كتابة إضافية في كل نافذة صيانة. يتطلب إعادة التشغيل.",
+  "de": "Eine unverschlüsselte Kopie der Hives SAM und SECURITY liegt im Ordner RegBack auf der Festplatte; auf einem Gerät ohne Laufwerksverschlüsselung ist das eine echte Angriffsfläche. Im Gegenzug wird die mit Windows 10 1803 eingestellte automatische Hive-Sicherung wieder eingeschaltet: die Registrierung wird über Neustarts hinweg nach RegBack kopiert, und die Aufgabe RegIdleBackup verwaltet die weiteren. Ein paar hundert MB Festplatte und zusätzliche Schreibvorgänge in jedem Wartungsfenster. Erfordert einen Neustart.",
+  "en": "An unencrypted copy of the SAM and SECURITY hives sits on disk in the RegBack folder; on a machine without drive encryption that is a real attack surface. In exchange it turns the automatic hive backup — dropped in Windows 10 1803 — back on: the registry is copied to RegBack across restarts and the RegIdleBackup task manages the ones after that. A few hundred MB of disk and extra writes in every maintenance window. Requires a restart.",
+  "es": "Una copia sin cifrar de los subárboles SAM y SECURITY queda en el disco, en la carpeta RegBack; en un equipo sin cifrado de disco eso es una superficie de ataque real. A cambio, vuelve a activar la copia automática de subárboles abandonada en Windows 10 1803: el registro se copia a RegBack entre reinicios y la tarea RegIdleBackup gestiona las siguientes. Unos cientos de MB de disco y escrituras adicionales en cada ventana de mantenimiento. Requiere reiniciar.",
+  "fr": "Une copie non chiffrée des ruches SAM et SECURITY se trouve sur le disque dans le dossier RegBack ; sur une machine sans chiffrement de disque, c'est une véritable surface d'attaque. En contrepartie, cela réactive la sauvegarde automatique des ruches abandonnée dans Windows 10 1803 : le registre est copié vers RegBack au fil des redémarrages et la tâche RegIdleBackup gère les suivantes. Quelques centaines de Mo de disque et des écritures supplémentaires à chaque fenêtre de maintenance. Nécessite un redémarrage.",
+  "it": "Una copia non crittografata degli hive SAM e SECURITY resta sul disco nella cartella RegBack; su una macchina senza crittografia del disco è una superficie d'attacco reale. In cambio riattiva il backup automatico degli hive abbandonato in Windows 10 1803: il registro viene copiato in RegBack attraverso i riavvii e l'attività RegIdleBackup gestisce quelli successivi. Qualche centinaio di MB di disco e scritture aggiuntive in ogni finestra di manutenzione. Richiede un riavvio.",
+  "pl": "Niezaszyfrowana kopia gałęzi SAM i SECURITY leży na dysku w folderze RegBack; na komputerze bez szyfrowania dysku to realna powierzchnia ataku. W zamian ponownie włącza automatyczną kopię gałęzi porzuconą w Windows 10 1803: rejestr jest kopiowany do RegBack przy ponownych uruchomieniach, a zadanie RegIdleBackup zarządza kolejnymi. Kilkaset MB dysku i dodatkowe zapisy w każdym oknie konserwacji. Wymaga ponownego uruchomienia.",
+  "pt": "Uma cópia não encriptada das ramificações SAM e SECURITY fica no disco, na pasta RegBack; num computador sem encriptação de disco isso é uma superfície de ataque real. Em troca, volta a ligar a cópia automática das ramificações abandonada no Windows 10 1803: o registo é copiado para RegBack ao longo dos reinícios e a tarefa RegIdleBackup gere as seguintes. Algumas centenas de MB de disco e escritas adicionais em cada janela de manutenção. Requer reiniciar.",
+  "ru": "Незашифрованная копия кустов SAM и SECURITY лежит на диске в папке RegBack; на компьютере без шифрования диска это настоящая поверхность атаки. Взамен снова включается автоматическое резервное копирование кустов, отменённое в Windows 10 1803: реестр копируется в RegBack при перезагрузках, а задача RegIdleBackup управляет последующими копиями. Несколько сотен МБ на диске и дополнительные записи в каждое окно обслуживания. Требуется перезагрузка.",
+  "tr": "SAM ve SECURITY kovanlarının şifrelenmemiş birer kopyası RegBack klasöründe diskte durur; disk şifrelemesi olmayan bir makinede bu gerçek bir saldırı yüzeyidir. Karşılığında Windows 10 1803'te bırakılan otomatik kovan yedeğini geri açar: kayıt defteri yeniden başlatmalarda RegBack'e kopyalanır ve RegIdleBackup görevi sonraki yedekleri yönetir. Birkaç yüz MB disk ve her bakım penceresinde ek yazma. Yeniden başlatma gerekir."
+ },
+ "tweak.adv-registry-periodic-backup.name": {
+  "ar": "نسخ احتياطي دوري للسجل",
+  "de": "Regelmäßige Registrierungssicherung",
+  "en": "Periodic registry backup",
+  "es": "Copia de seguridad periódica del registro",
+  "fr": "Sauvegarde périodique du registre",
+  "it": "Backup periodico del registro",
+  "pl": "Okresowa kopia zapasowa rejestru",
+  "pt": "Cópia de segurança periódica do registo",
+  "ru": "Периодическое резервное копирование реестра",
+  "tr": "Düzenli kayıt defteri yedeği"
+ },
+ "tweak.adv-sudo-mode.desc": {
+  "ar": "يحدّد أعلى وضع يُسمح للأمر sudo باستخدامه؛ فالسياسة لا تختار وضعًا بل تضع سقفًا، ولا يستطيع عنصر التحكم في الإعدادات > النظام > للمطوّرين أن يتجاوزه. والوضعان «بدون إدخال» و«ضمن السطر» يمثّلان مسار تصعيد امتيازات مذكورًا في وثائق Microsoft نفسها: إذ تستطيع عملية غير مرفوعة الصلاحيات أن تقود العملية المرفوعة التي تشاركها الطرفية نفسها. أما وضع «معطّل» فيكسر البرامج النصية التي تستخدم sudo. للمطوّرين فقط.",
+  "de": "Legt den höchsten Modus fest, den der Befehl sudo verwenden darf; die Richtlinie wählt keinen Modus, sie setzt eine Obergrenze, und das Steuerelement unter Einstellungen > System > Für Entwickler kann sie nicht überschreiten. Die Modi „Ohne Eingabe“ und „Inline“ sind ein in Microsofts eigener Dokumentation festgehaltener Weg zur Rechteausweitung: ein nicht erhöhter Prozess kann den erhöhten steuern, der sich dieselbe Konsole teilt. Die Stellung „Aus“ zerbricht Skripte, die sudo benutzen. Nur für Entwickler.",
+  "en": "Sets the highest mode the sudo command is allowed to use; the policy does not choose a mode, it sets a ceiling, and the control under Settings > System > For developers cannot go above it. The 'Input disabled' and 'Inline' modes are an elevation-of-privilege vector written down in Microsoft's own documentation: an unelevated process can drive the elevated one sharing its console. The 'Off' position breaks scripts that use sudo. For developers only.",
+  "es": "Establece el modo más alto que puede usar el comando sudo; la directiva no elige un modo, sino que fija un techo, y el control de Configuración > Sistema > Para desarrolladores no puede superarlo. Los modos «Sin entrada» y «En línea» son un vector de elevación de privilegios recogido en la propia documentación de Microsoft: un proceso sin elevar puede dirigir al proceso elevado que comparte su consola. La posición «Desactivado» rompe los scripts que usan sudo. Solo para desarrolladores.",
+  "fr": "Définit le mode le plus élevé que la commande sudo a le droit d'utiliser ; la stratégie ne choisit pas un mode, elle pose un plafond, et le réglage sous Paramètres > Système > Pour les développeurs ne peut pas le dépasser. Les modes « Sans saisie » et « En ligne » constituent un vecteur d'élévation de privilèges consigné dans la documentation même de Microsoft : un processus non élevé peut piloter le processus élevé qui partage sa console. La position « Désactivé » casse les scripts qui utilisent sudo. Pour les développeurs uniquement.",
+  "it": "Stabilisce la modalità massima che il comando sudo può usare; il criterio non sceglie una modalità, fissa un tetto, e il controllo in Impostazioni > Sistema > Per gli sviluppatori non può superarlo. Le modalità «Senza input» e «In linea» sono un vettore di elevazione dei privilegi messo per iscritto nella documentazione stessa di Microsoft: un processo non elevato può pilotare quello elevato che condivide la sua console. La posizione «Disattivato» rompe gli script che usano sudo. Solo per sviluppatori.",
+  "pl": "Ustala najwyższy tryb, jakiego wolno użyć poleceniu sudo; zasada nie wybiera trybu, lecz wyznacza pułap, a formant w Ustawienia > System > Dla deweloperów nie może go przekroczyć. Tryby „Bez wprowadzania” i „W tym samym oknie” to wektor podniesienia uprawnień opisany we własnej dokumentacji Microsoftu: proces bez podniesionych uprawnień może sterować procesem podniesionym dzielącym z nim konsolę. Pozycja „Wyłączone” psuje skrypty korzystające z sudo. Wyłącznie dla deweloperów.",
+  "pt": "Define o modo mais alto que o comando sudo pode utilizar; a política não escolhe um modo, fixa um teto, e o controlo em Definições > Sistema > Para programadores não o pode ultrapassar. Os modos «Sem entrada» e «Na mesma linha» são um vetor de elevação de privilégios registado na própria documentação da Microsoft: um processo não elevado pode conduzir o processo elevado que partilha a sua consola. A posição «Desativado» quebra os scripts que usam sudo. Apenas para programadores.",
+  "ru": "Задаёт наивысший режим, который разрешено использовать команде sudo; политика не выбирает режим, а ставит потолок, и элемент в Параметры > Система > Для разработчиков не может его превысить. Режимы «Без ввода» и «В той же строке» — это вектор повышения привилегий, записанный в собственной документации Microsoft: процесс без повышенных прав может управлять процессом с повышенными правами, делящим с ним консоль. Положение «Отключено» ломает сценарии, использующие sudo. Только для разработчиков.",
+  "tr": "sudo komutunun izin verilen azami kipini belirler; ilke kipi seçmez, tavanı koyar ve Ayarlar > Sistem > Geliştiriciler için altındaki denetim bu tavanın üstüne çıkamaz. 'Girdi kapalı' ve 'Satır içi' kipleri Microsoft'un kendi belgesinde yazılı bir yetki yükseltme vektörüdür: yükseltilmemiş bir süreç aynı konsoldaki yükseltilmiş süreci sürebilir. 'Kapalı' konumu sudo kullanan betikleri kırar. Yalnız geliştiriciler için."
+ },
+ "tweak.adv-sudo-mode.name": {
+  "ar": "وضع تشغيل الأمر sudo",
+  "de": "sudo-Ausführungsmodus",
+  "en": "sudo run mode",
+  "es": "Modo de ejecución de sudo",
+  "fr": "Mode d'exécution de sudo",
+  "it": "Modalità di esecuzione di sudo",
+  "pl": "Tryb działania polecenia sudo",
+  "pt": "Modo de execução do sudo",
+  "ru": "Режим работы команды sudo",
+  "tr": "Sudo çalışma kipi"
+ },
  "tweak.ai-copilot-off.desc": {
   "ar": "يعطّل Copilot عبر النهج؛ فيتوقف زر شريط المهام والاختصار عن العمل. مخصص لـ Windows 11.",
   "de": "Deaktiviert Copilot per Richtlinie; die Schaltfläche in der Taskleiste und die Tastenkombination funktionieren nicht mehr. Für Windows 11.",
@@ -10966,6 +11362,30 @@
   "pt": "Recall (histórico de instantâneos)",
   "ru": "Recall (журнал снимков)",
   "tr": "Recall (anlık görüntü geçmişi)"
+ },
+ "tweak.ai-recall-remove.desc": {
+  "ar": "تُحذف اللقطات المخزَّنة على القرص ولا تعود. لا تكتفي هذه السياسة بتعطيل Recall، بل تزيل ملفات المكوّن من الجهاز؛ والتراجع عن الكتابة في السجل لن يعيد اللقطات المحذوفة. الصف الذي فوقه يوقف التقاط لقطات جديدة فحسب، أما هذا الصف فيزيل المكوّن. يتطلب إعادة التشغيل.",
+  "de": "Die auf der Festplatte gespeicherten Momentaufnahmen werden gelöscht und kehren nicht zurück. Diese Richtlinie deaktiviert Recall nicht nur, sie entfernt die Bestandteile der Komponente vom Gerät; das Rückgängigmachen des Registrierungseintrags holt die gelöschten Aufnahmen nicht zurück. Die Zeile darüber verhindert lediglich neue Aufnahmen, diese Zeile entfernt die Komponente. Erfordert einen Neustart.",
+  "en": "The snapshots stored on disk are deleted and do not come back. This policy does not merely disable Recall — it removes the component's bits from the device; undoing the registry write will not bring the deleted snapshots back. The row above only stops new snapshots being taken; this row removes it. Requires a restart.",
+  "es": "Las instantáneas almacenadas en el disco se eliminan y no vuelven. Esta directiva no se limita a deshabilitar Recall: quita los archivos del componente del dispositivo; deshacer la escritura en el registro no recuperará las instantáneas eliminadas. La fila de arriba solo impide que se tomen instantáneas nuevas; esta fila lo quita. Requiere reiniciar.",
+  "fr": "Les instantanés stockés sur le disque sont supprimés et ne reviennent pas. Cette stratégie ne se contente pas de désactiver Recall : elle retire les composants de l'appareil ; annuler l'écriture dans le registre ne restaurera pas les instantanés supprimés. La ligne au-dessus empêche seulement la prise de nouveaux instantanés, celle-ci supprime le composant. Nécessite un redémarrage.",
+  "it": "Le istantanee memorizzate sul disco vengono eliminate e non tornano. Questo criterio non si limita a disattivare Recall: rimuove i file del componente dal dispositivo; annullare la scrittura nel registro non riporterà indietro le istantanee eliminate. La riga sopra impedisce soltanto l'acquisizione di nuove istantanee, questa riga rimuove il componente. Richiede un riavvio.",
+  "pl": "Migawki zapisane na dysku zostają usunięte i nie wracają. Ta zasada nie tylko wyłącza Recall — usuwa pliki składnika z urządzenia; cofnięcie zapisu w rejestrze nie przywróci usuniętych migawek. Wiersz powyżej jedynie wstrzymuje tworzenie nowych migawek, ten wiersz usuwa składnik. Wymaga ponownego uruchomienia.",
+  "pt": "As instantâneas guardadas no disco são eliminadas e não voltam. Esta política não se limita a desativar o Recall: remove os ficheiros do componente do dispositivo; anular a escrita no registo não recupera as instantâneas eliminadas. A linha acima só impede que sejam tiradas novas instantâneas; esta linha remove-o. Requer reiniciar.",
+  "ru": "Снимки, хранящиеся на диске, удаляются и не возвращаются. Эта политика не просто отключает Recall — она удаляет файлы компонента с устройства; отмена записи в реестр не вернёт удалённые снимки. Строка выше лишь прекращает создание новых снимков, эта строка удаляет компонент. Требуется перезагрузка.",
+  "tr": "Diskte duran anlık görüntüler silinir ve geri gelmez. Bu ilke Recall'ı devre dışı bırakmakla kalmaz, bileşenin bitlerini cihazdan kaldırır; kayıt defteri yazımını geri alsanız da silinen görüntüler dönmez. Üstteki satır yalnızca yeni görüntü alınmasını durdurur, bu satır kaldırır. Yeniden başlatma gerekir."
+ },
+ "tweak.ai-recall-remove.name": {
+  "ar": "إزالة مكوّن Recall من الجهاز",
+  "de": "Recall-Komponente vom Gerät entfernen",
+  "en": "Remove the Recall component from the device",
+  "es": "Quitar el componente Recall del dispositivo",
+  "fr": "Supprimer le composant Recall de l'appareil",
+  "it": "Rimuovi il componente Recall dal dispositivo",
+  "pl": "Usuń składnik Recall z urządzenia",
+  "pt": "Remover o componente Recall do dispositivo",
+  "ru": "Удалить компонент Recall с устройства",
+  "tr": "Recall bileşenini cihazdan kaldır"
  },
  "tweak.aud-ducking.desc": {
   "ar": "ما يفعله Windows بالأصوات الأخرى عند اكتشاف مكالمة. وهذا سبب انخفاض الصوت تلقائيًا أثناء الألعاب والموسيقى.",
@@ -11470,6 +11890,54 @@
   "pt": "Link para redefinir o PIN",
   "ru": "Ссылка сброса ПИН-кода",
   "tr": "PIN sıfırlama bağlantısı"
+ },
+ "tweak.boot-ctrl-alt-del.desc": {
+  "ar": "يفرض الضغط على Ctrl+Alt+Del قبل طلب كلمة المرور؛ وهو الدفاع الكلاسيكي ضد شاشات تسجيل الدخول المزيَّفة. ويتوقف تسجيل الدخول التلقائي عن العمل، وعلى جهاز ظاهري أو وحدة تحكم KVM قد يلتقط المضيفُ تركيبةَ المفاتيح. ووضع الإيقاف لا يكتب 0 بل يحذف القيمة: فملاحظة Microsoft نفسها تقول إن ضبط السياسة على «غير مُعرَّفة» لا يكفي للتراجع عنها، بل يجب إزالة قيمة السجل.",
+  "de": "Verlangt, dass Strg+Alt+Entf gedrückt wird, bevor nach dem Kennwort gefragt wird; die klassische Abwehr gegen gefälschte Anmeldebildschirme. Die automatische Anmeldung funktioniert nicht mehr, und auf einer virtuellen Maschine oder einer KVM-Konsole kann die Tastenkombination vom Host abgefangen werden. Die Aus-Stellung schreibt keine 0, sie löscht den Wert: Microsofts eigener Hinweis besagt, dass es nicht genügt, die Richtlinie auf „Nicht definiert“ zu setzen — der Registrierungswert muss entfernt werden.",
+  "en": "Requires Ctrl+Alt+Del to be pressed before the password is asked for; the classic defence against fake sign-in screens. Automatic sign-in stops working, and on a virtual machine or a KVM console the key combination may be caught by the host. The off position does not write 0, it deletes the value: Microsoft's own note says that setting the policy to 'Not Defined' is not enough to undo it — the registry value has to be removed.",
+  "es": "Obliga a pulsar Ctrl+Alt+Supr antes de que se pida la contraseña; la defensa clásica contra las pantallas de inicio de sesión falsas. El inicio de sesión automático deja de funcionar y, en una máquina virtual o una consola KVM, el host puede capturar la combinación de teclas. La posición de apagado no escribe 0, sino que elimina el valor: la propia nota de Microsoft dice que poner la directiva en «No definida» no basta para deshacerla; hay que quitar el valor del registro.",
+  "fr": "Impose d'appuyer sur Ctrl+Alt+Suppr avant que le mot de passe soit demandé ; la parade classique contre les faux écrans de connexion. La connexion automatique cesse de fonctionner et, sur une machine virtuelle ou une console KVM, la combinaison de touches peut être interceptée par l'hôte. La position d'arrêt n'écrit pas 0, elle supprime la valeur : la note de Microsoft précise que mettre la stratégie sur « Non défini » ne suffit pas à l'annuler — la valeur de registre doit être supprimée.",
+  "it": "Impone di premere Ctrl+Alt+Canc prima che venga chiesta la password; la difesa classica contro le schermate di accesso false. L'accesso automatico smette di funzionare e, su una macchina virtuale o una console KVM, la combinazione di tasti può essere intercettata dall'host. La posizione di spegnimento non scrive 0, elimina il valore: la nota di Microsoft precisa che portare il criterio su «Non definito» non basta ad annullarlo — il valore del registro va rimosso.",
+  "pl": "Wymusza naciśnięcie Ctrl+Alt+Del, zanim zostanie poproszone o hasło; klasyczna obrona przed podrobionymi ekranami logowania. Logowanie automatyczne przestaje działać, a na maszynie wirtualnej lub konsoli KVM kombinację klawiszy może przechwycić host. Pozycja wyłączona nie zapisuje 0, tylko usuwa wartość: własna uwaga Microsoftu mówi, że ustawienie zasady na „Nie zdefiniowano” nie wystarcza do jej cofnięcia — trzeba usunąć wartość z rejestru.",
+  "pt": "Obriga a premir Ctrl+Alt+Del antes de a palavra-passe ser pedida; a defesa clássica contra ecrãs de início de sessão falsos. O início de sessão automático deixa de funcionar e, numa máquina virtual ou numa consola KVM, a combinação de teclas pode ser captada pelo anfitrião. A posição de desligado não escreve 0, elimina o valor: a própria nota da Microsoft diz que colocar a política em «Não Definida» não chega para a anular — o valor do registo tem de ser removido.",
+  "ru": "Требует нажать Ctrl+Alt+Del перед запросом пароля; классическая защита от поддельных экранов входа. Автоматический вход перестаёт работать, а на виртуальной машине или KVM-консоли сочетание клавиш может быть перехвачено узлом. Положение «выключено» не пишет 0, а удаляет значение: собственное примечание Microsoft говорит, что перевода политики в состояние «Не определено» недостаточно для её отмены — значение реестра нужно удалить.",
+  "tr": "Parola sorulmadan önce Ctrl+Alt+Del basılmasını zorunlu kılar; sahte oturum açma ekranlarına karşı klasik önlem. Otomatik oturum açma çalışmaz, sanal makine ve KVM konsolunda tuş birleşimi ana makinede yakalanabilir. Kapalı konumu 0 yazmaz, değeri siler: Microsoft'un kendi notu, bu ilkeyi geri almak için değeri 'Tanımlanmadı' yapmanın yetmediğini, kayıt defteri değerinin kaldırılması gerektiğini söylüyor."
+ },
+ "tweak.boot-ctrl-alt-del.name": {
+  "ar": "طلب Ctrl+Alt+Del عند تسجيل الدخول",
+  "de": "Strg+Alt+Entf zur Anmeldung verlangen",
+  "en": "Require Ctrl+Alt+Del to sign in",
+  "es": "Exigir Ctrl+Alt+Supr para iniciar sesión",
+  "fr": "Exiger Ctrl+Alt+Suppr pour se connecter",
+  "it": "Richiedi Ctrl+Alt+Canc per l'accesso",
+  "pl": "Wymagaj Ctrl+Alt+Del przy logowaniu",
+  "pt": "Exigir Ctrl+Alt+Del para iniciar sessão",
+  "ru": "Требовать Ctrl+Alt+Del для входа",
+  "tr": "Oturum açarken Ctrl+Alt+Del iste"
+ },
+ "tweak.boot-lockscreen-widgets.desc": {
+  "ar": "يدير شريط الأدوات في شاشة القفل عبر السياسة؛ وعند إخفائه يصبح عنصر التحكم في الإعدادات باهتًا أيضًا. وتظل المواضع الثلاثة منفصلة لأن بيانات السياسة معكوسة والأدلة تناقض بعضها: فملفا ADMX وADML يكتبان «ممكّن» بالقيمة 0 و«معطّل» بالقيمة 1، بينما تعرض صفحة Policy CSP القيمة الافتراضية 0 وتقول إن الأدوات تظهر في الحالة غير المهيّأة. والموضع غير المهيّأ هو حالة Windows الأصلية. يتطلب تسجيل الخروج ثم الدخول من جديد.",
+  "de": "Steuert den Widget-Streifen auf dem Sperrbildschirm per Richtlinie; wenn Sie ihn ausblenden, wird auch das Steuerelement in den Einstellungen ausgegraut. Die drei Stellungen bleiben getrennt, weil die Daten der Richtlinie invertiert sind und sich die Belege widersprechen: ADMX und ADML schreiben „Aktiviert“ als 0 und „Deaktiviert“ als 1, während die Policy-CSP-Seite den Standard als 0 angibt und sagt, dass die Widgets im nicht konfigurierten Zustand erscheinen. Die nicht konfigurierte Stellung ist der Eigenzustand von Windows. Erfordert eine erneute Anmeldung.",
+  "en": "Manages the widget strip on the lock screen by policy; when you hide it, the control in Settings greys out as well. The three positions are kept apart because the policy's data is inverted and the evidence contradicts itself: the ADMX and ADML write 'Enabled' as 0 and 'Disabled' as 1, while the Policy CSP page shows the default as 0 and says the widgets appear when it is unconfigured. The unconfigured position is Windows' own state. Requires signing out and back in.",
+  "es": "Gestiona mediante directiva la franja de widgets de la pantalla de bloqueo; al ocultarla, el control de Configuración también se atenúa. Las tres posiciones se mantienen separadas porque los datos de la directiva están invertidos y las pruebas se contradicen: el ADMX y el ADML escriben «Habilitado» como 0 y «Deshabilitado» como 1, mientras que la página de Policy CSP muestra 0 como valor predeterminado y dice que los widgets aparecen cuando no está configurada. La posición sin configurar es el estado propio de Windows. Requiere cerrar la sesión y volver a iniciarla.",
+  "fr": "Gère par stratégie le bandeau de widgets de l'écran de verrouillage ; si vous le masquez, la commande dans Paramètres se grise également. Les trois positions restent distinctes parce que les données de la stratégie sont inversées et que les preuves se contredisent : l'ADMX et l'ADML écrivent « Activé » comme 0 et « Désactivé » comme 1, tandis que la page Policy CSP indique 0 comme valeur par défaut et affirme que les widgets apparaissent lorsqu'elle n'est pas configurée. La position non configurée est l'état propre de Windows. Nécessite de se déconnecter puis de se reconnecter.",
+  "it": "Gestisce tramite criterio la striscia di widget nella schermata di blocco; nascondendola, anche il controllo in Impostazioni diventa grigio. Le tre posizioni restano distinte perché i dati del criterio sono invertiti e le prove si contraddicono: ADMX e ADML scrivono «Abilitato» come 0 e «Disabilitato» come 1, mentre la pagina Policy CSP indica 0 come valore predefinito e afferma che i widget compaiono quando non è configurato. La posizione non configurata è lo stato proprio di Windows. Richiede la disconnessione e una nuova connessione.",
+  "pl": "Zarządza zasadą paskiem widżetów na ekranie blokady; po ukryciu wyszarza się także formant w Ustawieniach. Trzy pozycje pozostają rozdzielone, ponieważ dane zasady są odwrócone, a dowody przeczą sobie nawzajem: ADMX i ADML zapisują „Włączone” jako 0, a „Wyłączone” jako 1, natomiast strona Policy CSP podaje 0 jako wartość domyślną i mówi, że przy braku konfiguracji widżety są widoczne. Pozycja nieskonfigurowana to własny stan systemu Windows. Wymaga wylogowania i ponownego zalogowania.",
+  "pt": "Gere por política a faixa de widgets no ecrã de bloqueio; ao ocultá-la, o controlo nas Definições também fica cinzento. As três posições mantêm-se separadas porque os dados da política estão invertidos e as evidências contradizem-se: o ADMX e o ADML escrevem «Ativado» como 0 e «Desativado» como 1, enquanto a página do Policy CSP mostra 0 como predefinição e diz que os widgets aparecem quando não está configurada. A posição não configurada é o estado próprio do Windows. Requer terminar sessão e iniciá-la novamente.",
+  "ru": "Управляет полосой мини-приложений на экране блокировки через политику; когда вы её скрываете, элемент в Параметрах тоже становится серым. Три положения оставлены раздельными, потому что данные политики инвертированы, а свидетельства противоречат друг другу: ADMX и ADML записывают «Включено» как 0, а «Отключено» как 1, тогда как страница Policy CSP показывает значение по умолчанию 0 и утверждает, что в ненастроенном состоянии мини-приложения видны. Ненастроенное положение — собственное состояние Windows. Требуется выйти из системы и войти снова.",
+  "tr": "Kilit ekranındaki widget şeridini ilke ile yönetir; gizlediğinizde Ayarlar'daki denetim de grileşir. Üç konum ayrı duruyor çünkü ilkenin verisi terstir ve kanıt kendi içinde çelişiyor: ADMX ve ADML 'Etkin'i 0, 'Devre Dışı'yı 1 olarak yazıyor, Policy CSP sayfası ise varsayılanı 0 gösterip yapılandırılmamış durumda widget'ların göründüğünü söylüyor. Yapılandırılmamış konum Windows'un kendi hâlidir. Oturumu kapatıp açmak gerekir."
+ },
+ "tweak.boot-lockscreen-widgets.name": {
+  "ar": "أدوات شاشة القفل",
+  "de": "Widgets auf dem Sperrbildschirm",
+  "en": "Lock screen widgets",
+  "es": "Widgets de la pantalla de bloqueo",
+  "fr": "Widgets de l'écran de verrouillage",
+  "it": "Widget della schermata di blocco",
+  "pl": "Widżety ekranu blokady",
+  "pt": "Widgets do ecrã de bloqueio",
+  "ru": "Мини-приложения экрана блокировки",
+  "tr": "Kilit ekranı pencere öğeleri"
  },
  "tweak.boot-startup-delay.desc": {
   "ar": "يزيل التأخير البالغ نحو 10 ثوانٍ الذي ينتظره Windows بعد تسجيل الدخول قبل تشغيل تطبيقات بدء التشغيل.",
@@ -13595,6 +14063,78 @@
   "ru": "Буква диска в начале",
   "tr": "Sürücü harfini başta göster"
  },
+ "tweak.exp-numeric-sort.desc": {
+  "ar": "يجعل مستكشف الملفات يفرز أسماء الملفات رقمًا برقم بدلًا من القيمة العددية (111 < 22 < 3) — وهو ترتيب سطر الأوامر ومعظم أدوات المطوّرين. والوضع الافتراضي في Windows هو العكس (3 < 22 < 111)، أي أن هذا الصف لا يُفعّل الفرز الرقمي بل يُعطّله. ويعمل الإعداد على مستوى حساب المستخدم كله ولا يمكن اختياره لكل مجلد على حدة: فهو مناسب لمن يعملون بأسماء تحمل أرقام إصدارات، وسيّئ بوضوح للأسماء التي تحمل تواريخ أو أرقام حلقات، لأن img2.png صار يأتي بعد img10.png. ويفضّل معظم المستخدمين الفرز الطبيعي في Windows. يجب إعادة تشغيل مستكشف الملفات.",
+  "de": "Lässt den Explorer Dateinamen ziffernweise statt nach dem Zahlenwert sortieren (111 < 22 < 3) — die Reihenfolge der Kommandozeile und der meisten Entwicklerwerkzeuge. Die Vorgabe von Windows ist die umgekehrte (3 < 22 < 111), diese Zeile schaltet die numerische Sortierung also nicht ein, sondern aus. Die Einstellung gilt für das gesamte Benutzerkonto und lässt sich nicht pro Ordner wählen: sie ist richtig für alle, die mit Namen voller Versionsnummern arbeiten, und offenkundig schlecht für Namen mit Datums- oder Folgennummern, weil img2.png nun nach img10.png kommt. Die meisten Benutzer bevorzugen die natürliche Sortierung von Windows. Der Explorer muss neu gestartet werden.",
+  "en": "Makes Explorer sort file names digit by digit rather than by numeric value (111 < 22 < 3) — the order the command line and most developer tools use. Windows' default is the opposite (3 < 22 < 111), so this row does not turn numeric sorting on, it turns it off. The setting works across the whole user account and cannot be chosen per folder: it is right for people working with names carrying version numbers, and plainly bad for names carrying dates or episode numbers, because img2.png now comes after img10.png. Most users prefer Windows' natural sorting. Explorer must restart.",
+  "es": "Hace que el Explorador ordene los nombres de archivo dígito a dígito en lugar de por valor numérico (111 < 22 < 3), el orden de la línea de comandos y de la mayoría de las herramientas de desarrollo. El valor predeterminado de Windows es el contrario (3 < 22 < 111), así que esta fila no activa la ordenación numérica, la desactiva. La opción actúa en toda la cuenta de usuario y no puede elegirse por carpeta: es adecuada para quien trabaja con nombres que llevan números de versión y claramente mala para los que llevan fechas o números de episodio, porque img2.png pasa a ir después de img10.png. La mayoría de los usuarios prefiere la ordenación natural de Windows. El Explorador debe reiniciarse.",
+  "fr": "Fait trier à l'Explorateur les noms de fichiers chiffre par chiffre plutôt que par valeur numérique (111 < 22 < 3) — l'ordre de la ligne de commande et de la plupart des outils de développement. La valeur par défaut de Windows est l'inverse (3 < 22 < 111) : cette ligne n'active donc pas le tri numérique, elle le désactive. Le réglage s'applique à tout le compte d'utilisateur et ne peut pas être choisi dossier par dossier : il convient à qui travaille avec des noms portant des numéros de version, et il est franchement mauvais pour des noms portant des dates ou des numéros d'épisode, car img2.png vient désormais après img10.png. La plupart des utilisateurs préfèrent le tri naturel de Windows. L'Explorateur doit redémarrer.",
+  "it": "Fa ordinare a Explorer i nomi dei file cifra per cifra anziché per valore numerico (111 < 22 < 3) — l'ordine della riga di comando e della maggior parte degli strumenti di sviluppo. Il valore predefinito di Windows è l'opposto (3 < 22 < 111), quindi questa riga non attiva l'ordinamento numerico, lo disattiva. L'impostazione vale per l'intero account utente e non può essere scelta per singola cartella: è giusta per chi lavora con nomi che portano numeri di versione ed è chiaramente pessima per nomi che portano date o numeri di episodio, perché img2.png viene ora dopo img10.png. La maggior parte degli utenti preferisce l'ordinamento naturale di Windows. Explorer deve riavviarsi.",
+  "pl": "Sprawia, że Eksplorator sortuje nazwy plików cyfra po cyfrze, a nie według wartości liczbowej (111 < 22 < 3) — to porządek wiersza poleceń i większości narzędzi programistycznych. Domyślne zachowanie systemu Windows jest odwrotne (3 < 22 < 111), więc ten wiersz nie włącza sortowania numerycznego, tylko je wyłącza. Ustawienie działa w obrębie całego konta użytkownika i nie da się go wybrać osobno dla folderu: jest właściwe dla osób pracujących z nazwami zawierającymi numery wersji, a wyraźnie złe dla nazw z datami lub numerami odcinków, bo img2.png trafia teraz za img10.png. Większość użytkowników woli naturalne sortowanie systemu Windows. Eksplorator musi zostać uruchomiony ponownie.",
+  "pt": "Faz o Explorador ordenar os nomes de ficheiro dígito a dígito em vez de por valor numérico (111 < 22 < 3) — a ordem da linha de comandos e da maioria das ferramentas de programação. A predefinição do Windows é a oposta (3 < 22 < 111), pelo que esta linha não liga a ordenação numérica, desliga-a. A definição atua em toda a conta de utilizador e não pode ser escolhida por pasta: é adequada para quem trabalha com nomes que levam números de versão e é claramente má para nomes com datas ou números de episódio, porque img2.png passa a vir depois de img10.png. A maioria dos utilizadores prefere a ordenação natural do Windows. O Explorador tem de reiniciar.",
+  "ru": "Заставляет Проводник сортировать имена файлов посимвольно, а не по числовому значению (111 < 22 < 3) — это порядок командной строки и большинства инструментов разработчика. Умолчание Windows противоположно (3 < 22 < 111), так что эта строка не включает числовую сортировку, а выключает её. Параметр действует на всю учётную запись и не выбирается для отдельной папки: он верен для тех, кто работает с именами, несущими номера версий, и явно плох для имён с датами или номерами серий, потому что img2.png теперь идёт после img10.png. Большинство пользователей предпочитает естественную сортировку Windows. Проводник должен быть перезапущен.",
+  "tr": "Gezgin'in dosya adlarını sayısal değerine göre değil, rakam rakam sıralamasını sağlar (111 < 22 < 3) — komut satırının ve çoğu geliştirici aracının sırası. Windows'un varsayılanı bunun tersidir (3 < 22 < 111), yani bu satır sayısal sıralamayı açmaz, kapatır. Ayar kullanıcı geneli çalışır, klasör başına seçilemez: sürüm numarası taşıyan adlarla çalışanlar için doğru, tarih veya bölüm numarası taşıyanlar için açıkça kötüdür, çünkü img2.png artık img10.png'den sonra gelir. Çoğu kullanıcı Windows'un doğal sıralamasını tercih eder. Gezgin yeniden başlamalıdır."
+ },
+ "tweak.exp-numeric-sort.name": {
+  "ar": "إيقاف الفرز الرقمي لأسماء الملفات",
+  "de": "Numerische Sortierung von Dateinamen abschalten",
+  "en": "Turn off numeric sorting of file names",
+  "es": "Desactivar la ordenación numérica de los nombres de archivo",
+  "fr": "Désactiver le tri numérique des noms de fichiers",
+  "it": "Disattiva l'ordinamento numerico dei nomi di file",
+  "pl": "Wyłącz sortowanie numeryczne nazw plików",
+  "pt": "Desativar a ordenação numérica dos nomes de ficheiro",
+  "ru": "Отключить числовую сортировку имён файлов",
+  "tr": "Dosya adlarında sayısal sıralamayı kapat"
+ },
+ "tweak.exp-openwith-store.desc": {
+  "ar": "يزيل عنصر «البحث عن تطبيق في Microsoft Store» من مربع الحوار «فتح باستخدام». أما مُنتقي التطبيقات المحلية فكان موجودًا أصلًا ولا يتغيّر؛ والذي يُزال هو مسار البحث الوحيد المتوفر افتراضيًا لامتداد ملف غير معروف. ولأن القيمة تُكتب في HKLM فهي تسري على جميع مستخدمي الجهاز، ويظل تطبيق المتجر نفسه يعمل. يجب إعادة تشغيل مستكشف الملفات.",
+  "de": "Entfernt den Eintrag „Im Microsoft Store nach einer App suchen“ aus dem Dialogfeld „Öffnen mit“. Die lokale Anwendungsauswahl war ohnehin schon da und ändert sich nicht; entfernt wird der einzige von Haus aus vorhandene Suchweg für eine unbekannte Dateiendung. Da der Wert nach HKLM geschrieben wird, gilt er für alle auf dem Gerät, und die Store-App selbst funktioniert weiter. Der Explorer muss neu gestartet werden.",
+  "en": "Removes the 'Look for an app in the Microsoft Store' item from the Open with dialog. The local application picker was already there and does not change; what is removed is the one out-of-the-box search route for an unknown file extension. Because it is written to HKLM it binds everyone on the machine, and the Store app itself keeps working. Explorer must restart.",
+  "es": "Quita el elemento «Buscar una aplicación en Microsoft Store» del cuadro de diálogo Abrir con. El selector de aplicaciones locales ya estaba ahí y no cambia; lo que se quita es la única vía de búsqueda incluida de fábrica para una extensión desconocida. Como se escribe en HKLM, afecta a todos los usuarios del equipo, y la propia aplicación Store sigue funcionando. El Explorador debe reiniciarse.",
+  "fr": "Supprime l'élément « Rechercher une application dans le Microsoft Store » de la boîte de dialogue Ouvrir avec. Le sélecteur d'applications locales était déjà présent et ne change pas ; ce qui disparaît, c'est l'unique voie de recherche fournie d'origine pour une extension inconnue. Comme la valeur est écrite dans HKLM, elle s'applique à tous les utilisateurs de la machine, et l'application Store elle-même continue de fonctionner. L'Explorateur doit redémarrer.",
+  "it": "Rimuove la voce «Cerca un'app in Microsoft Store» dalla finestra di dialogo Apri con. Il selettore di applicazioni locali era già presente e non cambia; ciò che viene tolto è l'unica via di ricerca fornita di serie per un'estensione sconosciuta. Poiché viene scritto in HKLM vincola tutti gli utenti della macchina, e l'app Store stessa continua a funzionare. Explorer deve riavviarsi.",
+  "pl": "Usuwa pozycję „Poszukaj aplikacji w sklepie Microsoft Store” z okna dialogowego Otwórz za pomocą. Lokalny selektor aplikacji już tam był i się nie zmienia; usuwana jest jedyna fabrycznie dostępna droga wyszukiwania dla nieznanego rozszerzenia. Ponieważ zapis trafia do HKLM, obowiązuje wszystkich na komputerze, a sama aplikacja Sklepu działa nadal. Eksplorator musi zostać uruchomiony ponownie.",
+  "pt": "Remove o item «Procurar uma aplicação na Microsoft Store» da caixa de diálogo Abrir com. O seletor de aplicações locais já lá estava e não muda; o que é retirado é a única via de procura fornecida de origem para uma extensão desconhecida. Como é escrito em HKLM, abrange todos os utilizadores do computador, e a própria aplicação Store continua a funcionar. O Explorador tem de reiniciar.",
+  "ru": "Убирает пункт «Найти приложение в Microsoft Store» из диалога «Открыть с помощью». Выбор локального приложения там и был и не меняется; убирается единственный штатный путь поиска для неизвестного расширения. Поскольку значение пишется в HKLM, оно действует на всех пользователей компьютера, а само приложение Store продолжает работать. Проводник должен быть перезапущен.",
+  "tr": "Birlikte Aç iletişim kutusundan \"Microsoft Store'da uygulama ara\" ögesini kaldırır. Yerel uygulama seçicisi zaten oradaydı ve değişmez; kaldırılan şey bilinmeyen bir uzantı için kutudan çıkan tek arama yoludur. HKLM'e yazıldığı için makinedeki herkesi bağlar, Store uygulamasının kendisi çalışmayı sürdürür. Gezgin yeniden başlamalıdır."
+ },
+ "tweak.exp-openwith-store.name": {
+  "ar": "اقتراح «البحث عن تطبيق في المتجر»",
+  "de": "Der Vorschlag „App im Store suchen“",
+  "en": "The 'Look for an app in the Store' suggestion",
+  "es": "La sugerencia «Buscar una aplicación en la Store»",
+  "fr": "La suggestion « Rechercher une application dans le Store »",
+  "it": "Il suggerimento «Cerca un'app nello Store»",
+  "pl": "Sugestia „Poszukaj aplikacji w Sklepie”",
+  "pt": "A sugestão «Procurar uma aplicação na Store»",
+  "ru": "Предложение «Найти приложение в Store»",
+  "tr": "\"Store'da uygulama ara\" önerisi"
+ },
+ "tweak.exp-prelaunch.desc": {
+  "ar": "يوقف احتفاظ Windows بعملية مستكشف ملفات جاهزة في الخلفية. وفي المقابل قد تُفتح النافذة الأولى متأخرة قليلًا؛ وعلى حاسوب مكتبي حديث لا يُلاحَظ أيٌّ من الأمرين. وهي سياسة موثَّقة موجودة منذ Windows 11 إصدار 22H2، لكن نص ADMX يصف ما هي الميزة فحسب — ولا يوجد مصدر يقيس كلفة تعطيلها. يجب إعادة تشغيل مستكشف الملفات.",
+  "de": "Schaltet ab, dass Windows im Hintergrund einen Explorer-Prozess bereithält. Im Gegenzug öffnet sich das erste Fenster möglicherweise etwas später; auf einem modernen Desktop ist beides nicht spürbar. Es ist eine dokumentierte Richtlinie, die es seit Windows 11 22H2 gibt, doch der ADMX-Text beschreibt nur, was die Funktion ist — eine Quelle, die den Preis des Abschaltens misst, gibt es nicht. Der Explorer muss neu gestartet werden.",
+  "en": "Turns off Windows keeping an Explorer process ready in the background. In exchange the first window may open slightly later; on a modern desktop neither side is noticeable. It is a documented policy present since Windows 11 22H2, but the ADMX text only describes what the feature is — there is no source measuring the cost of turning it off. Explorer must restart.",
+  "es": "Desactiva que Windows mantenga un proceso del Explorador preparado en segundo plano. A cambio, la primera ventana puede abrirse algo más tarde; en un equipo de escritorio moderno ninguna de las dos cosas se nota. Es una directiva documentada presente desde Windows 11 22H2, pero el texto ADMX solo describe qué es la característica: no hay ninguna fuente que mida el coste de desactivarla. El Explorador debe reiniciarse.",
+  "fr": "Désactive le maintien par Windows d'un processus Explorateur prêt en arrière-plan. En contrepartie, la première fenêtre peut s'ouvrir un peu plus tard ; sur un ordinateur de bureau moderne, ni l'un ni l'autre ne se perçoit. C'est une stratégie documentée présente depuis Windows 11 22H2, mais le texte ADMX décrit seulement ce qu'est la fonctionnalité — aucune source ne mesure le coût de sa désactivation. L'Explorateur doit redémarrer.",
+  "it": "Disattiva il fatto che Windows tenga pronto un processo di Explorer in secondo piano. In cambio la prima finestra può aprirsi un po' più tardi; su un desktop moderno né l'uno né l'altro si avverte. È un criterio documentato presente da Windows 11 22H2, ma il testo ADMX descrive soltanto che cos'è la funzionalità — non esiste una fonte che misuri il costo di disattivarla. Explorer deve riavviarsi.",
+  "pl": "Wyłącza utrzymywanie przez system Windows gotowego procesu Eksploratora w tle. W zamian pierwsze okno może otworzyć się nieco później; na nowoczesnym komputerze żadna z tych rzeczy nie jest odczuwalna. To udokumentowana zasada obecna od Windows 11 22H2, ale tekst ADMX opisuje jedynie, czym jest ta funkcja — nie ma źródła mierzącego koszt jej wyłączenia. Eksplorator musi zostać uruchomiony ponownie.",
+  "pt": "Desativa a manutenção pelo Windows de um processo do Explorador pronto em segundo plano. Em troca, a primeira janela pode abrir um pouco mais tarde; num computador moderno nenhuma das duas coisas se nota. É uma política documentada presente desde o Windows 11 22H2, mas o texto ADMX só descreve o que a funcionalidade é — não há qualquer fonte que meça o custo de a desativar. O Explorador tem de reiniciar.",
+  "ru": "Отключает удержание Windows готового процесса Проводника в фоне. Взамен первое окно может открываться чуть позже; на современном настольном компьютере не заметно ни то, ни другое. Это документированная политика, существующая с Windows 11 22H2, но текст ADMX описывает только, что представляет собой эта возможность, — источника, измеряющего цену её отключения, нет. Проводник должен быть перезапущен.",
+  "tr": "Windows'un arka planda hazırda bir Gezgin süreci tutmasını kapatır. Karşılığında ilk pencere biraz daha geç açılabilir; modern bir masaüstünde iki taraf da hissedilmez. Windows 11 22H2'den beri var olan belgeli bir ilkedir, ancak ADMX açıklaması yalnızca özelliğin ne olduğunu anlatıyor — kapatmanın bedelini ölçen bir kaynak yok. Gezgin yeniden başlamalıdır."
+ },
+ "tweak.exp-prelaunch.name": {
+  "ar": "إبقاء مستكشف الملفات جاهزًا في الخلفية",
+  "de": "Explorer im Hintergrund bereithalten",
+  "en": "Keeping Explorer ready in the background",
+  "es": "Mantener el Explorador preparado en segundo plano",
+  "fr": "Garder l'Explorateur prêt en arrière-plan",
+  "it": "Tenere Explorer pronto in secondo piano",
+  "pl": "Utrzymywanie Eksploratora w gotowości w tle",
+  "pt": "Manter o Explorador pronto em segundo plano",
+  "ru": "Держать Проводник наготове в фоне",
+  "tr": "Gezgin'i arka planda hazır tutma"
+ },
  "tweak.exp-super-hidden.desc": {
   "ar": "يعرض في المستكشف ملفات نظام التشغيل المخفية أيضًا.",
   "de": "Zeigt im Explorer auch ausgeblendete Betriebssystemdateien an.",
@@ -14387,6 +14927,30 @@
   "ru": "Роуминг сотовых данных",
   "tr": "Hücresel veri dolaşımı"
  },
+ "tweak.net-admin-shares.desc": {
+  "ar": "يتوقف PsExec وإدارة الحاسوب عن بُعد ومعظم عملاء النسخ الاحتياطي و RMM عن العمل. يعطّل المشاركتين المخفيتين ‏C$‎ و‏ADMIN$‎ اللتين ينشئهما Windows من تلقاء نفسه عند كل إقلاع. ملاحظة عن الدليل: جرى التحقق من اسم القيمة على سطح التهيئة (Set-SmbServerConfiguration) لا في المكوّن الذي ينشئ المشاركة — أي أن قراءة الإعداد مؤكدة، لكن أثره لم يُقَس. يتطلب إعادة التشغيل.",
+  "de": "PsExec, die Remote-Computerverwaltung und die meisten Sicherungs-/RMM-Agenten funktionieren nicht mehr. Schaltet die versteckten Freigaben C$ und ADMIN$ ab, die Windows bei jedem Start von selbst anlegt. Beleghinweis: Der Wertname wurde auf der Konfigurationsoberfläche (Set-SmbServerConfiguration) bestätigt, nicht in der Komponente, welche die Freigabe erstellt — es ist also sicher, dass die Einstellung gelesen wird, ihre Wirkung wurde jedoch nicht gemessen. Erfordert einen Neustart.",
+  "en": "PsExec, remote Computer Management and most backup/RMM agents stop working. Turns off the hidden C$ and ADMIN$ shares Windows creates by itself at every startup. Evidence note: the value name was verified on the configuration surface (Set-SmbServerConfiguration), not in the component that creates the share — so it is certain the setting is read, but its effect was not measured. Requires a restart.",
+  "es": "PsExec, la Administración de equipos remota y la mayoría de los agentes de copia de seguridad/RMM dejan de funcionar. Desactiva los recursos compartidos ocultos C$ y ADMIN$ que Windows crea por sí mismo en cada arranque. Nota sobre las pruebas: el nombre del valor se verificó en la superficie de configuración (Set-SmbServerConfiguration), no en el componente que crea el recurso compartido; es decir, es seguro que la opción se lee, pero su efecto no se midió. Requiere reiniciar.",
+  "fr": "PsExec, la Gestion de l'ordinateur à distance et la plupart des agents de sauvegarde/RMM cessent de fonctionner. Désactive les partages masqués C$ et ADMIN$ que Windows crée de lui-même à chaque démarrage. Note de preuve : le nom de la valeur a été vérifié sur la surface de configuration (Set-SmbServerConfiguration), pas dans le composant qui crée le partage — il est donc certain que le paramètre est lu, mais son effet n'a pas été mesuré. Nécessite un redémarrage.",
+  "it": "PsExec, Gestione computer remota e la maggior parte degli agenti di backup/RMM smettono di funzionare. Disattiva le condivisioni nascoste C$ e ADMIN$ che Windows crea da sé a ogni avvio. Nota sulle prove: il nome del valore è stato verificato sulla superficie di configurazione (Set-SmbServerConfiguration), non nel componente che crea la condivisione — è quindi certo che l'impostazione venga letta, ma il suo effetto non è stato misurato. Richiede un riavvio.",
+  "pl": "PsExec, zdalne Zarządzanie komputerem i większość agentów kopii zapasowych/RMM przestają działać. Wyłącza ukryte udziały C$ i ADMIN$, które Windows tworzy sam przy każdym uruchomieniu. Uwaga dowodowa: nazwę wartości potwierdzono na powierzchni konfiguracyjnej (Set-SmbServerConfiguration), a nie w składniku tworzącym udział — to znaczy, że odczyt ustawienia jest pewny, ale jego skutku nie zmierzono. Wymaga ponownego uruchomienia.",
+  "pt": "O PsExec, a Gestão de Computadores remota e a maioria dos agentes de cópia de segurança/RMM deixam de funcionar. Desativa as partilhas ocultas C$ e ADMIN$ que o Windows cria sozinho em cada arranque. Nota sobre a evidência: o nome do valor foi verificado na superfície de configuração (Set-SmbServerConfiguration), não no componente que cria a partilha — ou seja, é certo que a definição é lida, mas o seu efeito não foi medido. Requer reiniciar.",
+  "ru": "PsExec, удалённое управление компьютером и большинство агентов резервного копирования/RMM перестают работать. Отключает скрытые ресурсы C$ и ADMIN$, которые Windows создаёт сама при каждом запуске. Замечание о доказательствах: имя значения подтверждено на поверхности настройки (Set-SmbServerConfiguration), а не в компоненте, создающем общий ресурс, — то есть чтение параметра несомненно, но его действие не измерялось. Требуется перезагрузка.",
+  "tr": "PsExec, uzaktan Bilgisayar Yönetimi ve çoğu yedekleme/RMM ajanı çalışmayı bırakır. Windows'un her açılışta kendiliğinden oluşturduğu C$ ve ADMIN$ gizli paylaşımlarını kapatır. Kanıt notu: değer adı yapılandırma yüzeyinde (Set-SmbServerConfiguration) doğrulandı, paylaşımı oluşturan bileşende değil — yani ayarın okunduğu kesin, etkisi ölçülmedi. Yeniden başlatma gerekir."
+ },
+ "tweak.net-admin-shares.name": {
+  "ar": "مشاركات الشبكة المخفية (‏C$‎ و‏ADMIN$‎)",
+  "de": "Versteckte Netzwerkfreigaben (C$, ADMIN$)",
+  "en": "Hidden network shares (C$, ADMIN$)",
+  "es": "Recursos compartidos de red ocultos (C$, ADMIN$)",
+  "fr": "Partages réseau masqués (C$, ADMIN$)",
+  "it": "Condivisioni di rete nascoste (C$, ADMIN$)",
+  "pl": "Ukryte udziały sieciowe (C$, ADMIN$)",
+  "pt": "Partilhas de rede ocultas (C$, ADMIN$)",
+  "ru": "Скрытые сетевые ресурсы (C$, ADMIN$)",
+  "tr": "Gizli ağ paylaşımları (C$, ADMIN$)"
+ },
  "tweak.net-autotuning.desc": {
   "ar": "توسيع Windows لنافذة استقبال TCP بحسب الوصلة. وتقييدها يحلّ التوقفات على الموجّهات القديمة، ويكلّف إنتاجية على الوصلات السريعة.",
   "de": "Windows vergrößert das TCP-Empfangsfenster passend zur Verbindung. Eine Einschränkung behebt Stockungen bei alten Routern, kostet auf schnellen Verbindungen aber Durchsatz.",
@@ -14410,6 +14974,30 @@
   "pt": "Ajuste automático do TCP",
   "ru": "Автонастройка TCP",
   "tr": "TCP otomatik ayarlama"
+ },
+ "tweak.net-font-providers.desc": {
+  "ar": "يمنع Windows من تنزيل خط مفقود من fs.microsoft.com؛ فتُستخدم الخطوط المثبَّتة محليًا فقط. ولن تصل بعد ذلك أنظمة الكتابة غير المثبَّتة لديك، بل تُرسم كبديل أو كمربّع فارغ — ويظهر ذلك بوضوح في الكتابات الصينية واليابانية والكورية والهندية. أما خطوط الويب في المتصفح فلا تتأثر، وهو ما تذكره Microsoft صراحةً. ووضع الإيقاف لا يكتب 1 بل يحذف القيمة: فالقيمة الافتراضية غير المهيّأة تختلف باختلاف إصدار Windows. يتطلب إعادة التشغيل (أو إعادة تشغيل خدمة Font Cache).",
+  "de": "Verhindert, dass Windows eine fehlende Schriftart von fs.microsoft.com herunterlädt; es werden nur lokal installierte Schriftarten verwendet. Nicht installierte Schriftsysteme werden nicht mehr nachgeladen und als Ersatzzeichen oder leeres Kästchen dargestellt — am deutlichsten bei CJK- und indischen Schriften. Webschriftarten im Browser sind nicht betroffen, was Microsoft ausdrücklich festhält. Die Aus-Stellung schreibt keine 1, sie löscht den Wert: die nicht konfigurierte Vorgabe unterscheidet sich je nach Windows-Edition. Erfordert einen Neustart (oder den Neustart des Dienstes „Font Cache“).",
+  "en": "Stops Windows downloading a missing font from fs.microsoft.com; only locally installed fonts are used. Scripts you do not have installed no longer stream in and are drawn as a substitute or an empty box — most visibly with CJK and Indic scripts. Web fonts in a browser are unaffected, which Microsoft states explicitly. The off position does not write 1, it deletes the value: the unconfigured default varies by Windows edition. Requires a restart (or restarting the Font Cache service).",
+  "es": "Impide que Windows descargue una fuente que falta desde fs.microsoft.com; solo se usan las fuentes instaladas localmente. Los alfabetos que no tenga instalados ya no se transmiten y se dibujan como sustituto o como recuadro vacío, algo especialmente visible en las escrituras CJK e índicas. Las fuentes web del navegador no se ven afectadas, y Microsoft lo indica de forma explícita. La posición de apagado no escribe 1, sino que elimina el valor: el valor predeterminado sin configurar varía según la edición de Windows. Requiere reiniciar (o reiniciar el servicio Font Cache).",
+  "fr": "Empêche Windows de télécharger une police manquante depuis fs.microsoft.com ; seules les polices installées localement sont utilisées. Les écritures que vous n'avez pas installées ne se chargent plus et sont dessinées sous forme de substitut ou de carré vide — surtout pour les écritures CJC et indiennes. Les polices web dans un navigateur ne sont pas concernées, Microsoft le précise explicitement. La position d'arrêt n'écrit pas 1, elle supprime la valeur : la valeur par défaut non configurée varie selon l'édition de Windows. Nécessite un redémarrage (ou le redémarrage du service Font Cache).",
+  "it": "Impedisce a Windows di scaricare un carattere mancante da fs.microsoft.com; vengono usati solo i caratteri installati localmente. Gli alfabeti non installati non arrivano più e vengono disegnati come sostituto o riquadro vuoto — soprattutto per le scritture CJK e indiane. I caratteri web nel browser non sono toccati, e Microsoft lo dichiara esplicitamente. La posizione di spegnimento non scrive 1, elimina il valore: il valore predefinito non configurato varia a seconda dell'edizione di Windows. Richiede un riavvio (o il riavvio del servizio Font Cache).",
+  "pl": "Powstrzymuje system Windows przed pobieraniem brakującej czcionki z fs.microsoft.com; używane są wyłącznie czcionki zainstalowane lokalnie. Niezainstalowane systemy pisma przestają być doczytywane i są rysowane jako zamiennik lub pusty prostokąt — najbardziej widocznie w pismach CJK i indyjskich. Czcionki internetowe w przeglądarce nie są objęte, co Microsoft stwierdza wprost. Pozycja wyłączona nie zapisuje 1, tylko usuwa wartość: nieskonfigurowana wartość domyślna różni się zależnie od edycji systemu Windows. Wymaga ponownego uruchomienia (albo ponownego uruchomienia usługi Font Cache).",
+  "pt": "Impede o Windows de transferir um tipo de letra em falta a partir de fs.microsoft.com; são usados apenas os tipos de letra instalados localmente. Os alfabetos que não tiver instalados deixam de ser transmitidos e são desenhados como substituto ou caixa vazia — sobretudo nas escritas CJK e índicas. Os tipos de letra Web no browser não são afetados, o que a Microsoft declara explicitamente. A posição de desligado não escreve 1, elimina o valor: a predefinição não configurada varia consoante a edição do Windows. Requer reiniciar (ou reiniciar o serviço Font Cache).",
+  "ru": "Не даёт Windows загружать отсутствующий шрифт с fs.microsoft.com; используются только локально установленные шрифты. Не установленные у вас письменности больше не подгружаются и рисуются заменителем или пустым прямоугольником — заметнее всего для письменностей CJK и Индии. Веб-шрифты в браузере не затрагиваются, о чём Microsoft говорит прямо. Положение «выключено» не пишет 1, а удаляет значение: ненастроенное значение по умолчанию различается в разных изданиях Windows. Требуется перезагрузка (или перезапуск службы Font Cache).",
+  "tr": "Windows'un eksik bir yazı tipini fs.microsoft.com'dan indirmesini kapatır; yalnızca yerel olarak yüklü yazı tipleri kullanılır. Yüklü olmayan alfabeler artık akmaz, ikame veya boş kutu olarak çizilir — özellikle CJK ve Hint alfabelerinde görünür. Tarayıcıdaki web yazı tipleri etkilenmez, Microsoft bunu açıkça belirtiyor. Kapalı konumu 1 yazmaz, değeri siler: yapılandırılmamış varsayılan Windows sürümüne göre değişiyor. Yeniden başlatma (ya da Font Cache hizmetini yeniden başlatmak) gerekir."
+ },
+ "tweak.net-font-providers.name": {
+  "ar": "تنزيل خط مفقود من الإنترنت",
+  "de": "Fehlende Schriftart aus dem Internet herunterladen",
+  "en": "Downloading a missing font from the internet",
+  "es": "Descarga de una fuente que falta desde Internet",
+  "fr": "Téléchargement d'une police manquante depuis Internet",
+  "it": "Download da Internet di un carattere mancante",
+  "pl": "Pobieranie brakującej czcionki z internetu",
+  "pt": "Transferência da Internet de um tipo de letra em falta",
+  "ru": "Загрузка отсутствующего шрифта из интернета",
+  "tr": "Eksik yazı tipini internetten indirme"
  },
  "tweak.net-ics.desc": {
   "ar": "يعطّل الخدمة التي تشارك اتصال هذا الجهاز مع أجهزة أخرى.",
@@ -14506,6 +15094,30 @@
   "pt": "Resolução mDNS (Bonjour)",
   "ru": "Разрешение mDNS (Bonjour)",
   "tr": "mDNS (Bonjour) çözümlemesi"
+ },
+ "tweak.net-ncsi-probe.desc": {
+  "ar": "تبقى علامة تعجّب دائمة في شريط المهام، ولا تُفتح صفحات تسجيل الدخول في الفنادق والمقاهي (البوابات المقيَّدة)، وتظن التطبيقات التي تسأل Windows عن حالة الشبكة — المتجر وOneDrive وبعض المثبِّتات وبعض مفاتيح إيقاف الشبكات الافتراضية الخاصة — أنها غير متصلة. وفي المقابل يصمت طلب الفحص النشط لـ NCSI، وهو أحد الاتصالات الصادرة المنتظمة غير المشروطة لجهاز خامل. ولا تُكتب سوى قيمة السياسة؛ أما عناوين وجهة الفحص فتوجد كنص صريح ضمن NlaSvc، ويمكن قراءة ما تم إيقافه هناك. يتطلب إعادة التشغيل.",
+  "de": "In der Taskleiste bleibt dauerhaft ein Ausrufezeichen stehen, Anmeldeseiten in Hotels und Cafés (Captive Portals) öffnen sich nicht, und Anwendungen, die Windows nach dem Netzwerkstatus fragen — der Store, OneDrive, manche Installationsprogramme, manche VPN-Kill-Switches — halten sich für offline. Im Gegenzug verstummt die aktive Prüfanfrage von NCSI, eine der regelmäßigen, bedingungslosen ausgehenden Verbindungen eines untätigen Rechners. Es wird nur der Richtlinienwert geschrieben; die Zieladressen der Prüfung stehen im Klartext unter NlaSvc, sodass sich dort nachlesen lässt, was gestoppt wurde. Erfordert einen Neustart.",
+  "en": "A permanent exclamation mark stays on the taskbar, hotel and café sign-in pages (captive portals) do not open, and applications that ask Windows for the network state — the Store, OneDrive, some installers, some VPN kill switches — believe themselves to be offline. In return, NCSI's active probe — one of the regular, unconditional outbound connections an idle machine makes — goes quiet. Only the policy value is written; the probe's target addresses sit in plain text under NlaSvc, so what has been stopped can be read there. Requires a restart.",
+  "es": "Queda un signo de exclamación permanente en la barra de tareas, las páginas de acceso de hoteles y cafeterías (portales cautivos) no se abren, y las aplicaciones que preguntan a Windows por el estado de la red —la Store, OneDrive, algunos instaladores, algunos interruptores de emergencia de VPN— se creen sin conexión. A cambio, el sondeo activo de NCSI —una de las conexiones salientes regulares e incondicionales de un equipo inactivo— enmudece. Solo se escribe el valor de directiva; las direcciones de destino del sondeo están en texto plano bajo NlaSvc, así que allí se puede leer qué se ha detenido. Requiere reiniciar.",
+  "fr": "Un point d'exclamation permanent reste dans la barre des tâches, les pages de connexion des hôtels et des cafés (portails captifs) ne s'ouvrent pas, et les applications qui interrogent Windows sur l'état du réseau — le Store, OneDrive, certains programmes d'installation, certains coupe-circuits VPN — se croient hors ligne. En contrepartie, la requête de test active de NCSI — l'une des connexions sortantes régulières et inconditionnelles d'une machine au repos — se tait. Seule la valeur de stratégie est écrite ; les adresses cibles du test se trouvent en clair sous NlaSvc, on peut donc y lire ce qui a été arrêté. Nécessite un redémarrage.",
+  "it": "Sulla barra delle applicazioni resta un punto esclamativo permanente, le pagine di accesso di hotel e bar (captive portal) non si aprono e le applicazioni che chiedono a Windows lo stato della rete — lo Store, OneDrive, alcuni programmi di installazione, alcuni kill switch VPN — si credono offline. In cambio tace la richiesta di verifica attiva di NCSI, una delle connessioni in uscita regolari e incondizionate di una macchina inattiva. Viene scritto solo il valore del criterio; gli indirizzi di destinazione della verifica stanno in chiaro sotto NlaSvc, quindi lì si può leggere che cosa è stato fermato. Richiede un riavvio.",
+  "pl": "Na pasku zadań pozostaje trwały wykrzyknik, strony logowania w hotelach i kawiarniach (portale przechwytujące) nie otwierają się, a aplikacje pytające system Windows o stan sieci — Sklep, OneDrive, niektóre instalatory, niektóre wyłączniki awaryjne VPN — uważają się za offline. W zamian milknie aktywne sondowanie NCSI — jedno z regularnych, bezwarunkowych połączeń wychodzących bezczynnego komputera. Zapisywana jest wyłącznie wartość zasady; adresy docelowe sondowania leżą otwartym tekstem pod NlaSvc, więc można tam odczytać, co zostało zatrzymane. Wymaga ponownego uruchomienia.",
+  "pt": "Fica um ponto de exclamação permanente na barra de tarefas, as páginas de início de sessão de hotéis e cafés (portais cativos) não abrem, e as aplicações que perguntam ao Windows pelo estado da rede — a Store, o OneDrive, alguns instaladores, alguns interruptores de emergência de VPN — julgam-se offline. Em troca, a sondagem ativa do NCSI — uma das ligações de saída regulares e incondicionais de um computador inativo — cala-se. Só é escrito o valor de política; os endereços de destino da sondagem estão em texto simples sob NlaSvc, pelo que aí se pode ler o que foi parado. Requer reiniciar.",
+  "ru": "На панели задач остаётся постоянный восклицательный знак, страницы входа в отелях и кафе (captive portal) не открываются, а приложения, спрашивающие у Windows состояние сети, — Store, OneDrive, некоторые установщики, некоторые аварийные выключатели VPN — считают себя офлайн. Взамен умолкает активная проверка NCSI — одно из регулярных, безусловных исходящих соединений простаивающего компьютера. Записывается только значение политики; целевые адреса проверки лежат открытым текстом в NlaSvc, так что там можно прочесть, что именно остановлено. Требуется перезагрузка.",
+  "tr": "Görev çubuğunda kalıcı bir ünlem işareti kalır, otel ve kafe girişleri (captive portal) açılmaz, ağ durumunu Windows'a soran uygulamalar — Store, OneDrive, bazı yükleyiciler, bazı VPN kill-switch'leri — kendini çevrimdışı sanar. Karşılığında NCSI'nin etkin sınama isteği — boştaki makinenin düzenli, koşulsuz dış bağlantılarından biri — susar. Yalnız ilke değeri yazılır; sınamanın hedef adresleri NlaSvc altında düz metin durur ve neyin durduğu oradan okunabilir. Yeniden başlatma gerekir."
+ },
+ "tweak.net-ncsi-probe.name": {
+  "ar": "طلب فحص اتصال الشبكة (NCSI)",
+  "de": "Netzwerkverbindungstest (NCSI)",
+  "en": "Network connectivity probe (NCSI)",
+  "es": "Sondeo de conectividad de red (NCSI)",
+  "fr": "Requête de test de connectivité réseau (NCSI)",
+  "it": "Richiesta di verifica della connettività di rete (NCSI)",
+  "pl": "Sondowanie łączności sieciowej (NCSI)",
+  "pt": "Sondagem de conectividade de rede (NCSI)",
+  "ru": "Проверка сетевого подключения (NCSI)",
+  "tr": "Ağ bağlantısı sınama isteği (NCSI)"
  },
  "tweak.net-netbios.desc": {
   "ar": "يعطّل بروتوكول تحليل الأسماء القديم. وهو معرّض لعائلة الهجمات نفسها التي يتعرض لها LLMNR؛ وقد يُفقد الوصول إلى مشاركات الشبكة القديمة جدًا.",
@@ -14759,30 +15371,6 @@
   "ru": "Блокировка пакетных файлов",
   "tr": "Toplu iş dosyası kilidi"
  },
- "tweak.perf-autohdr.desc": {
-  "ar": "يفعّل الطبقة التي تحوّل ألعاب SDR إلى HDR. ويلزم شاشة تدعم HDR؛ ويشوّه الألوان في بعض الألعاب.",
-  "de": "Aktiviert die Schicht, die SDR-Spiele in HDR umwandelt. Ein HDR-fähiger Bildschirm ist nötig; in manchen Spielen verfälscht es Farben.",
-  "en": "Turns on the layer that converts SDR games to HDR. An HDR-capable display is required; it distorts colour in some games.",
-  "es": "Activa la capa que convierte juegos SDR a HDR. Requiere una pantalla compatible con HDR; en algunos juegos falsea los colores.",
-  "fr": "Active la couche qui convertit les jeux SDR en HDR. Un écran compatible HDR est nécessaire ; les couleurs sont faussées dans certains jeux.",
-  "it": "Attiva il livello che converte i giochi SDR in HDR. Serve uno schermo compatibile HDR; in alcuni giochi falsa i colori.",
-  "pl": "Włącza warstwę przekształcającą gry SDR w HDR. Wymaga ekranu obsługującego HDR; w niektórych grach zniekształca kolory.",
-  "pt": "Ativa a camada que converte jogos SDR em HDR. É preciso um ecrã compatível com HDR; em alguns jogos distorce as cores.",
-  "ru": "Включает слой, преобразующий SDR-игры в HDR. Нужен дисплей с поддержкой HDR; в некоторых играх искажает цвета.",
-  "tr": "SDR oyunları HDR'a çeviren katmanı açar. HDR destekli ekran gerekir; bazı oyunlarda renkleri bozar."
- },
- "tweak.perf-autohdr.name": {
-  "ar": "HDR التلقائي",
-  "de": "Auto-HDR",
-  "en": "Auto HDR",
-  "es": "HDR automático",
-  "fr": "HDR automatique",
-  "it": "Auto HDR",
-  "pl": "Automatyczny HDR",
-  "pt": "HDR automático",
-  "ru": "Автоматический HDR",
-  "tr": "Otomatik HDR"
- },
  "tweak.perf-core-parking.desc": {
   "ar": "يمنع Windows من إسبات أنوية المعالج الخاملة. ويزيل تأخير الاستيقاظ عند ارتفاع الحمل المفاجئ مقابل استهلاك طاقة أعلى.",
   "de": "Verhindert, dass Windows ungenutzte CPU-Kerne schlafen legt. Beseitigt die Aufwachverzögerung bei plötzlicher Last, erhöht aber den Verbrauch.",
@@ -14832,28 +15420,28 @@
   "tr": "Tam ekran optimizasyonları · genel"
  },
  "tweak.perf-game-mmcss.desc": {
-  "ar": "يمنح الألعاب أولوية عالية من مجدول الوسائط، رافعًا أولوية وحدة الرسوميات والمعالج معًا.",
-  "de": "Verschafft Spielen hohe Priorität beim Multimediascheduler und hebt GPU- und CPU-Priorität gemeinsam an.",
-  "en": "Gives games high priority from the multimedia scheduler, raising both the GPU and CPU priority together.",
-  "es": "Otorga a los juegos alta prioridad en el planificador multimedia, subiendo a la vez la prioridad de GPU y CPU.",
-  "fr": "Donne aux jeux une priorité élevée auprès du planificateur multimédia, en relevant à la fois la priorité GPU et CPU.",
-  "it": "Assegna ai giochi priorità alta nello scheduler multimediale, alzando insieme la priorità di GPU e CPU.",
-  "pl": "Nadaje grom wysoki priorytet w harmonogramie multimedialnym, podnosząc jednocześnie priorytet GPU i procesora.",
-  "pt": "Dá aos jogos prioridade alta no agendador multimédia, subindo em conjunto a prioridade de GPU e CPU.",
-  "ru": "Даёт играм высокий приоритет у мультимедийного планировщика, поднимая приоритет и GPU, и процессора.",
-  "tr": "Oyunların multimedya zamanlayıcısından yüksek öncelik almasını sağlar. GPU ve CPU önceliğini birlikte yükseltir."
+  "ar": "ينقل مهمة Games في MMCSS من فئة الجدولة «متوسطة» إلى «عالية»؛ وتعمل خيوط هذه الفئة في نطاق الأولوية 23-26، أي دون حفنة من مهام النظام فقط. وتصف وثائق Microsoft نفسها قيمتَي GPU Priority وSFIO Priority في المفتاح ذاته بأنهما غير مستخدَمتين، كما تُعامَل قيمة Priority على أنها 2 على أي حال في الفئة العالية — لذا صار هذا الصف يكتب القيمة الوحيدة التي تُقرأ فعلًا. والتكلفة أن الصوت وسطح المكتب يجدان قدرًا أقل من المعالج أثناء تشغيل لعبة.",
+  "de": "Verschiebt die Games-Aufgabe von MMCSS aus der Planungskategorie „Mittel“ nach „Hoch“; Threads dieser Kategorie laufen im Prioritätsbereich 23-26, nur unterhalb einiger weniger Systemaufgaben. Microsofts eigene Dokumentation kennzeichnet die Werte GPU Priority und SFIO Priority im selben Schlüssel als nicht verwendet, und Priority wird in der Kategorie „Hoch“ ohnehin als 2 behandelt — diese Zeile schreibt daher nur noch den einen Wert, der tatsächlich gelesen wird. Der Preis ist, dass Audio und Desktop weniger CPU finden, solange ein Spiel läuft.",
+  "en": "Moves MMCSS's Games task from the Medium scheduling category to High; threads in that category run in the 23-26 priority range, below only a handful of system tasks. Microsoft's own documentation marks the GPU Priority and SFIO Priority values in the same key as not used, and Priority is treated as 2 regardless in the High category — so this row now writes only the one value that is actually read. The cost is that audio and the desktop find less CPU while a game is running.",
+  "es": "Pasa la tarea Games de MMCSS de la categoría de programación Media a Alta; los subprocesos de esa categoría se ejecutan en el intervalo de prioridad 23-26, por debajo de apenas unas pocas tareas del sistema. La propia documentación de Microsoft marca los valores GPU Priority y SFIO Priority de la misma clave como no usados, y Priority se trata como 2 de todos modos en la categoría Alta, así que esta fila ya solo escribe el único valor que realmente se lee. El coste es que el audio y el escritorio encuentran menos CPU mientras se ejecuta un juego.",
+  "fr": "Fait passer la tâche Games de MMCSS de la catégorie de planification Moyenne à Haute ; les threads de cette catégorie s'exécutent dans la plage de priorité 23-26, sous une poignée de tâches système seulement. La documentation de Microsoft marque les valeurs GPU Priority et SFIO Priority de la même clé comme inutilisées, et Priority est de toute façon traitée comme 2 dans la catégorie Haute — cette ligne n'écrit donc plus que la seule valeur réellement lue. Le coût, c'est que l'audio et le bureau trouvent moins de CPU pendant qu'un jeu tourne.",
+  "it": "Sposta l'attività Games di MMCSS dalla categoria di pianificazione Media ad Alta; i thread di quella categoria girano nell'intervallo di priorità 23-26, al di sotto di poche attività di sistema soltanto. La documentazione stessa di Microsoft segna i valori GPU Priority e SFIO Priority della stessa chiave come non utilizzati, e Priority viene comunque trattata come 2 nella categoria Alta — quindi questa riga scrive ormai solo l'unico valore realmente letto. Il costo è che l'audio e il desktop trovano meno CPU mentre un gioco è in esecuzione.",
+  "pl": "Przenosi zadanie Games z kategorii planowania Średnia do Wysoka w MMCSS; wątki tej kategorii działają w zakresie priorytetów 23-26, poniżej zaledwie kilku zadań systemowych. Własna dokumentacja Microsoftu oznacza wartości GPU Priority i SFIO Priority w tym samym kluczu jako nieużywane, a Priority i tak jest traktowana jak 2 w kategorii Wysoka — dlatego ten wiersz zapisuje już tylko tę jedną wartość, która jest naprawdę odczytywana. Kosztem jest to, że dźwięk i pulpit znajdują mniej czasu procesora, gdy działa gra.",
+  "pt": "Move a tarefa Games do MMCSS da categoria de agendamento Média para Alta; os threads dessa categoria correm no intervalo de prioridade 23-26, abaixo de apenas um punhado de tarefas do sistema. A própria documentação da Microsoft assinala os valores GPU Priority e SFIO Priority da mesma chave como não utilizados, e Priority é tratada como 2 de qualquer forma na categoria Alta — pelo que esta linha escreve agora apenas o único valor que é realmente lido. O custo é que o áudio e o ambiente de trabalho encontram menos CPU enquanto um jogo está a correr.",
+  "ru": "Переводит задачу Games в MMCSS из класса планирования «Средний» в «Высокий»; потоки этого класса выполняются в диапазоне приоритетов 23-26, ниже лишь нескольких системных задач. Собственная документация Microsoft помечает значения GPU Priority и SFIO Priority в том же разделе как неиспользуемые, а Priority в классе «Высокий» в любом случае считается равным 2 — поэтому эта строка теперь пишет только то единственное значение, которое действительно читается. Цена в том, что звук и рабочий стол получают меньше процессорного времени, пока идёт игра.",
+  "tr": "MMCSS'in Oyunlar görevini Orta yerine Yüksek zamanlama sınıfına alır; bu sınıftaki iş parçacıkları 23-26 öncelik aralığında, yalnızca birkaç sistem görevinin altında çalışır. Aynı anahtardaki GPU Priority ve SFIO Priority değerlerini Microsoft'un kendi belgesi kullanılmıyor diye işaretliyor, Priority ise Yüksek sınıfta her hâlükârda 2 sayılıyor — bu satır artık sadece gerçekten okunan tek değeri yazar. Bedeli, ses ve masaüstünün oyun sürerken daha az CPU bulmasıdır."
  },
  "tweak.perf-game-mmcss.name": {
-  "ar": "ملف تعريف MMCSS للألعاب",
-  "de": "MMCSS-Profil für Spiele",
-  "en": "MMCSS profile for games",
-  "es": "Perfil MMCSS para juegos",
-  "fr": "Profil MMCSS pour les jeux",
-  "it": "Profilo MMCSS per i giochi",
-  "pl": "Profil MMCSS dla gier",
-  "pt": "Perfil MMCSS para jogos",
-  "ru": "Профиль MMCSS для игр",
-  "tr": "Oyunlar için MMCSS profili"
+  "ar": "فئة جدولة MMCSS للألعاب",
+  "de": "MMCSS-Planungskategorie für Spiele",
+  "en": "MMCSS scheduling category for games",
+  "es": "Categoría de programación MMCSS para juegos",
+  "fr": "Catégorie de planification MMCSS pour les jeux",
+  "it": "Categoria di pianificazione MMCSS per i giochi",
+  "pl": "Kategoria planowania MMCSS dla gier",
+  "pt": "Categoria de agendamento MMCSS para jogos",
+  "ru": "Класс планирования MMCSS для игр",
+  "tr": "Oyunlar için MMCSS zamanlama sınıfı"
  },
  "tweak.perf-gamebar-shortcuts.desc": {
   "ar": "يعطّل اختصارات شريط الألعاب مثل Win+Alt+R. ويمنع تعارضها مع تركيبات مفاتيح تستخدمها اللعبة لشيء آخر.",
@@ -14928,28 +15516,28 @@
   "tr": "GameDVR arka plan kaydı"
  },
  "tweak.perf-hpet-timer.desc": {
-  "ar": "يثبّت دقّة مؤقّت النظام، مما يقلّل تذبذب زمن الإطار في بعض الألعاب. ويتفاوت الأثر بحسب العتاد — فلا تفعّله دون قياس.",
-  "de": "Fixiert die Auflösung des Plattformtimers und verringert in manchen Spielen Frametime-Schwankungen. Die Wirkung hängt von der Hardware ab — nicht ohne Messung einschalten.",
-  "en": "Pins the platform timer's resolution, which reduces frame-time jitter in some games. The effect varies by hardware — do not turn it on without measuring.",
-  "es": "Fija la resolución del temporizador de plataforma, lo que reduce la fluctuación del tiempo de fotograma en algunos juegos. El efecto varía según el hardware: no lo actives sin medir.",
-  "fr": "Fige la résolution du minuteur de plateforme, ce qui réduit les variations de temps d'image dans certains jeux. L'effet dépend du matériel : ne l'activez pas sans mesurer.",
-  "it": "Fissa la risoluzione del timer di piattaforma, riducendo le oscillazioni del frame time in alcuni giochi. L'effetto varia con l'hardware: non attivarlo senza misurare.",
-  "pl": "Ustala rozdzielczość zegara platformy, co zmniejsza wahania czasu klatki w niektórych grach. Efekt zależy od sprzętu — nie włączaj bez pomiaru.",
-  "pt": "Fixa a resolução do temporizador de plataforma, reduzindo a variação do tempo de fotograma em alguns jogos. O efeito varia com o hardware — não ative sem medir.",
-  "ru": "Фиксирует разрешение системного таймера, снижая разброс времени кадра в некоторых играх. Эффект зависит от железа — не включайте без измерений.",
-  "tr": "Platform zamanlayıcısının çözünürlüğünü sabitler; bazı oyunlarda kare süresi dalgalanmasını azaltır. Etkisi donanıma göre değişir, ölçmeden açmayın."
+  "ar": "يعيد السلوك الذي كان سائدًا قبل Windows 10 إصدار 2004: إذ تُغيّر العملية التي تستدعي timeBeginPeriod دقةَ المؤقّت للنظام كله لا لنفسها وحدها. فمنذ إصدار 2004 صار الطلب معزولًا لكل عملية، وهذه القيمة تزيل ذلك العزل — وهي ليست إعدادًا لمؤقّت المنصّة ولا لـ HPET. وطلب تطبيق واحد دقةَ 1 ملّي ثانية يُسرّع مؤقّت الجهاز بأكمله؛ وبحسب تحذير Microsoft نفسها قد تمنع الدقةُ العالية المعالجَ من الدخول في أوضاع توفير الطاقة. ملاحظة عن الدليل: توثّق Microsoft أن العزل جاء في إصدار 2004، لكنها لا توثّق قيمة السجل هذه — واعتبارُ أن النواة تقرأها عند الإقلاع يستند إلى تحليلات طرف ثالث، ولا يُعرف ما إذا كانت تعمل على Windows 10. يتطلب إعادة التشغيل.",
+  "de": "Stellt das Verhalten vor Windows 10 2004 wieder her: ein Prozess, der timeBeginPeriod aufruft, ändert die Zeitgeberauflösung für das ganze System und nicht nur für sich selbst. Seit 2004 ist die Anforderung pro Prozess isoliert, und dieser Wert hebt die Isolierung auf — es ist keine Plattform-Zeitgeber- oder HPET-Einstellung. Fordert eine einzige Anwendung 1 ms an, beschleunigt das den Zeitgeber der gesamten Maschine; nach Microsofts eigener Warnung kann eine hohe Auflösung den Prozessor an seinen Energiesparzuständen hindern. Beleghinweis: Microsoft dokumentiert, dass die Isolierung mit 2004 kam, dokumentiert aber diesen Registrierungswert nicht — dass der Kernel ihn beim Start liest, stützt sich auf Analysen Dritter, und ob es unter Windows 10 wirkt, ist nicht bekannt. Erfordert einen Neustart.",
+  "en": "Restores the pre-Windows 10 2004 behaviour: a process calling timeBeginPeriod changes the timer resolution for the whole system rather than only for itself. Since 2004 the request has been isolated per process, and this value removes that isolation — it is not a platform timer or an HPET setting. One application asking for 1 ms speeds up the whole machine's timer; by Microsoft's own warning, a high resolution can keep the processor out of its power-saving states. Evidence note: Microsoft documents that the isolation arrived in 2004, but does not document this registry value — that the kernel reads it at boot rests on third-party analysis, and whether it works on Windows 10 is not known. Requires a restart.",
+  "es": "Restaura el comportamiento anterior a Windows 10 2004: un proceso que llama a timeBeginPeriod cambia la resolución del temporizador de todo el sistema y no solo la suya. Desde 2004 la solicitud está aislada por proceso, y este valor elimina ese aislamiento; no es un ajuste del temporizador de plataforma ni de HPET. Que una sola aplicación pida 1 ms acelera el temporizador de todo el equipo; según la propia advertencia de Microsoft, una resolución alta puede impedir que el procesador entre en sus estados de ahorro de energía. Nota sobre las pruebas: Microsoft documenta que el aislamiento llegó en 2004, pero no documenta este valor del registro; que el núcleo lo lea al arrancar se apoya en análisis de terceros, y se desconoce si funciona en Windows 10. Requiere reiniciar.",
+  "fr": "Rétablit le comportement antérieur à Windows 10 2004 : un processus appelant timeBeginPeriod modifie la résolution du minuteur pour tout le système et non pour lui seul. Depuis 2004, la requête est isolée par processus, et cette valeur supprime cette isolation — ce n'est pas un réglage de minuteur de plateforme ni de HPET. Une seule application demandant 1 ms accélère le minuteur de toute la machine ; selon l'avertissement de Microsoft lui-même, une résolution élevée peut empêcher le processeur d'entrer dans ses états d'économie d'énergie. Note de preuve : Microsoft documente l'arrivée de l'isolation en 2004, mais ne documente pas cette valeur de registre — le fait que le noyau la lise au démarrage repose sur des analyses tierces, et son effet sous Windows 10 est inconnu. Nécessite un redémarrage.",
+  "it": "Ripristina il comportamento precedente a Windows 10 2004: un processo che chiama timeBeginPeriod cambia la risoluzione del timer per l'intero sistema e non solo per sé. Dal 2004 la richiesta è isolata per processo, e questo valore rimuove tale isolamento — non è un'impostazione del timer di piattaforma né di HPET. Una sola applicazione che chiede 1 ms accelera il timer dell'intera macchina; per esplicito avvertimento di Microsoft, una risoluzione elevata può impedire al processore di entrare nei suoi stati di risparmio energetico. Nota sulle prove: Microsoft documenta che l'isolamento è arrivato nel 2004, ma non documenta questo valore del registro — che il kernel lo legga all'avvio si basa su analisi di terze parti, e non si sa se funzioni su Windows 10. Richiede un riavvio.",
+  "pl": "Przywraca zachowanie sprzed Windows 10 2004: proces wywołujący timeBeginPeriod zmienia rozdzielczość czasomierza dla całego systemu, a nie tylko dla siebie. Od wersji 2004 żądanie jest izolowane per proces, a ta wartość znosi tę izolację — nie jest to ustawienie czasomierza platformy ani HPET. Gdy jedna aplikacja poprosi o 1 ms, przyspiesza to czasomierz całego komputera; zgodnie z własnym ostrzeżeniem Microsoftu wysoka rozdzielczość może uniemożliwiać procesorowi wchodzenie w stany oszczędzania energii. Uwaga dowodowa: Microsoft dokumentuje, że izolacja pojawiła się w wersji 2004, ale nie dokumentuje tej wartości rejestru — to, że jądro odczytuje ją przy rozruchu, opiera się na analizach zewnętrznych, a czy działa w Windows 10, nie jest znane. Wymaga ponownego uruchomienia.",
+  "pt": "Repõe o comportamento anterior ao Windows 10 2004: um processo que chama timeBeginPeriod altera a resolução do temporizador para todo o sistema e não apenas para si. Desde 2004 o pedido está isolado por processo, e este valor remove esse isolamento — não é uma definição de temporizador de plataforma nem de HPET. Uma única aplicação a pedir 1 ms acelera o temporizador de toda a máquina; pelo próprio aviso da Microsoft, uma resolução elevada pode impedir o processador de entrar nos seus estados de poupança de energia. Nota sobre a evidência: a Microsoft documenta que o isolamento chegou em 2004, mas não documenta este valor do registo — que o kernel o leia no arranque assenta em análises de terceiros, e não se sabe se funciona no Windows 10. Requer reiniciar.",
+  "ru": "Возвращает поведение, существовавшее до Windows 10 2004: процесс, вызывающий timeBeginPeriod, меняет разрешение таймера для всей системы, а не только для себя. С версии 2004 запрос изолирован по процессам, и это значение снимает изоляцию — это не настройка платформенного таймера и не HPET. Когда одно приложение запрашивает 1 мс, ускоряется таймер всей машины; по собственному предупреждению Microsoft, высокое разрешение может помешать процессору переходить в энергосберегающие состояния. Замечание о доказательствах: Microsoft документирует появление изоляции в версии 2004, но не документирует это значение реестра — то, что ядро читает его при загрузке, опирается на сторонний анализ, и работает ли оно в Windows 10, неизвестно. Требуется перезагрузка.",
+  "tr": "Windows 10 2004 öncesi davranışı geri getirir: timeBeginPeriod çağıran bir süreç zamanlayıcı çözünürlüğünü yalnız kendisi için değil, tüm sistem için değiştirir. 2004'ten beri istek süreç başına yalıtılıyor ve bu değer yalıtımı kaldırır — bir platform zamanlayıcısı veya HPET ayarı değildir. Tek bir uygulamanın 1 ms istemesi bütün makinenin zamanlayıcısını hızlandırır; Microsoft'un kendi uyarısıyla, yüksek çözünürlük işlemcinin güç tasarrufu kiplerine girmesini engelleyebilir. Kanıt notu: yalıtımın 2004'te geldiğini Microsoft belgeliyor, ama bu kayıt defteri değerini belgelemiyor — değerin çekirdek tarafından açılışta okunduğu üçüncü taraf incelemelerine dayanır ve Windows 10'da işe yaradığı bilinmiyor. Yeniden başlatma gerekir."
  },
  "tweak.perf-hpet-timer.name": {
-  "ar": "إصلاح المؤقّت الديناميكي",
-  "de": "Korrektur des dynamischen Timers",
-  "en": "Dynamic timer fix",
-  "es": "Corrección del temporizador dinámico",
-  "fr": "Correctif du minuteur dynamique",
-  "it": "Correzione del timer dinamico",
-  "pl": "Poprawka dynamicznego zegara",
-  "pt": "Correção do temporizador dinâmico",
-  "ru": "Исправление динамического таймера",
-  "tr": "Dinamik zamanlayıcı düzeltmesi"
+  "ar": "طلبات دقة المؤقّت على مستوى النظام",
+  "de": "Systemweite Anforderungen der Zeitgeberauflösung",
+  "en": "System-wide timer resolution requests",
+  "es": "Solicitudes de resolución del temporizador para todo el sistema",
+  "fr": "Requêtes de résolution du minuteur à l'échelle du système",
+  "it": "Richieste di risoluzione del timer a livello di sistema",
+  "pl": "Żądania rozdzielczości czasomierza dla całego systemu",
+  "pt": "Pedidos de resolução do temporizador a nível do sistema",
+  "ru": "Общесистемные запросы разрешения таймера",
+  "tr": "Sistem geneli zamanlayıcı çözünürlüğü istekleri"
  },
  "tweak.perf-io-page-lock.desc": {
   "ar": "مقدار الذاكرة التي يمكن لبرنامج تشغيل قفلها دفعةً واحدة. يرفع الإنتاجية في نقل الملفات الكبيرة؛ والصفر يترك القرار لـ Windows.",
@@ -15310,30 +15898,6 @@
   "pt": "Comando TRIM",
   "ru": "Команда TRIM",
   "tr": "TRIM komutu"
- },
- "tweak.perf-vrr.desc": {
-  "ar": "يفعّل معدل التحديث المتغيّر للألعاب في نافذة. ويجب أن تدعمه الشاشة وبرنامج التشغيل معًا.",
-  "de": "Aktiviert die variable Bildwiederholrate für Spiele im Fenstermodus. Bildschirm und Treiber müssen sie unterstützen.",
-  "en": "Turns on variable refresh rate for windowed games. The display and the driver both have to support it.",
-  "es": "Activa la frecuencia de actualización variable para juegos en ventana. La pantalla y el controlador deben admitirla.",
-  "fr": "Active le taux de rafraîchissement variable pour les jeux en fenêtre. L'écran et le pilote doivent tous deux le prendre en charge.",
-  "it": "Attiva la frequenza di aggiornamento variabile per i giochi in finestra. Schermo e driver devono supportarla.",
-  "pl": "Włącza zmienną częstotliwość odświeżania dla gier w oknie. Zarówno ekran, jak i sterownik muszą to obsługiwać.",
-  "pt": "Ativa a taxa de atualização variável para jogos em janela. O ecrã e o controlador têm ambos de a suportar.",
-  "ru": "Включает переменную частоту обновления для оконных игр. Её должны поддерживать и дисплей, и драйвер.",
-  "tr": "Pencereli oyunlar için değişken yenileme hızını açar. Ekranın ve sürücünün desteklemesi gerekir."
- },
- "tweak.perf-vrr.name": {
-  "ar": "معدل التحديث المتغيّر",
-  "de": "Variable Bildwiederholrate",
-  "en": "Variable refresh rate",
-  "es": "Frecuencia de actualización variable",
-  "fr": "Taux de rafraîchissement variable",
-  "it": "Frequenza di aggiornamento variabile",
-  "pl": "Zmienna częstotliwość odświeżania",
-  "pt": "Taxa de atualização variável",
-  "ru": "Переменная частота обновления",
-  "tr": "Değişken yenileme hızı"
  },
  "tweak.priv-01-25835.desc": {
   "ar": "يخفي إشعارات اقتراحات الحساب في تطبيق الإعدادات.",
@@ -15983,6 +16547,102 @@
   "ru": "Список языков для веб-сайтов",
   "tr": "Web sitelerine dil listesi"
  },
+ "tweak.priv-app-device-inventory.desc": {
+  "ar": "يوقف خمسة مجمّعات جرد منفصلة وصلت مع الإصدار 24H2: تتبّع التثبيت، وأخذ عيّنات واجهات البرمجة، وبصمة التطبيق، وفحص التوافق للتطبيقات المنسوخة احتياطيًا، ومكوّن تبعيات الوارد. ورغم أن اسم القيمة DisableWin32AppBackup فإن هذه السياسة لا توقف النسخ الاحتياطي، بل تُعطّل فحص توافق التطبيقات المنسوخة فقط. والتكلفة هي فقدان التشخيص لا غير — فنصّ ADMX للخمسة جميعًا يصفها بأنها موجودة «للمساعدة في تشخيص مشكلات التوافق». ولا يتعطّل أي شيء يراه المستخدم. يتطلب إعادة التشغيل.",
+  "de": "Schaltet die fünf getrennten Inventar-Sammler ab, die mit 24H2 kamen: Installationsverfolgung, API-Stichproben, Anwendungs-Fußabdruck, den Kompatibilitätsscan für gesicherte Apps und die Inbox-Abhängigkeitskomponente. Obwohl der Wert DisableWin32AppBackup heißt, stoppt diese Richtlinie keine Sicherung — sie schaltet nur den Kompatibilitätsscan der gesicherten Apps ab. Der Preis ist allein der Verlust an Diagnose: der ADMX-Text beschreibt alle fünf als vorhanden, „um Kompatibilitätsprobleme zu diagnostizieren“. Nichts, was ein Benutzer sieht, geht kaputt. Erfordert einen Neustart.",
+  "en": "Turns off the five separate inventory collectors that arrived with 24H2: install tracing, API sampling, application footprint, the compatibility scan for backed-up apps, and the inbox dependency component. Despite the value being named DisableWin32AppBackup, this policy does not stop backup — it only turns off the compatibility scan of the apps that are backed up. The cost is a loss of diagnostics and nothing else: the ADMX text for all five describes them as being there 'to help diagnose compatibility problems'. Nothing a user can see breaks. Requires a restart.",
+  "es": "Desactiva los cinco recopiladores de inventario independientes que llegaron con 24H2: seguimiento de instalación, muestreo de API, huella de la aplicación, examen de compatibilidad de las aplicaciones con copia de seguridad y el componente de dependencias de la bandeja de entrada. Pese a que el valor se llama DisableWin32AppBackup, esta directiva no detiene la copia de seguridad: solo desactiva el examen de compatibilidad de las aplicaciones respaldadas. El coste es únicamente la pérdida de diagnóstico: el texto ADMX de los cinco los describe como presentes «para ayudar a diagnosticar problemas de compatibilidad». No se rompe nada que el usuario vea. Requiere reiniciar.",
+  "fr": "Désactive les cinq collecteurs d'inventaire distincts arrivés avec 24H2 : suivi des installations, échantillonnage d'API, empreinte applicative, analyse de compatibilité des applications sauvegardées et composant de dépendances de la boîte de réception. Bien que la valeur s'appelle DisableWin32AppBackup, cette stratégie n'arrête pas la sauvegarde : elle ne désactive que l'analyse de compatibilité des applications sauvegardées. Le coût se limite à une perte de diagnostic — le texte ADMX des cinq les décrit comme présents « pour aider à diagnostiquer les problèmes de compatibilité ». Rien de visible pour l'utilisateur ne casse. Nécessite un redémarrage.",
+  "it": "Disattiva i cinque raccoglitori di inventario distinti arrivati con 24H2: tracciamento delle installazioni, campionamento delle API, impronta dell'applicazione, analisi di compatibilità per le app di cui è stato eseguito il backup e il componente delle dipendenze in ingresso. Nonostante il valore si chiami DisableWin32AppBackup, questo criterio non interrompe il backup: disattiva soltanto l'analisi di compatibilità delle app salvate. Il costo è unicamente la perdita di diagnostica — il testo ADMX di tutti e cinque li descrive come presenti «per aiutare a diagnosticare problemi di compatibilità». Nulla di visibile all'utente si rompe. Richiede un riavvio.",
+  "pl": "Wyłącza pięć osobnych modułów zbierania inwentarza, które pojawiły się wraz z 24H2: śledzenie instalacji, próbkowanie interfejsów API, ślad aplikacji, skanowanie zgodności aplikacji objętych kopią zapasową oraz składnik zależności skrzynki odbiorczej. Mimo że wartość nazywa się DisableWin32AppBackup, ta zasada nie zatrzymuje tworzenia kopii zapasowych — wyłącza jedynie skanowanie zgodności aplikacji objętych kopią. Kosztem jest wyłącznie utrata diagnostyki: tekst ADMX wszystkich pięciu opisuje je jako obecne „aby pomóc w diagnozowaniu problemów ze zgodnością”. Nic widocznego dla użytkownika się nie psuje. Wymaga ponownego uruchomienia.",
+  "pt": "Desativa os cinco recoletores de inventário distintos que chegaram com o 24H2: registo de instalações, amostragem de API, pegada da aplicação, análise de compatibilidade das aplicações com cópia de segurança e o componente de dependências da caixa de entrada. Apesar de o valor se chamar DisableWin32AppBackup, esta política não interrompe a cópia de segurança: apenas desativa a análise de compatibilidade das aplicações copiadas. O custo é apenas a perda de diagnóstico — o texto ADMX dos cinco descreve-os como estando lá «para ajudar a diagnosticar problemas de compatibilidade». Nada que o utilizador veja se estraga. Requer reiniciar.",
+  "ru": "Отключает пять отдельных сборщиков инвентаризации, появившихся в 24H2: отслеживание установок, выборку API, отпечаток приложения, проверку совместимости для приложений в резервной копии и компонент встроенных зависимостей. Хотя значение называется DisableWin32AppBackup, эта политика не прекращает резервное копирование — она лишь отключает проверку совместимости для скопированных приложений. Цена — только потеря диагностики: текст ADMX всех пяти описывает их как существующие «чтобы помочь диагностировать проблемы совместимости». Ничего видимого пользователю не ломается. Требуется перезагрузка.",
+  "tr": "24H2 ile gelen beş ayrı envanter toplayıcısını kapatır: kurulum izleme, API örnekleme, uygulama ayak izi, yedeklenen uygulamalar için uyumluluk taraması ve gelen kutusu bağımlılık bileşeni. Değer adı DisableWin32AppBackup olsa da bu ilke yedeklemeyi durdurmaz, yalnızca yedeklenen uygulamaların uyumluluk taramasını kapatır. Bedeli yalnızca teşhis kaybıdır — beşinin de ADMX açıklaması bunları 'uyumluluk sorunlarını tanılamaya yardımcı olmak için' diye tanımlıyor. Kullanıcıya görünen hiçbir şey bozulmaz. Yeniden başlatma gerekir."
+ },
+ "tweak.priv-app-device-inventory.name": {
+  "ar": "جمع بيانات استخدام التطبيقات",
+  "de": "Erfassung von App-Nutzungsdaten",
+  "en": "Collecting app usage data",
+  "es": "Recopilación de datos de uso de aplicaciones",
+  "fr": "Collecte des données d'utilisation des applications",
+  "it": "Raccolta dei dati di utilizzo delle app",
+  "pl": "Zbieranie danych o użyciu aplikacji",
+  "pt": "Recolha de dados de utilização das aplicações",
+  "ru": "Сбор данных об использовании приложений",
+  "tr": "Uygulama kullanım verisi toplama"
+ },
+ "tweak.priv-cross-device-clipboard.desc": {
+  "ar": "يمنع بالسياسة إرسال ما تنسخه إلى أجهزتك الأخرى عبر السحابة. صفّ سجل الحافظة يُفعّل Win+V فحسب ولا يغلق هذا الباب الثاني خلفه؛ ومع تسجيل الدخول بحساب Microsoft قد تُرفع كل كلمة مرور تنسخها. يصبح المفتاح في الإعدادات باهتًا بعبارة «تُدار بواسطة مؤسستك»، أما سجل Win+V المحلي فقيمة منفصلة ولا يتأثر. يسري التغيير فورًا.",
+  "de": "Verhindert per Richtlinie, dass Kopiertes über die Cloud an Ihre anderen Geräte gesendet wird. Die Zeile zum Zwischenablageverlauf schaltet lediglich Win+V ein und schließt diese zweite Tür dahinter nicht; bei angemeldetem Microsoft-Konto könnte sonst jedes kopierte Kennwort hochgeladen werden. Der Schalter in den Einstellungen wird als „von Ihrer Organisation verwaltet“ ausgegraut; der lokale Win+V-Verlauf ist ein eigener Wert und bleibt unberührt. Wird sofort wirksam.",
+  "en": "Uses policy to stop what you copy being sent to your other devices through the cloud. The clipboard-history row only turns on Win+V and does not close this second door behind it; with a Microsoft account signed in, every password you copy could otherwise be uploaded. The switch in Settings greys out as 'managed by your organisation'; the local Win+V history is a separate value and is not affected. Takes effect immediately.",
+  "es": "Impide mediante directiva que lo que copia se envíe a sus otros dispositivos a través de la nube. La fila del historial del portapapeles solo activa Win+V y no cierra esta segunda puerta que hay detrás; con una cuenta Microsoft iniciada, cada contraseña que copie podría cargarse de otro modo. El interruptor de Configuración se atenúa como «administrado por su organización»; el historial local de Win+V es un valor aparte y no se ve afectado. Surte efecto de inmediato.",
+  "fr": "Empêche par stratégie l'envoi de ce que vous copiez vers vos autres appareils via le cloud. La ligne relative à l'historique du presse-papiers active seulement Win+V et ne referme pas cette seconde porte derrière elle ; avec un compte Microsoft connecté, chaque mot de passe copié pourrait sinon être téléversé. L'interrupteur dans Paramètres se grise avec la mention « géré par votre organisation » ; l'historique local Win+V est une valeur distincte et n'est pas touché. Prend effet immédiatement.",
+  "it": "Impedisce tramite criterio che ciò che copiate venga inviato agli altri vostri dispositivi attraverso il cloud. La riga della cronologia Appunti attiva soltanto Win+V e non chiude questa seconda porta dietro di sé; con un account Microsoft connesso, ogni password copiata potrebbe altrimenti essere caricata. L'interruttore in Impostazioni diventa grigio con la dicitura «gestito dall'organizzazione»; la cronologia locale Win+V è un valore distinto e non viene toccata. Ha effetto immediato.",
+  "pl": "Blokuje zasadą wysyłanie skopiowanej treści do pozostałych urządzeń przez chmurę. Wiersz historii schowka włącza jedynie Win+V i nie zamyka tych drugich drzwi za sobą; przy zalogowanym koncie Microsoft każde skopiowane hasło mogłoby w przeciwnym razie zostać przesłane. Przełącznik w Ustawieniach wyszarza się z opisem „zarządzane przez organizację”; lokalna historia Win+V to osobna wartość i pozostaje nienaruszona. Działa natychmiast.",
+  "pt": "Impede por política que aquilo que copia seja enviado para os seus outros dispositivos através da nuvem. A linha do histórico da área de transferência apenas ativa o Win+V e não fecha esta segunda porta atrás dela; com uma conta Microsoft com sessão iniciada, cada palavra-passe que copiar poderia de outro modo ser carregada. O interruptor nas Definições fica cinzento como «gerido pela sua organização»; o histórico local do Win+V é um valor separado e não é afetado. Tem efeito imediato.",
+  "ru": "Политикой запрещает отправку скопированного на другие ваши устройства через облако. Строка журнала буфера обмена лишь включает Win+V и не закрывает эту вторую дверь за собой; при выполненном входе в учётную запись Microsoft каждый скопированный пароль иначе может быть выгружен. Переключатель в Параметрах становится серым с пометкой «управляется вашей организацией»; локальный журнал Win+V — отдельное значение и не затрагивается. Вступает в силу немедленно.",
+  "tr": "Kopyaladığınız içeriğin bulut üzerinden diğer cihazlarınıza gönderilmesini ilke ile engeller. Pano geçmişi satırı yalnızca Win+V'yi açar ve arkasındaki bu ikinci kapıyı kapatmaz; Microsoft hesabı açıkken kopyaladığınız her parola aksi hâlde yüklenebilir. Ayarlar'daki anahtar 'kuruluşunuz tarafından yönetiliyor' diye grileşir, yerel Win+V geçmişi ayrı bir değerdir ve etkilenmez. Değişiklik anında geçerlidir."
+ },
+ "tweak.priv-cross-device-clipboard.name": {
+  "ar": "مزامنة الحافظة بين الأجهزة",
+  "de": "Zwischenablage-Synchronisierung zwischen Geräten",
+  "en": "Clipboard sync across devices",
+  "es": "Sincronización del portapapeles entre dispositivos",
+  "fr": "Synchronisation du presse-papiers entre appareils",
+  "it": "Sincronizzazione degli Appunti tra dispositivi",
+  "pl": "Synchronizacja schowka między urządzeniami",
+  "pt": "Sincronização da área de transferência entre dispositivos",
+  "ru": "Синхронизация буфера обмена между устройствами",
+  "tr": "Cihazlar arası pano eşitlemesi"
+ },
+ "tweak.priv-mrt-reporting.desc": {
+  "ar": "يوقف إبلاغ Microsoft بمعلومات الإصابة التي يعثر عليها فحص MRT الشهري. ويستمر الفحص والتنظيف المحليان كما هما؛ وصفّ Defender/SpynetReporting في الفهرس لا يشمل هذه الأداة المنفصلة. ووثائق Microsoft نفسها لا تُعدّد الحقول التي يحملها التقرير، وهذا الصف لا يُعدّدها أيضًا.",
+  "de": "Verhindert, dass die monatliche MRT-Prüfung die gefundenen Infektionsinformationen an Microsoft meldet. Die lokale Prüfung und Bereinigung laufen unverändert weiter; die Defender-/SpynetReporting-Zeile des Katalogs erfasst dieses separate Werkzeug nicht. Microsofts eigene Dokumentation zählt nicht auf, welche Felder der Bericht enthält, und diese Zeile tut es auch nicht.",
+  "en": "Stops the monthly MRT scan reporting the infection information it finds to Microsoft. The local scan and cleanup continue exactly as before; the catalogue's Defender/SpynetReporting row does not cover this separate tool. Microsoft's own documentation does not enumerate which fields the report carries, and neither does this row.",
+  "es": "Impide que el examen mensual de MRT informe a Microsoft de la información de infección que encuentra. El examen y la limpieza locales continúan igual; la fila Defender/SpynetReporting del catálogo no abarca esta herramienta aparte. La documentación de Microsoft no enumera qué campos lleva el informe, y esta fila tampoco.",
+  "fr": "Empêche l'analyse mensuelle MRT de signaler à Microsoft les informations d'infection qu'elle trouve. L'analyse et le nettoyage locaux se poursuivent à l'identique ; la ligne Defender/SpynetReporting du catalogue ne couvre pas cet outil distinct. La documentation de Microsoft n'énumère pas les champs que contient le rapport, et cette ligne non plus.",
+  "it": "Impedisce che la scansione mensile di MRT segnali a Microsoft le informazioni sulle infezioni che trova. La scansione e la pulizia locali proseguono immutate; la riga Defender/SpynetReporting del catalogo non copre questo strumento distinto. La documentazione di Microsoft non elenca quali campi contenga il rapporto, e nemmeno questa riga.",
+  "pl": "Wyłącza przesyłanie do Microsoftu informacji o infekcjach znalezionych przez comiesięczne skanowanie MRT. Lokalne skanowanie i czyszczenie działają bez zmian; wiersz Defender/SpynetReporting w katalogu nie obejmuje tego osobnego narzędzia. Własna dokumentacja Microsoftu nie wylicza, jakie pola zawiera raport, i ten wiersz również tego nie robi.",
+  "pt": "Impede que a análise mensal do MRT comunique à Microsoft as informações de infeção que encontra. A análise e a limpeza locais continuam iguais; a linha Defender/SpynetReporting do catálogo não abrange esta ferramenta separada. A documentação da Microsoft não enumera que campos o relatório transporta, e esta linha também não.",
+  "ru": "Отключает отправку в Microsoft сведений о заражении, найденных ежемесячной проверкой MRT. Локальная проверка и очистка продолжаются в точности как прежде; строка каталога Defender/SpynetReporting не охватывает этот отдельный инструмент. Собственная документация Microsoft не перечисляет, какие поля содержит отчёт, и эта строка тоже.",
+  "tr": "Aylık MRT taramasının bulduğu bulaşma bilgisini Microsoft'a bildirmesini kapatır. Yerel tarama ve temizleme aynen sürer; kataloğun Defender/SpynetReporting satırı bu ayrı aracı kapsamıyor. Bildirimin hangi alanları taşıdığını Microsoft'un kendi belgesi saymıyor, bu satır da saymaz."
+ },
+ "tweak.priv-mrt-reporting.name": {
+  "ar": "تقرير فحص البرامج الضارة",
+  "de": "Bericht der Schadsoftware-Prüfung",
+  "en": "Malware scan report",
+  "es": "Informe del examen de malware",
+  "fr": "Rapport d'analyse des logiciels malveillants",
+  "it": "Rapporto della scansione malware",
+  "pl": "Raport ze skanowania złośliwego oprogramowania",
+  "pt": "Relatório da análise de software malicioso",
+  "ru": "Отчёт о проверке на вредоносные программы",
+  "tr": "Kötü amaçlı yazılım tarama raporu"
+ },
+ "tweak.priv-onesettings-downloads.desc": {
+  "ar": "يجعل Windows يتوقف تمامًا عن الاتصال بخدمة OneSettings، وهي الخدمة التي يتصل بها على فترات منتظمة لتنزيل إعدادات التهيئة؛ فيُغلق القناة التي تستطيع Microsoft من خلالها ضبط سلوك الجهاز عن بُعد. وفي المقابل يُقطع اتصال صادر يستمر حتى مع خفض القياس عن بُعد إلى الصفر. ويُقال على نطاق واسع إن هذه القناة تحمل تعليقات الحماية (safeguard hold) والإصلاحات العاجلة، لكن وثائق Microsoft نفسها لا تُعدّد ما يجري تنزيله — وهذا الصف لا يدّعي سوى أن الاتصال ينقطع. يتطلب إعادة التشغيل.",
+  "de": "Sorgt dafür, dass Windows sich überhaupt nicht mehr mit OneSettings verbindet, dem Dienst, den es in regelmäßigen Abständen kontaktiert, um Konfigurationseinstellungen herunterzuladen; der Kanal, über den Microsoft das Verhalten des Rechners aus der Ferne anpassen kann, wird geschlossen. Im Gegenzug entfällt eine ausgehende Verbindung, die selbst bei ganz heruntergedrehter Telemetrie bestehen bleibt. Es wird häufig behauptet, dieser Kanal übertrage Schutzsperren (safeguard holds) und Notfallkorrekturen, doch Microsofts eigene Dokumentation zählt nicht auf, was heruntergeladen wird — diese Zeile behauptet nur, dass die Verbindung endet. Erfordert einen Neustart.",
+  "en": "Makes Windows stop connecting altogether to OneSettings, the service it contacts at regular intervals to download configuration settings; the channel through which Microsoft can adjust the machine's behaviour remotely is closed. In return, an outbound connection that continues even with telemetry turned down to nothing is cut. It is widely asserted that this channel carries safeguard holds and emergency fixes, but Microsoft's own documentation does not enumerate what is downloaded — this row claims only that the connection stops. Requires a restart.",
+  "es": "Hace que Windows deje de conectarse por completo a OneSettings, el servicio con el que contacta a intervalos regulares para descargar valores de configuración; se cierra el canal por el que Microsoft puede ajustar de forma remota el comportamiento del equipo. A cambio, se corta una conexión saliente que continúa incluso con la telemetría reducida a cero. Se afirma con frecuencia que este canal transporta las retenciones de seguridad (safeguard holds) y las correcciones de emergencia, pero la propia documentación de Microsoft no enumera lo que se descarga: esta fila solo afirma que la conexión cesa. Requiere reiniciar.",
+  "fr": "Fait en sorte que Windows ne se connecte plus du tout à OneSettings, le service qu'il contacte à intervalles réguliers pour télécharger des paramètres de configuration ; le canal par lequel Microsoft peut ajuster à distance le comportement de la machine est fermé. En contrepartie, une connexion sortante qui persiste même avec la télémétrie réduite à zéro est coupée. On affirme couramment que ce canal transporte les blocages de sécurité (safeguard holds) et les correctifs d'urgence, mais la documentation de Microsoft n'énumère pas ce qui est téléchargé — cette ligne se contente d'affirmer que la connexion cesse. Nécessite un redémarrage.",
+  "it": "Fa sì che Windows smetta del tutto di collegarsi a OneSettings, il servizio che contatta a intervalli regolari per scaricare impostazioni di configurazione; si chiude il canale attraverso cui Microsoft può regolare da remoto il comportamento della macchina. In cambio viene interrotta una connessione in uscita che prosegue anche con la telemetria azzerata. Si sostiene comunemente che questo canale trasporti i blocchi di salvaguardia (safeguard hold) e le correzioni d'emergenza, ma la documentazione di Microsoft non elenca ciò che viene scaricato: questa riga afferma soltanto che la connessione cessa. Richiede un riavvio.",
+  "pl": "Sprawia, że Windows w ogóle przestaje łączyć się z OneSettings — usługą, z którą kontaktuje się w regularnych odstępach, aby pobierać ustawienia konfiguracyjne; zamyka się kanał, przez który Microsoft może zdalnie regulować zachowanie komputera. W zamian przerwane zostaje połączenie wychodzące, które trwa nawet przy telemetrii zredukowanej do zera. Powszechnie twierdzi się, że kanał ten przenosi blokady zabezpieczające (safeguard holds) i poprawki awaryjne, ale własna dokumentacja Microsoftu nie wylicza, co jest pobierane — ten wiersz twierdzi jedynie, że połączenie ustaje. Wymaga ponownego uruchomienia.",
+  "pt": "Faz com que o Windows deixe totalmente de se ligar ao OneSettings, o serviço que contacta a intervalos regulares para transferir definições de configuração; fecha-se o canal através do qual a Microsoft pode ajustar remotamente o comportamento do computador. Em troca, corta-se uma ligação de saída que continua mesmo com a telemetria reduzida a zero. É frequentemente afirmado que este canal transporta as retenções de salvaguarda (safeguard holds) e as correções de emergência, mas a própria documentação da Microsoft não enumera o que é transferido — esta linha afirma apenas que a ligação cessa. Requer reiniciar.",
+  "ru": "Заставляет Windows вовсе прекратить подключение к OneSettings — службе, к которой она регулярно обращается за настройками конфигурации; канал, через который Microsoft может удалённо менять поведение компьютера, закрывается. Взамен обрывается исходящее соединение, которое сохраняется даже при полностью убранной телеметрии. Широко утверждается, что этот канал несёт защитные блокировки (safeguard holds) и экстренные исправления, но собственная документация Microsoft не перечисляет, что именно загружается, — эта строка утверждает лишь то, что соединение прекращается. Требуется перезагрузка.",
+  "tr": "Windows'un yapılandırma ayarlarını indirmek için düzenli aralıklarla bağlandığı OneSettings hizmetine artık hiç bağlanmamasını sağlar; Microsoft'un makinenin davranışını uzaktan ayarlayabildiği kanal kapanır. Karşılığında telemetri sıfıra çekilmişken bile sürüp giden bir dış bağlantı kesilir. Bu kanalın güvenlik durdurmalarını (safeguard hold) ve acil düzeltmeleri taşıdığı yaygın olarak öne sürülür, ama Microsoft'un kendi belgesi indirilen içeriği saymıyor — bu satır yalnızca bağlantının kesildiğini iddia eder. Yeniden başlatma gerekir."
+ },
+ "tweak.priv-onesettings-downloads.name": {
+  "ar": "ضبط Windows لنفسه عن بُعد",
+  "de": "Windows, das sich selbst aus der Ferne einstellt",
+  "en": "Windows tuning itself remotely",
+  "es": "Windows ajustándose a sí mismo de forma remota",
+  "fr": "Windows se réglant lui-même à distance",
+  "it": "Windows che si regola da remoto",
+  "pl": "Zdalne dostrajanie się systemu Windows",
+  "pt": "O Windows a ajustar-se remotamente",
+  "ru": "Удалённая настройка Windows самой себя",
+  "tr": "Windows'un kendini uzaktan ayarlaması"
+ },
  "tweak.pwr-adaptive-brightness.desc": {
   "ar": "يمنع تغيّر سطوع الشاشة تلقائيًا وفق مستشعر الضوء المحيط.",
   "de": "Verhindert, dass sich die Bildschirmhelligkeit anhand des Umgebungslichtsensors von selbst ändert.",
@@ -16150,6 +16810,30 @@
   "pt": "Mostrar o botão Suspender",
   "ru": "Показывать кнопку «Спящий режим»",
   "tr": "Uyku düğmesini göster"
+ },
+ "tweak.pwr-update-wake.desc": {
+  "ar": "يمنع Windows Update من تنبيه الجهاز من وضع السكون لأجل تثبيت مجدوَل. ولا يعمل إلا إذا كان Windows Update مهيّأً للتثبيت التلقائي؛ عندئذٍ تصل التصحيحات متأخرة وتتراكم حتى التشغيل التالي. يتطلب إعادة التشغيل.",
+  "de": "Verhindert, dass Windows Update den Rechner für eine geplante Installation aus dem Ruhezustand weckt. Es greift nur, wenn Windows Update auf automatische Installation eingestellt ist; Updates kommen dann später und stauen sich bis zum nächsten Einschalten. Erfordert einen Neustart.",
+  "en": "Stops Windows Update waking the machine from sleep for a scheduled installation. It only comes into play if Windows Update is configured to install automatically; patches then arrive late and pile up for the next time you switch on. Requires a restart.",
+  "es": "Impide que Windows Update saque el equipo de la suspensión para una instalación programada. Solo entra en juego si Windows Update está configurado para instalar automáticamente; entonces las revisiones llegan tarde y se acumulan hasta el siguiente encendido. Requiere reiniciar.",
+  "fr": "Empêche Windows Update de sortir la machine de veille pour une installation planifiée. Cela n'intervient que si Windows Update est configuré pour installer automatiquement ; les correctifs arrivent alors en retard et s'accumulent jusqu'au prochain démarrage. Nécessite un redémarrage.",
+  "it": "Impedisce a Windows Update di riattivare il computer dalla sospensione per un'installazione pianificata. Entra in gioco solo se Windows Update è configurato per installare automaticamente; le correzioni arrivano allora in ritardo e si accumulano fino alla successiva accensione. Richiede un riavvio.",
+  "pl": "Powstrzymuje Windows Update przed wybudzaniem komputera ze stanu uśpienia w celu zaplanowanej instalacji. Działa tylko wtedy, gdy Windows Update jest skonfigurowany do instalacji automatycznej; poprawki docierają wówczas z opóźnieniem i piętrzą się do następnego włączenia. Wymaga ponownego uruchomienia.",
+  "pt": "Impede que o Windows Update retire o computador da suspensão para uma instalação agendada. Só entra em ação se o Windows Update estiver configurado para instalar automaticamente; as correções chegam então tarde e acumulam-se até ao arranque seguinte. Requer reiniciar.",
+  "ru": "Не даёт Windows Update выводить компьютер из сна ради запланированной установки. Действует, только если Windows Update настроен на автоматическую установку; исправления тогда приходят позже и накапливаются до следующего включения. Требуется перезагрузка.",
+  "tr": "Windows Update'in zamanlanmış bir kurulum için makineyi uykudan uyandırmasını engeller. Yalnızca Windows Update otomatik kurulum yapacak biçimde yapılandırılmışsa devreye girer; yamalar geç iner ve bir sonraki açılışa yığılır. Yeniden başlatma gerekir."
+ },
+ "tweak.pwr-update-wake.name": {
+  "ar": "تنبيه الجهاز من أجل Windows Update",
+  "de": "Aufwecken für Windows Update",
+  "en": "Waking the machine for Windows Update",
+  "es": "Reactivación del equipo para Windows Update",
+  "fr": "Réveil de la machine pour Windows Update",
+  "it": "Riattivazione del computer per Windows Update",
+  "pl": "Wybudzanie komputera dla Windows Update",
+  "pt": "Reativação do computador para o Windows Update",
+  "ru": "Пробуждение компьютера для Windows Update",
+  "tr": "Windows Update için uyandırma"
  },
  "tweak.pwr-usb-power-off.desc": {
   "ar": "يمنع Windows من إيقاف محاور USB الجذرية لتوفير الطاقة. وهو المقابل في السجل لمربّع الاختيار في إدارة الأجهزة.",
@@ -17519,6 +18203,126 @@
   "ru": "Журнал буфера обмена",
   "tr": "Pano geçmişi"
  },
+ "tweak.sys-console-beep.desc": {
+  "ar": "يوقف برنامج التشغيل beep الذي يصدر النغمة التي تُطلقها وحدة التحكم وبعض مربّعات الحوار. منذ Windows 7 يُوجَّه هذا الصوت إلى جهاز الصوت الافتراضي، أي أن مستوى الصوت وكتمه يؤثران فيه أصلًا — أما إيقاف برنامج التشغيل فيُخرج الصوت من تحت سيطرتك. كما يصمت تنبيه ToggleKeys الذي يعلن ضغط المفاتيح؛ فلا تُفعّل هذا إن كنت تعتمد عليه لإمكانية الوصول. يتطلب إعادة التشغيل.",
+  "de": "Hält den Beep-Treiber an, der den Ton erzeugt, den die Konsole und einige Dialogfelder ausgeben. Seit Windows 7 wird dieser Ton an das Standard-Audiogerät geleitet, Lautstärke und Stummschaltung wirken also bereits darauf — den Treiber abzuschalten nimmt den Ton stattdessen aus Ihrer Kontrolle heraus. Auch die ToggleKeys-Rückmeldung, die einen Tastendruck ankündigt, verstummt; schalten Sie dies nicht ein, wenn Sie sie für die Barrierefreiheit brauchen. Erfordert einen Neustart.",
+  "en": "Stops the beep driver that produces the tone the console and some dialog boxes make. Since Windows 7 that sound is routed to the default audio device, so volume and mute already affect it — turning the driver off takes the sound out of your control instead. The ToggleKeys feedback that announces a key press also goes silent; do not turn this on if you rely on it for accessibility. Requires a restart.",
+  "es": "Detiene el controlador beep que produce el tono que emiten la consola y algunos cuadros de diálogo. Desde Windows 7 ese sonido se dirige al dispositivo de audio predeterminado, de modo que el volumen y el silencio ya le afectan; desactivar el controlador, en cambio, saca el sonido de su control. También enmudece la respuesta de ToggleKeys que anuncia una pulsación de tecla; no lo active si depende de ella para la accesibilidad. Requiere reiniciar.",
+  "fr": "Arrête le pilote beep qui produit le son émis par la console et certaines boîtes de dialogue. Depuis Windows 7, ce son est dirigé vers le périphérique audio par défaut : le volume et la coupure du son agissent donc déjà dessus — désactiver le pilote retire au contraire ce son de votre contrôle. Le retour ToggleKeys qui annonce une frappe se tait également ; ne l'activez pas si vous en dépendez pour l'accessibilité. Nécessite un redémarrage.",
+  "it": "Arresta il driver beep che produce il tono emesso dalla console e da alcune finestre di dialogo. Da Windows 7 quel suono è instradato al dispositivo audio predefinito, quindi volume e disattivazione audio lo influenzano già — spegnere il driver toglie invece il suono dal vostro controllo. Tace anche il riscontro di ToggleKeys che annuncia la pressione di un tasto; non attivatelo se ci contate per l'accessibilità. Richiede un riavvio.",
+  "pl": "Zatrzymuje sterownik beep, który wytwarza dźwięk wydawany przez konsolę i niektóre okna dialogowe. Od czasów Windows 7 dźwięk ten jest kierowany do domyślnego urządzenia audio, więc głośność i wyciszenie już na niego działają — wyłączenie sterownika przeciwnie, odbiera ten dźwięk spod kontroli. Milknie też sygnał ToggleKeys zapowiadający naciśnięcie klawisza; nie włączaj tego, jeśli polegasz na nim ze względu na ułatwienia dostępu. Wymaga ponownego uruchomienia.",
+  "pt": "Para o controlador beep que produz o tom emitido pela consola e por algumas caixas de diálogo. Desde o Windows 7 esse som é encaminhado para o dispositivo de áudio predefinido, pelo que o volume e o silêncio já o afetam — desligar o controlador retira antes o som do seu controlo. O aviso do ToggleKeys que anuncia a pressão de uma tecla também fica em silêncio; não ative isto se depender dele para acessibilidade. Requer reiniciar.",
+  "ru": "Останавливает драйвер beep, который издаёт сигнал консоли и некоторых диалоговых окон. Начиная с Windows 7 этот звук направляется на устройство вывода по умолчанию, поэтому громкость и отключение звука уже действуют на него — а отключение драйвера, наоборот, выводит звук из-под вашего контроля. Замолкает и отклик ToggleKeys, объявляющий нажатие клавиши; не включайте это, если полагаетесь на него ради специальных возможностей. Требуется перезагрузка.",
+  "tr": "Konsolun ve bazı iletişim kutularının çıkardığı zil sesini üreten beep sürücüsünü durdurur. Windows 7'den beri bu ses varsayılan ses aygıtına yönlendirilir, yani ses düzeyi ve sessize alma zaten onu etkiler — sürücüyü kapatmak sesi ayarın dışına çıkarır. ToggleKeys'in tuş basımını duyuran geri bildirimi de susar; erişilebilirlik için buna güveniyorsanız açmayın. Yeniden başlatma gerekir."
+ },
+ "tweak.sys-console-beep.name": {
+  "ar": "صفير وحدة التحكم",
+  "de": "Konsolen-Signalton",
+  "en": "Console beep",
+  "es": "Pitido de la consola",
+  "fr": "Bip de la console",
+  "it": "Segnale acustico della console",
+  "pl": "Sygnał dźwiękowy konsoli",
+  "pt": "Aviso sonoro da consola",
+  "ru": "Звуковой сигнал консоли",
+  "tr": "Konsol zil sesi"
+ },
+ "tweak.sys-copilot-key.desc": {
+  "ar": "لا يفعل شيئًا على جهاز لا تحتوي لوحة مفاتيحه على مفتاح Copilot فعلي. يحدّد التطبيق الذي يفتحه المفتاح بدلًا من Copilot. لا تقبل السياسة سوى معرّف AUMID لتطبيق محزَّم، لذا فالوجهتان المتاحتان هنا ثابتتان؛ وأي تطبيق آخر يحتاج إلى محرّر السياسات. يتطلب تسجيل الخروج ثم الدخول من جديد.",
+  "de": "Bewirkt nichts auf einem Gerät, dessen Tastatur keine physische Copilot-Taste hat. Legt fest, welche Anwendung die Taste anstelle von Copilot öffnet. Die Richtlinie akzeptiert nur die AUMID einer paketierten App, daher sind die beiden hier angebotenen Ziele fest vorgegeben; für alles andere ist der Richtlinien-Editor nötig. Erfordert eine erneute Anmeldung.",
+  "en": "Does nothing on a machine whose keyboard has no physical Copilot key. Sets which application the key opens instead of Copilot. The policy only accepts the AUMID of a packaged app, so the two targets offered here are fixed; anything else needs the policy editor. Requires signing out and back in.",
+  "es": "No hace nada en un equipo cuyo teclado carece de tecla Copilot física. Determina qué aplicación abre la tecla en lugar de Copilot. La directiva solo acepta el AUMID de una aplicación empaquetada, por lo que los dos destinos que se ofrecen aquí son fijos; cualquier otro requiere el editor de directivas. Requiere cerrar la sesión y volver a iniciarla.",
+  "fr": "N'a aucun effet sur une machine dont le clavier ne possède pas de touche Copilot physique. Définit l'application que la touche ouvre à la place de Copilot. La stratégie n'accepte que l'AUMID d'une application empaquetée : les deux cibles proposées ici sont donc figées ; toute autre application nécessite l'éditeur de stratégie. Nécessite de se déconnecter puis de se reconnecter.",
+  "it": "Non fa nulla su una macchina la cui tastiera non ha un tasto Copilot fisico. Stabilisce quale applicazione apre il tasto al posto di Copilot. Il criterio accetta solo l'AUMID di un'app pacchettizzata, quindi le due destinazioni offerte qui sono fisse; per qualsiasi altra serve l'editor dei criteri. Richiede la disconnessione e una nuova connessione.",
+  "pl": "Nie robi nic na komputerze, którego klawiatura nie ma fizycznego klawisza Copilot. Określa, którą aplikację otwiera klawisz zamiast Copilota. Zasada przyjmuje wyłącznie AUMID aplikacji spakowanej, więc oba oferowane tu cele są stałe; cokolwiek innego wymaga edytora zasad. Wymaga wylogowania i ponownego zalogowania.",
+  "pt": "Não faz nada num computador cujo teclado não tem uma tecla Copilot física. Define que aplicação a tecla abre em vez do Copilot. A política só aceita o AUMID de uma aplicação empacotada, pelo que os dois destinos aqui oferecidos são fixos; qualquer outro exige o editor de políticas. Requer terminar sessão e iniciá-la novamente.",
+  "ru": "Ничего не делает на компьютере, клавиатура которого не имеет физической клавиши Copilot. Задаёт, какое приложение открывает клавиша вместо Copilot. Политика принимает только AUMID упакованного приложения, поэтому два предлагаемых здесь варианта фиксированы; для любого другого нужен редактор политик. Требуется выйти из системы и войти снова.",
+  "tr": "Klavyesinde fiziksel Copilot tuşu olmayan makinede hiçbir şey yapmaz. Tuşun Copilot yerine hangi uygulamayı açacağını belirler. İlke yalnızca paketli uygulamaların AUMID'ini kabul ettiği için buradaki iki hedef sabittir; başka bir uygulama için ilke düzenleyicisi gerekir. Oturumu kapatıp açmak gerekir."
+ },
+ "tweak.sys-copilot-key.name": {
+  "ar": "ما يفتحه مفتاح Copilot",
+  "de": "Welche App die Copilot-Taste öffnet",
+  "en": "What the Copilot key opens",
+  "es": "Qué abre la tecla Copilot",
+  "fr": "Ce qu'ouvre la touche Copilot",
+  "it": "Cosa apre il tasto Copilot",
+  "pl": "Co otwiera klawisz Copilot",
+  "pt": "O que a tecla Copilot abre",
+  "ru": "Что открывает клавиша Copilot",
+  "tr": "Copilot tuşunun açtığı uygulama"
+ },
+ "tweak.sys-foreground-lock.desc": {
+  "ar": "المدة التي يسمح فيها Windows لتطبيق يعمل في الخلفية بأن يقدّم نفسه إلى المقدمة. في وضع «السماح» يخطف التطبيق الذي في الخلفية التركيز أثناء كتابتك ويبتلع ضغطات المفاتيح — بما في ذلك حقل كلمة المرور؛ وفي الوضع الأعلى تُرفض كذلك الطلبات المشروعة للظهور (معالج تثبيت، مكالمة واردة) فيبدو التطبيق وكأنه لم يُفتح قط. الرقم في السجل ليس سوى القيمة الأولية عند تسجيل الدخول: فأي تطبيق يستدعي SystemParametersInfo يمكنه تغيير القيمة الجارية. يتطلب تسجيل الخروج ثم الدخول من جديد.",
+  "de": "Wie lange Windows einer Hintergrundanwendung erlaubt, sich in den Vordergrund zu holen. Bei „Zulassen“ reißt eine Hintergrundanwendung den Fokus an sich, während Sie tippen, und verschluckt Ihre Tastenanschläge — auch in einem Kennwortfeld; bei der höchsten Einstellung werden auch berechtigte Anfragen abgelehnt (ein Setup-Assistent, ein eingehender Anruf), und die Anwendung wirkt, als hätte sie sich nie geöffnet. Die Zahl in der Registrierung ist nur der Startwert bei der Anmeldung: jede Anwendung, die SystemParametersInfo aufruft, kann den laufenden Wert ändern. Erfordert eine erneute Anmeldung.",
+  "en": "How long Windows lets a background application pull itself to the front. At 'Allow', a background application steals focus while you are typing and swallows your keystrokes — a password field included; at the highest setting, legitimate 'come forward' requests are refused too (a setup wizard, an incoming call) and the application looks as though it never opened. The number in the registry is only the sign-in seed: any application calling SystemParametersInfo can change the running value. Requires signing out and back in.",
+  "es": "Cuánto tiempo permite Windows que una aplicación en segundo plano se ponga en primer plano. En «Permitir», una aplicación en segundo plano roba el foco mientras escribe y se traga sus pulsaciones —incluido un campo de contraseña—; en el valor más alto también se rechazan las solicitudes legítimas de pasar al frente (un asistente de instalación, una llamada entrante) y la aplicación parece no haberse abierto nunca. El número del registro es solo el valor inicial del inicio de sesión: cualquier aplicación que llame a SystemParametersInfo puede cambiar el valor en curso. Requiere cerrar la sesión y volver a iniciarla.",
+  "fr": "Combien de temps Windows autorise une application en arrière-plan à se mettre au premier plan. Sur « Autoriser », une application en arrière-plan vous vole le focus pendant que vous tapez et avale vos frappes — champ de mot de passe compris ; au réglage le plus élevé, les demandes légitimes de passage au premier plan sont refusées elles aussi (assistant d'installation, appel entrant) et l'application semble ne jamais s'être ouverte. Le nombre dans le registre n'est que la valeur initiale de la session : toute application appelant SystemParametersInfo peut modifier la valeur en cours. Nécessite de se déconnecter puis de se reconnecter.",
+  "it": "Per quanto tempo Windows consente a un'applicazione in secondo piano di portarsi in primo piano. Su «Consenti», un'applicazione in secondo piano ruba il fuoco mentre state digitando e inghiotte i tasti premuti — campo password compreso; all'impostazione più alta vengono rifiutate anche le richieste legittime di venire in primo piano (una procedura guidata di installazione, una chiamata in arrivo) e l'applicazione sembra non essersi mai aperta. Il numero nel registro è solo il valore iniziale della sessione: qualsiasi applicazione che chiami SystemParametersInfo può modificare il valore in uso. Richiede la disconnessione e una nuova connessione.",
+  "pl": "Jak długo system Windows pozwala aplikacji działającej w tle wysunąć się na pierwszy plan. Przy ustawieniu „Zezwalaj” aplikacja w tle przejmuje fokus w trakcie pisania i połyka naciśnięcia klawiszy — łącznie z polem hasła; przy najwyższym ustawieniu odrzucane są także uzasadnione żądania wyjścia na wierzch (kreator instalacji, połączenie przychodzące) i aplikacja sprawia wrażenie, jakby w ogóle się nie otworzyła. Liczba w rejestrze to tylko wartość początkowa sesji: każda aplikacja wywołująca SystemParametersInfo może zmienić wartość bieżącą. Wymaga wylogowania i ponownego zalogowania.",
+  "pt": "Durante quanto tempo o Windows permite que uma aplicação em segundo plano se coloque à frente. Em «Permitir», uma aplicação em segundo plano rouba o foco enquanto está a escrever e engole as suas teclas — incluindo um campo de palavra-passe; na definição mais alta, também são recusados os pedidos legítimos de vir para a frente (um assistente de instalação, uma chamada recebida) e a aplicação parece nunca ter aberto. O número no registo é apenas o valor inicial da sessão: qualquer aplicação que chame SystemParametersInfo pode alterar o valor em curso. Requer terminar sessão e iniciá-la novamente.",
+  "ru": "Как долго Windows разрешает фоновому приложению выходить на передний план. В положении «Разрешать» фоновое приложение перехватывает фокус, пока вы печатаете, и проглатывает нажатия клавиш — включая поле пароля; в наибольшем положении отклоняются и законные запросы выйти вперёд (мастер установки, входящий звонок), и приложение выглядит так, будто вовсе не открывалось. Число в реестре — лишь начальное значение сеанса: любое приложение, вызывающее SystemParametersInfo, может изменить текущее значение. Требуется выйти из системы и войти снова.",
+  "tr": "Arka plandaki bir uygulamanın kendini öne almasına Windows'un ne kadar süre izin vereceği. 'İzin ver' konumunda arka plandaki uygulama siz yazarken odağı kapar ve tuş vuruşlarınızı — parola alanı dâhil — yutar; en yüksek konumda meşru 'öne gel' istekleri de (kurulum sihirbazı, gelen arama) reddedilir ve uygulama hiç açılmamış görünür. Kayıt defterindeki sayı yalnız oturum açılış tohumudur: SystemParametersInfo çağıran herhangi bir uygulama çalışan değeri değiştirebilir. Oturumu kapatıp açmak gerekir."
+ },
+ "tweak.sys-foreground-lock.name": {
+  "ar": "البرامج التي تفرض نافذتها إلى المقدمة",
+  "de": "Programme, die ihr Fenster in den Vordergrund zwingen",
+  "en": "Programs forcing their window to the front",
+  "es": "Programas que fuerzan su ventana al primer plano",
+  "fr": "Programmes forçant leur fenêtre au premier plan",
+  "it": "Programmi che forzano la propria finestra in primo piano",
+  "pl": "Programy wymuszające okno na pierwszym planie",
+  "pt": "Programas que forçam a sua janela para a frente",
+  "ru": "Программы, выводящие своё окно на передний план",
+  "tr": "Programların pencereyi öne zorlaması"
+ },
+ "tweak.sys-notification-duration.desc": {
+  "ar": "المدة التي تبقى فيها لافتة الإشعار على الشاشة قبل أن تُغلق. في المدد الطويلة تشغل اللافتة الزاوية السفلية اليمنى ولا يمكن النقر على النافذة أسفلها؛ أما الإشعارات التي تفرض مدتها الخاصة (مكالمة واردة، منبّه) فتتجاهل هذه القيمة. وهي القيمة نفسها الموجودة في القائمة المنسدلة ضمن الإعدادات > إمكانية الوصول > التأثيرات المرئية. يتطلب تسجيل الخروج ثم الدخول من جديد.",
+  "de": "Wie lange ein Benachrichtigungsbanner angezeigt wird, bevor es geschlossen wird. Bei langen Zeiten belegt das Banner die rechte untere Ecke, und das Fenster darunter lässt sich nicht anklicken; Benachrichtigungen mit eigener Dauer (eingehender Anruf, Wecker) ignorieren diesen Wert. Es ist derselbe Wert wie die Auswahlliste unter Einstellungen > Barrierefreiheit > Visuelle Effekte. Erfordert eine erneute Anmeldung.",
+  "en": "How long a notification banner stays on screen before it closes. At the long settings the banner occupies the bottom-right corner and you cannot click the window underneath it; notifications that impose their own duration (an incoming call, an alarm) ignore this value. It is the same value as the drop-down under Settings > Accessibility > Visual effects. Requires signing out and back in.",
+  "es": "Cuánto tiempo permanece en pantalla un aviso de notificación antes de cerrarse. Con los valores largos, el aviso ocupa la esquina inferior derecha y no se puede hacer clic en la ventana que hay debajo; las notificaciones que imponen su propia duración (una llamada entrante, una alarma) omiten este valor. Es el mismo valor que la lista desplegable de Configuración > Accesibilidad > Efectos visuales. Requiere cerrar la sesión y volver a iniciarla.",
+  "fr": "Durée pendant laquelle une bannière de notification reste affichée avant de se fermer. Aux durées longues, la bannière occupe le coin inférieur droit et la fenêtre située en dessous devient incliquable ; les notifications qui imposent leur propre durée (appel entrant, alarme) ignorent cette valeur. C'est la même valeur que la liste déroulante sous Paramètres > Accessibilité > Effets visuels. Nécessite de se déconnecter puis de se reconnecter.",
+  "it": "Per quanto tempo un avviso di notifica resta sullo schermo prima di chiudersi. Con le durate lunghe l'avviso occupa l'angolo in basso a destra e la finestra sottostante non è cliccabile; le notifiche che impongono una durata propria (una chiamata in arrivo, una sveglia) ignorano questo valore. È lo stesso valore dell'elenco a discesa in Impostazioni > Accessibilità > Effetti visivi. Richiede la disconnessione e una nuova connessione.",
+  "pl": "Jak długo baner powiadomienia pozostaje na ekranie, zanim się zamknie. Przy długich ustawieniach baner zajmuje prawy dolny róg i nie da się kliknąć okna pod nim; powiadomienia narzucające własny czas (połączenie przychodzące, alarm) ignorują tę wartość. To ta sama wartość co lista rozwijana w Ustawienia > Ułatwienia dostępu > Efekty wizualne. Wymaga wylogowania i ponownego zalogowania.",
+  "pt": "Quanto tempo um aviso de notificação permanece no ecrã antes de fechar. Nas durações longas, o aviso ocupa o canto inferior direito e não é possível clicar na janela por baixo; as notificações que impõem a sua própria duração (uma chamada recebida, um alarme) ignoram este valor. É o mesmo valor da lista pendente em Definições > Acessibilidade > Efeitos visuais. Requer terminar sessão e iniciá-la novamente.",
+  "ru": "Сколько времени баннер уведомления остаётся на экране до закрытия. При больших значениях баннер занимает правый нижний угол и по окну под ним нельзя щёлкнуть; уведомления с собственной длительностью (входящий звонок, будильник) игнорируют это значение. Это то же значение, что и раскрывающийся список в Параметры > Специальные возможности > Визуальные эффекты. Требуется выйти из системы и войти снова.",
+  "tr": "Bir bildirim baloncuğunun kapanmadan önce ekranda kalacağı süre. Uzun sürelerde bildirim sağ alt köşeyi işgal eder ve altındaki pencereye tıklanamaz; kendi süresini dayatan bildirimler (gelen arama, alarm) bu değeri yok sayar. Ayarlar > Erişilebilirlik > Görsel efektler'deki açılır listeyle aynı değerdir. Oturumu kapatıp açmak gerekir."
+ },
+ "tweak.sys-notification-duration.name": {
+  "ar": "مدة بقاء الإشعار على الشاشة",
+  "de": "Anzeigedauer einer Benachrichtigung",
+  "en": "How long a notification stays on screen",
+  "es": "Tiempo que una notificación permanece en pantalla",
+  "fr": "Durée d'affichage d'une notification",
+  "it": "Durata di una notifica sullo schermo",
+  "pl": "Czas wyświetlania powiadomienia",
+  "pt": "Tempo que uma notificação fica no ecrã",
+  "ru": "Время показа уведомления",
+  "tr": "Bildirimin ekranda kalma süresi"
+ },
+ "tweak.sys-shortcut-drive-search.desc": {
+  "ar": "يمنع Windows من فحص القرص بأكمله بحثًا عن الملف عندما يكون هدف الاختصار مفقودًا؛ فبدلًا من محاولة الإصلاح تظهر رسالة «غير موجود» مباشرة. تتوقف الاختصارات عن إصلاح نفسها — يُلغى الفحص الكامل للقرص فقط، أما النقل داخل وحدة التخزين نفسها فما زال يُحلّ عبر معرّف كائن NTFS. اتجاه القيمة غير مذكور صراحةً في ملف ADMX، وإنما مأخوذ من القيمة الافتراضية للمخطط. يجب إعادة تشغيل مستكشف الملفات.",
+  "de": "Verhindert, dass Windows das gesamte Laufwerk durchsucht, um die Datei zu finden, wenn das Ziel einer Verknüpfung fehlt; statt eines Reparaturversuchs erscheint direkt die Meldung „nicht gefunden“. Verknüpfungen reparieren sich nicht mehr selbst — nur der vollständige Laufwerksscan entfällt, eine Verschiebung innerhalb desselben Volumes wird weiterhin über die NTFS-Objekt-ID aufgelöst. Die Richtung des Werts wird in der ADMX nicht ausdrücklich angegeben, sie stammt aus der Schema-Vorgabe. Der Explorer muss neu gestartet werden.",
+  "en": "Stops Windows scanning the whole drive to find the file when a shortcut's target is missing; instead of attempting a repair you get a straight 'not found' message. Shortcuts stop repairing themselves — only the full drive scan is cancelled, and a move within the same volume is still resolved through the NTFS object id. The direction of the data is not stated explicitly in the ADMX; it comes from the schema default. Explorer must restart.",
+  "es": "Impide que Windows recorra toda la unidad para encontrar el archivo cuando falta el destino de un acceso directo; en lugar de intentar una reparación, aparece directamente el mensaje «no se encuentra». Los accesos directos dejan de repararse solos: solo se cancela el examen completo de la unidad, y un movimiento dentro del mismo volumen se sigue resolviendo mediante el id. de objeto NTFS. La dirección del valor no se indica explícitamente en el ADMX; procede del valor predeterminado del esquema. El Explorador debe reiniciarse.",
+  "fr": "Empêche Windows de parcourir tout le lecteur pour retrouver le fichier lorsque la cible d'un raccourci est introuvable ; au lieu d'une tentative de réparation, vous obtenez directement un message « introuvable ». Les raccourcis cessent de se réparer eux-mêmes — seul le balayage complet du lecteur est annulé, un déplacement au sein du même volume reste résolu par l'identifiant d'objet NTFS. Le sens de la valeur n'est pas indiqué explicitement dans l'ADMX ; il provient de la valeur par défaut du schéma. L'Explorateur doit redémarrer.",
+  "it": "Impedisce a Windows di esaminare l'intera unità per ritrovare il file quando la destinazione di un collegamento non esiste più; invece di tentare una riparazione compare direttamente il messaggio «non trovato». I collegamenti smettono di ripararsi da soli: viene annullata solo la scansione completa dell'unità, mentre uno spostamento all'interno dello stesso volume continua a essere risolto tramite l'id oggetto NTFS. La direzione del valore non è dichiarata esplicitamente nell'ADMX; deriva dal valore predefinito dello schema. Explorer deve riavviarsi.",
+  "pl": "Powstrzymuje system Windows przed przeszukiwaniem całego dysku w celu odnalezienia pliku, gdy brakuje celu skrótu; zamiast próby naprawy pojawia się od razu komunikat „nie znaleziono”. Skróty przestają się samodzielnie naprawiać — anulowane jest wyłącznie pełne skanowanie dysku, a przeniesienie w obrębie tego samego woluminu nadal jest rozwiązywane przez identyfikator obiektu NTFS. Kierunek wartości nie jest wprost podany w pliku ADMX; pochodzi z wartości domyślnej schematu. Eksplorator musi zostać uruchomiony ponownie.",
+  "pt": "Impede o Windows de percorrer toda a unidade para encontrar o ficheiro quando o destino de um atalho não existe; em vez de tentar uma reparação, surge diretamente a mensagem «não encontrado». Os atalhos deixam de se reparar sozinhos — apenas a análise completa da unidade é cancelada, e uma deslocação dentro do mesmo volume continua a ser resolvida pelo id. de objeto NTFS. A direção do valor não é indicada explicitamente no ADMX; vem do valor predefinido do esquema. O Explorador tem de reiniciar.",
+  "ru": "Не даёт Windows просматривать весь диск в поисках файла, когда цель ярлыка отсутствует; вместо попытки восстановления сразу выводится сообщение «не найдено». Ярлыки перестают восстанавливаться сами — отменяется только полное сканирование диска, а перемещение в пределах того же тома по-прежнему разрешается через идентификатор объекта NTFS. Направление значения прямо не указано в ADMX; оно взято из значения схемы по умолчанию. Проводник должен быть перезапущен.",
+  "tr": "Hedefi bulunamayan bir kısayolda Windows'un bütün sürücüyü tarayıp dosyayı aramasını durdurur; onarım denemesi yerine doğrudan 'bulunamadı' iletisi gelir. Kısayollar kendini onarmayı bırakır — yalnız tam sürücü taraması iptal olur, aynı birim içindeki taşımalar NTFS nesne kimliğiyle hâlâ çözülür. Verinin yönü ADMX'te açıkça bildirilmiyor, şema varsayılanından geliyor. Gezgin yeniden başlamalıdır."
+ },
+ "tweak.sys-shortcut-drive-search.name": {
+  "ar": "البحث عن ملف اختصار معطوب",
+  "de": "Suche nach der Datei einer defekten Verknüpfung",
+  "en": "Searching for the file behind a broken shortcut",
+  "es": "Búsqueda del archivo de un acceso directo roto",
+  "fr": "Recherche du fichier d'un raccourci cassé",
+  "it": "Ricerca del file di un collegamento interrotto",
+  "pl": "Wyszukiwanie pliku uszkodzonego skrótu",
+  "pt": "Procura do ficheiro de um atalho danificado",
+  "ru": "Поиск файла для нерабочего ярлыка",
+  "tr": "Bozuk kısayolda dosyayı arama"
+ },
  "tweak.sys-wheel-focus.desc": {
   "ar": "يجعل عجلة الماوس تمرّر النافذة النشطة بدلاً من النافذة الموجودة أسفل المؤشر.",
   "de": "Sorgt dafür, dass das Mausrad das aktive Fenster scrollt und nicht das Fenster unter dem Zeiger.",
@@ -17902,6 +18706,30 @@
   "pt": "Compilações Insider Preview",
   "ru": "Сборки Insider Preview",
   "tr": "Insider Preview derlemeleri"
+ },
+ "tweak.upd-limit-diagnostic-data.desc": {
+  "ar": "يقصر تفريغ الذاكرة المُرسَل عند حدوث عطل على تفريغ مصغَّر للنواة وتفريغ فرز في وضع المستخدم، ويوقف جمع سجلات التشخيص الإضافية. تفريغ الكومة هو ذاكرة العملية نفسها؛ وهو أكبر كائن يرسله الجهاز إلى Microsoft. ولا يغيّر شيئًا إلا ما دامت بيانات التشخيص في وضع «اختياري» — وصفوف القياس عن بُعد في هذا الفهرس تُنزل الجهاز أصلًا إلى «مطلوب»، لذا فهو اليوم صف وقائي. يتطلب إعادة التشغيل.",
+  "de": "Beschränkt den bei einem Absturz gesendeten Speicherauszug auf einen Kernel-Minidump und einen Triage-Dump im Benutzermodus und unterbindet das Sammeln zusätzlicher Diagnoseprotokolle. Ein Heap-Dump ist der Prozessspeicher selbst; er ist das größte Objekt, das der Rechner an Microsoft schickt. Er ändert nur dann etwas, wenn die Diagnosedaten auf „Optional“ stehen — die Telemetriezeilen dieses Katalogs ziehen den Rechner ohnehin auf „Erforderlich“, sodass dies heute eine vorbeugende Zeile ist. Erfordert einen Neustart.",
+  "en": "Limits the memory dump sent on a crash to a kernel mini dump and a user-mode triage dump, and stops the extra diagnostic logs being collected. A heap dump is process memory itself; it is the largest object the machine sends to Microsoft. It only changes anything while diagnostic data is set to 'Optional' — this catalogue's telemetry rows already pull the machine down to 'Required', so today it is a preventive row. Requires a restart.",
+  "es": "Limita el volcado de memoria que se envía al bloquearse a un minivolcado del kernel y un volcado de clasificación en modo de usuario, y detiene la recopilación de los registros de diagnóstico adicionales. Un volcado del montón es la memoria del proceso en sí; es el objeto más grande que el equipo envía a Microsoft. Solo cambia algo mientras los datos de diagnóstico están en «Opcional»: las filas de telemetría de este catálogo ya dejan el equipo en «Necesario», así que hoy es una fila preventiva. Requiere reiniciar.",
+  "fr": "Limite le vidage mémoire envoyé lors d'un plantage à un mini-vidage noyau et à un vidage de triage en mode utilisateur, et empêche la collecte des journaux de diagnostic supplémentaires. Un vidage de tas, c'est la mémoire du processus elle-même ; c'est le plus gros objet que la machine envoie à Microsoft. Cela ne change quelque chose que si les données de diagnostic sont sur « Facultatif » — les lignes de télémétrie de ce catalogue ramènent déjà la machine sur « Obligatoire », c'est donc aujourd'hui une ligne préventive. Nécessite un redémarrage.",
+  "it": "Limita il dump di memoria inviato in caso di arresto anomalo a un minidump del kernel e a un dump di triage in modalità utente, e interrompe la raccolta dei registri diagnostici aggiuntivi. Un dump dell'heap è la memoria del processo stessa; è l'oggetto più grande che la macchina invia a Microsoft. Cambia qualcosa solo finché i dati diagnostici sono su «Facoltativo» — le righe di telemetria di questo catalogo portano già la macchina su «Obbligatorio», quindi oggi è una riga preventiva. Richiede un riavvio.",
+  "pl": "Ogranicza zrzut pamięci wysyłany przy awarii do minizrzutu jądra i zrzutu segregującego w trybie użytkownika oraz wstrzymuje zbieranie dodatkowych dzienników diagnostycznych. Zrzut sterty to sama pamięć procesu; jest to największy obiekt, jaki komputer wysyła do Microsoftu. Zmienia cokolwiek tylko wtedy, gdy dane diagnostyczne są ustawione na „Opcjonalne” — wiersze telemetrii w tym katalogu i tak sprowadzają komputer do poziomu „Wymagane”, więc dziś jest to wiersz zapobiegawczy. Wymaga ponownego uruchomienia.",
+  "pt": "Limita a captura de memória enviada numa falha a uma minicaptura do kernel e a uma captura de triagem em modo de utilizador, e impede a recolha dos registos de diagnóstico adicionais. Uma captura da área dinâmica é a própria memória do processo; é o maior objeto que o computador envia à Microsoft. Só altera alguma coisa enquanto os dados de diagnóstico estiverem em «Opcional» — as linhas de telemetria deste catálogo já colocam o computador em «Necessário», pelo que hoje é uma linha preventiva. Requer reiniciar.",
+  "ru": "Ограничивает отправляемый при сбое дамп памяти малым дампом ядра и сортировочным дампом пользовательского режима и прекращает сбор дополнительных диагностических журналов. Дамп кучи — это сама память процесса; это самый крупный объект, который компьютер отправляет в Microsoft. Что-либо меняет только тогда, когда диагностические данные стоят в положении «Необязательные», — строки телеметрии этого каталога и так переводят компьютер в «Обязательные», так что сегодня это упреждающая строка. Требуется перезагрузка.",
+  "tr": "Bir çökmede gönderilen bellek dökümünü çekirdek özet dökümü ve kullanıcı modu önceliklendirme dökümüyle sınırlar, ek tanılama günlüklerinin toplanmasını durdurur. Yığın dökümü süreç belleğinin kendisidir; makinenin Microsoft'a gönderdiği en büyük nesne odur. Yalnızca tanılama verisi 'İsteğe bağlı' konumundayken bir şey değiştirir — bu kataloğun telemetri satırları makineyi zaten 'Gerekli'ye çektiği için bugün önleyici bir satırdır. Yeniden başlatma gerekir."
+ },
+ "tweak.upd-limit-diagnostic-data.name": {
+  "ar": "محتوى الذاكرة في تقرير الأعطال",
+  "de": "Speicherinhalt im Absturzbericht",
+  "en": "Memory contents in a crash report",
+  "es": "Contenido de la memoria en un informe de bloqueo",
+  "fr": "Contenu de la mémoire dans un rapport de plantage",
+  "it": "Contenuto della memoria in un rapporto di arresto anomalo",
+  "pl": "Zawartość pamięci w raporcie o awarii",
+  "pt": "Conteúdo da memória num relatório de falha",
+  "ru": "Содержимое памяти в отчёте о сбое",
+  "tr": "Çökme raporunda bellek içeriği"
  },
  "tweak.upd-ms-products.desc": {
   "ar": "يتيح تحديث Office وبرامج Microsoft الأخرى عبر Windows Update أيضًا. وعند الإيقاف تُترك هذه المنتجات لأدوات التحديث الخاصة بها.",

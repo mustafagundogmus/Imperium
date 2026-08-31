@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(Arbitrium VERSION 0.11.0 LANGUAGES CXX)
+project(Arbitrium VERSION 0.12.0 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -18,6 +18,8 @@ set(PROJECT_SOURCES
     src/i18n.h                         src/i18n.cpp
     src/css.h                         src/css.cpp
     src/console.h                     src/console.cpp
+    src/winpaths.h                    src/winpaths.cpp
+    src/progress.h
     src/icons.h                       src/icons.cpp
     src/catalog.h                     src/catalog.cpp
     src/action.h                      src/action.cpp
@@ -48,6 +50,7 @@ set(PROJECT_SOURCES
     src/widgets/applyoverlay.h        src/widgets/applyoverlay.cpp
     src/widgets/borderglow.h          src/widgets/borderglow.cpp
     src/widgets/buttons.h             src/widgets/buttons.cpp
+    src/widgets/dialog.h              src/widgets/dialog.cpp
     src/widgets/categoryrow.h         src/widgets/categoryrow.cpp
     src/widgets/debloatrow.h          src/widgets/debloatrow.cpp
     src/widgets/livechart.h           src/widgets/livechart.cpp

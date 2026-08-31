@@ -23,7 +23,15 @@ namespace Theme {
 
 // The order here is the order the theme switch shows them in, and the numeric values are
 // never persisted (a name is — see schemeToString), so this can be reordered freely.
-enum class Appearance { Dark, Light, Midnight, Sepia, Ocean, Forest, Dusk, Rose };
+//
+// The four added last are all light ones. Of the eight before them only two — Light and
+// Sepia — were, so a light-theme user had a cool white and a warm cream and nothing else,
+// against six darks. They are appended rather than filed next to Light so that no card a
+// user has already learnt the position of moves under them. Grouping the six darks and the
+// six lights into the two rows the switch now draws would read better; that is a reorder
+// of this line and of Order[] in themeswitch.cpp, which has to keep matching it.
+enum class Appearance { Dark, Light, Midnight, Sepia, Ocean, Forest, Dusk, Rose,
+                        Mist, Contrast, Meadow, Lilac };
 
 /// How many of them there are, for the places that want to say the number rather than
 /// handle each one — the Hakkında page's Görünüm card, today. Counted here rather than
@@ -32,17 +40,41 @@ enum class Appearance { Dark, Light, Midnight, Sepia, Ocean, Forest, Dusk, Rose 
 /// check that makes adding a scheme safe. The assertion is `<` rather than `==` on purpose:
 /// it stays quiet through a reorder (the enum's numeric values are never persisted, so
 /// reordering is allowed) and fires on a ninth scheme wherever it is inserted.
-inline constexpr int AppearanceCount = 8;
-static_assert(int(Appearance::Rose) < AppearanceCount,
+inline constexpr int AppearanceCount = 12;
+static_assert(int(Appearance::Lilac) < AppearanceCount,
               "a scheme was added to Appearance without updating AppearanceCount");
 
 /// Which family a scheme belongs to, for the handful of decisions that turn on "is the
 /// ground light or dark" rather than on the exact palette — the accent wash's alpha, the
 /// darkened accent ink for readable text, the border glow. Midnight is a darker Dark;
-/// Sepia is a warmer Light.
+/// Sepia is a warmer Light; Mist is a dimmed one, Contrast a maximal one, and Meadow and
+/// Lilac are tinted ones.
+///
+/// Written as a switch rather than a chain of ==, so that -Wswitch reports every scheme
+/// added after this line. A scheme missing from here does not fail to compile and does not
+/// look wrong at a glance: it draws its own palette correctly and gets the dark family's
+/// 13% accent wash and its undarkened accent ink, which on a light ground is the pale
+/// amber the accentInk() comment was written about. That is a bug you have to notice by
+/// eye, which is exactly the kind this file is meant not to have.
 inline bool isLightFamily(Appearance a)
 {
-    return a == Appearance::Light || a == Appearance::Sepia;
+    switch (a) {
+    case Appearance::Light:
+    case Appearance::Sepia:
+    case Appearance::Mist:
+    case Appearance::Contrast:
+    case Appearance::Meadow:
+    case Appearance::Lilac:
+        return true;
+    case Appearance::Dark:
+    case Appearance::Midnight:
+    case Appearance::Ocean:
+    case Appearance::Forest:
+    case Appearance::Dusk:
+    case Appearance::Rose:
+        break;
+    }
+    return false;
 }
 
 struct Palette
@@ -323,8 +355,15 @@ QColor accentSoft();          ///< accent behind a selected row (13% dark / 19% 
 QColor accentSoft(Appearance a);
 void   setAccent(const QColor &c, Persist persist = Persist::Yes);
 
-/// The accent as *text*. On the light palette the raw amber is too pale to read, so
-/// this is a darkened variant; on the dark palette it is the accent itself.
+/// The accent as *text*. On a light palette the raw amber is too pale to read, so this is
+/// a darkened variant; on a dark palette it is the accent itself.
+///
+/// How far it darkens is measured rather than fixed — the value comes down one level at a
+/// time until the ink clears the scheme's own floor against both grounds it is drawn on,
+/// the window and the selection wash. That floor is 4.5:1 for eleven of the twelve and
+/// 7:1 for Contrast, which offers AAA and has to be held to it here too. An accent that
+/// already cleared its floor at the design's ×0.62 keeps exactly the colour it had; see
+/// textFloor() and the reasoning in theme.cpp.
 QColor accentInk();
 
 Notifier *notifier();

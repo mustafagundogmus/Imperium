@@ -8,13 +8,9 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QLocale>
-#include <QMessageBox>
+#include "dialog.h"
 #include <QPainter>
 #include <QPainterPath>
-// QMessageBox::addButton hands back a QPushButton*, so the type has to be complete for
-// the QAbstractButton* the comparison below is written against — the same pair
-// settingspage.cpp and mainwindow.cpp carry for their own dialogs.
-#include <QPushButton>
 
 #include <cmath>
 
@@ -35,15 +31,8 @@ constexpr qreal GapToButton = 16.0;
 void say(QWidget *parent, const QString &text, const QString &informative,
          const QString &details)
 {
-    QMessageBox box(parent);
-    box.setWindowTitle(QCoreApplication::applicationName());
-    box.setIcon(QMessageBox::NoIcon);
-    box.setText(text);
-    box.setInformativeText(informative);
-    if (!details.isEmpty())
-        box.setDetailedText(details);
-    box.addButton(Locale::tr(QStringLiteral("apply.close")), QMessageBox::AcceptRole);
-    box.exec();
+    Dialog::inform(parent, text, informative,
+                   Locale::tr(QStringLiteral("apply.close")), details);
 }
 
 } // namespace
@@ -81,30 +70,22 @@ void UpdateDialog::offer(Updater *updater, const Updater::Release &release, QWid
         return;
     }
 
-    QMessageBox box(parent);
-    box.setWindowTitle(QCoreApplication::applicationName());
-    box.setIcon(QMessageBox::NoIcon);
-    box.setText(title);
     // What is about to happen, then what the verification proves and what it does not.
     // The honest limit of a checksum belongs here, before the user agrees, rather than
-    // next to a checkmark afterwards where it would read as reassurance.
-    box.setInformativeText(Locale::tr(QStringLiteral("update.offer.body"))
-                               .arg(QCoreApplication::applicationVersion())
-                           + QStringLiteral("\n\n")
-                           + Locale::tr(QStringLiteral("update.proof")));
-    // Not a formality, exactly as in ActionPage::confirmAndRun: the whole release note is
-    // here, so a user who wants to know what changed can read it instead of taking the
-    // version number on trust.
-    box.setDetailedText(details);
+    // next to a checkmark afterwards where it would read as reassurance. The last
+    // argument is the whole release note, exactly as in ActionPage::confirmAndRun: a user
+    // who wants to know what changed can read it instead of taking the version on trust.
+    // "Şimdilik kalsın" is the same wording the elevation dialog uses for "not now".
+    const bool go = Dialog::confirm(
+        parent, title,
+        Locale::tr(QStringLiteral("update.offer.body"))
+                .arg(QCoreApplication::applicationVersion())
+            + QStringLiteral("\n\n") + Locale::tr(QStringLiteral("update.proof")),
+        Locale::tr(QStringLiteral("update.offer.go")),
+        Locale::tr(QStringLiteral("mw.elevate.later")),
+        details);
 
-    QPushButton *go = box.addButton(Locale::tr(QStringLiteral("update.offer.go")),
-                                    QMessageBox::AcceptRole);
-    // "Şimdilik kalsın" — the same words the elevation dialog already uses to mean "not
-    // now, and do not do anything".
-    box.addButton(Locale::tr(QStringLiteral("mw.elevate.later")), QMessageBox::RejectRole);
-    box.exec();
-
-    if (box.clickedButton() != go)
+    if (!go)
         return;
 
     // Parented so it centres on the window and dies with it; not WA_DeleteOnClose,

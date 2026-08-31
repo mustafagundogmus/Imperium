@@ -19,6 +19,8 @@
 #include "views/settingspage.h"
 #include "views/statusbar.h"
 #include "widgets/applyoverlay.h"
+#include "widgets/dialog.h"
+#include "widgets/splashscreen.h"
 #include "widgets/updatedialog.h"
 #include "views/titlebar.h"
 #include "views/tilauncherpage.h"
@@ -27,7 +29,6 @@
 #include "widgets/smoothscrollarea.h"
 
 #include <QCoreApplication>
-#include <QMessageBox>
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QShortcut>
@@ -55,12 +56,21 @@ MainWindow::MainWindow(QWidget *parent)
 {
     setWindowTitle(QCoreApplication::applicationName());
 
+    // Each of these is a stage the splash names while it runs, and each call repaints it.
+    // Before 0.12.0 the whole constructor ran with the event loop untouched, so the card
+    // froze on its first frame — and on a machine where one of these stages takes tens of
+    // seconds, a frozen splash is indistinguishable from a hung application. Naming them
+    // also means a stall can be reported by whoever hits it: the card says which one.
+    Splash::report(QStringLiteral("splash.stage.catalog"));
     m_engine = new TweakEngine(this);
     m_state = new AppState(m_engine, this);
+
+    Splash::report(QStringLiteral("splash.stage.facts"));
     m_facts = SysInfo::collect();
     m_scannedAt = QDateTime::currentDateTime();
     m_monitor = new SystemMonitor(this);
 
+    Splash::report(QStringLiteral("splash.stage.ui"));
     buildUi();
     wire();
 
@@ -108,6 +118,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_overview->setFacts(m_facts);
     m_monitor->start();
 
+    Splash::report(QStringLiteral("splash.stage.state"));
     refreshView();
     refreshCounters();
 
@@ -687,16 +698,13 @@ void MainWindow::onApply()
     // promises never appeared — Uygula went straight to the writes whichever way it was
     // set. It defaults to on, which is why this is the path most users were missing.
     if (Settings::instance().confirmBeforeApply()) {
-        QMessageBox box(this);
-        box.setWindowTitle(QCoreApplication::applicationName());
-        box.setIcon(QMessageBox::NoIcon);
-        box.setText(Locale::tr(QStringLiteral("mw.confirm.title")).arg(m_state->pendingCount()));
-        box.setInformativeText(Locale::tr(QStringLiteral("mw.confirm.body")));
-        QAbstractButton *go = box.addButton(Locale::tr(QStringLiteral("mw.confirm.apply")),
-                                            QMessageBox::AcceptRole);
-        box.addButton(Locale::tr(QStringLiteral("mw.confirm.cancel")), QMessageBox::RejectRole);
-        box.exec();
-        if (box.clickedButton() != go)
+        const bool go = Dialog::confirm(
+            this,
+            Locale::tr(QStringLiteral("mw.confirm.title")).arg(m_state->pendingCount()),
+            Locale::tr(QStringLiteral("mw.confirm.body")),
+            Locale::tr(QStringLiteral("mw.confirm.apply")),
+            Locale::tr(QStringLiteral("mw.confirm.cancel")));
+        if (!go)
             return;
     }
 
@@ -721,17 +729,14 @@ void MainWindow::onApplyFinished(int succeeded, int failed, bool elevationRequir
 
     if (report.elevationRequired && !TweakEngine::isElevated()) {
         // These tweaks live outside HKCU, so they cannot be written by a standard token.
-        QMessageBox box(this);
-        box.setWindowTitle(QCoreApplication::applicationName());
-        box.setIcon(QMessageBox::NoIcon);
-        box.setText(Locale::tr(QStringLiteral("mw.elevate.title")).arg(report.failed));
-        box.setInformativeText(Locale::tr(QStringLiteral("mw.elevate.body")));
-        QAbstractButton *restart = box.addButton(Locale::tr(QStringLiteral("mw.elevate.restart")),
-                                                 QMessageBox::AcceptRole);
-        box.addButton(Locale::tr(QStringLiteral("mw.elevate.later")), QMessageBox::RejectRole);
-        box.exec();
+        const bool restart = Dialog::confirm(
+            this,
+            Locale::tr(QStringLiteral("mw.elevate.title")).arg(report.failed),
+            Locale::tr(QStringLiteral("mw.elevate.body")),
+            Locale::tr(QStringLiteral("mw.elevate.restart")),
+            Locale::tr(QStringLiteral("mw.elevate.later")));
 
-        if (box.clickedButton() == restart) {
+        if (restart) {
             m_state->stashPending();
             if (TweakEngine::relaunchElevated())
                 close();

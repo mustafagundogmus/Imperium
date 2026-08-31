@@ -4,6 +4,144 @@ Bu dosya sürümler arasındaki dikkate değer değişiklikleri listeler.
 Biçim [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) temellidir ve
 proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
+## [0.12.0] — 2026-08-31
+
+### Eklendi
+
+#### Uygulamanın kendi ileti kutusu
+
+`QMessageBox` uygulamadaki tek yabancı yüzeydi: Windows'un kendi pencere çerçevesini, kendi
+başlık çubuğunu, kendi grisini ve kendi düğme ölçülerini getiriyordu. Çerçevesiz, temalı ve
+on dilli bir uygulamada bu, araya giren başka bir program gibi okunuyordu — ve temayı takip
+edemediği için açık paletlerde sistem ne diyorsa o kalıyordu.
+
+Yeni `Dialog` tasarımın kendi sözlüğüyle çiziliyor: kart `ApplyOverlay`'in kartı (Tile zemin,
+TileBorder saç çizgisi, ControlRadius köşeler, Window renginde perde), başlık
+`Font::blockTitle()`, gövde `Font::tweakDesc()` ve **kırpılmıyor, sarılıyor** — bir iletişim
+kutusu metnin tam okunması gereken tek yerdir. Düğmeler `PillButton`: kabul için Accent,
+vazgeçmek için Ghost.
+
+Ayrıntı paneli QMessageBox'ınkinden iyi: eylem betiği tek aralıklı bir iç panelde duruyor ve
+**seçilip kopyalanabiliyor**. Panel her zaman tam satır yüksekliğinde — yarım satır, "devamı
+var" değil, bir çizim hatası gibi okunur. Satır yüksekliği font metriğinden değil, o satırı
+çizecek olan `QPlainTextDocumentLayout::blockBoundingRect()`'ten alınıyor; font metriği bir
+piksel eksikti ve dokuz satırda bu tam bir satır ediyordu.
+
+Escape ve perdeye tıklamak vazgeçiyor, Return kabul ediyor, kart sürüklenebiliyor. Sekiz
+çağrı yerinin hepsi geçti; kodda `QMessageBox` kalmadı.
+
+#### Dört açık tema daha
+
+Sekiz temanın yalnızca ikisi açıktı. Şimdi altı: **Sis** (kısılmış), **Yüksek karşıtlık**
+(AAA, 7:1), **Çayır** (yeşil) ve **Leylak** (mor). Tema anahtarı on iki kartı 6×2 çiziyor —
+dört eklendi çünkü on iki, `flexColumns`'un inebileceği her sütun sayısına (12, 6, 4, 3, 2, 1)
+tam bölünüyor; on bir, altı şeklin dördünde tırtıklı bir son satır bırakırdı.
+
+#### Yirmi üç yeni tweak
+
+Recall'ı cihazdan kaldırma, uygulama kullanım verisi toplayıcıları (24H2'nin beşi birden),
+cihazlar arası pano, OneSettings, çökme raporundaki bellek içeriği, NCSI sınama isteği, gizli
+ağ paylaşımları, kilit ekranı pencere öğeleri, Copilot tuşunun hedefi, sudo kipi, düzenli
+kayıt defteri yedeği ve diğerleri. Katalog 390'dan 411 satıra çıktı.
+
+Bedeli olan satırın açıklaması **bedelle başlıyor**: Recall satırı "diskte duran anlık
+görüntüler silinir ve geri gelmez" diye, kayıt defteri yedeği "SAM ve SECURITY kovanlarının
+şifrelenmemiş birer kopyası diskte durur" diye açılıyor. Adlar da mekanizmayı değil etkiyi
+anlatıyor — "OneSettings indirmeleri" değil, **"Windows'un kendini uzaktan ayarlaması"**.
+
+### Düzeltildi
+
+#### Açılışta otuz saniyelik donma
+
+Bazı makinelerde uygulama anında açılıyor, bazılarında otuz saniye donuyordu. Sebep
+`QStandardPaths::findExecutable("powershell")`: bu fonksiyon PATH'teki **her dizini** tek tek
+yokluyor, ve PATH'inde erişilemeyen bir eşlenmiş ağ sürücüsü olan makinede her yoklama SMB
+zaman aşımına kadar bloke oluyor. İki yerde, ikisi de UI thread'inde, pencere çizilmeden önce.
+PATH'i tamamen yerel olan makinede maliyeti sıfır — bu yüzden geliştiricinin makinesinde hiç
+görünmedi.
+
+`ActionEngine` de `powershell.exe`'yi çıplak adla veriyordu; QProcess onu da PATH'ten çözüyor,
+üstelik yönetici yetkisiyle çalışan bir süreçte, ardından ona bir betik vermek üzere. Üçü de
+projenin daha önce `mmc.exe`, `control.exe`, `tbs.dll` ve `netapi32.dll` için kapattığı açığın
+kaçmış örnekleriydi.
+
+Yeni `src/winpaths.{h,cpp}`: System32 `GetSystemDirectoryW`'den alınıyor ve PowerShell sabit,
+mutlak yoluyla çözülüyor. Bulunamazsa çıplak ada düşmüyor, temiz hata veriyor.
+`godmodepage.cpp`'deki birebir aynı ikinci çözücü silindi.
+
+#### Donmuş açılış ekranı
+
+`splashscreen.h` "splash çizerken ana pencere arkada kuruluyor" diyordu; doğru değildi.
+`show()` ile `finish()` arasında olay döngüsüne hiç sıra gelmiyordu, yani kart bir kez çizilip
+constructor bitene kadar donuyordu. Yavaş bir makinede kullanıcının gördüğü şey, donmuş bir
+uygulamaydı.
+
+`Splash::report()` eklendi. Başlangıç işi beş aşamayı adlandırıyor — **Katalog okunuyor**,
+**Hizmetler taranıyor**, **Sistem bilgileri okunuyor**, **Arayüz hazırlanıyor**, **Ayarların
+durumu okunuyor** — ve her çağrı kartı yeniden çizip döngüye bir tur veriyor. Animasyon artık
+gerçekten akıyor, ve kartın alt satırı hangi aşamada olunduğunu yazıyor: takılan bir kullanıcı
+nerede takıldığını ekran görüntüsüyle söyleyebiliyor, hata ayıklama sürümü gerekmeden.
+
+#### Dört bozuk tweak
+
+**`perf-game-mmcss` dört değerden birine indi.** Microsoft'un kendi MMCSS belgesi `GPU Priority`
+ve `SFIO Priority` için "bu değer kullanılmıyor" diyor, `Priority` ise Yüksek sınıfta her
+hâlükârda 2 sayılıyor — üstelik satır `GPU Priority`'yi `off='8' on='8'` yazıyordu, yani kendi
+verisine göre bile bir şey yapmıyordu. Geriye gerçekten okunan tek değer kaldı.
+
+**`perf-vrr` ve `perf-autohdr` kaldırıldı.** İkisi de tek bir REG_SZ içindeki *belirteçlerdi*:
+`DirectXUserGlobalSettings`, `AutoHDREnable=1;VRROptimizeEnable=1;...` biçiminde. `perf-autohdr`
+bir belirteç yükünü değer *adı* sanıp `AutoHDREnable` adlı bir değer yazıyordu — Windows böyle
+bir değeri hiç okumaz. `perf-vrr` ise doğru değere yazıyor ama dizenin **tamamını** eziyordu:
+çok ekran kartlı dizüstülerde kullanıcının tercih ettiği GPU seçimi (`HighPerfAdapter`) dâhil
+her belirteç siliniyordu. Katalogun `reg` şekli oku-değiştir-yaz yapamadığı için satır doğru
+hâle getirilemez; `sec-powershell-v2` emsaliyle aynı karar verildi. İkisi de Ayarlar > Sistem >
+Ekran > Grafikler altında duruyor.
+
+**`perf-hpet-timer`'ın adı ve açıklaması değişti.** Değer doğruydu; anlatımı değildi. Bu bir
+platform zamanlayıcısı veya HPET ayarı değil: 2004'te gelen süreç başına yalıtımı kaldırıyor,
+yani `timeBeginPeriod` çağıran tek bir uygulama bütün makinenin zamanlayıcısını hızlandırıyor.
+
+#### Kontrast: on iki paletin hepsi ölçüldü
+
+Açık ve Sepya paletleri dosyanın kendi 4,5:1 iddiasını tutmuyordu — Açık'ta `textFainter`
+2,18, Sepya'da 2,20. Üç koyu palet de aynı belirteçte ve aynı zeminde kaçırıyordu: Koyu'nun
+belgelenmiş 4,52'si yalnız pencere değeri, sayının asıl çizildiği kart üzerinde 4,34.
+
+Her metin belirteci artık **gerçekten üzerine çizildiği zeminde** ölçülüyor, çizim koduna
+bakılarak; `iconStroke`, `textMono` ve `textMuted` için dosyanın kendi tablosu yanlıştı.
+Yalnız metin renkleri oynadı — yüzeyler, kenarlıklar, anahtarlar ve `scrollThumb` tek piksel
+değişmedi. Rakamı yazılı olmayan beş şemaya da 55 satır ek açıklama kondu, böylece on iki
+paletin tamamı denetlenebilir.
+
+`accentInk()` de artık her şemanın kendi tabanına çözüyor. Tabanı 4,5 sabitiydi; Yüksek
+karşıtlık teması AAA vaat edip seçili kategori etiketini 4,55-5,92 arasında bir mürekkeple
+çiziyordu.
+
+### Değiştirildi
+
+#### Doğrulayıcıda gerçek bir delik kapandı
+
+46 çeviri anahtarı eksikken `tools/check-data.py` yemyeşil geçiyordu: check 8 `tweak.` önekini
+"çalışma zamanı öneki" diye muaf tutuyor, check 6 ise yalnız *var olan* anahtarların eksiksiz
+olduğunu denetliyor — sahip olmadığı bir anahtar hakkında hiçbir şey söylemiyor.
+
+Yeni **check 12** her katalog satırının `name` ve `desc` anahtarını, ve içinde kelime geçen her
+seçenek etiketinin `opt.` anahtarını şart koşuyor. Kelime ölçütü üç harf: "50 MB" ve "22H2" her
+dilde aynı okunur ve anahtar istemez, "5 saniye" ile "1 dakika" ister.
+
+Buna bağlı olarak `TweakOption::displayLabel()` rakamla başlayan etiketleri de artık arıyor.
+Erken dönüş bir aralık kaydırıcısının "512 MB"ı için yazılmıştı; ama aynı kural "5 saniye"yi de
+yakalıyor ve onu on dilde Türkçe bırakıyordu.
+
+#### Çeviriler
+
+23 yeni satır, onarılan 2 satır, 15 seçenek etiketi ve 4 tema adı — on dilde. Onarılan iki
+satırın **İngilizce açıklaması hâlâ eski yanlışı taşıyordu**: `perf-game-mmcss` için "GPU ve CPU
+önceliğini birlikte yükseltir", yani onarımın kaldırdığı iddianın ta kendisi.
+
+---
+
 ## [0.11.0] — 2026-08-31
 
 ### Eklendi
@@ -1083,6 +1221,7 @@ satırdan geniş bir değer sol kenardan taşarak çiziliyordu.
 
 ---
 
+[0.12.0]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.12.0
 [0.11.0]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.11.0
 [0.10.0]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.10.0
 [0.9.10]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.10

@@ -21,12 +21,23 @@ constexpr qreal Gap = 10.0;
 constexpr qreal RingOffset = 3.0;   // the selection ring sits this far outside the card
 constexpr qreal LabelGap = 5.0;
 
+// The gallery's own order, which is Appearance's. The four light schemes are last for the
+// reason given on the enum: appending leaves every card a user has already learnt the
+// position of exactly where it was.
 const Theme::Appearance Order[] = {
     Theme::Appearance::Dark,   Theme::Appearance::Light,
     Theme::Appearance::Midnight, Theme::Appearance::Sepia,
     Theme::Appearance::Ocean,  Theme::Appearance::Forest,
-    Theme::Appearance::Dusk,   Theme::Appearance::Rose};
+    Theme::Appearance::Dusk,   Theme::Appearance::Rose,
+    Theme::Appearance::Mist,   Theme::Appearance::Contrast,
+    Theme::Appearance::Meadow, Theme::Appearance::Lilac};
 constexpr int Count = int(std::size(Order));
+// Every scheme has a card, and the enum is what says how many there are. Order[] is a
+// separate list that -Wswitch cannot check, so a scheme added to the enum and forgotten
+// here would simply be unreachable from the settings page — visible only to somebody who
+// counted the cards.
+static_assert(Count == Theme::AppearanceCount,
+              "every Appearance needs a card in Order[]");
 
 QString labelFor(Theme::Appearance a)
 {
@@ -38,6 +49,10 @@ QString labelFor(Theme::Appearance a)
     case Theme::Appearance::Forest:   return Locale::tr(QStringLiteral("theme.forest"));
     case Theme::Appearance::Dusk:     return Locale::tr(QStringLiteral("theme.dusk"));
     case Theme::Appearance::Rose:     return Locale::tr(QStringLiteral("theme.rose"));
+    case Theme::Appearance::Mist:     return Locale::tr(QStringLiteral("theme.mist"));
+    case Theme::Appearance::Contrast: return Locale::tr(QStringLiteral("theme.contrast"));
+    case Theme::Appearance::Meadow:   return Locale::tr(QStringLiteral("theme.meadow"));
+    case Theme::Appearance::Lilac:    return Locale::tr(QStringLiteral("theme.lilac"));
     case Theme::Appearance::Dark:     break;
     }
     return Locale::tr(QStringLiteral("theme.dark"));
@@ -91,9 +106,14 @@ int ThemeSwitch::columns() const
 
 QSize ThemeSwitch::sizeHint() const
 {
-    // The shape it would rather have: all eight palettes on one line, which the settings
-    // page's content column has room for at every interface scale. A narrower container
-    // wraps instead of clipping.
+    // The shape it would rather have: all twelve palettes on one line. Nothing but a
+    // maximised window has room for that any more — twelve cards want 1124px and the
+    // settings page's content column is 970 at the design's own 1240px width — so in
+    // practice this is the hint a wider container is allowed to honour, and everywhere
+    // else heightForWidth() wraps rather than clipping. It is deliberately not narrowed to
+    // what the settings page happens to give: a maximised window does have the room, and a
+    // gallery that stays two rows wide on a 1920px desktop for no reason is the bug the
+    // flexColumns rebalance exists to avoid.
     return {qCeil(Count * CardW + (Count - 1) * Gap + 2 * RingOffset),
             qCeil(cellHeight() + 2 * RingOffset)};
 }
@@ -247,10 +267,17 @@ void ThemeSwitch::paintEvent(QPaintEvent *)
                               7.0, 7.0);
         }
 
-        // Elided to the card it belongs to. No translation of the eight names is anywhere
-        // near 84px even at the largest text size — the widest measured is the French
-        // "Crépuscule" — but a label that outgrew its card would run under its neighbour
-        // rather than stop, and a grid whose labels overlap is worse than one that trims.
+        // Elided to the card it belongs to, which matters more than it looks. Measuring
+        // all twelve names in all ten languages across the six faces and the four text
+        // sizes, the widest is the Arabic "منتصف الليل" — midnight — at 83.0px in Open
+        // Sans at the largest size, inside an 84px card. One pixel. The four added last
+        // are nowhere near it: the widest of them is "Contraste" at 60px, so they cost
+        // nothing here, but the claim this comment used to make — that no label comes
+        // close, the widest being the French "Crépuscule" — was wrong on both counts and
+        // is worth not repeating. A thirteenth name a little longer than midnight's will
+        // elide, and eliding is the right failure: a label that outgrew its card would run
+        // under its neighbour rather than stop, and a grid whose labels overlap is worse
+        // than one that trims.
         const QRectF labelBox(card.left(), card.bottom() + LabelGap, card.width(), labelLine);
         Css::drawText(&p, labelBox, Css::baseline(labelFont, labelBox.top(), labelLine), labelFont,
                       selected ? Color::TextPrimary() : Color::TextFaint(),

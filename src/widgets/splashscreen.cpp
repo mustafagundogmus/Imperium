@@ -46,6 +46,11 @@ QPainterPath diamond(const QPointF &centre, qreal radius)
     return path;
 }
 
+/// The splash currently on screen, or nullptr. A raw pointer rather than anything owning:
+/// main() creates one on the stack of its own scope and deletes it, and this only has to
+/// be right for the window between show() and close().
+SplashScreen *g_active = nullptr;
+
 } // namespace
 
 SplashScreen::SplashScreen(QWidget *parent)
@@ -54,6 +59,8 @@ SplashScreen::SplashScreen(QWidget *parent)
     setAttribute(Qt::WA_TranslucentBackground, true);
     setAttribute(Qt::WA_NoSystemBackground, true);
     setFixedSize(CardW + 2 * Margin, CardH + 2 * Margin);
+
+    g_active = this;
 
     if (const QScreen *screen = QGuiApplication::primaryScreen()) {
         const QRect available = screen->availableGeometry();
@@ -93,9 +100,34 @@ void SplashScreen::finish(QWidget *window)
     }
 
     m_timer->stop();
+    // Cleared before the window is shown rather than in the destructor: everything after
+    // this point is ordinary running, and a report() arriving from a stage that overran
+    // must find nothing rather than a card that is already closing.
+    g_active = nullptr;
     if (window)
         window->show();
     close();
+}
+
+namespace Splash {
+
+void report(const QString &key)
+{
+    if (!g_active)
+        return;
+    g_active->noteStage(key);
+}
+
+} // namespace Splash
+
+void SplashScreen::noteStage(const QString &key)
+{
+    m_stage = key;
+    update();
+    // One turn of the loop, enough to get the repaint out and keep the window manager
+    // from marking the process unresponsive. ExcludeUserInputEvents because the main
+    // window behind the card is still being wired up.
+    QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 }
 
 void SplashScreen::paintEvent(QPaintEvent *)
@@ -197,9 +229,15 @@ void SplashScreen::paintEvent(QPaintEvent *)
         const qreal line = Css::normalLine(font);
         QColor ink = Color::TextFaint();
         ink.setAlphaF(note);
+        // The stage in progress while the work is reporting one, the tagline before the
+        // first report and after the last. Resolved here rather than stored as text so a
+        // language change mid-startup repaints in the new language.
+        const QString caption = m_stage.isEmpty()
+                                    ? Locale::tr(QStringLiteral("splash.tagline"))
+                                    : Locale::tr(m_stage);
         Css::drawText(&p, QRectF(card.left(), card.top() + 150, card.width(), line),
                       Css::baseline(font, card.top() + 150, line), font, ink,
-                      Locale::tr(QStringLiteral("splash.tagline")), Qt::AlignHCenter);
+                      caption, Qt::AlignHCenter);
     }
 
     p.restore();

@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "registry.h"
+#include "winpaths.h"
 
 #include <QDateTime>
 #include <QDir>
@@ -1258,7 +1259,12 @@ void Probe::start()
     m_started = true;
 
 #ifdef Q_OS_WIN
-    const QString powershell = QStandardPaths::findExecutable(QStringLiteral("powershell"));
+    // Absolute, never a PATH search. This runs on the UI thread while the window is
+    // still being built, and findExecutable() walks every PATH entry stat-ing a candidate
+    // — on a machine whose PATH holds an unreachable mapped drive that blocks for the SMB
+    // timeout with the splash frozen behind it. See winpaths.h; the security half of the
+    // argument is the same one that pinned tbs.dll and netapi32.dll above.
+    const QString powershell = WinPaths::powershell();
     if (powershell.isEmpty()) {
         Q_EMIT resolved({}, {}, {});
         return;

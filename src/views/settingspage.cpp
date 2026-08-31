@@ -25,12 +25,8 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QHBoxLayout>
-#include <QMessageBox>
+#include "../widgets/dialog.h"
 #include <QProcess>
-// QMessageBox::addButton hands back a QPushButton*, so the type has to be complete for the
-// QAbstractButton* the comparison below is written against — the same pair mainwindow.cpp
-// carries for the two dialogs it puts up.
-#include <QPushButton>
 #include <QStandardPaths>
 #include <QUrl>
 #include <QVBoxLayout>
@@ -483,17 +479,13 @@ void SettingsPage::onImportPreset()
     // that one" twice is not a finer-grained choice, only a longer one. The tweak positions
     // are queued either way; this dialog can only decline the preferences.
     if (result.appearance.present || result.settings.present) {
-        QMessageBox box(this);
-        box.setWindowTitle(QCoreApplication::applicationName());
-        box.setIcon(QMessageBox::NoIcon);
-        box.setText(Locale::tr(QStringLiteral("settings.preset.prefs.title")));
-        box.setInformativeText(Locale::tr(QStringLiteral("settings.preset.prefs.body")));
-        QAbstractButton *adopt = box.addButton(Locale::tr(QStringLiteral("settings.preset.prefs.apply")),
-                                               QMessageBox::AcceptRole);
-        box.addButton(Locale::tr(QStringLiteral("settings.preset.prefs.keep")),
-                      QMessageBox::RejectRole);
-        box.exec();
-        if (box.clickedButton() == adopt) {
+        const bool adopt = Dialog::confirm(
+            this,
+            Locale::tr(QStringLiteral("settings.preset.prefs.title")),
+            Locale::tr(QStringLiteral("settings.preset.prefs.body")),
+            Locale::tr(QStringLiteral("settings.preset.prefs.apply")),
+            Locale::tr(QStringLiteral("settings.preset.prefs.keep")));
+        if (adopt) {
             // The four switches first. applyAppearance() finishes with the language, and
             // a language change tears this page down and builds it again through
             // rebuild() — which reads Settings::instance() to decide where the smooth

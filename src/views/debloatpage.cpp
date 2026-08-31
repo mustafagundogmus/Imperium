@@ -11,7 +11,7 @@
 #include <QCoreApplication>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QMessageBox>
+#include "../widgets/dialog.h"
 #include <QPushButton>
 #include <QVBoxLayout>
 
@@ -330,19 +330,14 @@ void DebloatPage::runRemoval(const QStringList &ids, const QStringList &packageN
     action.note = Locale::tr(QStringLiteral("debloat.confirm.note"));
     action.run = DebloatActions::removalScript(packageNames).split(QLatin1Char('\n'));
 
-    QMessageBox box(this);
-    box.setWindowTitle(QCoreApplication::applicationName());
-    box.setIcon(QMessageBox::NoIcon);
-    box.setText(action.name);
-    box.setInformativeText(action.desc + Locale::tr(QStringLiteral("actions.confirm.irreversible"))
-                           + QStringLiteral("\n") + action.note);
-    box.setDetailedText(action.script());
-
-    QPushButton *go =
-        box.addButton(Locale::tr(QStringLiteral("actions.run")), QMessageBox::AcceptRole);
-    box.addButton(Locale::tr(QStringLiteral("actions.cancel")), QMessageBox::RejectRole);
-    box.exec();
-    if (box.clickedButton() != go)
+    const bool go = Dialog::confirm(
+        this, action.name,
+        action.desc + Locale::tr(QStringLiteral("actions.confirm.irreversible"))
+            + QStringLiteral("\n") + action.note,
+        Locale::tr(QStringLiteral("actions.run")),
+        Locale::tr(QStringLiteral("actions.cancel")),
+        action.script());
+    if (!go)
         return;
 
     m_pendingIds = ids;

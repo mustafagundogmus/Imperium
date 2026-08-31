@@ -135,6 +135,50 @@
        "on": false
       },
       {
+       "id": "sys-notification-duration",
+       "name": "Bildirimin ekranda kalma süresi",
+       "desc": "Bir bildirim baloncuğunun kapanmadan önce ekranda kalacağı süre. Uzun sürelerde bildirim sağ alt köşeyi işgal eder ve altındaki pencereye tıklanamaz; kendi süresini dayatan bildirimler (gelen arama, alarm) bu değeri yok sayar. Ayarlar > Erişilebilirlik > Görsel efektler'deki açılır listeyle aynı değerdir. Oturumu kapatıp açmak gerekir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Accessibility",
+         "value": "MessageDuration",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "5 saniye",
+         "data": "5"
+        },
+        {
+         "label": "7 saniye",
+         "data": "7"
+        },
+        {
+         "label": "15 saniye",
+         "data": "15"
+        },
+        {
+         "label": "30 saniye",
+         "data": "30"
+        },
+        {
+         "label": "1 dakika",
+         "data": "60"
+        },
+        {
+         "label": "5 dakika",
+         "data": "300"
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
+      },
+      {
        "id": "sys-08-7748",
        "name": "USB bağlantı uyarıları",
        "desc": "USB aygıtlarında sorun olduğunda çıkan bildirimleri engeller.",
@@ -289,6 +333,56 @@
          "off": "DELETE"
         }
        ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "ai-recall-remove",
+       "name": "Recall bileşenini cihazdan kaldır",
+       "desc": "Diskte duran anlık görüntüler silinir ve geri gelmez. Bu ilke Recall'ı devre dışı bırakmakla kalmaz, bileşenin bitlerini cihazdan kaldırır; kayıt defteri yazımını geri alsanız da silinen görüntüler dönmez. Üstteki satır yalnızca yeni görüntü alınmasını durdurur, bu satır kaldırır. Yeniden başlatma gerekir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsAI",
+         "value": "AllowRecallEnablement",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false,
+       "minBuild": 26100
+      },
+      {
+       "id": "sys-copilot-key",
+       "name": "Copilot tuşunun açtığı uygulama",
+       "desc": "Klavyesinde fiziksel Copilot tuşu olmayan makinede hiçbir şey yapmaz. Tuşun Copilot yerine hangi uygulamayı açacağını belirler. İlke yalnızca paketli uygulamaların AUMID'ini kabul ettiği için buradaki iki hedef sabittir; başka bir uygulama için ilke düzenleyicisi gerekir. Oturumu kapatıp açmak gerekir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\CopilotKey",
+         "value": "SetCopilotHardwareKey",
+         "type": "SZ",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Varsayılan",
+         "data": "DELETE"
+        },
+        {
+         "label": "Terminal",
+         "data": "Microsoft.WindowsTerminal_8wekyb3d8bbwe!App"
+        },
+        {
+         "label": "Ayarlar",
+         "data": "windows.immersivecontrolpanel_cw5n1h2txyewy!microsoft.windows.immersivecontrolpanel"
+        }
+       ],
+       "default": 0,
        "applied": false,
        "on": false
       }
@@ -626,6 +720,55 @@
         "unit": "kademe",
         "default": 31
        },
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sys-shortcut-drive-search",
+       "name": "Bozuk kısayolda dosyayı arama",
+       "desc": "Hedefi bulunamayan bir kısayolda Windows'un bütün sürücüyü tarayıp dosyayı aramasını durdurur; onarım denemesi yerine doğrudan 'bulunamadı' iletisi gelir. Kısayollar kendini onarmayı bırakır — yalnız tam sürücü taraması iptal olur, aynı birim içindeki taşımalar NTFS nesne kimliğiyle hâlâ çözülür. Verinin yönü ADMX'te açıkça bildirilmiyor, şema varsayılanından geliyor. Gezgin yeniden başlamalıdır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+         "value": "NoResolveSearch",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "sys-foreground-lock",
+       "name": "Programların pencereyi öne zorlaması",
+       "desc": "Arka plandaki bir uygulamanın kendini öne almasına Windows'un ne kadar süre izin vereceği. 'İzin ver' konumunda arka plandaki uygulama siz yazarken odağı kapar ve tuş vuruşlarınızı — parola alanı dâhil — yutar; en yüksek konumda meşru 'öne gel' istekleri de (kurulum sihirbazı, gelen arama) reddedilir ve uygulama hiç açılmamış görünür. Kayıt defterindeki sayı yalnız oturum açılış tohumudur: SystemParametersInfo çağıran herhangi bir uygulama çalışan değeri değiştirebilir. Oturumu kapatıp açmak gerekir.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Control Panel\\Desktop",
+         "value": "ForegroundLockTimeout",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "İzin ver",
+         "data": "0"
+        },
+        {
+         "label": "Varsayılan",
+         "data": "200000"
+        },
+        {
+         "label": "Neredeyse hiçbir zaman",
+         "data": "2147483647"
+        }
+       ],
+       "default": 1,
        "applied": false,
        "on": false
       }
@@ -1529,6 +1672,23 @@
        ],
        "applied": false,
        "on": false
+      },
+      {
+       "id": "sys-console-beep",
+       "name": "Konsol zil sesi",
+       "desc": "Konsolun ve bazı iletişim kutularının çıkardığı zil sesini üreten beep sürücüsünü durdurur. Windows 7'den beri bu ses varsayılan ses aygıtına yönlendirilir, yani ses düzeyi ve sessize alma zaten onu etkiler — sürücüyü kapatmak sesi ayarın dışına çıkarır. ToggleKeys'in tuş basımını duyuran geri bildirimi de susar; erişilebilirlik için buna güveniyorsanız açmayın. Yeniden başlatma gerekir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\beep",
+         "value": "Start",
+         "type": "DWORD",
+         "on": "4",
+         "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
       }
      ]
     }
@@ -2214,6 +2374,31 @@
          "hive": "HKCU",
          "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
          "value": "DoNotShowFeedbackNotifications",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "upd-limit-diagnostic-data",
+       "name": "Çökme raporunda bellek içeriği",
+       "desc": "Bir çökmede gönderilen bellek dökümünü çekirdek özet dökümü ve kullanıcı modu önceliklendirme dökümüyle sınırlar, ek tanılama günlüklerinin toplanmasını durdurur. Yığın dökümü süreç belleğinin kendisidir; makinenin Microsoft'a gönderdiği en büyük nesne odur. Yalnızca tanılama verisi 'İsteğe bağlı' konumundayken bir şey değiştirir — bu kataloğun telemetri satırları makineyi zaten 'Gerekli'ye çektiği için bugün önleyici bir satırdır. Yeniden başlatma gerekir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+         "value": "LimitDumpCollection",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+         "value": "LimitDiagnosticLogCollection",
          "type": "DWORD",
          "on": "1",
          "off": "DELETE"
@@ -3253,6 +3438,90 @@
        ],
        "applied": false,
        "on": false
+      },
+      {
+       "id": "priv-app-device-inventory",
+       "name": "Uygulama kullanım verisi toplama",
+       "desc": "24H2 ile gelen beş ayrı envanter toplayıcısını kapatır: kurulum izleme, API örnekleme, uygulama ayak izi, yedeklenen uygulamalar için uyumluluk taraması ve gelen kutusu bağımlılık bileşeni. Değer adı DisableWin32AppBackup olsa da bu ilke yedeklemeyi durdurmaz, yalnızca yedeklenen uygulamaların uyumluluk taramasını kapatır. Bedeli yalnızca teşhis kaybıdır — beşinin de ADMX açıklaması bunları 'uyumluluk sorunlarını tanılamaya yardımcı olmak için' diye tanımlıyor. Kullanıcıya görünen hiçbir şey bozulmaz. Yeniden başlatma gerekir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+         "value": "DisableInstallTracing",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+         "value": "DisableAPISampling",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+         "value": "DisableApplicationFootprint",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+         "value": "DisableWin32AppBackup",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+         "value": "DisableApplicationInboxDependencyData",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false,
+       "minBuild": 26100
+      },
+      {
+       "id": "priv-cross-device-clipboard",
+       "name": "Cihazlar arası pano eşitlemesi",
+       "desc": "Kopyaladığınız içeriğin bulut üzerinden diğer cihazlarınıza gönderilmesini ilke ile engeller. Pano geçmişi satırı yalnızca Win+V'yi açar ve arkasındaki bu ikinci kapıyı kapatmaz; Microsoft hesabı açıkken kopyaladığınız her parola aksi hâlde yüklenebilir. Ayarlar'daki anahtar 'kuruluşunuz tarafından yönetiliyor' diye grileşir, yerel Win+V geçmişi ayrı bir değerdir ve etkilenmez. Değişiklik anında geçerlidir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+         "value": "AllowCrossDeviceClipboard",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "priv-onesettings-downloads",
+       "name": "Windows'un kendini uzaktan ayarlaması",
+       "desc": "Windows'un yapılandırma ayarlarını indirmek için düzenli aralıklarla bağlandığı OneSettings hizmetine artık hiç bağlanmamasını sağlar; Microsoft'un makinenin davranışını uzaktan ayarlayabildiği kanal kapanır. Karşılığında telemetri sıfıra çekilmişken bile sürüp giden bir dış bağlantı kesilir. Bu kanalın güvenlik durdurmalarını (safeguard hold) ve acil düzeltmeleri taşıdığı yaygın olarak öne sürülür, ama Microsoft'un kendi belgesi indirilen içeriği saymıyor — bu satır yalnızca bağlantının kesildiğini iddia eder. Yeniden başlatma gerekir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+         "value": "DisableOneSettingsDownloads",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
       }
      ]
     },
@@ -3617,6 +3886,23 @@
          "type": "DWORD",
          "on": "1",
          "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "priv-mrt-reporting",
+       "name": "Kötü amaçlı yazılım tarama raporu",
+       "desc": "Aylık MRT taramasının bulduğu bulaşma bilgisini Microsoft'a bildirmesini kapatır. Yerel tarama ve temizleme aynen sürer; kataloğun Defender/SpynetReporting satırı bu ayrı aracı kapsamıyor. Bildirimin hangi alanları taşıdığını Microsoft'un kendi belgesi saymıyor, bu satır da saymaz.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\MRT",
+         "value": "DontReportInfectionInformation",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
         }
        ],
        "applied": false,
@@ -4400,6 +4686,40 @@
        ],
        "applied": false,
        "on": false
+      },
+      {
+       "id": "net-font-providers",
+       "name": "Eksik yazı tipini internetten indirme",
+       "desc": "Windows'un eksik bir yazı tipini fs.microsoft.com'dan indirmesini kapatır; yalnızca yerel olarak yüklü yazı tipleri kullanılır. Yüklü olmayan alfabeler artık akmaz, ikame veya boş kutu olarak çizilir — özellikle CJK ve Hint alfabelerinde görünür. Tarayıcıdaki web yazı tipleri etkilenmez, Microsoft bunu açıkça belirtiyor. Kapalı konumu 1 yazmaz, değeri siler: yapılandırılmamış varsayılan Windows sürümüne göre değişiyor. Yeniden başlatma (ya da Font Cache hizmetini yeniden başlatmak) gerekir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+         "value": "EnableFontProviders",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "net-ncsi-probe",
+       "name": "Ağ bağlantısı sınama isteği (NCSI)",
+       "desc": "Görev çubuğunda kalıcı bir ünlem işareti kalır, otel ve kafe girişleri (captive portal) açılmaz, ağ durumunu Windows'a soran uygulamalar — Store, OneDrive, bazı yükleyiciler, bazı VPN kill-switch'leri — kendini çevrimdışı sanar. Karşılığında NCSI'nin etkin sınama isteği — boştaki makinenin düzenli, koşulsuz dış bağlantılarından biri — susar. Yalnız ilke değeri yazılır; sınamanın hedef adresleri NlaSvc altında düz metin durur ve neyin durduğu oradan okunabilir. Yeniden başlatma gerekir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\NetworkConnectivityStatusIndicator",
+         "value": "NoActiveProbe",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
       }
      ]
     },
@@ -4598,6 +4918,23 @@
          "type": "DWORD",
          "on": "1",
          "off": "0"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "net-admin-shares",
+       "name": "Gizli ağ paylaşımları (C$, ADMIN$)",
+       "desc": "PsExec, uzaktan Bilgisayar Yönetimi ve çoğu yedekleme/RMM ajanı çalışmayı bırakır. Windows'un her açılışta kendiliğinden oluşturduğu C$ ve ADMIN$ gizli paylaşımlarını kapatır. Kanıt notu: değer adı yapılandırma yüzeyinde (Set-SmbServerConfiguration) doğrulandı, paylaşımı oluşturan bileşende değil — yani ayarın okunduğu kesin, etkisi ölçülmedi. Yeniden başlatma gerekir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\LanmanServer\\Parameters",
+         "value": "AutoShareWks",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
         }
        ],
        "applied": false,
@@ -5087,6 +5424,38 @@
        ],
        "applied": false,
        "on": false
+      },
+      {
+       "id": "boot-lockscreen-widgets",
+       "name": "Kilit ekranı pencere öğeleri",
+       "desc": "Kilit ekranındaki widget şeridini ilke ile yönetir; gizlediğinizde Ayarlar'daki denetim de grileşir. Üç konum ayrı duruyor çünkü ilkenin verisi terstir ve kanıt kendi içinde çelişiyor: ADMX ve ADML 'Etkin'i 0, 'Devre Dışı'yı 1 olarak yazıyor, Policy CSP sayfası ise varsayılanı 0 gösterip yapılandırılmamış durumda widget'ların göründüğünü söylüyor. Yapılandırılmamış konum Windows'un kendi hâlidir. Oturumu kapatıp açmak gerekir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Dsh",
+         "value": "DisableWidgetsOnLockScreen",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Varsayılan",
+         "data": "DELETE"
+        },
+        {
+         "label": "Göster",
+         "data": "1"
+        },
+        {
+         "label": "Gizle",
+         "data": "0"
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false
       }
      ]
     },
@@ -5190,6 +5559,23 @@
          "type": "DWORD",
          "on": "0",
          "off": "15"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "boot-ctrl-alt-del",
+       "name": "Oturum açarken Ctrl+Alt+Del iste",
+       "desc": "Parola sorulmadan önce Ctrl+Alt+Del basılmasını zorunlu kılar; sahte oturum açma ekranlarına karşı klasik önlem. Otomatik oturum açma çalışmaz, sanal makine ve KVM konsolunda tuş birleşimi ana makinede yakalanabilir. Kapalı konumu 0 yazmaz, değeri siler: Microsoft'un kendi notu, bu ilkeyi geri almak için değeri 'Tanımlanmadı' yapmanın yetmediğini, kayıt defteri değerinin kaldırılması gerektiğini söylüyor.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+         "value": "DisableCAD",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
         }
        ],
        "applied": false,
@@ -5603,6 +5989,41 @@
        ],
        "applied": false,
        "on": false
+      },
+      {
+       "id": "exp-numeric-sort",
+       "name": "Dosya adlarında sayısal sıralamayı kapat",
+       "desc": "Gezgin'in dosya adlarını sayısal değerine göre değil, rakam rakam sıralamasını sağlar (111 < 22 < 3) — komut satırının ve çoğu geliştirici aracının sırası. Windows'un varsayılanı bunun tersidir (3 < 22 < 111), yani bu satır sayısal sıralamayı açmaz, kapatır. Ayar kullanıcı geneli çalışır, klasör başına seçilemez: sürüm numarası taşıyan adlarla çalışanlar için doğru, tarih veya bölüm numarası taşıyanlar için açıkça kötüdür, çünkü img2.png artık img10.png'den sonra gelir. Çoğu kullanıcı Windows'un doğal sıralamasını tercih eder. Gezgin yeniden başlamalıdır.",
+       "reg": [
+        {
+         "hive": "HKCU",
+         "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+         "value": "NoStrCmpLogical",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "exp-prelaunch",
+       "name": "Gezgin'i arka planda hazır tutma",
+       "desc": "Windows'un arka planda hazırda bir Gezgin süreci tutmasını kapatır. Karşılığında ilk pencere biraz daha geç açılabilir; modern bir masaüstünde iki taraf da hissedilmez. Windows 11 22H2'den beri var olan belgeli bir ilkedir, ancak ADMX açıklaması yalnızca özelliğin ne olduğunu anlatıyor — kapatmanın bedelini ölçen bir kaynak yok. Gezgin yeniden başlamalıdır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Explorer",
+         "value": "DisableFileExplorerPrelaunch",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false,
+       "minBuild": 22621
       }
      ]
     },
@@ -5987,6 +6408,23 @@
          "hive": "HKLM",
          "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Explorer",
          "value": "NoNewAppAlert",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "exp-openwith-store",
+       "name": "\"Store'da uygulama ara\" önerisi",
+       "desc": "Birlikte Aç iletişim kutusundan \"Microsoft Store'da uygulama ara\" ögesini kaldırır. Yerel uygulama seçicisi zaten oradaydı ve değişmez; kaldırılan şey bilinmeyen bir uzantı için kutudan çıkan tek arama yoludur. HKLM'e yazıldığı için makinedeki herkesi bağlar, Store uygulamasının kendisi çalışmayı sürdürür. Gezgin yeniden başlamalıdır.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Explorer",
+         "value": "NoUseStoreOpenWith",
          "type": "DWORD",
          "on": "1",
          "off": "DELETE"
@@ -7735,25 +8173,9 @@
       },
       {
        "id": "perf-game-mmcss",
-       "name": "Oyunlar için MMCSS profili",
-       "desc": "Oyunların multimedya zamanlayıcısından yüksek öncelik almasını sağlar. GPU ve CPU önceliğini birlikte yükseltir.",
+       "name": "Oyunlar için MMCSS zamanlama sınıfı",
+       "desc": "MMCSS'in Oyunlar görevini Orta yerine Yüksek zamanlama sınıfına alır; bu sınıftaki iş parçacıkları 23-26 öncelik aralığında, yalnızca birkaç sistem görevinin altında çalışır. Aynı anahtardaki GPU Priority ve SFIO Priority değerlerini Microsoft'un kendi belgesi kullanılmıyor diye işaretliyor, Priority ise Yüksek sınıfta her hâlükârda 2 sayılıyor — bu satır artık sadece gerçekten okunan tek değeri yazar. Bedeli, ses ve masaüstünün oyun sürerken daha az CPU bulmasıdır.",
        "reg": [
-        {
-         "hive": "HKLM",
-         "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games",
-         "value": "GPU Priority",
-         "type": "DWORD",
-         "on": "8",
-         "off": "8"
-        },
-        {
-         "hive": "HKLM",
-         "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games",
-         "value": "Priority",
-         "type": "DWORD",
-         "on": "6",
-         "off": "2"
-        },
         {
          "hive": "HKLM",
          "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games",
@@ -7761,14 +8183,6 @@
          "type": "SZ",
          "on": "High",
          "off": "Medium"
-        },
-        {
-         "hive": "HKLM",
-         "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games",
-         "value": "SFIO Priority",
-         "type": "SZ",
-         "on": "High",
-         "off": "Normal"
         }
        ],
        "applied": false,
@@ -7817,8 +8231,8 @@
       },
       {
        "id": "perf-hpet-timer",
-       "name": "Dinamik zamanlayıcı düzeltmesi",
-       "desc": "Platform zamanlayıcısının çözünürlüğünü sabitler; bazı oyunlarda kare süresi dalgalanmasını azaltır. Etkisi donanıma göre değişir, ölçmeden açmayın.",
+       "name": "Sistem geneli zamanlayıcı çözünürlüğü istekleri",
+       "desc": "Windows 10 2004 öncesi davranışı geri getirir: timeBeginPeriod çağıran bir süreç zamanlayıcı çözünürlüğünü yalnız kendisi için değil, tüm sistem için değiştirir. 2004'ten beri istek süreç başına yalıtılıyor ve bu değer yalıtımı kaldırır — bir platform zamanlayıcısı veya HPET ayarı değildir. Tek bir uygulamanın 1 ms istemesi bütün makinenin zamanlayıcısını hızlandırır; Microsoft'un kendi uyarısıyla, yüksek çözünürlük işlemcinin güç tasarrufu kiplerine girmesini engelleyebilir. Kanıt notu: yalıtımın 2004'te geldiğini Microsoft belgeliyor, ama bu kayıt defteri değerini belgelemiyor — değerin çekirdek tarafından açılışta okunduğu üçüncü taraf incelemelerine dayanır ve Windows 10'da işe yaradığı bilinmiyor. Yeniden başlatma gerekir.",
        "reg": [
         {
          "hive": "HKLM",
@@ -7830,7 +8244,8 @@
         }
        ],
        "applied": false,
-       "on": false
+       "on": false,
+       "minBuild": 22000
       }
      ]
     },
@@ -8021,40 +8436,6 @@
          "value": "GamePanelStartupTipIndex",
          "type": "DWORD",
          "on": "3",
-         "off": "DELETE"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
-       "id": "perf-autohdr",
-       "name": "Otomatik HDR",
-       "desc": "SDR oyunları HDR'a çeviren katmanı açar. HDR destekli ekran gerekir; bazı oyunlarda renkleri bozar.",
-       "reg": [
-        {
-         "hive": "HKCU",
-         "path": "SOFTWARE\\Microsoft\\DirectX\\UserGpuPreferences",
-         "value": "AutoHDREnable",
-         "type": "SZ",
-         "on": "2270",
-         "off": "DELETE"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
-       "id": "perf-vrr",
-       "name": "Değişken yenileme hızı",
-       "desc": "Pencereli oyunlar için değişken yenileme hızını açar. Ekranın ve sürücünün desteklemesi gerekir.",
-       "reg": [
-        {
-         "hive": "HKCU",
-         "path": "SOFTWARE\\Microsoft\\DirectX\\UserGpuPreferences",
-         "value": "DirectXUserGlobalSettings",
-         "type": "SZ",
-         "on": "VRROptimizeEnable=1;",
          "off": "DELETE"
         }
        ],
@@ -8269,6 +8650,23 @@
          "type": "DWORD",
          "on": "2",
          "off": "1"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "pwr-update-wake",
+       "name": "Windows Update için uyandırma",
+       "desc": "Windows Update'in zamanlanmış bir kurulum için makineyi uykudan uyandırmasını engeller. Yalnızca Windows Update otomatik kurulum yapacak biçimde yapılandırılmışsa devreye girer; yamalar geç iner ve bir sonraki açılışa yığılır. Yeniden başlatma gerekir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+         "value": "AUPowerManagement",
+         "type": "DWORD",
+         "on": "0",
+         "off": "DELETE"
         }
        ],
        "applied": false,
@@ -8873,6 +9271,64 @@
        ],
        "applied": false,
        "on": false
+      },
+      {
+       "id": "adv-prevent-device-encryption",
+       "name": "Otomatik aygıt şifrelemesini engelle",
+       "desc": "Çalınan ya da sökülen diskteki veriler korumasız kalır — Microsoft bu ayarı, özellikle Recall bulunan cihazlarda, önermiyor. Windows'un kurulumdan sonra sistem diskini kendiliğinden şifrelemesini ve kurtarma anahtarını Microsoft hesabına yüklemesini engeller. Önleyicidir, geri alıcı değil: hâlihazırda şifreli bir diski çözmez ve mevcut korumaya dokunmaz. Yeniden başlatma gerekir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\BitLocker",
+         "value": "PreventDeviceEncryption",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "adv-sudo-mode",
+       "name": "Sudo çalışma kipi",
+       "desc": "sudo komutunun izin verilen azami kipini belirler; ilke kipi seçmez, tavanı koyar ve Ayarlar > Sistem > Geliştiriciler için altındaki denetim bu tavanın üstüne çıkamaz. 'Girdi kapalı' ve 'Satır içi' kipleri Microsoft'un kendi belgesinde yazılı bir yetki yükseltme vektörüdür: yükseltilmemiş bir süreç aynı konsoldaki yükseltilmiş süreci sürebilir. 'Kapalı' konumu sudo kullanan betikleri kırar. Yalnız geliştiriciler için.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Sudo",
+         "value": "Enabled",
+         "type": "DWORD",
+         "on": "",
+         "off": ""
+        }
+       ],
+       "options": [
+        {
+         "label": "Varsayılan",
+         "data": "DELETE"
+        },
+        {
+         "label": "Kapalı",
+         "data": "0"
+        },
+        {
+         "label": "Yeni pencerede",
+         "data": "1"
+        },
+        {
+         "label": "Girdi kapalı",
+         "data": "2"
+        },
+        {
+         "label": "Satır içi",
+         "data": "3"
+        }
+       ],
+       "default": 0,
+       "applied": false,
+       "on": false,
+       "minBuild": 26100
       }
      ]
     },
@@ -9097,6 +9553,24 @@
        ],
        "applied": false,
        "on": false
+      },
+      {
+       "id": "adv-registry-periodic-backup",
+       "name": "Düzenli kayıt defteri yedeği",
+       "desc": "SAM ve SECURITY kovanlarının şifrelenmemiş birer kopyası RegBack klasöründe diskte durur; disk şifrelemesi olmayan bir makinede bu gerçek bir saldırı yüzeyidir. Karşılığında Windows 10 1803'te bırakılan otomatik kovan yedeğini geri açar: kayıt defteri yeniden başlatmalarda RegBack'e kopyalanır ve RegIdleBackup görevi sonraki yedekleri yönetir. Birkaç yüz MB disk ve her bakım penceresinde ek yazma. Yeniden başlatma gerekir.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Configuration Manager",
+         "value": "EnablePeriodicBackup",
+         "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false,
+       "minBuild": 17134
       }
      ]
     }

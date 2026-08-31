@@ -9,7 +9,7 @@
 #include "../widgets/settingrow.h"
 
 #include <QCoreApplication>
-#include <QMessageBox>
+#include "../widgets/dialog.h"
 #include <QPushButton>
 #include <QVBoxLayout>
 
@@ -144,27 +144,18 @@ void ActionPage::confirmAndRun(const Action &action)
         return;
     }
 
-    QMessageBox box(this);
-    box.setWindowTitle(QCoreApplication::applicationName());
-    box.setIcon(QMessageBox::NoIcon);
-    box.setText(action.displayName());
-
     QString informative = action.displayDesc();
     informative += action.reversible
                        ? Locale::tr(QStringLiteral("actions.confirm.reversible"))
                        : Locale::tr(QStringLiteral("actions.confirm.irreversible"));
     if (!action.note.isEmpty())
         informative += QStringLiteral("\n") + action.displayNote();
-    box.setInformativeText(informative);
-
-    // Not a formality: this is the whole script, so a user who wants to know exactly what
-    // is about to run can read it here instead of trusting the description.
-    box.setDetailedText(action.script());
-
-    QPushButton *go = box.addButton(Locale::tr(QStringLiteral("actions.run")), QMessageBox::AcceptRole);
-    box.addButton(Locale::tr(QStringLiteral("actions.cancel")), QMessageBox::RejectRole);
-    box.exec();
-
-    if (box.clickedButton() == go)
+    // The last argument is not a formality: it is the whole script, so a user who wants
+    // to know exactly what is about to run can read it here instead of trusting the
+    // description. The dialog puts it behind a toggle and lets it be selected and copied.
+    if (Dialog::confirm(this, action.displayName(), informative,
+                        Locale::tr(QStringLiteral("actions.run")),
+                        Locale::tr(QStringLiteral("actions.cancel")),
+                        action.script()))
         m_engine->run(action);
 }

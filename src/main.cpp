@@ -25,7 +25,7 @@
 #include <QEventLoop>
 #include <QFile>
 #include <QIcon>
-#include <QMessageBox>
+#include "widgets/dialog.h"
 #include <QMouseEvent>
 #include <QTextStream>
 #include <QTimer>
@@ -459,7 +459,8 @@ int main(int argc, char *argv[])
     QCommandLineOption compactOption(QStringLiteral("compact"),
                                      QStringLiteral("Denser tweak rows (4px instead of 7px padding)."));
     QCommandLineOption themeOption(QStringLiteral("theme"),
-                                   QStringLiteral("Appearance: dark, light, midnight, sepia, ocean, forest, dusk, rose."),
+                                   QStringLiteral("Appearance: dark, light, midnight, sepia, ocean, forest, dusk, "
+                                                  "rose, mist, contrast, meadow, lilac."),
                                    QStringLiteral("name"));
     QCommandLineOption typefaceOption(QStringLiteral("typeface"),
                                       QStringLiteral("Interface face: plex, monda, opensans, "
@@ -510,10 +511,11 @@ int main(int argc, char *argv[])
         const Ownership::Result result = taking ? Ownership::take(target)
                                                 : Ownership::giveBack(target);
 
-        QMessageBox box(result.ok ? QMessageBox::Information : QMessageBox::Warning,
-                        Locale::tr(QStringLiteral("own.dialogTitle")), result.summary);
-        box.setDetailedText(result.detail);
-        box.exec();
+        // No parent: this branch runs before any window exists, so the dialog centres
+        // itself on the screen rather than on an application that is not there.
+        Dialog::inform(nullptr, Locale::tr(QStringLiteral("own.dialogTitle")),
+                       result.summary, Locale::tr(QStringLiteral("apply.close")),
+                       result.detail);
         return result.ok ? 0 : 1;
     }
 
@@ -546,9 +548,18 @@ int main(int argc, char *argv[])
             Theme::setAppearance(Theme::Appearance::Dusk, Theme::Persist::No);
         else if (name == QLatin1String("rose"))
             Theme::setAppearance(Theme::Appearance::Rose, Theme::Persist::No);
+        else if (name == QLatin1String("mist"))
+            Theme::setAppearance(Theme::Appearance::Mist, Theme::Persist::No);
+        else if (name == QLatin1String("contrast"))
+            Theme::setAppearance(Theme::Appearance::Contrast, Theme::Persist::No);
+        else if (name == QLatin1String("meadow"))
+            Theme::setAppearance(Theme::Appearance::Meadow, Theme::Persist::No);
+        else if (name == QLatin1String("lilac"))
+            Theme::setAppearance(Theme::Appearance::Lilac, Theme::Persist::No);
         else
-            qWarning("--theme takes dark, light, midnight, sepia, ocean, forest, dusk or "
-                     "rose; ignoring '%s'", qUtf8Printable(name));
+            qWarning("--theme takes dark, light, midnight, sepia, ocean, forest, dusk, "
+                     "rose, mist, contrast, meadow or lilac; ignoring '%s'",
+                     qUtf8Printable(name));
     }
 
     applyPalette(app);

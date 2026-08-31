@@ -1,5 +1,6 @@
 #include "catalog.h"
 #include "i18n.h"
+#include "progress.h"
 #include "services.h"
 #include "startup.h"
 #include "sysinfo.h"
@@ -35,10 +36,14 @@ QString TweakOption::displayLabel() const
         return Locale::tr(labelKey);
     if (label.isEmpty())
         return label;
-    // A range tweak's labels are numbers with a unit; there is nothing to translate and a
-    // lookup on every one of them would only add keys nobody writes.
-    if (label.at(0).isDigit())
-        return label;
+    // Every label goes through the lookup, including the ones that start with a digit.
+    // Those used to return early, on the reasoning that a range's positions are numbers
+    // with a unit and there is nothing in "512 MB" to translate. That holds for a range,
+    // and for a choice whose positions are "22H2" or "50 MB" — but not for one whose
+    // positions are "5 saniye" and "1 dakika", which the early return left in Turkish in
+    // all ten languages with nothing reporting it. content() falls back to the label when
+    // there is no key, so the untranslatable ones still cost exactly one lookup and come
+    // back unchanged; only the labels somebody has actually written a key for move.
     return Locale::content(QStringLiteral("opt.") + label, label);
 }
 
@@ -452,6 +457,11 @@ void Catalog::load()
         m_categories.append(cat);
     }
 
+    // Named separately from the catalogue JSON above it. This is the stage that walks the
+    // service control manager and every Run key on the machine, and it is the one most
+    // likely to be slow on somebody else's computer — so when a startup stalls, the card
+    // should be able to say it was here rather than "loading".
+    Splash::report(QStringLiteral("splash.stage.services"));
     appendServices();
     appendStartup();
 

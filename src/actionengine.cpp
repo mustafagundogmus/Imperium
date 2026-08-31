@@ -1,5 +1,6 @@
 #include "actionengine.h"
 #include "console.h"
+#include "winpaths.h"
 #include "i18n.h"
 
 #include "action.h"
@@ -25,6 +26,17 @@ void ActionEngine::run(const Action &action)
     if (m_process)
         return;
 
+    // Resolved before the script is written, so a machine that cannot run this fails with
+    // one message and no leftover file. A bare name would be resolved by QProcess against
+    // PATH, in an elevated process, for a program about to be handed a script — the same
+    // hole winpaths.h closes for the two probes. There is deliberately no fallback to the
+    // bare name: nothing else should be allowed to answer to "powershell" here.
+    const QString powershell = WinPaths::powershell();
+    if (powershell.isEmpty()) {
+        Q_EMIT finished(action.id, false, Locale::tr(QStringLiteral("err.noPowerShell")));
+        return;
+    }
+
     // A BOM, because the scripts carry Turkish text and PowerShell 5 reads a file without
     // one as the system codepage.
     QFile script(m_scriptPath);
@@ -42,7 +54,7 @@ void ActionEngine::run(const Action &action)
 
     m_process = new QProcess(this);
     m_process->setProcessChannelMode(QProcess::MergedChannels);
-    m_process->setProgram(QStringLiteral("powershell.exe"));
+    m_process->setProgram(powershell);
     m_process->setArguments({QStringLiteral("-NoProfile"),
                              QStringLiteral("-NonInteractive"),
                              QStringLiteral("-ExecutionPolicy"), QStringLiteral("Bypass"),

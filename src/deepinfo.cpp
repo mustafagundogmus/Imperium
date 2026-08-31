@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "registry.h"
 #include "sysinfo.h"
+#include "winpaths.h"
 
 #include <QDateTime>
 #include <QDir>
@@ -557,7 +558,9 @@ void Probe::runInstant()
 void Probe::runScript(const char *script, void (Probe::*then)(const QJsonObject &))
 {
 #ifdef Q_OS_WIN
-    const QString powershell = QStandardPaths::findExecutable(QStringLiteral("powershell"));
+    // Absolute rather than resolved through PATH, for both reasons in winpaths.h: this
+    // is an elevated process, and findExecutable() blocks on an unreachable PATH entry.
+    const QString powershell = WinPaths::powershell();
     if (powershell.isEmpty()) {
         (this->*then)({});
         return;

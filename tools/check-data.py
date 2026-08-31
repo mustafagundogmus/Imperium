@@ -1032,10 +1032,11 @@ def collect_data_keys(catalog, actions, links):
                     keys.add("tweak." + tweak["id"] + ".desc")   # catalog.cpp:87
                 for option in objects(tweak.get("options")):
                     label = text(option, "label")
-                    # displayLabel() skips a label that starts with a digit: a range's
-                    # positions are numbers with a unit and there is nothing to translate
-                    # (catalog.cpp:38-41).
-                    if label and not label[0].isdigit():
+                    # Every label, digit-leading ones included: displayLabel() looks all of
+                    # them up now (catalog.cpp:38-48). A key is not *required* for "50 MB"
+                    # — check 12 decides that — but if one exists it is referenced, and
+                    # listing it here is what stops check 9 calling it an orphan.
+                    if label:
                         keys.add("opt." + label)                 # catalog.cpp:42
     for section in objects(actions.get("sections")):
         if text(section, "title"):
@@ -1054,6 +1055,72 @@ def collect_data_keys(catalog, actions, links):
             if text(item, "id"):
                 keys.add("godmode." + item["id"])                 # godmodepage.cpp, label()
     return keys
+
+
+def check_catalog_translations(report, catalog, i18n):
+    """Every catalogue row, and every option label with a word in it, has its key.
+
+    Check 8 cannot do this. It walks src/ for literals handed to tr(), and the catalogue's
+    keys are not literals anywhere — they are built at run time from an id, so "tweak." is
+    on its whitelist of runtime prefixes and everything under it goes unexamined. Check 6
+    cannot do it either: it verifies that the keys i18n.json *has* are filled in for all
+    ten languages, which says nothing about a key it does not have.
+
+    That left the gap this check closes. Locale::content() falls back to the catalogue's
+    own Turkish when a key is absent (i18n.cpp:128-143), and the comment there calls it
+    "silent, this is expected during rollout" — which is right for one row mid-edit and
+    wrong for a release: 23 rows shipped that way would be Turkish in nine languages with
+    every check on this page green.
+
+    Option labels are required only when they contain a word — a run of three or more
+    letters. That is a heuristic, and it is the honest rule rather than the tidy one: unit
+    and version tokens reach two ("50 MB", "22H2", "1 ms") and are the same string in every
+    language, while the labels that actually need translating reach three or more ("5
+    saniye", "1 dakika", "Yeni pencerede"). A two-letter word in some language would slip
+    through, so the failure mode is a missing key going unreported rather than a false
+    alarm on a label nobody should have to translate.
+    """
+    c = report.check(12, "catalog.json — every row and worded option label has its i18n key")
+    rows = 0
+    labels = 0
+    missing_rows = []
+    missing_labels = []
+    for category in objects(catalog.get("categories")):
+        for section in objects(category.get("sections")):
+            for tweak in objects(section.get("tweaks")):
+                tid = tweak.get("id")
+                if not isinstance(tid, str) or not tid:
+                    continue
+                rows += 1
+                for suffix in ("name", "desc"):
+                    key = "tweak.%s.%s" % (tid, suffix)
+                    if key not in i18n:
+                        missing_rows.append((key, tid))
+                for option in objects(tweak.get("options")):
+                    label = option.get("label")
+                    if not isinstance(label, str) or not label:
+                        continue
+                    if not re.search(r"[^\W\d_]{3,}", label):
+                        continue
+                    labels += 1
+                    if "opt." + label not in i18n:
+                        missing_labels.append((label, tid))
+
+    for key, tid in missing_rows[:MAX_SHOWN]:
+        c.error("untranslated row", "catalog.json", tid,
+                "%s is absent, so the row stays Turkish in nine languages" % key)
+    if len(missing_rows) > MAX_SHOWN:
+        c.error("untranslated row", "catalog.json",
+                "(%d more)" % (len(missing_rows) - MAX_SHOWN), "same")
+
+    for label, tid in missing_labels[:MAX_SHOWN]:
+        c.error("untranslated option", "catalog.json", tid,
+                'opt.%s is absent, so the position stays Turkish in nine languages' % label)
+    if len(missing_labels) > MAX_SHOWN:
+        c.error("untranslated option", "catalog.json",
+                "(%d more)" % (len(missing_labels) - MAX_SHOWN), "same")
+
+    c.note("%d rows x 2 keys, %d option labels carrying a word" % (rows, labels))
 
 
 def check_orphans(report, i18n, source_keys, data_keys, result_keys, risk_keys, sources):
@@ -1413,6 +1480,7 @@ def main():
     check_orphans(report, i18n, source_keys, data_keys, result_keys, risk_keys, sources)
     check_actions(report, actions, i18n)
     check_settings_links(report, links, i18n)
+    check_catalog_translations(report, catalog, i18n)
 
     return report.emit()
 

@@ -1,10 +1,10 @@
 // updatedialog.h — what "update itself" looks like while it is happening.
 //
-// Two things, in order. First the offer: a QMessageBox built the way
-// ActionPage::confirmAndRun builds its confirmation — the new version as the text, what is
-// about to happen as the informative text, the release notes behind the Details button,
-// and two plain buttons. The app has one way of asking before it does something
-// irreversible and this is it, so the update asks the same way.
+// Two things, in order. First the offer: a Dialog::confirm built the way
+// ActionPage::confirmAndRun builds its confirmation — the new version as the title, what
+// is about to happen as the body, the release notes behind the Ayrıntılar toggle, and two
+// plain buttons. The app has one way of asking before it does something irreversible and
+// this is it, so the update asks the same way.
 //
 // Then, only if the user accepted, this dialog: the progress card, drawn with the same
 // parts as the apply overlay — the uppercase stage label, the 4px accent rail, the name
