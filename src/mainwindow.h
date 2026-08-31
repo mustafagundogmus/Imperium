@@ -117,4 +117,9 @@ private:
     ApplyOverlay *m_applyOverlay = nullptr;
 
     bool m_alphabetical = false;
+
+    /// An update offer is on screen or about to be. A modal dialog runs its own event
+    /// loop, so a launch-time check that completes while the user is reading the offer
+    /// would otherwise stack a second one on top of the first.
+    bool m_offering = false;
 };

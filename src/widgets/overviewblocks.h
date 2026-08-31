@@ -5,9 +5,10 @@
 //            The meter is the part the eye reads first, so it is only drawn for the
 //            tiles that are a proportion of something (cpu, memory, disk).
 //
-// InfoSection  a card of the same family: a 12.5px semibold title over a rule, then
-//              label/value rows on 1px separators. A row can carry a meter of its own —
-//              a volume is a proportion too, and a bar says it faster than "378 GB boş".
+// InfoSection  a card of the same family: a lucide glyph and a 12.5px semibold title over
+//              a rule, then label/value rows on 1px separators. A row can carry a meter of
+//              its own — a volume is a proportion too, and a bar says it faster than
+//              "378 GB boş".
 //
 // Both were flat text on the window background before; the design reads as a dashboard
 // now, which is what the page had become.
@@ -16,6 +17,10 @@
 
 #include <QVector>
 #include <QWidget>
+
+namespace Icons {
+struct Glyph;
+}
 
 class StatTile : public QWidget
 {
@@ -66,7 +71,10 @@ class InfoSection : public QWidget
     Q_OBJECT
 
 public:
-    InfoSection(const QString &title, QWidget *parent = nullptr);
+    /// \a icon is a compile-time constant out of Icons::Lucide, held by reference: every
+    /// card has one, none of them ever swaps it, and taking it in the constructor is what
+    /// makes "a card without a glyph" unrepresentable rather than merely discouraged.
+    InfoSection(const QString &title, const Icons::Glyph &icon, QWidget *parent = nullptr);
 
     void setTitle(const QString &title);
     void setRows(const QVector<InfoRow> &rows);
@@ -90,5 +98,6 @@ private:
 
     QString m_title;
     QString m_note;
+    const Icons::Glyph *m_icon;
     QVector<InfoRow> m_rows;
 };

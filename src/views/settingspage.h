@@ -1,8 +1,23 @@
 // settingspage.h — the Ayarlar screen.
 //
-// Built from the same parts as the tweak list (section headers, 49px rows, the 26×15
+// Built from the same parts as the tweak list (section headers, 49px rows, the 30×16
 // switch, the segmented control, the pill buttons) so it belongs to the app rather than
 // looking like a settings dialog bolted on the side.
+//
+// Five sections, grouped by what somebody is looking for rather than by what was added
+// when:
+//
+//   Görünüm   dil, tema, vurgu rengi, yazı tipi, yazı boyutu — the five settings that
+//             offer a choice from a set. Each is a caption over its gallery
+//             (SettingRow::Below), and every gallery wraps to the column it is given, so
+//             none of them elides an option away at any text size or window width.
+//   Arayüz    kompakt satırlar, akıcı kaydırma, kenar parıltısı — the three switches.
+//             They have no options to show and do not belong among the galleries.
+//   Ön ayarlar / Uygulama / Güvenlik — unchanged, and already lists of plain rows.
+//
+// One shape per section is the whole point: what made the old page look jumbled was a
+// 160px theme grid, a two-row chip cloud, a 20px swatch strip and three 40px switch rows
+// stacked into a single list with nothing to say which of them belonged together.
 //
 // The whole page is thrown away and rebuilt on a language change rather than having every
 // row learn to retranslate itself in place: nineteen-odd rows, mostly title+description
@@ -49,6 +64,7 @@ private Q_SLOTS:
 private:
     void rebuild();
     QWidget *buildAppearance();
+    QWidget *buildInterface();
     QWidget *buildPresets();
     QWidget *buildApplication();
     QWidget *buildSafety();

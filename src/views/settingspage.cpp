@@ -90,7 +90,7 @@ SettingsPage::SettingsPage(AppState *state, Updater *updater, QWidget *parent)
     rebuild();
 
     connect(m_updater, &Updater::finished, this,
-            [this](bool available, const QString &version, const QString &url, const QString &error,
+            [this](bool available, const QString &version, const QString &, const QString &error,
                    bool userInitiated) {
                 m_updateButton->setEnabledLook(true);
                 if (!error.isEmpty()) {
@@ -103,17 +103,16 @@ SettingsPage::SettingsPage(AppState *state, Updater *updater, QWidget *parent)
                     return;
                 }
                 if (available) {
-                    // Only a check somebody pressed a button for is allowed to take over
-                    // the screen. The launch-time one says so and stops there — its own
-                    // setting promises it looks "silently", and a browser opening by
-                    // itself seconds after the window appears is the opposite of that.
-                    m_updateRow->setDesc(Locale::tr(userInitiated
-                                                        ? QStringLiteral("settings.update.available")
-                                                        : QStringLiteral("settings.update.availableQuiet"))
+                    // The row and the status line, and that is all this page does with the
+                    // answer now. It used to open a browser here for a check somebody had
+                    // pressed a button for, and say nothing but "press Denetle" for the
+                    // launch-time one; MainWindow now puts the same offer up for both, and
+                    // two things reacting to one signal would mean two things on screen.
+                    // Which is also why the row no longer has a quiet wording: there is no
+                    // longer a quiet outcome to describe.
+                    m_updateRow->setDesc(Locale::tr(QStringLiteral("settings.update.available"))
                                              .arg(version));
                     Q_EMIT notice(Locale::tr(QStringLiteral("settings.update.newVersionNotice")).arg(version));
-                    if (userInitiated)
-                        QDesktopServices::openUrl(QUrl(url));
                 } else if (userInitiated) {
                     m_updateRow->setDesc(Locale::tr(QStringLiteral("settings.update.upToDate"))
                                              .arg(QCoreApplication::applicationVersion()));
@@ -143,9 +142,10 @@ void SettingsPage::rebuild()
 
     m_rowCount = 0;
     m_layout->insertWidget(0, buildAppearance());
-    m_layout->insertWidget(1, buildPresets());
-    m_layout->insertWidget(2, buildApplication());
-    m_layout->insertWidget(3, buildSafety());
+    m_layout->insertWidget(1, buildInterface());
+    m_layout->insertWidget(2, buildPresets());
+    m_layout->insertWidget(3, buildApplication());
+    m_layout->insertWidget(4, buildSafety());
 
     // The restore-point probe runs once at startup; a rebuild would otherwise show
     // "Aranıyor…" again for a result that already arrived.
@@ -153,6 +153,16 @@ void SettingsPage::rebuild()
         setRestorePoint(m_restoreValue);
 }
 
+/// Görünüm — the five settings that are a choice from a set, each one a caption over the
+/// gallery that makes the choice.
+///
+/// Dil comes first. It is the one setting on this page that rewrites every other word on
+/// it, including the labels of everything below, so somebody who has landed in a language
+/// they cannot read has to be able to find it without reading anything — and the ten
+/// native names are legible whichever language is in force. It stays in this section
+/// rather than getting one of its own because that is where the rest of the app already
+/// files it: the Hakkında page's Görünüm card counts the languages alongside the themes,
+/// the accents and the faces.
 QWidget *SettingsPage::buildAppearance()
 {
     auto *themePicker = new ThemeSwitch;
@@ -190,6 +200,40 @@ QWidget *SettingsPage::buildAppearance()
         Theme::setFontScale(Theme::FontScaleSteps[i].value);
     });
 
+    // Every one of the five is Below: the caption gets the whole column and so does the
+    // gallery under it. They used to be trailing controls, which is what made this section
+    // unreadable — the eight theme cards took 372px out of the right of a row and pushed
+    // it to 160px tall, the ten language chips took another 400 and wrapped into a ragged
+    // block, and the two descriptions that had the most to say were left with the least
+    // room to say it in.
+    const QVector<QWidget *> rows{
+        new SettingRow(Locale::tr(QStringLiteral("settings.language.label")),
+                       Locale::tr(QStringLiteral("settings.language.desc")),
+                       language, SettingRow::Below),
+        new SettingRow(Locale::tr(QStringLiteral("settings.theme.label")),
+                       Locale::tr(QStringLiteral("settings.theme.desc")),
+                       themePicker, SettingRow::Below),
+        new SettingRow(Locale::tr(QStringLiteral("settings.accent.label")),
+                       Locale::tr(QStringLiteral("settings.accent.desc")),
+                       accent, SettingRow::Below),
+        new SettingRow(Locale::tr(QStringLiteral("settings.typeface.label")),
+                       Locale::tr(QStringLiteral("settings.typeface.desc")),
+                       typeface, SettingRow::Below),
+        new SettingRow(Locale::tr(QStringLiteral("settings.fontsize.label")),
+                       Locale::tr(QStringLiteral("settings.fontsize.desc")),
+                       fontSize, SettingRow::Below),
+    };
+    m_rowCount += rows.size();
+    return makeSection(Locale::tr(QStringLiteral("settings.section.appearance")), rows, this);
+}
+
+/// Arayüz — the three switches that tune how the interface behaves rather than what it is
+/// drawn in. They were the tail of Görünüm, where they read as three more of the same kind
+/// of thing as the theme and the language and are not: a switch has no options to show, it
+/// is on or off. Splitting them leaves Görünüm as five galleries and nothing else, which
+/// is what lets one section have one shape.
+QWidget *SettingsPage::buildInterface()
+{
     auto *compact = new ToggleSwitch;
     compact->setChecked(Theme::compact(), false);
     connect(compact, &ToggleSwitch::toggled, this, [](bool on) { Theme::setCompact(on); });
@@ -203,21 +247,6 @@ QWidget *SettingsPage::buildAppearance()
     connect(glow, &ToggleSwitch::toggled, this, [](bool on) { Settings::instance().setBorderGlow(on); });
 
     const QVector<QWidget *> rows{
-        new SettingRow(Locale::tr(QStringLiteral("settings.theme.label")),
-                       Locale::tr(QStringLiteral("settings.theme.desc")),
-                       themePicker, SettingRow::Trailing),
-        new SettingRow(Locale::tr(QStringLiteral("settings.language.label")),
-                       Locale::tr(QStringLiteral("settings.language.desc")),
-                       language, SettingRow::Trailing),
-        new SettingRow(Locale::tr(QStringLiteral("settings.typeface.label")),
-                       Locale::tr(QStringLiteral("settings.typeface.desc")),
-                       typeface, SettingRow::Trailing),
-        new SettingRow(Locale::tr(QStringLiteral("settings.fontsize.label")),
-                       Locale::tr(QStringLiteral("settings.fontsize.desc")),
-                       fontSize, SettingRow::Trailing),
-        new SettingRow(Locale::tr(QStringLiteral("settings.accent.label")),
-                       Locale::tr(QStringLiteral("settings.accent.desc")),
-                       accent, SettingRow::Trailing),
         new SettingRow(Locale::tr(QStringLiteral("settings.compact.label")),
                        Locale::tr(QStringLiteral("settings.compact.desc")),
                        compact, SettingRow::Leading),
@@ -229,7 +258,7 @@ QWidget *SettingsPage::buildAppearance()
                        glow, SettingRow::Leading),
     };
     m_rowCount += rows.size();
-    return makeSection(Locale::tr(QStringLiteral("settings.section.appearance")), rows, this);
+    return makeSection(Locale::tr(QStringLiteral("settings.section.interface")), rows, this);
 }
 
 QWidget *SettingsPage::buildPresets()
@@ -286,8 +315,12 @@ QWidget *SettingsPage::buildApplication()
 
     const QVector<QWidget *> rows{
         m_updateRow,
+        // A new description rather than the old one. The old text promised the launch
+        // check looked "silently", which was the whole of what it did; it now ends in an
+        // offer to replace the executable, and it is on by default, so this row is the
+        // one place a user finds out both facts and the one switch that turns them off.
         new SettingRow(Locale::tr(QStringLiteral("settings.update.onLaunch.label")),
-                       Locale::tr(QStringLiteral("settings.update.onLaunch.desc")),
+                       Locale::tr(QStringLiteral("update.onLaunch.desc")),
                        onLaunch, SettingRow::Leading),
         new SettingRow(Locale::tr(QStringLiteral("settings.version.label")),
                        Locale::tr(QStringLiteral("settings.version.value"))

@@ -35,6 +35,18 @@
   "ru": "Угостить кофе",
   "tr": "Bir kahve ısmarla"
  },
+ "about.license": {
+  "ar": "الترخيص",
+  "de": "Lizenz",
+  "en": "License",
+  "es": "Licencia",
+  "fr": "Licence",
+  "it": "Licenza",
+  "pl": "Licencja",
+  "pt": "Licença",
+  "ru": "Лицензия",
+  "tr": "Lisans"
+ },
  "about.subtitle": {
   "ar": "المطوّر والشيفرة المصدرية والدعم",
   "de": "Entwickler, Quelle und Unterstützung",
@@ -8591,6 +8603,18 @@
   "ru": "Приложение",
   "tr": "Uygulama"
  },
+ "settings.section.interface": {
+  "ar": "الواجهة",
+  "de": "Oberfläche",
+  "en": "Interface",
+  "es": "Interfaz",
+  "fr": "Interface",
+  "it": "Interfaccia",
+  "pl": "Interfejs",
+  "pt": "Interface",
+  "ru": "Интерфейс",
+  "tr": "Arayüz"
+ },
  "settings.section.presets": {
   "ar": "الإعدادات المسبقة",
   "de": "Voreinstellungen",
@@ -8640,16 +8664,16 @@
   "tr": "Akıcı kaydırma"
  },
  "settings.theme.desc": {
-  "ar": "داكن وفاتح ومنتصف ليل أعمق وبنّي دافئ — أربع لوحات مبنية على العلاقات اللونية نفسها.",
-  "de": "Dunkel, Hell, ein tieferes Mitternacht und ein warmes Sepia — vier aus denselben Tonbeziehungen aufgebaute Paletten.",
-  "en": "Dark, Light, a deeper Midnight and a warm Sepia — four palettes built from the same tonal relationships.",
-  "es": "Oscuro, Claro, un Medianoche más profundo y un Sepia cálido: cuatro paletas construidas con las mismas relaciones tonales.",
-  "fr": "Sombre, Clair, un Minuit plus profond et un Sépia chaud — quatre palettes bâties sur les mêmes relations tonales.",
-  "it": "Scuro, Chiaro, un Mezzanotte più profondo e un Seppia caldo — quattro palette costruite sulle stesse relazioni tonali.",
-  "pl": "Ciemny, Jasny, głębsza Północ i ciepła Sepia — cztery palety zbudowane na tych samych relacjach tonalnych.",
-  "pt": "Escuro, Claro, um Meia-noite mais profundo e um Sépia quente — quatro paletas construídas com as mesmas relações tonais.",
-  "ru": "Тёмная, Светлая, более глубокая Полночь и тёплая Сепия — четыре палитры на одних и тех же тональных отношениях.",
-  "tr": "Koyu, Açık, daha derin Gece ve sıcak Sepya — hepsi aynı ton ilişkilerinden kurulmuş dört palet."
+  "ar": "داكن وفاتح ومنتصف الليل والسيبيا والمحيط والغابة والغسق والوردي — ثماني لوحات مبنية على العلاقات اللونية نفسها.",
+  "de": "Dunkel, Hell, Mitternacht, Sepia, Ozean, Wald, Dämmerung und Rose — acht Paletten aus denselben Tonbeziehungen.",
+  "en": "Dark, Light, Midnight, Sepia, Ocean, Forest, Dusk and Rose — eight palettes built from the same tonal relationships.",
+  "es": "Oscuro, Claro, Medianoche, Sepia, Océano, Bosque, Crepúsculo y Rosa: ocho paletas construidas con las mismas relaciones tonales.",
+  "fr": "Sombre, Clair, Minuit, Sépia, Océan, Forêt, Crépuscule et Rose — huit palettes bâties sur les mêmes rapports de tons.",
+  "it": "Scuro, Chiaro, Mezzanotte, Seppia, Oceano, Foresta, Crepuscolo e Rosa — otto palette costruite sulle stesse relazioni tonali.",
+  "pl": "Ciemny, Jasny, Północ, Sepia, Ocean, Las, Zmierzch i Róż — osiem palet zbudowanych na tych samych relacjach tonalnych.",
+  "pt": "Escuro, Claro, Meia-noite, Sépia, Oceano, Floresta, Crepúsculo e Rosa — oito paletas construídas com as mesmas relações tonais.",
+  "ru": "Тёмная, Светлая, Полночь, Сепия, Океан, Лес, Сумерки и Роза — восемь палитр, построенных на одних и тех же тональных отношениях.",
+  "tr": "Koyu, Açık, Gece, Sepya, Okyanus, Orman, Alaca ve Gül — hepsi aynı ton ilişkilerinden kurulmuş sekiz palet."
  },
  "settings.theme.label": {
   "ar": "السمة",
@@ -20038,5 +20062,185 @@
   "pt": "Animações da barra de tarefas",
   "ru": "Анимация панели задач",
   "tr": "Görev çubuğu animasyonları"
+ },
+ "update.fail.asset": {
+  "ar": "لم يُنشر في هذا الإصدار ملف تنفيذي لنظام Windows، لذا لا يستطيع التطبيق تحديث نفسه. ولم يُنزَّل أي شيء.",
+  "de": "Zu dieser Version wurde keine ausführbare Windows-Datei veröffentlicht, daher kann sich die App nicht selbst aktualisieren. Es wurde nichts heruntergeladen.",
+  "en": "No Windows executable was published for this version, so the app cannot update itself. Nothing was downloaded.",
+  "es": "En esta versión no se publicó ningún ejecutable de Windows, por lo que la aplicación no puede actualizarse sola. No se ha descargado nada.",
+  "fr": "Aucun exécutable Windows n'a été publié pour cette version, l'application ne peut donc pas se mettre à jour elle-même. Rien n'a été téléchargé.",
+  "it": "Per questa versione non è stato pubblicato alcun eseguibile Windows, quindi l'app non può aggiornarsi da sola. Non è stato scaricato nulla.",
+  "pl": "W tej wersji nie opublikowano pliku wykonywalnego dla systemu Windows, więc aplikacja nie może sama się zaktualizować. Nic nie zostało pobrane.",
+  "pt": "Nesta versão não foi publicado nenhum executável do Windows, por isso a aplicação não se pode atualizar a si própria. Não foi transferido nada.",
+  "ru": "В этой версии не опубликован исполняемый файл для Windows, поэтому приложение не может обновить себя. Ничего не загружено.",
+  "tr": "Bu sürüm bir Windows çalıştırılabiliri yayımlamamış, dolayısıyla kendini güncelleyemez. Hiçbir şey indirilmedi."
+ },
+ "update.fail.download": {
+  "ar": "فشل التنزيل: %1. لم يُكتب أي شيء على القرص، وتطبيقك باقٍ كما هو تمامًا.",
+  "de": "Der Download ist fehlgeschlagen: %1. Es wurde nichts auf den Datenträger geschrieben, Ihre App ist unverändert geblieben.",
+  "en": "The download failed: %1. Nothing was written to disk, and your app is exactly as it was.",
+  "es": "La descarga falló: %1. No se escribió nada en el disco; su aplicación sigue exactamente igual.",
+  "fr": "Le téléchargement a échoué : %1. Rien n'a été écrit sur le disque, votre application est restée telle quelle.",
+  "it": "Il download non è riuscito: %1. Non è stato scritto nulla sul disco, la tua app è rimasta esattamente com'era.",
+  "pl": "Pobieranie nie powiodło się: %1. Nic nie zostało zapisane na dysku, a Twoja aplikacja pozostała dokładnie taka, jaka była.",
+  "pt": "A transferência falhou: %1. Não foi escrito nada no disco; a sua aplicação está exatamente como estava.",
+  "ru": "Загрузка не удалась: %1. На диск ничего не записано, ваше приложение осталось в точности прежним.",
+  "tr": "İndirme başarısız oldu: %1. Diske hiçbir şey yazılmadı, uygulamanız olduğu gibi duruyor."
+ },
+ "update.fail.folder": {
+  "ar": "تعذّرت الكتابة في المجلد %1 (%2)، لذا لم يُنزَّل أي شيء. انقل التطبيق إلى مجلد قابل للكتابة أو نزّل الإصدار الجديد يدويًا.",
+  "de": "In den Ordner %1 kann nicht geschrieben werden (%2), daher wurde nichts heruntergeladen. Verschieben Sie die App in einen beschreibbaren Ordner oder laden Sie die neue Version von Hand herunter.",
+  "en": "The folder %1 cannot be written to (%2), so nothing was downloaded. Move the app to a writable folder, or download the new version by hand.",
+  "es": "No se puede escribir en la carpeta %1 (%2), por lo que no se descargó nada. Mueva la aplicación a una carpeta con permiso de escritura o descargue la nueva versión a mano.",
+  "fr": "Impossible d'écrire dans le dossier %1 (%2), rien n'a donc été téléchargé. Déplacez l'application dans un dossier accessible en écriture, ou téléchargez la nouvelle version à la main.",
+  "it": "Non è possibile scrivere nella cartella %1 (%2), quindi non è stato scaricato nulla. Sposta l'app in una cartella scrivibile oppure scarica a mano la nuova versione.",
+  "pl": "Nie można zapisywać w folderze %1 (%2), więc nic nie zostało pobrane. Przenieś aplikację do folderu z prawem zapisu albo pobierz nową wersję ręcznie.",
+  "pt": "Não é possível escrever na pasta %1 (%2), por isso não foi transferido nada. Mova a aplicação para uma pasta com permissão de escrita ou transfira a nova versão à mão.",
+  "ru": "В папку %1 нельзя записывать (%2), поэтому ничего не загружено. Переместите приложение в папку, доступную для записи, или скачайте новую версию вручную.",
+  "tr": "%1 klasörüne yazılamıyor (%2), bu yüzden hiçbir şey indirilmedi. Uygulamayı yazılabilir bir klasöre taşıyın ya da yeni sürümü elle indirin."
+ },
+ "update.fail.install": {
+  "ar": "تعذّر وضع الإصدار الجديد في مكانه — وقد تعثّر عند: %1. وقد أُعيد الإصدار القديم إلى مكانه؛ والتطبيق الذي يعمل لديك الآن لم يتغيّر إطلاقًا.",
+  "de": "Die neue Version konnte nicht eingesetzt werden — gescheitert bei: %1. Die alte Version wurde wieder an ihren Platz gebracht; die App, die Sie gerade ausführen, hat sich nicht verändert.",
+  "en": "The new version could not be put in place — it stopped at: %1. The old version has been put back; the app you are running right now has not changed at all.",
+  "es": "No se pudo poner la nueva versión en su sitio — se atascó en: %1. La versión antigua se ha vuelto a colocar; la aplicación que está ejecutando ahora mismo no ha cambiado en nada.",
+  "fr": "La nouvelle version n'a pas pu être mise en place — le blocage : %1. L'ancienne version a été remise en place ; l'application que vous exécutez en ce moment n'a pas changé.",
+  "it": "Non è stato possibile mettere al suo posto la nuova versione — si è bloccata a: %1. La vecchia versione è stata rimessa al suo posto; l'app che stai eseguendo in questo momento non è cambiata affatto.",
+  "pl": "Nie udało się umieścić nowej wersji na miejscu — zatrzymało się na: %1. Stara wersja została przywrócona; działająca w tej chwili aplikacja w niczym się nie zmieniła.",
+  "pt": "Não foi possível colocar a nova versão no lugar — parou em: %1. A versão antiga foi reposta; a aplicação que está a executar neste momento não mudou em nada.",
+  "ru": "Новую версию не удалось поставить на место — застряло на: %1. Старая версия возвращена на место; работающее сейчас приложение не изменилось.",
+  "tr": "Yeni sürüm yerine konamadı — takıldığı yer: %1. Eski sürüm geri alındı; şu anda çalışan uygulamanız hiç değişmedi."
+ },
+ "update.fail.redirect": {
+  "ar": "أُعيد توجيه التنزيل إلى عنوان (%1) خارج github.com، ولم يُتَّبع هذا التوجيه. ولم يُنزَّل أي شيء.",
+  "de": "Der Download wurde auf eine Adresse außerhalb von github.com (%1) umgeleitet, und dieser Umleitung wurde nicht gefolgt. Es wurde nichts heruntergeladen.",
+  "en": "The download was redirected to an address outside github.com (%1), and that redirect was not followed. Nothing was downloaded.",
+  "es": "La descarga se redirigió a una dirección ajena a github.com (%1) y esa redirección no se siguió. No se descargó nada.",
+  "fr": "Le téléchargement a été redirigé vers une adresse extérieure à github.com (%1) et cette redirection n'a pas été suivie. Rien n'a été téléchargé.",
+  "it": "Il download è stato reindirizzato a un indirizzo esterno a github.com (%1) e quel reindirizzamento non è stato seguito. Non è stato scaricato nulla.",
+  "pl": "Pobieranie zostało przekierowane pod adres spoza github.com (%1), a to przekierowanie nie zostało wykonane. Nic nie zostało pobrane.",
+  "pt": "A transferência foi redirecionada para um endereço fora de github.com (%1) e esse redirecionamento não foi seguido. Não foi transferido nada.",
+  "ru": "Загрузка была перенаправлена на адрес за пределами github.com (%1), и это перенаправление не было выполнено. Ничего не загружено.",
+  "tr": "İndirme github.com dışındaki bir adrese (%1) yönlendirildi ve bu yönlendirme izlenmedi. Hiçbir şey indirilmedi."
+ },
+ "update.fail.stranded": {
+  "ar": "تعذّر وضع الإصدار الجديد في مكانه وتعذّر أيضًا إرجاع الملف القديم. تطبيقك موجود الآن باسم %1؛ أغلق التطبيق وأعد تسمية هذا الملف يدويًا إلى %2.",
+  "de": "Die neue Version konnte nicht eingesetzt werden, und die alte Datei ließ sich nicht zurückholen. Ihre App liegt jetzt unter dem Namen %1; schließen Sie die App und benennen Sie diese Datei von Hand in %2 um.",
+  "en": "The new version could not be put in place and the old file could not be brought back. Your app is now sitting under the name %1; close the app and rename that file by hand to %2.",
+  "es": "No se pudo poner la nueva versión en su sitio y tampoco se pudo devolver el archivo antiguo. Su aplicación está ahora con el nombre %1; cierre la aplicación y cambie a mano el nombre de ese archivo por %2.",
+  "fr": "La nouvelle version n'a pas pu être mise en place et l'ancien fichier n'a pas pu être remis. Votre application se trouve maintenant sous le nom %1 ; fermez l'application et renommez ce fichier à la main en %2.",
+  "it": "Non è stato possibile mettere al suo posto la nuova versione e non è stato possibile riportare indietro il vecchio file. La tua app si trova ora con il nome %1; chiudi l'app e rinomina a mano quel file in %2.",
+  "pl": "Nie udało się umieścić nowej wersji na miejscu ani przywrócić starego pliku. Twoja aplikacja znajduje się teraz pod nazwą %1; zamknij aplikację i ręcznie zmień nazwę tego pliku na %2.",
+  "pt": "Não foi possível colocar a nova versão no lugar nem repor o ficheiro antigo. A sua aplicação encontra-se agora com o nome %1; feche a aplicação e mude à mão o nome desse ficheiro para %2.",
+  "ru": "Новую версию не удалось поставить на место, а старый файл не удалось вернуть. Ваше приложение сейчас лежит под именем %1; закройте приложение и вручную переименуйте этот файл в %2.",
+  "tr": "Yeni sürüm yerine konamadı ve eski dosya geri alınamadı. Uygulamanız şu anda %1 adıyla duruyor; uygulamayı kapatıp bu dosyayı elle %2 olarak yeniden adlandırın."
+ },
+ "update.fail.verify": {
+  "ar": "تجزئة SHA-256 للملف المُنزَّل لا تطابق التجزئة التي نشرها هذا الإصدار. وقد أُهمل الملف دون أن يُكتب على القرص أصلًا، ولم يُشغَّل.",
+  "de": "Der SHA-256-Hash der heruntergeladenen Datei stimmt nicht mit dem Hash überein, den diese Version veröffentlicht hat. Die Datei wurde verworfen, ohne je auf den Datenträger geschrieben zu werden, und sie wurde nicht ausgeführt.",
+  "en": "The SHA-256 digest of the downloaded file does not match the digest this version published. The file was discarded without ever being written to disk, and it was not run.",
+  "es": "El hash SHA-256 del archivo descargado no coincide con el que publicó esta versión. El archivo se descartó sin llegar a escribirse en el disco y no se ejecutó.",
+  "fr": "L'empreinte SHA-256 du fichier téléchargé ne correspond pas à celle publiée par cette version. Le fichier a été rejeté sans jamais être écrit sur le disque et n'a pas été exécuté.",
+  "it": "L'hash SHA-256 del file scaricato non corrisponde a quello pubblicato da questa versione. Il file è stato scartato senza mai essere scritto sul disco e non è stato eseguito.",
+  "pl": "Skrót SHA-256 pobranego pliku nie zgadza się ze skrótem opublikowanym przez tę wersję. Plik został odrzucony, zanim w ogóle trafił na dysk, i nie został uruchomiony.",
+  "pt": "O hash SHA-256 do ficheiro transferido não corresponde ao que esta versão publicou. O ficheiro foi descartado sem chegar a ser escrito no disco e não foi executado.",
+  "ru": "SHA-256-хеш загруженного файла не совпадает с хешем, опубликованным в этой версии. Файл был отброшен, так и не попав на диск, и не был запущен.",
+  "tr": "İndirilen dosyanın SHA-256 özeti, sürümün yayımladığı özetle uyuşmuyor. Dosya diske hiç yazılmadan atıldı ve çalıştırılmadı."
+ },
+ "update.offer.body": {
+  "ar": "أنت تستخدم حاليًا الإصدار %1. سيُنزَّل الإصدار الجديد إلى هذا المجلد، ويُتحقَّق منه عبر SHA-256، ويُوضَع مكان الملف قيد التشغيل، ثم يُعاد تشغيل التطبيق. ويُحذف الملف القديم عند التشغيل التالي؛ ولا يبقى في مجلدك أي شيء آخر.",
+  "de": "Sie verwenden derzeit Version %1. Die neue Version wird in diesen Ordner heruntergeladen, per SHA-256 überprüft, an die Stelle der laufenden Datei gesetzt, und die App wird neu gestartet. Die alte Datei wird beim nächsten Start gelöscht; sonst bleibt nichts in Ihrem Ordner zurück.",
+  "en": "You are currently using version %1. The new version will be downloaded into this folder, verified against its SHA-256, put in place of the running file, and the app will be restarted. The old file is deleted at the next launch; nothing else is left in your folder.",
+  "es": "Actualmente está usando la versión %1. La nueva versión se descargará en esta carpeta, se verificará con SHA-256, se pondrá en el lugar del archivo en ejecución y la aplicación se reiniciará. El archivo antiguo se elimina en el siguiente arranque; en su carpeta no queda nada más.",
+  "fr": "Vous utilisez actuellement la version %1. La nouvelle version sera téléchargée dans ce dossier, vérifiée par SHA-256, mise à la place du fichier en cours d'exécution, puis l'application redémarrera. L'ancien fichier est supprimé au démarrage suivant ; rien d'autre n'est laissé dans votre dossier.",
+  "it": "Al momento stai usando la versione %1. La nuova versione verrà scaricata in questa cartella, verificata con SHA-256, messa al posto del file in esecuzione, e l'app verrà riavviata. Il vecchio file viene eliminato al successivo avvio; nella tua cartella non resta nient'altro.",
+  "pl": "Obecnie używasz wersji %1. Nowa wersja zostanie pobrana do tego folderu, zweryfikowana za pomocą SHA-256, umieszczona w miejscu działającego pliku, a aplikacja zostanie uruchomiona ponownie. Stary plik jest usuwany przy następnym uruchomieniu; nic więcej nie zostaje w Twoim folderze.",
+  "pt": "Está a usar atualmente a versão %1. A nova versão será transferida para esta pasta, verificada com SHA-256, colocada no lugar do ficheiro em execução, e a aplicação será reiniciada. O ficheiro antigo é eliminado no arranque seguinte; na sua pasta não fica mais nada.",
+  "ru": "Сейчас вы используете версию %1. Новая версия будет загружена в эту папку, проверена по SHA-256, поставлена на место работающего файла, после чего приложение перезапустится. Старый файл удаляется при следующем запуске; больше в вашей папке ничего не остаётся.",
+  "tr": "Şu anda %1 sürümünü kullanıyorsunuz. Yeni sürüm bu klasöre indirilecek, SHA-256 ile doğrulanacak, çalışan dosyanın yerine konacak ve uygulama yeniden başlatılacak. Eski dosya bir sonraki açılışta silinir; klasörünüzde başka hiçbir şey bırakılmaz."
+ },
+ "update.offer.go": {
+  "ar": "التحديث الآن",
+  "de": "Jetzt aktualisieren",
+  "en": "Update now",
+  "es": "Actualizar ahora",
+  "fr": "Mettre à jour maintenant",
+  "it": "Aggiorna ora",
+  "pl": "Zaktualizuj teraz",
+  "pt": "Atualizar agora",
+  "ru": "Обновить сейчас",
+  "tr": "Şimdi güncelle"
+ },
+ "update.offer.title": {
+  "ar": "نُشر إصدار جديد: %1",
+  "de": "Neue Version veröffentlicht: %1",
+  "en": "New version published: %1",
+  "es": "Nueva versión publicada: %1",
+  "fr": "Nouvelle version publiée : %1",
+  "it": "Nuova versione pubblicata: %1",
+  "pl": "Opublikowano nową wersję: %1",
+  "pt": "Nova versão publicada: %1",
+  "ru": "Опубликована новая версия: %1",
+  "tr": "Yeni sürüm yayımlandı: %1"
+ },
+ "update.onLaunch.desc": {
+  "ar": "يسأل GitHub عند التشغيل مرة واحدة في اليوم على الأكثر؛ وإذا وُجد إصدار جديد عرض التحديث. ولا يُنزَّل أي شيء دون موافقتك.",
+  "de": "Fragt beim Start höchstens einmal am Tag bei GitHub nach; gibt es eine neue Version, wird das Update angeboten. Ohne Ihre Zustimmung wird nichts heruntergeladen.",
+  "en": "At launch it asks GitHub at most once a day; if there is a new version, it offers the update. Nothing is downloaded until you approve it.",
+  "es": "Al iniciar, consulta a GitHub como máximo una vez al día; si hay una nueva versión, ofrece la actualización. No se descarga nada sin su aprobación.",
+  "fr": "Au démarrage, interroge GitHub au plus une fois par jour ; s'il existe une nouvelle version, la mise à jour est proposée. Rien n'est téléchargé sans votre accord.",
+  "it": "All'avvio interroga GitHub al massimo una volta al giorno; se c'è una nuova versione, propone l'aggiornamento. Senza la tua approvazione non viene scaricato nulla.",
+  "pl": "Przy uruchamianiu pyta GitHub najwyżej raz dziennie; jeśli jest nowa wersja, proponuje aktualizację. Bez Twojej zgody nic nie jest pobierane.",
+  "pt": "Ao iniciar, consulta o GitHub no máximo uma vez por dia; se houver uma nova versão, propõe a atualização. Não é transferido nada sem a sua aprovação.",
+  "ru": "При запуске обращается к GitHub не чаще одного раза в сутки; если есть новая версия, предлагает обновление. Без вашего согласия ничего не загружается.",
+  "tr": "Açılışta günde en fazla bir kez GitHub'a sorar; yeni sürüm varsa güncellemeyi teklif eder. Siz onaylamadan hiçbir şey indirilmez."
+ },
+ "update.proof": {
+  "ar": "لا تُظهر مقارنة SHA-256 سوى أن الملف نُزِّل كاملًا وأنه الملف الذي نشره ذلك الإصدار؛ وهي لا تُثبت من الذي بناه — فمن يستطيع تغيير ملف sums يستطيع تغيير ملف exe في الحركة نفسها. وللتحقق ممّن بناه: gh attestation verify Arbitrium-vX.Y.Z-win64.exe --repo shadesofdeath/Arbitrium",
+  "de": "Der SHA-256-Vergleich zeigt nur, dass die Datei vollständig heruntergeladen wurde und dass es die Datei ist, die diese Version veröffentlicht hat; er beweist nicht, wer sie gebaut hat — wer die sums-Datei ändern kann, kann im selben Zug auch die exe ändern. Um zu prüfen, wer sie gebaut hat: gh attestation verify Arbitrium-vX.Y.Z-win64.exe --repo shadesofdeath/Arbitrium",
+  "en": "The SHA-256 comparison only shows that the file downloaded whole and that it is the file that version published; it does not prove who built it — anyone who can change the sums file can change the exe in the same move. To check who built it: gh attestation verify Arbitrium-vX.Y.Z-win64.exe --repo shadesofdeath/Arbitrium",
+  "es": "La comparación SHA-256 solo muestra que el archivo se descargó entero y que es el archivo que publicó esa versión; no demuestra quién lo compiló — quien pueda cambiar el archivo sums puede cambiar el exe en el mismo movimiento. Para comprobar quién lo compiló: gh attestation verify Arbitrium-vX.Y.Z-win64.exe --repo shadesofdeath/Arbitrium",
+  "fr": "La comparaison SHA-256 montre seulement que le fichier est arrivé complet et qu'il s'agit du fichier publié par cette version ; elle ne prouve pas qui l'a compilé — qui peut modifier le fichier sums peut modifier l'exe dans le même mouvement. Pour vérifier qui l'a compilé : gh attestation verify Arbitrium-vX.Y.Z-win64.exe --repo shadesofdeath/Arbitrium",
+  "it": "Il confronto SHA-256 mostra soltanto che il file è arrivato per intero e che è il file pubblicato da quella versione; non dimostra chi lo ha compilato — chi può modificare il file sums può modificare l'exe con la stessa mossa. Per verificare chi lo ha compilato: gh attestation verify Arbitrium-vX.Y.Z-win64.exe --repo shadesofdeath/Arbitrium",
+  "pl": "Porównanie SHA-256 pokazuje jedynie, że plik pobrał się w całości i że jest to plik opublikowany przez tę wersję; nie dowodzi, kto go zbudował — kto może podmienić plik sums, ten w tym samym ruchu podmieni też plik exe. Aby sprawdzić, kto go zbudował: gh attestation verify Arbitrium-vX.Y.Z-win64.exe --repo shadesofdeath/Arbitrium",
+  "pt": "A comparação SHA-256 apenas mostra que o ficheiro foi transferido por inteiro e que é o ficheiro que essa versão publicou; não prova quem o compilou — quem puder alterar o ficheiro sums pode alterar o exe no mesmo gesto. Para confirmar quem o compilou: gh attestation verify Arbitrium-vX.Y.Z-win64.exe --repo shadesofdeath/Arbitrium",
+  "ru": "Сравнение SHA-256 показывает лишь то, что файл загрузился целиком и что это тот файл, который опубликован в этой версии; оно не доказывает, кто его собрал, — тот, кто может подменить файл sums, тем же движением подменит и exe. Чтобы проверить, кто его собрал: gh attestation verify Arbitrium-vX.Y.Z-win64.exe --repo shadesofdeath/Arbitrium",
+  "tr": "SHA-256 karşılaştırması yalnızca dosyanın eksiksiz indiğini ve o sürümün yayımladığı dosya olduğunu gösterir; kimin derlediğini kanıtlamaz — sums dosyasını değiştirebilen, exe'yi de aynı hamlede değiştirebilir. Derleyeni doğrulamak için: gh attestation verify Arbitrium-vX.Y.Z-win64.exe --repo shadesofdeath/Arbitrium"
+ },
+ "update.stage.download": {
+  "ar": "جارٍ التنزيل",
+  "de": "Wird heruntergeladen",
+  "en": "Downloading",
+  "es": "Descargando",
+  "fr": "Téléchargement",
+  "it": "Download in corso",
+  "pl": "Pobieranie",
+  "pt": "A transferir",
+  "ru": "Загрузка",
+  "tr": "İndiriliyor"
+ },
+ "update.stage.install": {
+  "ar": "جارٍ الاستبدال",
+  "de": "Wird ersetzt",
+  "en": "Replacing",
+  "es": "Sustituyendo",
+  "fr": "Remplacement",
+  "it": "Sostituzione in corso",
+  "pl": "Zastępowanie",
+  "pt": "A substituir",
+  "ru": "Замена",
+  "tr": "Yerine konuyor"
+ },
+ "update.stage.verify": {
+  "ar": "جارٍ التحقق",
+  "de": "Wird überprüft",
+  "en": "Verifying",
+  "es": "Verificando",
+  "fr": "Vérification",
+  "it": "Verifica in corso",
+  "pl": "Weryfikacja",
+  "pt": "A verificar",
+  "ru": "Проверка",
+  "tr": "Doğrulanıyor"
  }
 }

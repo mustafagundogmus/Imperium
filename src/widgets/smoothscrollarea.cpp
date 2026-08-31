@@ -35,7 +35,7 @@ void SmoothScrollArea::applyStyle()
         QScrollBar::handle:vertical {
             background: %2;
             border: 2px solid %3;
-            border-radius: 4px;
+            border-radius: %4px;
             min-height: 28px;
         }
         QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
@@ -46,7 +46,11 @@ void SmoothScrollArea::applyStyle()
         }
     )")
                       .arg(Theme::Metric::ScrollBarWidth)
-                      .arg(Theme::Color::ScrollThumb().name(), Theme::Color::Window().name()));
+                      .arg(Theme::Color::ScrollThumb().name(), Theme::Color::Window().name())
+                      // Half the track, so the handle stays a capsule whatever the track
+                      // is widened to. It was a literal 4 next to a literal 8 and the two
+                      // were the same number by coincidence, not by construction.
+                      .arg(Theme::Metric::ScrollBarWidth / 2));
 }
 
 void SmoothScrollArea::scrollToTop()

@@ -57,6 +57,17 @@ qreal rowPadY();
 qreal rowNameLine();
 qreal rowDescLine();
 
+/// CSS `flex-wrap` over uniform cells: how many columns of width \a cell fit across
+/// \a available with \a gap between them, for \a count cells in total.
+///
+/// Rebalanced rather than merely truncated. Ten language chips in a column that happens
+/// to hold nine would otherwise leave a single orphan on the second line, which is the
+/// ragged shape the settings page was reported for; asking for the same number of rows
+/// and spreading the cells evenly over them turns 9+1 into 5+5. Every gallery on that
+/// page — languages, typefaces, theme cards — wraps through this one function, which is
+/// what makes them read as one control family instead of three separate strips.
+int flexColumns(qreal available, qreal cell, qreal gap, int count);
+
 /// Fills a 1px hairline. Kept separate so the 1px stays 1 *logical* px on hi-dpi.
 void hairline(QPainter *p, const QRectF &r, const QColor &c);
 

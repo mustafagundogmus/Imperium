@@ -25,6 +25,17 @@ namespace Theme {
 // never persisted (a name is — see schemeToString), so this can be reordered freely.
 enum class Appearance { Dark, Light, Midnight, Sepia, Ocean, Forest, Dusk, Rose };
 
+/// How many of them there are, for the places that want to say the number rather than
+/// handle each one — the Hakkında page's Görünüm card, today. Counted here rather than
+/// derived, because a C++ enum carries no count and giving this one a trailing sentinel
+/// would make every -Wswitch-checked switch over it non-exhaustive, which is exactly the
+/// check that makes adding a scheme safe. The assertion is `<` rather than `==` on purpose:
+/// it stays quiet through a reorder (the enum's numeric values are never persisted, so
+/// reordering is allowed) and fires on a ninth scheme wherever it is inserted.
+inline constexpr int AppearanceCount = 8;
+static_assert(int(Appearance::Rose) < AppearanceCount,
+              "a scheme was added to Appearance without updating AppearanceCount");
+
 /// Which family a scheme belongs to, for the handful of decisions that turn on "is the
 /// ground light or dark" rather than on the exact palette — the accent wash's alpha, the
 /// darkened accent ink for readable text, the border glow. Midnight is a darker Dark;
@@ -164,7 +175,14 @@ inline constexpr int PagePadLeft   = 18;
 inline constexpr int PagePadTop    = 2;
 inline constexpr int PagePadRight  = 12;
 inline constexpr int PagePadBottom = 16;
-inline constexpr int ScrollBarWidth = 8;
+// The track, not the thumb. SmoothScrollArea insets the handle by a 2px border on each
+// side, so the grabbable part is this minus 4: at the 8 this used to be, that came to a
+// 4px thumb, which is thinner than the window's own border and needs a deliberate aim.
+// 12 doubles it to 8px — the same width as Windows 11's own expanded scrollbar thumb, so
+// it meets a hand that has been trained on that one — and 12 is also PagePadRight, which
+// means the bar occupies exactly the column every page already reserves as its right
+// gutter and content keeps a full 12px of air from it at every interface scale.
+inline constexpr int ScrollBarWidth = 12;
 
 // Shadow: CSS `0 24px 80px rgba(0,0,0,.55)`.
 // A literal 80px blur would need ~80px of transparent margin on every side; with the

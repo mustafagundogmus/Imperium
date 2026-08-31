@@ -312,9 +312,10 @@ void Sidebar::resizeEvent(QResizeEvent *e)
         return y;
     };
 
-    // Measured at full width first, and laid out again 8px narrower only if the result
-    // does not fit — asking the viewport for its width instead would answer with whatever
-    // it was before this geometry was set, which on the first pass is nothing like right.
+    // Measured at full width first, and laid out again a scrollbar's width narrower only
+    // if the result does not fit — asking the viewport for its width instead would answer
+    // with whatever it was before this geometry was set, which on the first pass is
+    // nothing like right.
     int rowW = contentW;
     int listContentH = layoutRows(rowW);
     if (listContentH > listH) {

@@ -1,8 +1,13 @@
 // smoothscrollarea.h — scroll container for the main content column.
 //
-// Carries the mockup's scrollbar skin (8px wide, #232327 thumb inset by a 2px
-// window-coloured border, radius 4, transparent track) and eases wheel scrolling
+// Carries the mockup's scrollbar skin — a transparent track the width of
+// Theme::Metric::ScrollBarWidth, holding a thumb in the palette's scroll colour inset by a
+// 2px window-coloured border and capped at half the track — and eases wheel scrolling
 // instead of jumping in three-line steps.
+//
+// The two numbers are named rather than written down here because they moved once already:
+// the mockup's 8px track left a 4px thumb after the border, and a comment that repeats a
+// constant is a comment that will disagree with it.
 
 #pragma once
 

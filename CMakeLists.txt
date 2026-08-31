@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(Arbitrium VERSION 0.10.0 LANGUAGES CXX)
+project(Arbitrium VERSION 0.11.0 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -62,6 +62,7 @@ set(PROJECT_SOURCES
     src/widgets/segmentedcontrol.h    src/widgets/segmentedcontrol.cpp
     src/widgets/smoothscrollarea.h    src/widgets/smoothscrollarea.cpp
     src/widgets/toggleswitch.h        src/widgets/toggleswitch.cpp
+    src/widgets/updatedialog.h        src/widgets/updatedialog.cpp
     src/widgets/tweakrow.h            src/widgets/tweakrow.cpp
 
     src/views/contentheader.h         src/views/contentheader.cpp

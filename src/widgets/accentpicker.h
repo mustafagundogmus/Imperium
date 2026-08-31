@@ -1,7 +1,17 @@
-// accentpicker.h — the four accent presets from the handoff, as a strip of swatches.
+// accentpicker.h — the accent presets from the handoff, as a strip of swatches.
 //
-// 14px circles, 10px apart. The active one carries a 1px ring in its own colour, offset
-// by 3px, which is the same visual language the sidebar uses for the selected category.
+// 14px circles, 10px apart — the same gap the theme cards and the chip grids keep. The
+// active one carries a 1px ring in its own colour, offset by 3px, which is the same visual
+// language the sidebar uses for the selected category.
+//
+// The dot is a fixed size at every interface scale, like ToggleSwitch's 30×16 capsule: in
+// this design the type scales and the drawn controls do not. What does follow the type is
+// the strip's height, which is the app's one pill height — so the band you can click grows
+// with the text size even though the dot inside it does not, and the strip sits on the same
+// rhythm as the segmented control and the chip grids stacked above it.
+//
+// No wrapping here, unlike the three galleries beside it: eight 14px dots come to 188px,
+// which is narrower than the settings column at any text size and any window width.
 
 #pragma once
 

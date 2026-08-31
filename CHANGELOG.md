@@ -4,6 +4,117 @@ Bu dosya sürümler arasındaki dikkate değer değişiklikleri listeler.
 Biçim [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) temellidir ve
 proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
+## [0.11.0] — 2026-08-31
+
+### Eklendi
+
+#### Uygulama kendini güncelliyor
+
+Açılışta yeni bir sürüm varsa soruyor; kabul edilirse indiriyor, doğruluyor, yerine koyuyor ve
+yeni sürümle açılıyor. Taşınabilirlik bozulmuyor: kurulum yok, hizmet yok, zamanlanmış görev yok,
+klasörde kullanıcının zaten sahip olduğu tek dosyadan başka bir şey kalmıyor.
+
+`updater.h`'nin başındaki söz — *"hiçbir şey indirmez ve kurmaz, kullanıcıya sürüm sayfasını
+verir"* — artık doğru olmadığı için yeniden yazıldı. Yerine geçen kural şu: **hiçbir şey bir
+insan onaylamadan olmuyor.** Açılış kontrolü yalnızca bakar; indiren ve değiştiren tek şey
+teklif penceresindeki düğmedir.
+
+İndirilen dosyanın SHA-256 özeti, sürümün yayımladığı `.sha256` ile karşılaştırılıyor ve
+uyuşmazsa hiçbir şey çalıştırılmıyor. Kullanıcıya gösterilen metin bunun neyi kanıtlayıp neyi
+kanıtlamadığını açıkça söylüyor: dosyanın eksiksiz indiğini ve o sürümün yayımladığı dosya
+olduğunu kanıtlar, kimin derlediğini **kanıtlamaz** — release'i değiştirebilen aynı hamlede
+özet dosyasını da değiştirir. Kaynağı kanıtlayan şey GitHub'ın yayımladığı build attestation'ı,
+ve bir Sigstore paketini süreç içinde doğrulamak buranın işi değil; yorum bunu söyleyip
+README'nin zaten belgelediği `gh attestation verify` komutuna işaret ediyor.
+
+Windows çalışan bir exe'nin üzerine yazdırmaz ama yeniden adlandırmaya izin verir: yeni sürüm
+mevcut exe'nin yanına iniyor, doğrulanıyor, çalışan dosya kenara alınıyor, yenisi yerine
+konuyor, başlatılıyor ve eski süreç çıkıyor. Kalıntı bir sonraki açılışta siliniyor — ilk
+denemede başarısız olması beklenen bir şey, çünkü değiştirilen süreç hâlâ çıkıyor olabiliyor;
+birkaç saniye sonraki ikinci deneme tutuyor.
+
+Yazılamayan bir klasör **indirmeden önce** tespit ediliyor, sonunda başarısız olmak yerine.
+Her başarısızlık hangi aşamada takıldığını söylüyor ve kullanıcıyı çalışan bir uygulamayla
+bırakıyor — tek istisnası, yeni dosya yerine konamayıp eski dosyanın da geri alınamadığı dal,
+ve o durumda uygulamanın hangi adla nerede olduğu ve elle nasıl geri alınacağı yazılıyor.
+`updater.h` bu istisnayı gizlemek yerine adıyla anıyor.
+
+`checkUpdatesOnLaunch` artık **varsayılan olarak açık**. Kapalıyken özellik, düğmeyi aramaya
+gitmeyen herkes için ölü koddu; ve yönetici yetkisiyle çalışıp registry'ye yazan bir programın
+üç sürüm geride kalmış bir kopyası nötr bir durum değil. Kontrolün ne olduğu bunu savunulabilir
+kılıyor: `api.github.com`'a günde en fazla bir kez, yalnızca bir User-Agent taşıyan anonim bir
+GET — kimlik yok, makine bilgisi yok, hiçbir telemetri yok. Ayarlar'daki anahtar tek tıkla
+kapatıyor ve açıklaması ne yaptığını aynen yazıyor.
+
+#### Genel Bakış kartlarında ikonlar
+
+Yirmi dokuz kart artık başlığının yanında bir ikon taşıyor. Set **lucide**; glyph'ler yazım
+anında `api.iconify.design`'dan çekilip `src/icons.cpp`'ye gömüldü — çalışma anında hiçbir şey
+indirilmiyor, çünkü bu taşınabilir bir exe ve çevrimdışı çalışmak zorunda.
+
+Mevcut `Icons::fragment()` üzerinden gidiyorlar, yani tema, vurgu rengi, metin boyutu ve
+kesirli dpr için zaten çözülmüş yolu kullanıyorlar; ikinci bir mekanizma eklenmedi. Çizgi
+kalınlığı lucide'ın kendi 2'si yerine 24 birimde 1.75: 14px kutuda 1.02 mantıksal piksele denk
+geliyor, yani uygulamanın elle çizilmiş sekiz glyph'iyle ve `Css::hairline` ile aynı incelikte.
+
+On dilde en uzun kart başlığı 1240px'lik asgari pencerede ölçüldü — en dar durum Rusça
+"Программное обеспечение", 274px alanda 165px — hiçbiri ikon yüzünden kısalmıyor. lucide ISC
+lisans metni `resources/licenses/` altına eklendi ve release zip'i artık dokuz lisans dosyası
+taşıyor.
+
+#### Hakkında sayfası
+
+Dört çıplak satırdan ibaretti. Artık Genel Bakış ızgarasının **kendi kartlarından** ikisi —
+yeni bir bileşen değil, aynı `InfoSection` — ve içindeki her rakam çalışan build'den okunuyor:
+sürüm, Qt sürümü, lisans, katalog ve eylem sayısı; yanında tema, vurgu rengi, dil, yazı tipi ve
+boyut sayıları. Yani sayfa bu binary'nin taşımadığı bir dili ya da yazı tipini reklam edemiyor.
+
+Dördü de tablosundan okunuyor; tema sayısı okunamıyordu çünkü bir C++ enum'unun eleman sayısı
+yok, o yüzden `Theme::AppearanceCount` eklendi ve yanına dokuzuncu palet nereye eklenirse
+eklensin patlayan bir `static_assert` kondu. Dört bağlantı satırı aynen duruyor; bağış satırı
+hâlâ sonda ve hâlâ sade.
+
+### Değiştirildi
+
+#### Ayarlar sayfası yeniden düzenlendi
+
+Şikâyet "sıkışık ve karışık"tı; ölçünce sorun aralık değil şuymuş: **dört galeri, bir liste
+satırının sağ kontrolü olarak giydirilmişti.** `SettingRow::Trailing` 30×16'lık bir anahtar ya
+da bir hap düğme için tasarlanmış; içine 372×158'lik tema ızgarası, on dillik çip kümesi, altı
+yazı tipi örneği ve sekiz renk noktası konuyordu.
+
+Sonuçları ölçüldü: aynı 1px'le birleşmiş listede 158, 58, 27, 22 ve 40 piksellik satır
+yükseklikleri — satırlar çizgi ve zemin çizmediği için bir ayarı diğerinden ayıran tek sinyal
+boşluktu ve 158px'in yanında o sinyal yok oluyordu. En geniş kontrol de sütunu en uzun
+açıklamadan çalıyordu: dil açıklaması Fransızca'da varsayılan boyutta **1136px**, en büyük
+boyutta 1439px, ve eline geçen 970px'in **164'üydü**. Ekranda en sıkışık görünen şey buydu.
+
+Yeni bir yerleşim eklendi — `SettingRow::Below`: açıklama tam sütunda, kontrol altında kendi
+satırında. Dört galeri de tek bir kurala bağlandı: eşit hücreler, tek bir 10px boşluk ve satır
+dengeleyen bir sarma. Sonuç 1240×760'ta her metin boyutunda **on dil tek satırda** (en büyük
+boyutta 970'in 930'u) ve sekiz tema **tek sırada**.
+
+Gruplama da tarihe göre değil aramaya göre yeniden yapıldı, kuralı "bir bölüm, bir şekil":
+**Görünüm** artık yalnızca bir kümeden seçim yaptıran beş ayar (Dil, Tema, Vurgu, Yazı tipi,
+Yazı boyutu), yeni **Arayüz** bölümü ise üç açık/kapalı anahtar. Dil başa alındı, çünkü
+okuyamadığı bir dile düşmüş birinin onu **okumadan** bulabilmesi gerekiyor ve on dilin kendi
+adları her koşulda okunur.
+
+Yol üstünde iki hata: `TypefacePicker`'ın `typefaceChanged` bağlantısı hiç yokmuş ve örneklerini
+`Theme::font()`'u atlayarak kuruyormuş — sayfadaki tek kontroldü ki "Çok büyük"te 1.0 boyutunda
+kalıyordu. Ve `SettingRow::positionControl()` yazı tipi değişiminde çalışmıyordu, yani genişleyen
+bir hap düğme yerinde kalıyordu.
+
+Tema açıklaması da eskimişti: "dört palet" diyordu, sekiz var. On dilde düzeltildi.
+
+#### Kaydırma çubuğu 8'den 12 piksele
+
+Tutamak iki yanından 2px kenarlıkla içeri alındığı için 8, kavraması zor 4 piksellik bir şerit
+bırakıyordu. `sidebar.cpp`'nin iki geçişli ölçümü bu sayıyı satır genişliğinden düşüyor;
+aritmetiği yeniden kontrol edildi.
+
+---
+
 ## [0.10.0] — 2026-08-31
 
 ### Eklendi
@@ -972,6 +1083,7 @@ satırdan geniş bir değer sol kenardan taşarak çiziliyordu.
 
 ---
 
+[0.11.0]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.11.0
 [0.10.0]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.10.0
 [0.9.10]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.10
 [0.9.9]: https://github.com/shadesofdeath/Arbitrium/releases/tag/v0.9.9

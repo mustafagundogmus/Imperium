@@ -6,6 +6,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
+#include <QtMath>
 
 #include <iterator>
 
@@ -13,11 +14,12 @@ namespace {
 
 constexpr qreal CardW = 84.0;
 constexpr qreal CardH = 52.0;
+// The one gallery gap, on both axes and shared with the chip grids beside this one. The
+// vertical figure used to be a 12 of its own, which is the sort of one-off spacing that
+// makes a page of otherwise identical parts read as several unrelated ones.
 constexpr qreal Gap = 10.0;
 constexpr qreal RingOffset = 3.0;   // the selection ring sits this far outside the card
 constexpr qreal LabelGap = 5.0;
-constexpr qreal RowVGap = 12.0;     // space below a label before the next row of cards
-constexpr int Cols = 4;             // eight themes wrap to a 4×2 grid
 
 const Theme::Appearance Order[] = {
     Theme::Appearance::Dark,   Theme::Appearance::Light,
@@ -48,36 +50,68 @@ ThemeSwitch::ThemeSwitch(QWidget *parent)
 {
     setMouseTracking(true);
     setCursor(Qt::PointingHandCursor);
-    setFixedSize(sizeHint());
+
+    // Flows into the width it is handed and reports the height that leaves, the same
+    // contract the language and typeface grids keep — Preferred and not Fixed vertically
+    // for the reason spelled out in languagepicker.cpp: Fixed caps the item at one row's
+    // height and clips the wrap.
+    QSizePolicy policy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    policy.setHeightForWidth(true);
+    setSizePolicy(policy);
+
     connect(Theme::notifier(), &Theme::Notifier::appearanceChanged, this, qOverload<>(&QWidget::update));
     connect(Theme::notifier(), &Theme::Notifier::accentChanged, this, qOverload<>(&QWidget::update));
+    // The label under a card is the only part of this widget measured from the font, and
+    // it decides the height of a row of cards — so both of the things that can change it
+    // have to ask the layout for a new height as well as repainting.
     connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
-        setFixedSize(sizeHint());
+        updateGeometry();
         update();
     });
     connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, [this] {
-        setFixedSize(sizeHint());
+        updateGeometry();
         update();
     });
+}
+
+namespace {
+
+/// A card plus the label under it — the cell the grid is built from.
+qreal cellHeight()
+{
+    return CardH + LabelGap + Css::normalLine(Theme::Font::tileSub());
+}
+
+} // namespace
+
+int ThemeSwitch::columns() const
+{
+    return qMax(1, Css::flexColumns(width() - 2 * RingOffset, CardW, Gap, Count));
 }
 
 QSize ThemeSwitch::sizeHint() const
 {
-    const qreal labelLine = Css::normalLine(Theme::Font::tileSub());
-    const int cols = qMin(Count, Cols);
-    const int rows = (Count + Cols - 1) / Cols;
-    const qreal rowPitch = CardH + LabelGap + labelLine + RowVGap;
-    return {qRound(cols * CardW + (cols - 1) * Gap + 2 * RingOffset),
-            qRound(rows * rowPitch - RowVGap + 2 * RingOffset)};
+    // The shape it would rather have: all eight palettes on one line, which the settings
+    // page's content column has room for at every interface scale. A narrower container
+    // wraps instead of clipping.
+    return {qCeil(Count * CardW + (Count - 1) * Gap + 2 * RingOffset),
+            qCeil(cellHeight() + 2 * RingOffset)};
+}
+
+int ThemeSwitch::heightForWidth(int w) const
+{
+    const int cols = qMax(1, Css::flexColumns(w - 2 * RingOffset, CardW, Gap, Count));
+    const int rows = (Count + cols - 1) / cols;
+    return qCeil(rows * cellHeight() + (rows - 1) * Gap + 2 * RingOffset);
 }
 
 QRectF ThemeSwitch::cardRect(int index) const
 {
-    const qreal labelLine = Css::normalLine(Theme::Font::tileSub());
-    const qreal rowPitch = CardH + LabelGap + labelLine + RowVGap;
-    const int col = index % Cols;
-    const int row = index / Cols;
-    return {RingOffset + col * (CardW + Gap), RingOffset + row * rowPitch, CardW, CardH};
+    const int cols = columns();
+    const int col = index % cols;
+    const int row = index / cols;
+    return {RingOffset + col * (CardW + Gap), RingOffset + row * (cellHeight() + Gap),
+            CardW, CardH};
 }
 
 int ThemeSwitch::indexAt(const QPointF &pos) const
@@ -213,9 +247,13 @@ void ThemeSwitch::paintEvent(QPaintEvent *)
                               7.0, 7.0);
         }
 
+        // Elided to the card it belongs to. No translation of the eight names is anywhere
+        // near 84px even at the largest text size — the widest measured is the French
+        // "Crépuscule" — but a label that outgrew its card would run under its neighbour
+        // rather than stop, and a grid whose labels overlap is worse than one that trims.
         const QRectF labelBox(card.left(), card.bottom() + LabelGap, card.width(), labelLine);
         Css::drawText(&p, labelBox, Css::baseline(labelFont, labelBox.top(), labelLine), labelFont,
                       selected ? Color::TextPrimary() : Color::TextFaint(),
-                      labelFor(Order[i]), Qt::AlignHCenter);
+                      labelFor(Order[i]), Qt::AlignHCenter, true);
     }
 }

@@ -1,6 +1,7 @@
 #include "overviewpage.h"
 #include "../deepinfo.h"
 #include "../i18n.h"
+#include "../icons.h"
 #include "../theme.h"
 #include "../widgets/livechart.h"
 #include "../widgets/overviewblocks.h"
@@ -128,35 +129,75 @@ OverviewPage::OverviewPage(SystemMonitor *monitor, QWidget *parent)
     grid->setHorizontalSpacing(SectionGapH);
     grid->setVerticalSpacing(SectionGapV);
 
-    m_system = new InfoSection(Locale::tr(QStringLiteral("overview.section.system")), sections);
-    m_user = new InfoSection(Locale::tr(QStringLiteral("overview.section.user")), sections);
-    m_hardware = new InfoSection(Locale::tr(QStringLiteral("overview.section.hardware")), sections);
-    m_display = new InfoSection(Locale::tr(QStringLiteral("overview.section.display")), sections);
-    m_network = new InfoSection(Locale::tr(QStringLiteral("overview.section.network")), sections);
-    m_power = new InfoSection(Locale::tr(QStringLiteral("overview.section.power")), sections);
-    m_security = new InfoSection(Locale::tr(QStringLiteral("overview.section.security")), sections);
-    m_storage = new InfoSection(Locale::tr(QStringLiteral("overview.section.storage")), sections);
-    m_session = new InfoSection(Locale::tr(QStringLiteral("overview.section.session")), sections);
-    m_firmware = new InfoSection(Locale::tr(QStringLiteral("overview.section.firmware")), sections);
-    m_processor = new InfoSection(Locale::tr(QStringLiteral("overview.section.processor")), sections);
-    m_memory = new InfoSection(Locale::tr(QStringLiteral("overview.section.memory")), sections);
-    m_software = new InfoSection(Locale::tr(QStringLiteral("overview.section.software")), sections);
-    m_locale = new InfoSection(Locale::tr(QStringLiteral("overview.section.locale")), sections);
-    m_processes = new InfoSection(Locale::tr(QStringLiteral("overview.section.processes")), sections);
-    m_catalog = new InfoSection(Locale::tr(QStringLiteral("overview.section.catalog")), sections);
+    // Each card's glyph, from lucide (see the block at the bottom of icons.h). The pairing
+    // is the point of this list, so it is written out here rather than hidden behind a
+    // lookup: a card whose title says one thing and whose glyph says another is a bug you
+    // can only see by reading the two side by side, which is what this is.
+    //
+    // Three of them are chips and they are three different chips on purpose: the square
+    // die with pins on four sides for the processor, the vertical DIP package for the
+    // firmware that lives on one, and the populated board for the machine as a whole.
+    //
+    // An alias rather than `using namespace Icons`, which would also drop this file's
+    // scope on the free functions next to it — `search` and `sort` among them.
+    namespace Lucide = Icons::Lucide;
+    m_system = new InfoSection(Locale::tr(QStringLiteral("overview.section.system")),
+                               Lucide::AppWindow, sections);
+    m_user = new InfoSection(Locale::tr(QStringLiteral("overview.section.user")),
+                             Lucide::User, sections);
+    m_hardware = new InfoSection(Locale::tr(QStringLiteral("overview.section.hardware")),
+                                 Lucide::CircuitBoard, sections);
+    m_display = new InfoSection(Locale::tr(QStringLiteral("overview.section.display")),
+                                Lucide::Monitor, sections);
+    m_network = new InfoSection(Locale::tr(QStringLiteral("overview.section.network")),
+                                Lucide::Network, sections);
+    m_power = new InfoSection(Locale::tr(QStringLiteral("overview.section.power")),
+                              Lucide::BatteryCharging, sections);
+    m_security = new InfoSection(Locale::tr(QStringLiteral("overview.section.security")),
+                                 Lucide::ShieldCheck, sections);
+    m_storage = new InfoSection(Locale::tr(QStringLiteral("overview.section.storage")),
+                                Lucide::HardDrive, sections);
+    m_session = new InfoSection(Locale::tr(QStringLiteral("overview.section.session")),
+                                Lucide::Clock, sections);
+    m_firmware = new InfoSection(Locale::tr(QStringLiteral("overview.section.firmware")),
+                                 Lucide::Microchip, sections);
+    m_processor = new InfoSection(Locale::tr(QStringLiteral("overview.section.processor")),
+                                  Lucide::Cpu, sections);
+    m_memory = new InfoSection(Locale::tr(QStringLiteral("overview.section.memory")),
+                               Lucide::MemoryStick, sections);
+    m_software = new InfoSection(Locale::tr(QStringLiteral("overview.section.software")),
+                                 Lucide::Package, sections);
+    m_locale = new InfoSection(Locale::tr(QStringLiteral("overview.section.locale")),
+                               Lucide::Globe, sections);
+    m_processes = new InfoSection(Locale::tr(QStringLiteral("overview.section.processes")),
+                                  Lucide::Layers, sections);
+    m_catalog = new InfoSection(Locale::tr(QStringLiteral("overview.section.catalog")),
+                                Lucide::SlidersHorizontal, sections);
 
-    m_update = new InfoSection(Locale::tr(QStringLiteral("overview.section.update")), sections);
-    m_integrity = new InfoSection(Locale::tr(QStringLiteral("overview.section.integrity")), sections);
-    m_tasks = new InfoSection(Locale::tr(QStringLiteral("overview.section.tasks")), sections);
-    m_drivers = new InfoSection(Locale::tr(QStringLiteral("overview.section.drivers")), sections);
-    m_privacy = new InfoSection(Locale::tr(QStringLiteral("overview.section.privacy")), sections);
-    m_encryption = new InfoSection(Locale::tr(QStringLiteral("overview.section.encryption")), sections);
-    m_accounts = new InfoSection(Locale::tr(QStringLiteral("overview.section.accounts")), sections);
-    m_virtualisation = new InfoSection(Locale::tr(QStringLiteral("overview.section.virtualisation")), sections);
-    m_diskHealth = new InfoSection(Locale::tr(QStringLiteral("overview.section.diskhealth")), sections);
-    m_performance = new InfoSection(Locale::tr(QStringLiteral("overview.section.performance")), sections);
-    m_connection = new InfoSection(Locale::tr(QStringLiteral("overview.section.connection")), sections);
-    m_sensors = new InfoSection(Locale::tr(QStringLiteral("overview.section.sensors")), sections);
+    m_update = new InfoSection(Locale::tr(QStringLiteral("overview.section.update")),
+                               Lucide::Download, sections);
+    m_integrity = new InfoSection(Locale::tr(QStringLiteral("overview.section.integrity")),
+                                  Lucide::TriangleAlert, sections);
+    m_tasks = new InfoSection(Locale::tr(QStringLiteral("overview.section.tasks")),
+                              Lucide::CalendarClock, sections);
+    m_drivers = new InfoSection(Locale::tr(QStringLiteral("overview.section.drivers")),
+                                Lucide::Plug, sections);
+    m_privacy = new InfoSection(Locale::tr(QStringLiteral("overview.section.privacy")),
+                                Lucide::EyeOff, sections);
+    m_encryption = new InfoSection(Locale::tr(QStringLiteral("overview.section.encryption")),
+                                   Lucide::Lock, sections);
+    m_accounts = new InfoSection(Locale::tr(QStringLiteral("overview.section.accounts")),
+                                 Lucide::Users, sections);
+    m_virtualisation = new InfoSection(Locale::tr(QStringLiteral("overview.section.virtualisation")),
+                                       Lucide::Box, sections);
+    m_diskHealth = new InfoSection(Locale::tr(QStringLiteral("overview.section.diskhealth")),
+                                   Lucide::HeartPulse, sections);
+    m_performance = new InfoSection(Locale::tr(QStringLiteral("overview.section.performance")),
+                                    Lucide::Gauge, sections);
+    m_connection = new InfoSection(Locale::tr(QStringLiteral("overview.section.connection")),
+                                   Lucide::Wifi, sections);
+    m_sensors = new InfoSection(Locale::tr(QStringLiteral("overview.section.sensors")),
+                                Lucide::Thermometer, sections);
 
     // Three columns rather than the handoff's two: there is a lot to show and the window
     // is wide enough that a third column costs nothing but gains a whole screen of
@@ -326,10 +367,13 @@ void OverviewPage::setFacts(const SysInfo::Facts &facts)
     // The list uses the stacked row, with the adapter's name as the row's title and its
     // values underneath — the shape InfoRow::stacked documents, and the one the storage
     // block already uses for a disk and its details. That is not a preference, it is what
-    // fits. An info card gives a row 300.7 px at the 1240 px minimum window (three columns,
-    // 12 px card padding); measured in the real faces, "NVIDIA GeForce RTX 5070 Laptop GPU"
-    // is 268 px on its own line and its driver and date another 192 px, while putting the
-    // name and the driver on one line comes to 488 px and loses the half that matters.
+    // fits. An info card gives a row 296 px at the 1240 px minimum window, counted right
+    // through: 1240 less the card's two 1 px borders, the 212 px sidebar and the scroll
+    // bar's track leaves the page 1014 px; less its 18/12 padding and the grid's two 12 px
+    // gutters that is 960 px over three columns, and each column spends 12 px of padding a
+    // side. Measured in the real faces, "NVIDIA GeForce RTX 5070 Laptop GPU" is 268 px on
+    // its own line and its driver and date another 192 px, while putting the name and the
+    // driver on one line comes to 488 px and loses the half that matters.
     QVector<InfoRow> hardware{
         {Locale::tr(QStringLiteral("ov.islemci")), facts.cpu, false},
         {Locale::tr(QStringLiteral("ov.bellek")), facts.memory, false},
@@ -372,7 +416,7 @@ void OverviewPage::setFacts(const SysInfo::Facts &facts)
         for (const SysInfo::Facts::Adapter &adapter : facts.adapters) {
             // The version and date alone, in the mono face 0.9.10 drew them in, under the
             // name of the card they belong to. No "Ekran sürücüsü" in front of them: that
-            // measures 328 px against the row's 300.7 and would cost the driver date, and
+            // measures 328 px against the row's 296 and would cost the driver date, and
             // this block is already titled "Ekran" with the card named directly above.
             // A card whose driver version is missing still gets its row — that the card is
             // there is worth more than leaving it out for want of a version.

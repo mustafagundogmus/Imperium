@@ -227,7 +227,7 @@ something isn't what you expected.
 Arbitrium is released under the **[MIT License](LICENSE)** — read it, fork it, ship it, build
 something else out of it. Keep the copyright notice with it and the rest is yours.
 
-Two pieces inside it carry licences of their own, and they stay with the binary:
+Three pieces inside it carry licences of their own, and they stay with the binary:
 
 - **Qt 6.11** — statically linked, used under the [LGPL v3](https://www.qt.io/licensing). The
   release workflow, [`.github/workflows/release.yml`](.github/workflows/release.yml), builds that
@@ -238,8 +238,14 @@ Two pieces inside it carry licences of their own, and they stay with the binary:
 - **Six typefaces** — IBM Plex, Monda, Open Sans, Oxygen, Red Hat Text and Saira, every one of
   them compiled into the executable through [`resources.qrc`](resources/resources.qrc) and every
   one under the SIL Open Font License 1.1, with a [`LICENSE-*.txt`](resources/fonts) of its own.
+- **lucide** — the glyphs that title the Genel Bakış cards, under the
+  [ISC License](https://github.com/lucide-icons/lucide/blob/main/LICENSE). They are compiled into
+  [`src/icons.cpp`](src/icons.cpp) as path data rather than shipped as files, and the text in
+  [`resources/licenses/`](resources/licenses) is the upstream licence in full, because a few of
+  the glyphs used here are on its Feather-derived list and carry that project's MIT notice in the
+  same file.
 
-The release zip carries all eight of those files in a `licenses/` folder, so a downloaded copy is
+The release zip carries all nine of those files in a `licenses/` folder, so a downloaded copy is
 complete without the repository beside it.
 
 ---

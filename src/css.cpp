@@ -141,6 +141,25 @@ qreal rowDescLine()
     return line(Theme::Font::tweakDesc(), 1.45);
 }
 
+int flexColumns(qreal available, qreal cell, qreal gap, int count)
+{
+    if (count <= 0)
+        return 0;
+    // A cell of no width would divide by zero below, and a caller asking to wrap nothing
+    // wants every cell on one line anyway.
+    if (cell <= 0.0)
+        return count;
+
+    // n cells carry n-1 gaps, so n*cell + (n-1)*gap <= available rearranges to this.
+    int fit = int((available + gap) / (cell + gap));
+    fit = qBound(1, fit, count);
+
+    // The rebalance the header describes: keep the number of rows that many columns
+    // implies, then spread the cells evenly over exactly those rows.
+    const int rows = (count + fit - 1) / fit;
+    return (count + rows - 1) / rows;
+}
+
 void hairline(QPainter *p, const QRectF &r, const QColor &c)
 {
     // The contract in the header is a crisp 1 *logical* pixel, and a bare fillRect does

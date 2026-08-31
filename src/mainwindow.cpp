@@ -19,6 +19,7 @@
 #include "views/settingspage.h"
 #include "views/statusbar.h"
 #include "widgets/applyoverlay.h"
+#include "widgets/updatedialog.h"
 #include "views/titlebar.h"
 #include "views/tilauncherpage.h"
 #include "views/tweakpage.h"
@@ -131,10 +132,18 @@ MainWindow::MainWindow(QWidget *parent)
             [this](DeepInfo::Probe::Stage) { m_overview->setDeepFacts(m_deepProbe->facts()); });
     m_deepProbe->start();
 
+    // Whatever a previous self-update left in the folder. It normally fails on the first
+    // try and that is expected rather than a fault: the process being replaced is still
+    // exiting, and Windows will not delete the file it is running from. The second attempt
+    // a few seconds later is the one that lands. Both are two QFile::exists() calls when
+    // there is nothing to do, so the ordinary launch pays nothing for them.
+    if (!Updater::sweepPreviousInstall())
+        QTimer::singleShot(6000, this, [] { Updater::sweepPreviousInstall(); });
+
     // The Settings switch for this was stored and never consulted: Updater::check() had
     // exactly one caller, the manual button on the settings page. A little after the
     // window is up, so the first paint is not waiting on a network round trip.
-    if (Settings::instance().checkUpdatesOnLaunch())
+    if (Settings::instance().checkUpdatesOnLaunch() && Updater::launchCheckDue())
         QTimer::singleShot(2500, m_updater, [this] { m_updater->check(); });
 }
 
@@ -258,6 +267,38 @@ void MainWindow::wire()
         if (m_state->selectedCategory() == Sidebar::debloatId())
             refreshView();
     });
+    // The offer, for both kinds of check.
+    //
+    // It used to be the settings page's business, because the only thing finding a new
+    // version did was rewrite one row and — for a check somebody had pressed a button
+    // for — open a browser. Now that the answer is "shall I replace myself", it belongs
+    // to the window: the dialog is application-modal, it outlives the page it might have
+    // been opened from, and the launch-time check has no page on screen at all. The
+    // settings row still updates itself; this is the part that asks.
+    //
+    // Both kinds of check ask. The old rule that only a user-initiated check was allowed
+    // to take over the screen existed because taking it over meant launching a browser
+    // seconds after startup; a dialog naming the version and waiting for an answer is the
+    // thing the launch check was always for, and one nobody is ever told about is the
+    // whole failure this feature exists to fix.
+    connect(m_updater, &Updater::finished, this,
+            [this](bool available, const QString &, const QString &, const QString &error, bool) {
+                // …and not while one is already being installed: offer() returns as soon
+                // as the question is answered, so m_offering alone would go false again
+                // while the download it started is still running behind its own dialog.
+                if (!available || !error.isEmpty() || m_offering || m_updater->installing())
+                    return;
+                m_offering = true;
+                // Off the network reply's stack before a modal dialog spins an event loop
+                // on top of it, and with the release copied out rather than read back
+                // later, so a second check cannot change the answer under the dialog.
+                const Updater::Release release = m_updater->latest();
+                QTimer::singleShot(0, this, [this, release] {
+                    UpdateDialog::offer(m_updater, release, this);
+                    m_offering = false;
+                });
+            });
+
     connect(m_settings, &SettingsPage::presetApplied, this,
             [this](const QString &name, int changed, int unknown) {
                 QString text = Locale::tr(QStringLiteral("mw.preset.loaded"))

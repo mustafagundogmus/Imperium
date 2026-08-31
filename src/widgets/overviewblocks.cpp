@@ -1,10 +1,13 @@
 #include "overviewblocks.h"
 #include "../css.h"
+#include "../icons.h"
 #include "../theme.h"
 
 #include <QPainter>
 #include <QPainterPath>
 #include <QtMath>
+
+#include <cmath>
 
 namespace {
 
@@ -17,6 +20,8 @@ constexpr qreal CardPadTop = 10.0;
 constexpr qreal CardPadBottom = 9.0;
 constexpr qreal TitleGap = 8.0;    // title baseline box → rule
 constexpr qreal RuleGap = 6.0;     // rule → first row
+constexpr qreal TitleIconGap = 8.0;   // glyph → title
+constexpr qreal TitleNoteGap = 10.0;  // title → the note on the right, when there is one
 
 constexpr qreal RowPadY = 5.0;
 constexpr qreal RowGap = 16.0;     // label ↔ value
@@ -151,9 +156,10 @@ void StatTile::paintEvent(QPaintEvent *)
 
 // ----------------------------------------------------------------- InfoSection ---
 
-InfoSection::InfoSection(const QString &title, QWidget *parent)
+InfoSection::InfoSection(const QString &title, const Icons::Glyph &icon, QWidget *parent)
     : QWidget(parent)
     , m_title(title)
+    , m_icon(&icon)
 {
     setAttribute(Qt::WA_TransparentForMouseEvents);
     // Grows to the tallest card in its grid row rather than stopping at its own content:
@@ -254,13 +260,39 @@ void InfoSection::paintEvent(QPaintEvent *)
     // --- title -----------------------------------------------------------------
     const QFont &titleFont = Font::blockTitle();
     const qreal titleLine = Css::normalLine(titleFont);
-    const QRectF titleBox(left, 0, right - left, titleLine);
-    Css::drawText(&p, titleBox, Css::baseline(titleFont, CardPadTop, titleLine),
-                  titleFont, Color::TextPrimary(), m_title, Qt::AlignLeft, true);
+    const qreal titleBaseline = Css::baseline(titleFont, CardPadTop, titleLine);
+
+    // The glyph is the title's own line box, which is the one measurement that cannot put
+    // it into the rule below and still follows all six faces and all four interface scales
+    // — 11, 13, 14 and 16px, measured across every face in the build. It was written as a
+    // multiple of the title's pixel size capped at this line, but no face in the build has
+    // a line box that big (they run about 0.98em), so the cap bound every time and the
+    // multiple never once decided anything.
+    const int iconSize = qRound(titleLine);
+    // Rounded to a whole pixel so the glyph's own 1px strokes land on the device grid the
+    // way the rest of the card's hairlines do.
+    const qreal iconY = std::round(CardPadTop + (titleLine - iconSize) / 2.0);
+    // The colour is read here, at paint time, and Icons:: caches per colour — which is all
+    // that following the theme takes: MainWindow repaints the tree on appearanceChanged,
+    // this asks for TextPrimary again, and the cache answers with the right palette's copy.
+    p.drawPixmap(QPointF(left, iconY),
+                 Icons::lucide(*m_icon, Color::TextPrimary(), iconSize, devicePixelRatioF()));
+
+    const qreal titleLeft = left + iconSize + TitleIconGap;
+
+    // The note is measured out of the title's width rather than drawn over it. It only
+    // ever appears on the storage card, whose title is short, but the glyph and its gap
+    // have just taken 21px off the line at 100% and more at every step above it, and a
+    // title elided into the note would be the way that shows.
+    const QFont &noteFont = Font::sectionCount();
+    const qreal noteW = m_note.isEmpty() ? 0.0
+                                         : Css::textWidth(noteFont, m_note) + TitleNoteGap;
+
+    Css::drawText(&p, QRectF(titleLeft, 0, qMax(0.0, right - titleLeft - noteW), titleLine),
+                  titleBaseline, titleFont, Color::TextPrimary(), m_title, Qt::AlignLeft, true);
 
     if (!m_note.isEmpty()) {
-        const QFont &noteFont = Font::sectionCount();
-        Css::drawText(&p, titleBox, Css::baseline(titleFont, CardPadTop, titleLine),
+        Css::drawText(&p, QRectF(titleLeft, 0, right - titleLeft, titleLine), titleBaseline,
                       noteFont, Color::TextFainter(), m_note, Qt::AlignRight);
     }
 

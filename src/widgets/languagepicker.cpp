@@ -3,16 +3,21 @@
 #include "../css.h"
 #include "../i18n.h"
 #include "../theme.h"
+#include "segmentedcontrol.h"
 
 #include <QMouseEvent>
 #include <QPainter>
+#include <QResizeEvent>
+#include <QtMath>
 
 namespace {
-constexpr qreal ChipH = 26.0;
+// The pill padding SegmentedControl and PillButton already use, and unscaled like theirs:
+// in this app the type grows with the interface scale and the padding around it does not.
 constexpr qreal ChipPadX = 10.0;
-constexpr qreal Gap = 6.0;
-constexpr qreal RowGap = 6.0;
-constexpr int PerRow = 5;   // five languages per row, two rows for the ten the build carries
+// One gallery gap, on both axes, shared with the theme cards and the accent swatches. The
+// picker used to keep 6px between chips and 6px between rows while the strip beside it
+// kept 10, which is the sort of one-off spacing the page was reported for.
+constexpr qreal Gap = 10.0;
 } // namespace
 
 LanguagePicker::LanguagePicker(QWidget *parent)
@@ -20,60 +25,106 @@ LanguagePicker::LanguagePicker(QWidget *parent)
 {
     setMouseTracking(true);
     setCursor(Qt::PointingHandCursor);
-    rebuild();
+
+    // The strip flows into whatever width it is handed and reports the height that leaves.
+    // That is what lets the settings page give it the whole content column and the setup
+    // wizard give it a narrower one, without either of them having to know the shape.
+    //
+    // Preferred vertically rather than Fixed, and the difference is not cosmetic: a Fixed
+    // vertical policy makes qSmartMaxSize cap the item at sizeHint().height(), which is the
+    // height of a single row, and a QBoxLayout then clips the wrap it asked for. Measured
+    // in the setup wizard, whose 758px column takes ten chips to two rows: the picker was
+    // handed 22px and the second row vanished.
+    QSizePolicy policy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    policy.setHeightForWidth(true);
+    setSizePolicy(policy);
+
+    measure();
+    relayout();
+
     connect(Theme::notifier(), &Theme::Notifier::accentChanged, this, qOverload<>(&QWidget::update));
     connect(Theme::notifier(), &Theme::Notifier::appearanceChanged, this, qOverload<>(&QWidget::update));
+    // The names are written in their own languages, so a language change moves the
+    // selection and nothing else.
     connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, qOverload<>(&QWidget::update));
     // Every chip's rectangle is measured from Font::segment(), which carries the interface
     // scale, so a face swap or a text-size change has to re-measure them. Without this the
     // chips kept the widths of the size they were built at: at "Büyük" the labels ran past
     // their outlines, at "Küçük" they floated inside them.
     connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
-        rebuild();
+        measure();
+        relayout();
+        updateGeometry();
         update();
     });
 }
 
-void LanguagePicker::rebuild()
+void LanguagePicker::measure()
 {
     m_chips.clear();
 
-    QFont font = Theme::Font::segment();
+    const QFont font = Theme::Font::segment();
 
-    qreal x = 0.0, y = 0.0;
-    int col = 0;
+    // One width for every chip, taken from the widest native name. Ten names of ten
+    // different lengths laid end to end is precisely the ragged block this page was
+    // reported for; a uniform cell turns the same ten into a grid whose columns line up,
+    // and it costs only the difference between "Polski" and "Português".
+    qreal widest = 0.0;
     for (const Locale::Language &lang : Locale::languages()) {
         Chip chip;
         chip.id = lang.id;
         chip.name = lang.nativeName;
-
-        const qreal w = Css::textWidth(font, chip.name) + 2 * ChipPadX;
-        chip.box = QRectF(x, y, w, ChipH);
-        x += w + Gap;
-
+        widest = qMax(widest, Css::textWidth(font, chip.name));
         m_chips.append(chip);
-
-        if (++col >= PerRow) {
-            col = 0;
-            x = 0.0;
-            y += ChipH + RowGap;
-        }
     }
 
-    setFixedSize(sizeHint());
+    m_cell = widest + 2 * ChipPadX;
+    // The app has one pill height and it is derived from the type, so a chip ends up
+    // exactly as tall as a segment of the filter control and a ghost button.
+    m_chipH = SegmentedControl::controlHeight();
+}
+
+int LanguagePicker::columnsFor(int w) const
+{
+    return Css::flexColumns(w, m_cell, Gap, int(m_chips.size()));
+}
+
+void LanguagePicker::relayout()
+{
+    const int cols = columnsFor(width());
+    if (cols <= 0)
+        return;
+    for (int i = 0; i < m_chips.size(); ++i) {
+        const int col = i % cols;
+        const int row = i / cols;
+        m_chips[i].box = QRectF(col * (m_cell + Gap), row * (m_chipH + Gap), m_cell, m_chipH);
+    }
 }
 
 QSize LanguagePicker::sizeHint() const
 {
-    if (m_chips.isEmpty())
-        return {0, qRound(ChipH)};
+    const int n = int(m_chips.size());
+    if (n == 0)
+        return {0, qCeil(m_chipH)};
+    // The shape it would rather have: every language on one line. Anything narrower is
+    // handled by the wrap, so this is a preference and not a demand.
+    return {qCeil(n * m_cell + (n - 1) * Gap), qCeil(m_chipH)};
+}
 
-    qreal maxRight = 0.0, maxBottom = 0.0;
-    for (const Chip &c : m_chips) {
-        maxRight = qMax(maxRight, c.box.right());
-        maxBottom = qMax(maxBottom, c.box.bottom());
-    }
-    return {qRound(maxRight), qRound(maxBottom)};
+int LanguagePicker::heightForWidth(int w) const
+{
+    const int cols = columnsFor(w);
+    if (cols <= 0)
+        return qCeil(m_chipH);
+    const int rows = (int(m_chips.size()) + cols - 1) / cols;
+    return qCeil(rows * m_chipH + (rows - 1) * Gap);
+}
+
+void LanguagePicker::resizeEvent(QResizeEvent *e)
+{
+    QWidget::resizeEvent(e);
+    if (e->size().width() != e->oldSize().width())
+        relayout();
 }
 
 int LanguagePicker::indexAt(const QPointF &pos) const
@@ -151,7 +202,8 @@ void LanguagePicker::paintEvent(QPaintEvent *)
         p.drawRoundedRect(chip.box.adjusted(0.5, 0.5, -0.5, -0.5),
                           Metric::ControlRadius, Metric::ControlRadius);
 
-        Css::drawText(&p, chip.box, Css::baseline(font, chip.box.top() + (ChipH - line) / 2.0, line),
+        Css::drawText(&p, chip.box,
+                      Css::baseline(font, chip.box.top() + (m_chipH - line) / 2.0, line),
                       font, selected ? accentInk() : Color::TextSecondary(),
                       chip.name, Qt::AlignHCenter);
     }

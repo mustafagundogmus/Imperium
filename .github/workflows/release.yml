@@ -156,11 +156,13 @@ jobs:
       # file that exists in a working tree and was never committed would otherwise go
       # unnoticed until cp failed on the runner.
       #
-      # Eight: one per font family compiled in through resources.qrc, which is six and
+      # Nine: one per font family compiled in through resources.qrc, which is six and
       # not one per .ttf, since IBM Plex Sans and IBM Plex Mono are one family under one
       # licence; plus LGPL-3.0, the licence the statically linked Qt is taken under, and
-      # the GPL-3.0 whose terms LGPL-3.0's own opening paragraph incorporates. Change
-      # the number in the commit that adds or removes one.
+      # the GPL-3.0 whose terms LGPL-3.0's own opening paragraph incorporates; plus the
+      # ISC of lucide, whose glyphs title the Genel Bakış cards and are compiled into
+      # src/icons.cpp as path data rather than shipped as files. Change the number in
+      # the commit that adds or removes one.
       - name: Check the licences the download has to carry
         shell: bash
         run: |
@@ -171,7 +173,7 @@ jobs:
           shopt -s nullglob
           licences=(resources/fonts/LICENSE-*.txt resources/licenses/*.txt)
 
-          expected=8
+          expected=9
           if [ "${#licences[@]}" -ne "$expected" ]; then
             echo "::error::the zip has to carry $expected licence files, this commit has ${#licences[@]}"
             printf '  %s\n' "${licences[@]:-(none)}"
