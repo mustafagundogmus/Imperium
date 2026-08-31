@@ -344,6 +344,54 @@ PATH'e güvenmek demekti.
 başlatılan bir Explorer aynı sorunu yaşıyor. Gerekiyorsa sonuç satırında söyleyip yeniden başlatmayı
 uygulama içindeki düğmeye bırakıyorlar — `shell.cpp` artık explorer'a dokunan tek yer.
 
+#### Ekran kartı satırı bir kartın adını, sürücü satırı başka bir kartın sürücüsünü gösteriyordu
+
+İki ayrı yer, iki ayrı yanlış. Ad `EnumDisplayDevices`'in masaüstüne bağlı **ilk** adaptöründe
+duruyordu; sürücü sürümü ise kayıt defterinde **sabit yazılmış** `…\Class\{4d36e968-…}\0000`
+anahtarından okunuyordu. Hibrit bir dizüstünde bunlar farklı kartlar oluyor — ölçüldü: bir
+makinede `0000` NVIDIA, `0001` Intel, `0002` yine NVIDIA. Üstelik iki satır ayrı bloklarda
+(Donanım ve Ekran) olduğu için uyuşmazlık göze batmıyordu.
+
+Artık ekran sınıfındaki her adaptör bir kez sayılıyor ve **adı, VRAM'i, sürücü sürümü ve tarihi
+birlikte** tutuluyor, yani ikisi bir daha farklı kartlardan gelemiyor. Birden fazla kart varsa
+her biri kendi satırında listeleniyor ve masaüstünü süren kart işaretlenip başa alınıyor; tek
+kartlı makinelerde 0.9.10'un iki satırı aynen kalıyor.
+
+Tekilleştirme kuralı ölçümle seçildi. `MatchingDeviceId` tam olarak yanlış anahtar: aynı NVIDIA
+kartının iki girdisi yalnızca alt sistem kimliğinde ayrılıyor (`subsys_14a71462` /
+`subsys_14a61462`), yani o kural bir kartı ikiye bölerdi — ikisinin tek fiziksel kart olduğu
+`Enum\PCI` altında aynı aygıt örneğine (`A8BA505BB42DB04800`) çıkmalarıyla doğrulandı. Kural
+şu: ekranda aynı adı, aynı belleği ve aynı sürücüyü çizecek iki girdi tek satırdır. Bedeli,
+gerçekten özdeş iki kartın tek satıra düşmesi — hibrit dizüstünden çok daha nadir, ve olmayan
+bir kart uydurmak yerine eksik sayıyor.
+
+Gerçek adaptörü sınıf anahtarının defter kayıtlarından ayıran şey `DriverDesc` — VRAM olamazdı,
+çünkü ölçüldü: Intel girdisi `HardwareInformation.qwMemorySize` taşımıyor, yani o filtre
+makinede gerçekten olan bir kartı düşürürdü.
+
+#### Bellek satırı kurulu değil, görünen belleği gösteriyordu
+
+`GlobalMemoryStatusEx().ullTotalPhys` işletim sisteminin adresleyebildiğini verir, takılı olanı
+değil. Ölçüldü: 34.048.495.616 bayta karşı 34.359.738.368 kurulu — aradaki 297 MiB'yi firmware ve
+dahili grafik tutuyor. `formatBytes` tam GB'a yuvarladığı için bu makinede fark kayboluyordu, ama
+yuvarlama eşiği 512 MiB: dahili GPU'ya 2 GB ayıran bir makine 16 GB takılıyken **15 GB** gösterirdi.
+
+Kurulu toplam artık SMBIOS tip 17 modül boyutlarının toplamı — dosya o tabloyu zaten okuyordu,
+sadece kapasiteyi toplamıyordu. Boyut alanı spesifikasyona göre çözülüyor: `0x7FFF` ise 0x1C'deki
+genişletilmiş DWORD, değilse 15. bit KB/MB seçiyor. Tabloya güvenilmesi için görünen değerden
+küçük olmaması aranıyor; bu, tip 17 hiç olmayan sanal makineyi de kapsıyor.
+
+Kurulu ile görünen yuvarlandıktan sonra da farklıysa satır ikisini birden yazıyor —
+`16 GB DDR5-5600 (14 GB kullanılabilir)` — Windows'un kendi Sistem sayfasının yaptığı gibi.
+Yalnızca farklıyken, çünkü çoğu makinede fark yok ve her seferinde yanındaki sayıyı tekrarlayan
+bir parantez gürültüdür; ama farklı olduğunda susmak daha kötü: bu satırın etiketi "Bellek",
+"Takılı" değil, ve iki blok ötedeki "Kullanımda" ile "Boşta" görünen değerden hesaplanıyor.
+
+Karışık hızlı modüllerde artık **en düşük** yapılandırılmış hız gösteriliyor — denetleyici
+kanalları birlikte saatlediği için makinenin gerçekten çalıştığı hız o. Modüller türde
+anlaşmıyorsa tür tahmin edilmek yerine boş bırakılıyor. Ve SMBIOS tablosu üç ayrı yerde üç kez
+çekilip ayrıştırılıyordu; artık bir kez.
+
 ### Güvenlik
 
 #### Yükseltilmiş process, kendi yazmadığı iki girdiyi artık sorguluyor

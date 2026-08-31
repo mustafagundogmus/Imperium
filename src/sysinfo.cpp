@@ -142,111 +142,315 @@ CoreCounts coreCounts()
     return c;
 }
 
-/// Memory type and speed from SMBIOS table type 17 (Memory Device).
-QString memoryKind()
+/// The raw SMBIOS table, exactly as GetSystemFirmwareTable returns it: a RawSMBIOSData
+/// header of four bytes of version info and a DWORD length, then the structures.
+///
+/// Fetched once. Three call sites used to ask the firmware for this same table and parse
+/// it separately, which is a waste but also three chances to disagree. Holding it is not
+/// a cache that can go stale: the firmware builds the table at boot and hands the OS a
+/// copy, so it cannot change while this process is alive. Empty when the table is
+/// unavailable — a virtual machine may have none at all.
+const QByteArray &smbiosTable()
 {
-    // GetSystemFirmwareTable's provider signature 'RSMB', spelled out so it is not a
-    // multi-character literal with implementation-defined ordering.
-    constexpr DWORD RawSmbios = 0x52534D42;
+    static const QByteArray table = [] {
+        // GetSystemFirmwareTable's provider signature 'RSMB', spelled out so it is not a
+        // multi-character literal with implementation-defined ordering.
+        constexpr DWORD RawSmbios = 0x52534D42;
 
-    const DWORD size = GetSystemFirmwareTable(RawSmbios, 0, nullptr, 0);
-    if (size == 0)
-        return {};
+        const DWORD size = GetSystemFirmwareTable(RawSmbios, 0, nullptr, 0);
+        if (size == 0)
+            return QByteArray();
+        QByteArray raw(int(size), Qt::Uninitialized);
+        if (GetSystemFirmwareTable(RawSmbios, 0, raw.data(), size) != size)
+            return QByteArray();
+        return raw;
+    }();
+    return table;
+}
 
-    QByteArray raw(int(size), Qt::Uninitialized);
-    if (GetSystemFirmwareTable(RawSmbios, 0, raw.data(), size) != size)
-        return {};
-    if (raw.size() < 8)
-        return {};
+/// Everything the SMBIOS type 17 (Memory Device) structures say, parsed once.
+struct MemoryModules
+{
+    /// Sum of the populated modules' capacities — what is physically installed. Zero when
+    /// the table is missing, holds no type 17, or reports a size this cannot add up.
+    quint64 installedBytes = 0;
+    QString kind;          ///< "DDR5-5600" — empty when the modules do not agree on a type
+    int slotCount = 0;
+    int filledCount = 0;
+};
 
-    // RawSMBIOSData header: 4 bytes of version info, then DWORD length, then the table.
-    const quint32 tableLength = *reinterpret_cast<const quint32 *>(raw.constData() + 4);
-    const uchar *p = reinterpret_cast<const uchar *>(raw.constData()) + 8;
-    const uchar *end = p + qMin<quint32>(tableLength, quint32(raw.size() - 8));
+const MemoryModules &memoryModules()
+{
+    static const MemoryModules parsed = [] {
+        MemoryModules m;
+        const QByteArray &raw = smbiosTable();
+        if (raw.size() < 8)
+            return m;
 
-    QString type;
-    int speed = 0;
+        const quint32 tableLength = *reinterpret_cast<const quint32 *>(raw.constData() + 4);
+        const uchar *p = reinterpret_cast<const uchar *>(raw.constData()) + 8;
+        const uchar *end = p + qMin<quint32>(tableLength, quint32(raw.size() - 8));
 
-    while (p + 4 <= end) {
-        const uchar structType = p[0];
-        const uchar headerLength = p[1];
-        if (headerLength < 4)
-            break;
-        const uchar *structEnd = p + headerLength;
+        QString type;
+        bool typesDisagree = false;
+        // Unsigned, and wider than the WORD it usually comes from, because the 3.3 extended
+        // speed fields below are DWORDs.
+        quint32 speed = 0;
+        bool sizeUnknown = false;
 
-        if (structType == 17 && headerLength >= 0x17) {
-            const quint16 sizeField = *reinterpret_cast<const quint16 *>(p + 0x0C);
-            if (sizeField != 0) {   // populated slot
-                if (type.isEmpty()) {
-                    switch (p[0x12]) {
-                    case 0x18: type = QStringLiteral("DDR3"); break;
-                    case 0x1A: type = QStringLiteral("DDR4"); break;
-                    case 0x22: type = QStringLiteral("DDR5"); break;
-                    case 0x23: type = QStringLiteral("LPDDR5"); break;
-                    case 0x1E: type = QStringLiteral("LPDDR3"); break;
-                    case 0x1F: type = QStringLiteral("LPDDR4"); break;
-                    default: break;
+        while (p + 4 <= end) {
+            const uchar structType = p[0];
+            const uchar headerLength = p[1];
+            if (headerLength < 4)
+                break;
+            const uchar *structEnd = p + headerLength;
+            // A structure whose declared length runs past the table is a truncated read,
+            // not a structure: every field below is addressed off p and would be reaching
+            // outside the buffer. The old walkers checked only that four bytes were left.
+            if (structEnd > end)
+                break;
+
+            // Field offsets and their minimum structure lengths are from the SMBIOS
+            // specification, DSP0134 3.7.0, section 7.18 "Memory Device (Type 17)".
+            if (structType == 17 && headerLength >= 0x0E) {
+                ++m.slotCount;
+                const quint16 sizeField = *reinterpret_cast<const quint16 *>(p + 0x0C);
+                if (sizeField != 0) {   // populated slot; 0 means nothing in this socket
+                    ++m.filledCount;
+
+                    // 7.18.5 Size, offset 0x0C, WORD: 0xFFFF means unknown; 0x7FFF means
+                    // the module is too large for this field and the real figure is the
+                    // Extended Size DWORD at 0x1C, in MB with bit 31 reserved; otherwise
+                    // bit 15 selects the unit — set is kilobytes, clear is megabytes — and
+                    // bits 14:0 carry the magnitude. Measured on this machine: two modules
+                    // reporting 0x4000 with bit 15 clear, so 16384 MB each, 32 GiB total.
+                    if (sizeField == 0xFFFF) {
+                        sizeUnknown = true;
+                    } else if (sizeField == 0x7FFF) {
+                        if (headerLength >= 0x20) {
+                            const quint32 extended =
+                                *reinterpret_cast<const quint32 *>(p + 0x1C) & 0x7FFFFFFFu;
+                            m.installedBytes += quint64(extended) * 1024ull * 1024ull;
+                        } else {
+                            sizeUnknown = true;
+                        }
+                    } else {
+                        const quint64 magnitude = sizeField & 0x7FFF;
+                        m.installedBytes += (sizeField & 0x8000) ? magnitude * 1024ull
+                                                                 : magnitude * 1024ull * 1024ull;
                     }
+
+                    // Memory Type, offset 0x12. Every populated module has to agree: a
+                    // machine cannot run two memory types at once, so if they disagree the
+                    // table is describing something this cannot name and naming one of
+                    // them anyway would be a guess printed as a fact. Codes this does not
+                    // recognise contribute nothing rather than counting as disagreement.
+                    if (headerLength >= 0x13) {
+                        QString name;
+                        switch (p[0x12]) {
+                        case 0x18: name = QStringLiteral("DDR3"); break;
+                        case 0x1A: name = QStringLiteral("DDR4"); break;
+                        case 0x22: name = QStringLiteral("DDR5"); break;
+                        case 0x23: name = QStringLiteral("LPDDR5"); break;
+                        case 0x1E: name = QStringLiteral("LPDDR3"); break;
+                        case 0x1F: name = QStringLiteral("LPDDR4"); break;
+                        default: break;
+                        }
+                        if (!name.isEmpty()) {
+                            if (type.isEmpty())
+                                type = name;
+                            else if (type != name)
+                                typesDisagree = true;
+                        }
+                    }
+
+                    // Configured Memory Speed, 7.18.7 at offset 0x20, falling back to the
+                    // nominal Speed, 7.18.6 at offset 0x15. Both are MT/s in a WORD, both
+                    // read 0 for unknown, and both read 0xFFFF to mean the figure did not
+                    // fit and lives in a DWORD added in SMBIOS 3.3 — Extended Speed at 0x54,
+                    // Extended Configured Memory Speed at 0x58, bit 31 reserved on each.
+                    // That escape is the same shape as the one on Size and is handled for
+                    // the same reason: taken literally, 0xFFFF is a plausible-looking 65535
+                    // and would print "DDR5-65535". It cannot be reached by anything on sale
+                    // — this machine's own modules report 5600 in the WORD and leave both
+                    // extended fields zero, measured — but a sentinel read as a magnitude is
+                    // the kind of thing that surfaces years later on hardware nobody had.
+                    //
+                    // The lowest of the populated modules is taken, not the first: a memory
+                    // controller clocks every channel together, so a 4800 module beside a
+                    // 5600 one runs the pair at 4800, and reporting whichever module the
+                    // firmware happened to list first would be reporting a speed the machine
+                    // never reaches. Measured here, both modules report a configured 5600 and
+                    // the machine runs at 5600.
+                    const quint32 length = headerLength;
+                    const auto speedAt = [p, length](quint32 wordOffset,
+                                                     quint32 extendedOffset) -> quint32 {
+                        if (length < wordOffset + 2u)
+                            return 0;
+                        const quint16 word = *reinterpret_cast<const quint16 *>(p + wordOffset);
+                        if (word != 0xFFFF)
+                            return word;
+                        if (length < extendedOffset + 4u)
+                            return 0;
+                        return *reinterpret_cast<const quint32 *>(p + extendedOffset) & 0x7FFFFFFFu;
+                    };
+
+                    quint32 moduleSpeed = speedAt(0x20, 0x58);
+                    if (moduleSpeed == 0)
+                        moduleSpeed = speedAt(0x15, 0x54);
+                    if (moduleSpeed > 0)
+                        speed = speed == 0 ? moduleSpeed : qMin(speed, moduleSpeed);
                 }
-                if (speed == 0) {
-                    if (headerLength >= 0x22) {
-                        const quint16 configured = *reinterpret_cast<const quint16 *>(p + 0x20);
-                        if (configured > 0)
-                            speed = configured;
-                    }
-                    if (speed == 0) {
-                        const quint16 nominal = *reinterpret_cast<const quint16 *>(p + 0x15);
-                        if (nominal > 0)
-                            speed = nominal;
-                    }
+            }
+
+            // Skip the double-NUL terminated string set that follows each structure.
+            p = structEnd;
+            while (p + 1 < end && !(p[0] == 0 && p[1] == 0))
+                ++p;
+            p += 2;
+        }
+
+        // One module of unknown size makes the sum an undercount, and an undercount
+        // presented as the installed total is worse than not answering: the caller falls
+        // back to what the OS can see, which is at least a number that means something.
+        if (sizeUnknown)
+            m.installedBytes = 0;
+        if (typesDisagree)
+            type.clear();
+        if (!type.isEmpty())
+            m.kind = speed > 0 ? QStringLiteral("%1-%2").arg(type).arg(speed) : type;
+        return m;
+    }();
+    return parsed;
+}
+
+/// Every display adapter this machine has, each one's name, VRAM, driver version and
+/// driver date read together from that adapter's own registry subkey.
+///
+/// 0.9.10 took the name from the first adapter EnumDisplayDevicesW reported as attached
+/// and the driver from the hardcoded subkey "…\\0000", which are not the same adapter on
+/// any hybrid laptop: measured on the developer's machine the Hardware block said
+/// "Intel(R) UHD Graphics" while the Display block reported NVIDIA's 32.0.15.9620. Reading
+/// all four fields out of one key is what makes them agree.
+QVector<Facts::Adapter> displayAdapters()
+{
+    // The PCI ids of whatever is painting the desktop right now. EnumDisplayDevicesW
+    // enumerates display *heads*, not adapters — measured here it returns eight entries,
+    // four per card, of which exactly one is attached — so it is no use as the adapter
+    // list, but it is still the only thing that knows which card is in use, which is worth
+    // keeping for a user who has two.
+    const QStringList activeIds = [] {
+        QStringList ids;
+        DISPLAY_DEVICEW device{};
+        device.cb = sizeof(device);
+        for (DWORD i = 0; EnumDisplayDevicesW(nullptr, i, &device, 0); ++i) {
+            if (device.StateFlags & DISPLAY_DEVICE_ATTACHED_TO_DESKTOP) {
+                const QString id = QString::fromWCharArray(device.DeviceID).trimmed().toLower();
+                if (!id.isEmpty() && !ids.contains(id))
+                    ids << id;
+            }
+            device.cb = sizeof(device);
+        }
+        return ids;
+    }();
+
+    const QString classPath = QStringLiteral(
+        "SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e968-e325-11ce-bfc1-08002be10318}");
+    QSettings root = hklm(classPath);
+
+    QVector<Facts::Adapter> found;
+    const QStringList children = root.childGroups();
+    for (const QString &child : children) {
+        QSettings entry = hklm(classPath + QLatin1Char('\\') + child);
+
+        // What separates an adapter from the class key's housekeeping, chosen from what is
+        // actually in the key rather than from what ought to be: measured, this machine's
+        // display class holds "Configuration" and "Properties" beside the three numbered
+        // entries, and neither of those carries a DriverDesc, a MatchingDeviceId or any
+        // HardwareInformation value. DriverDesc is the test because it is the only one of
+        // the three that every real adapter here has — the Intel entry carries no
+        // HardwareInformation.qwMemorySize at all, so VRAM cannot be the filter without
+        // dropping a card the machine really has.
+        Facts::Adapter adapter;
+        adapter.name = entry.value(QStringLiteral("DriverDesc")).toString().trimmed();
+        if (adapter.name.isEmpty())
+            continue;
+
+        // Unchanged from 0.9.10, including the silence: an adapter that does not report
+        // its memory says nothing rather than "0 GB".
+        const QVariant memory = entry.value(QStringLiteral("HardwareInformation.qwMemorySize"));
+        if (memory.isValid()) {
+            const quint64 bytes = memory.toULongLong();
+            if (bytes > 0)
+                adapter.memory = formatBytes(bytes);
+        }
+
+        const QString version = entry.value(QStringLiteral("DriverVersion")).toString().trimmed();
+        const QString date = entry.value(QStringLiteral("DriverDate")).toString().trimmed();
+        if (!version.isEmpty())
+            adapter.driver = date.isEmpty() ? version : QStringLiteral("%1 · %2").arg(version, date);
+
+        // MatchingDeviceId is the adapter's PCI id without the revision suffix, so an
+        // attached head's DeviceID ("PCI\\VEN_8086&DEV_A78B&SUBSYS_14A71462&REV_04") starts
+        // with it. Case is not consistent between the two — measured, the Intel subkey
+        // stores the id upper case and the NVIDIA ones lower case — so both sides are
+        // folded before the comparison.
+        const QString match =
+            entry.value(QStringLiteral("MatchingDeviceId")).toString().trimmed().toLower();
+        if (!match.isEmpty()) {
+            for (const QString &id : activeIds) {
+                if (id.startsWith(match)) {
+                    adapter.active = true;
+                    break;
                 }
             }
         }
 
-        // Skip the double-NUL terminated string set that follows each structure.
-        p = structEnd;
-        while (p + 1 < end && !(p[0] == 0 && p[1] == 0))
-            ++p;
-        p += 2;
-    }
-
-    if (type.isEmpty())
-        return {};
-    return speed > 0 ? QStringLiteral("%1-%2").arg(type).arg(speed) : type;
-}
-
-QString gpuDescription()
-{
-    DISPLAY_DEVICEW dd{};
-    dd.cb = sizeof(dd);
-    QString name;
-    for (DWORD i = 0; EnumDisplayDevicesW(nullptr, i, &dd, 0); ++i) {
-        if (dd.StateFlags & DISPLAY_DEVICE_ATTACHED_TO_DESKTOP) {
-            name = QString::fromWCharArray(dd.DeviceString).trimmed();
-            break;
+        // Deduplicate on everything the row will show. Measured, this class key holds the
+        // same NVIDIA card twice, as 0000 and 0002, with identical DriverDesc,
+        // DriverVersion, DriverDate and qwMemorySize and differing only in the subsystem id
+        // inside MatchingDeviceId — subsys_14a71462 against subsys_14a61462. So
+        // MatchingDeviceId is exactly the wrong identity here: it separates two entries
+        // that are one card. That they are one card was confirmed under
+        // HKLM\\SYSTEM\\CurrentControlSet\\Enum\\PCI, where both of those hardware ids
+        // resolve to the same device instance, A8BA505BB42DB04800.
+        //
+        // The rule kept is the one that needs no second lookup and cannot be wrong about
+        // what the reader sees: two entries that would draw the same name, the same memory
+        // and the same driver are one row, because two identical rows read as a bug. The
+        // price is that a machine with two genuinely identical cards collapses to one row.
+        // That is rarer than a hybrid laptop, and it under-counts rather than inventing a
+        // card the machine does not have.
+        bool duplicate = false;
+        for (Facts::Adapter &seen : found) {
+            if (seen.name == adapter.name && seen.memory == adapter.memory
+                && seen.driver == adapter.driver) {
+                // Which of the two subkeys carries the id that is on the desktop is an
+                // accident of enumeration order, so the mark survives the merge.
+                seen.active = seen.active || adapter.active;
+                duplicate = true;
+                break;
+            }
         }
-        dd.cb = sizeof(dd);
+        if (!duplicate)
+            found.append(adapter);
     }
-    if (name.isEmpty())
-        return {};
 
-    // VRAM lives beside the driver entry for the display class.
-    const QString classPath = QStringLiteral(
-        "SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e968-e325-11ce-bfc1-08002be10318}");
-    QSettings root = hklm(classPath);
-    const QStringList children = root.childGroups();
-    for (const QString &child : children) {
-        QSettings entry = hklm(classPath + QLatin1Char('\\') + child);
-        if (entry.value(QStringLiteral("DriverDesc")).toString().trimmed() != name)
-            continue;
-        const QVariant qw = entry.value(QStringLiteral("HardwareInformation.qwMemorySize"));
-        if (qw.isValid()) {
-            const quint64 bytes = qw.toULongLong();
-            if (bytes > 0)
-                return QStringLiteral("%1 · %2").arg(name, formatBytes(bytes));
-        }
+    // The card in use first, order otherwise as the registry gave them. Both blocks that
+    // draw this list draw it in the same order, so the reader can line one against the
+    // other, and the answer to "which one am I on" is the top row.
+    QVector<Facts::Adapter> ordered;
+    ordered.reserve(found.size());
+    const QVector<Facts::Adapter> &list = found;
+    for (const Facts::Adapter &adapter : list) {
+        if (adapter.active)
+            ordered.append(adapter);
     }
-    return name;
+    for (const Facts::Adapter &adapter : list) {
+        if (!adapter.active)
+            ordered.append(adapter);
+    }
+    return ordered;
 }
 
 /// NVMe / SSD / HDD for the volume Windows is installed on.
@@ -386,13 +590,13 @@ void readDisplays(Facts &f)
         }
     }
 
-    QSettings gpu = hklm(QStringLiteral(
-        "SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e968-e325-11ce-bfc1-08002be10318}\\0000"));
-    const QString version = gpu.value(QStringLiteral("DriverVersion")).toString();
-    const QString date = gpu.value(QStringLiteral("DriverDate")).toString();
-    if (!version.isEmpty())
-        f.graphicsDriver = date.isEmpty() ? version
-                                          : QStringLiteral("%1 · %2").arg(version, date);
+    // The graphics driver is deliberately not read here any more. This function used to
+    // take it from the subkey "…\\0000" of the display class, which is whichever adapter
+    // Windows numbered first and has nothing to do with the card the Hardware block named:
+    // on the developer's laptop that was the NVIDIA entry while the Hardware block showed
+    // the Intel card. Adapters and their drivers now come together out of
+    // displayAdapters(), and Facts::graphicsDriver is filled from the same entry as
+    // Facts::gpu.
 }
 
 /// The first operational, non-loopback adapter that holds an IPv4 address.
@@ -564,16 +768,12 @@ void readFirmware(Facts &f)
     f.biosDate = orUnknown(bios.value(QStringLiteral("BIOSReleaseDate")).toString());
 
     // The SMBIOS version lives in the first two bytes of the raw table header.
-    constexpr DWORD RawSmbios = 0x52534D42;
-    const DWORD size = GetSystemFirmwareTable(RawSmbios, 0, nullptr, 0);
-    if (size >= 8) {
-        QByteArray raw(int(size), Qt::Uninitialized);
-        if (GetSystemFirmwareTable(RawSmbios, 0, raw.data(), size) == size) {
-            const uchar major = uchar(raw.at(1));
-            const uchar minor = uchar(raw.at(2));
-            if (major > 0)
-                f.smbios = QStringLiteral("%1.%2").arg(major).arg(minor);
-        }
+    const QByteArray &raw = smbiosTable();
+    if (raw.size() >= 8) {
+        const uchar major = uchar(raw.at(1));
+        const uchar minor = uchar(raw.at(2));
+        if (major > 0)
+            f.smbios = QStringLiteral("%1.%2").arg(major).arg(minor);
     }
 
     // A UEFI machine answers this call; a legacy BIOS one fails with
@@ -615,39 +815,13 @@ void readMemoryDetail(Facts &f)
             f.pageFile = Locale::tr(QStringLiteral("sys.none"));
     }
 
-    // Populated versus total memory slots, from SMBIOS type 17.
-    constexpr DWORD RawSmbios = 0x52534D42;
-    const DWORD size = GetSystemFirmwareTable(RawSmbios, 0, nullptr, 0);
-    if (size == 0)
-        return;
-    QByteArray raw(int(size), Qt::Uninitialized);
-    if (GetSystemFirmwareTable(RawSmbios, 0, raw.data(), size) != size || raw.size() < 8)
-        return;
-
-    const quint32 tableLength = *reinterpret_cast<const quint32 *>(raw.constData() + 4);
-    const uchar *p = reinterpret_cast<const uchar *>(raw.constData()) + 8;
-    const uchar *end = p + qMin<quint32>(tableLength, quint32(raw.size() - 8));
-
-    // Not "slots": Qt defines that as a keyword macro.
-    int slotCount = 0, filledCount = 0;
-    while (p + 4 <= end) {
-        const uchar type = p[0];
-        const uchar headerLength = p[1];
-        if (headerLength < 4)
-            break;
-        const uchar *structEnd = p + headerLength;
-        if (type == 17 && headerLength >= 0x0E) {
-            ++slotCount;
-            if (*reinterpret_cast<const quint16 *>(p + 0x0C) != 0)
-                ++filledCount;
-        }
-        p = structEnd;
-        while (p + 1 < end && !(p[0] == 0 && p[1] == 0))
-            ++p;
-        p += 2;
-    }
-    if (slotCount > 0)
-        f.memorySlots = Locale::tr(QStringLiteral("sys.slotsFilled")).arg(filledCount).arg(slotCount);
+    // Populated versus total memory slots, from the SMBIOS type 17 structures this file
+    // used to walk a second time here and now parses once, in memoryModules().
+    const MemoryModules &modules = memoryModules();
+    if (modules.slotCount > 0)
+        f.memorySlots = Locale::tr(QStringLiteral("sys.slotsFilled"))
+                            .arg(modules.filledCount)
+                            .arg(modules.slotCount);
 }
 
 /// Counts the values under a Run key.
@@ -943,12 +1117,53 @@ Facts collect()
     MEMORYSTATUSEX mem{};
     mem.dwLength = sizeof(mem);
     if (GlobalMemoryStatusEx(&mem)) {
-        const QString kind = memoryKind();
-        const QString total = formatBytes(mem.ullTotalPhys);
-        f.memory = kind.isEmpty() ? total : QStringLiteral("%1 %2").arg(total, kind);
+        const MemoryModules &modules = memoryModules();
+
+        // ullTotalPhys is what the OS can address, not what is plugged in. Measured on the
+        // developer's laptop: 34,048,495,616 bytes against 34,359,738,368 installed, the
+        // 297 MiB difference being what the firmware and the integrated graphics keep. That
+        // gap happens to round away here; a machine whose APU carves out 2 GB would have
+        // shown "15 GB" beside 16 GB of memory. The type 17 sum is the installed figure.
+        //
+        // It is only believed when it is at least the visible figure: installed memory
+        // cannot be less than what the OS is already using, so a table that says otherwise
+        // is not one to report from. That also covers the virtual machine with no type 17
+        // at all, where the sum is zero.
+        const quint64 visible = mem.ullTotalPhys;
+        const quint64 installed = modules.installedBytes >= visible ? modules.installedBytes : visible;
+
+        QString text = formatBytes(installed);
+        if (!modules.kind.isEmpty())
+            text += QLatin1Char(' ') + modules.kind;
+
+        // …and what the OS can actually see, when that is a different number once rounded.
+        // Windows' own System page writes "32.0 GB (31.7 GB usable)" for the same reason.
+        //
+        // Only when it differs after rounding, because on most machines it does not and a
+        // parenthesis that always says the same thing as the figure beside it is noise. But
+        // where it does differ the silence is worse: this row is labelled "Bellek", not
+        // "Takılı", and the Kullanımda and Boşta rows two blocks away are computed from the
+        // visible figure — so an APU that keeps 2 GB would say 16 GB here and account for
+        // 14 GB there, with nothing on screen explaining the gap.
+        if (formatBytes(installed) != formatBytes(visible))
+            text += QStringLiteral(" (%1)").arg(
+                Locale::tr(QStringLiteral("sys.kullanilabilir")).arg(formatBytes(visible)));
+
+        f.memory = text;
     }
 
-    f.gpu = orUnknown(gpuDescription());
+    f.adapters = displayAdapters();
+    if (!f.adapters.isEmpty()) {
+        // The one-line summaries the rest of Facts still offers, both taken from the same
+        // entry — the adapter driving the desktop, which displayAdapters() sorts first — so
+        // that the pair 0.9.10 got from two unrelated places can no longer disagree.
+        const Facts::Adapter &primary = f.adapters.constFirst();
+        f.gpu = primary.memory.isEmpty()
+                    ? primary.name
+                    : QStringLiteral("%1 · %2").arg(primary.name, primary.memory);
+        if (!primary.driver.isEmpty())
+            f.graphicsDriver = primary.driver;
+    }
 
     {
         const QStorageInfo storage = QStorageInfo::root();

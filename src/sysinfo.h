@@ -39,6 +39,9 @@ struct Facts
     // Donanım
     QString cpu             = QStringLiteral("—");   ///< "Ryzen 7 7800X3D · 8C/16T"
     QString memory          = QStringLiteral("—");   ///< "32 GB DDR5-6000"
+    /// The adapter in `adapters` that is driving the desktop, as one line. Kept so anything
+    /// that reads Facts still gets a summary, and derived from a single entry of that list
+    /// so it can never name one card while `graphicsDriver` describes another.
     QString gpu             = QStringLiteral("—");   ///< "RTX 4070 · 12 GB"
     QString storage         = QStringLiteral("—");   ///< "NVMe 2 TB · 1.24 TB boş"
     QString motherboard     = QStringLiteral("—");
@@ -56,7 +59,25 @@ struct Facts
     QString resolution      = QStringLiteral("—");   ///< "2560×1440 @ 165 Hz"
     QString colorDepth      = QStringLiteral("—");
     QString dpiScale        = QStringLiteral("—");   ///< "%150"
+    /// The driver of the same adapter `gpu` names — see the note there.
     QString graphicsDriver  = QStringLiteral("—");
+
+    // Ekran bağdaştırıcıları — one entry per display adapter, every adapter the machine
+    // has. All four fields of an entry are read from that one adapter's own registry
+    // subkey, which is the whole point of the struct: 0.9.10 took the name from
+    // EnumDisplayDevicesW and the driver version from a hardcoded "…\0000" subkey, so on a
+    // hybrid laptop the Hardware block named the Intel card while the Display block
+    // reported NVIDIA's driver version. Keeping the fields together makes that impossible
+    // rather than merely unlikely.
+    struct Adapter
+    {
+        QString name;            ///< "NVIDIA GeForce RTX 5070 Laptop GPU"
+        QString memory;          ///< "8 GB" — empty when the adapter reports no VRAM
+        QString driver;          ///< "32.0.15.9620 · 4-12-2026" — empty when unknown
+        bool active = false;     ///< drives the desktop right now
+    };
+    /// The adapter driving the desktop sorts first; see SysInfo's displayAdapters().
+    QVector<Adapter> adapters;
 
     // Ağ
     QString adapter         = QStringLiteral("—");

@@ -308,23 +308,81 @@ void OverviewPage::setFacts(const SysInfo::Facts &facts)
         {Locale::tr(QStringLiteral("ov.profilKlasoru")), facts.profilePath, true},
     });
 
-    m_hardware->setRows({
+    // The Donanım and Ekran blocks grow a row per display adapter, but only on a machine
+    // that has more than one. That is the fix: 0.9.10 put one card's name in this block and
+    // another card's driver version in that one, two cards apart on the page, where nothing
+    // ever brought the two close enough to look wrong. One row per adapter, each row
+    // carrying only that adapter's own fields, makes the pair structurally incapable of
+    // describing different cards.
+    //
+    // A machine with one adapter keeps exactly the two rows 0.9.10 drew, from facts.gpu and
+    // facts.graphicsDriver — which SysInfo now derives from that same single adapter, so
+    // they agree by construction rather than by luck. Drawing the list unconditionally would
+    // have cost every single-GPU desktop a card name promoted to a row title and a
+    // "Kullanımda" marker that distinguishes the only card from nothing at all. There is
+    // no second card to tell it apart from, so there is nothing for the list to say.
+    const bool severalAdapters = facts.adapters.size() > 1;
+
+    // The list uses the stacked row, with the adapter's name as the row's title and its
+    // values underneath — the shape InfoRow::stacked documents, and the one the storage
+    // block already uses for a disk and its details. That is not a preference, it is what
+    // fits. An info card gives a row 300.7 px at the 1240 px minimum window (three columns,
+    // 12 px card padding); measured in the real faces, "NVIDIA GeForce RTX 5070 Laptop GPU"
+    // is 268 px on its own line and its driver and date another 192 px, while putting the
+    // name and the driver on one line comes to 488 px and loses the half that matters.
+    QVector<InfoRow> hardware{
         {Locale::tr(QStringLiteral("ov.islemci")), facts.cpu, false},
         {Locale::tr(QStringLiteral("ov.bellek")), facts.memory, false},
-        {Locale::tr(QStringLiteral("ov.ekranKarti")), facts.gpu, false},
-        {Locale::tr(QStringLiteral("ov.depolama")), facts.storage, false},
-        {Locale::tr(QStringLiteral("ov.anakart")), facts.motherboard, false},
-        {QStringLiteral("BIOS"), facts.bios, true},
-    });
+    };
+    if (!severalAdapters) {
+        // One adapter, or none enumerated at all — a non-Windows build, or a registry that
+        // would not answer, in which case facts.gpu is still the "—" it starts as.
+        hardware.append({Locale::tr(QStringLiteral("ov.ekranKarti")), facts.gpu, false});
+    } else {
+        for (const SysInfo::Facts::Adapter &adapter : facts.adapters) {
+            // "Ekran kartı" leads the value line rather than labelling the row, because the
+            // row's title line is spent on the card's name. It also guarantees the line is
+            // never empty, which an adapter reporting neither VRAM nor desktop duty would
+            // otherwise leave it. 212 px at its longest, so all three parts fit.
+            QStringList parts{Locale::tr(QStringLiteral("ov.ekranKarti"))};
+            if (!adapter.memory.isEmpty())
+                parts << adapter.memory;
+            if (adapter.active)
+                parts << Locale::tr(QStringLiteral("ov.kullanimda"));
+            hardware.append({adapter.name, parts.join(QStringLiteral(" · ")), false, -1.0, true});
+        }
+    }
+    hardware.append({Locale::tr(QStringLiteral("ov.depolama")), facts.storage, false});
+    hardware.append({Locale::tr(QStringLiteral("ov.anakart")), facts.motherboard, false});
+    hardware.append({QStringLiteral("BIOS"), facts.bios, true});
+    m_hardware->setRows(hardware);
 
-    m_display->setRows({
+    QVector<InfoRow> display{
         {Locale::tr(QStringLiteral("ov.ekranSayisi")), facts.displayCount, false},
         {Locale::tr(QStringLiteral("ov.cozunurluk")), facts.resolution, true},
         {Locale::tr(QStringLiteral("ov.renkDerinligi")), facts.colorDepth, true},
         {Locale::tr(QStringLiteral("ov.olcekleme")), facts.dpiScale, true},
-        {Locale::tr(QStringLiteral("ov.ekranSurucusu")), facts.graphicsDriver, true},
-        {Locale::tr(QStringLiteral("ov.sanalMasaustu")), facts.virtualDesktop, true},
-    });
+    };
+    if (!severalAdapters) {
+        // The 0.9.10 row, and now truthful: facts.graphicsDriver is the driver of the very
+        // adapter facts.gpu names over in the Donanım block, which is the pairing 0.9.10
+        // got from two unrelated registry reads and got wrong.
+        display.append({Locale::tr(QStringLiteral("ov.ekranSurucusu")), facts.graphicsDriver, true});
+    } else {
+        for (const SysInfo::Facts::Adapter &adapter : facts.adapters) {
+            // The version and date alone, in the mono face 0.9.10 drew them in, under the
+            // name of the card they belong to. No "Ekran sürücüsü" in front of them: that
+            // measures 328 px against the row's 300.7 and would cost the driver date, and
+            // this block is already titled "Ekran" with the card named directly above.
+            // A card whose driver version is missing still gets its row — that the card is
+            // there is worth more than leaving it out for want of a version.
+            display.append({adapter.name,
+                            adapter.driver.isEmpty() ? QStringLiteral("—") : adapter.driver,
+                            true, -1.0, true});
+        }
+    }
+    display.append({Locale::tr(QStringLiteral("ov.sanalMasaustu")), facts.virtualDesktop, true});
+    m_display->setRows(display);
 
     m_network->setRows({
         {Locale::tr(QStringLiteral("ov.bagdastirici")), facts.adapter, false},

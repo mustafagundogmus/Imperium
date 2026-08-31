@@ -9923,6 +9923,18 @@
   "ru": "Защищено",
   "tr": "Korumalı"
  },
+ "sys.kullanilabilir": {
+  "ar": "%1 قابلة للاستخدام",
+  "de": "%1 verwendbar",
+  "en": "%1 usable",
+  "es": "%1 utilizable",
+  "fr": "%1 utilisable",
+  "it": "%1 utilizzabile",
+  "pl": "%1 dostępne",
+  "pt": "%1 utilizável",
+  "ru": "доступно %1",
+  "tr": "%1 kullanılabilir"
+ },
  "sys.kullanimda": {
   "ar": "قيد الاستخدام",
   "de": "belegt",
