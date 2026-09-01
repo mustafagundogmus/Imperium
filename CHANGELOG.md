@@ -4,6 +4,162 @@ Bu dosya sürümler arasındaki dikkate değer değişiklikleri listeler.
 Biçim [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) temellidir ve
 proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
+## [0.12.1] — 2026-09-02
+
+Bir düzeltme sürümü. Tıklanacak yeni bir şey yok; etiketinin söylediğini artık gerçekten
+yapan epey satır var. Kaynağın tamamının ve `catalog.json`'daki her satırın, Windows'un
+gerçekten okuduğu değerlere karşı okunmasından çıktı.
+
+### Düzeltildi
+
+#### Makineyi okumak kayıt defterine anahtar yazıyordu
+
+`sysinfo.h` "hiçbir şey yazılmaz" diyordu. Doğru değildi. Bir anahtarın toplu okuması
+`QSettings` üzerinden gidiyordu ve `QSettings` bir kayıt defteri yolunu `RegCreateKeyEx` ile
+açar: olmayan bir anahtara bakmak o anahtarı **yaratır**. Genel Bakış, yokluğu bir makinenin
+olağan hâli olan on küsur anahtarı okur — BIOS ile açılan makinede `SecureBoot\State`,
+yönetilmeyen makinede `DataCollection` ve `System` ilke anahtarları, Hyper-V kurulu değilken
+`vmms` hizmeti, HKCR altında bir ProgId — ve her açılış HKLM'de boş anahtarlar bırakıyordu.
+"UEFI mi?" sorusunu `SecureBoot\State` var mı diye soran bir betik, Arbitrium'u bir kez
+çalıştırmış BIOS makinesinde evet demeye başlardı.
+
+`Registry::openKey` artık önce hiçbir şey yaratmayan `RegOpenKeyEx` ile bakıyor ve olmayan
+anahtarı boş, dosyasız bir depoyla yanıtlıyor. Her değer yok okunuyor; makinede hiçbir şey
+değişmiyor.
+
+#### Üç program hâlâ çıplak adıyla başlatılıyordu
+
+0.12.0, "yönetici belirteci içinde, miras alınan `PATH` üzerinden çözülen çıplak program adı"
+deliğini PowerShell için kapatmış ve bunu söylemişti. Üç başlatma atlanmıştı: Uygulamalar
+sayfasının taraması (`powershell.exe`), sahiplik alma kabuk fiilleri (`takeown.exe`,
+`icacls.exe`) ve Sistem Koruması düğmesi (`SystemPropertiesProtection.exe`). Üçü de artık
+uygulamanın geri kalanının kullandığı `winpaths.h` üzerinden, System32'nin mutlak yolundan
+çalışıyor.
+
+#### Hassas dokunmatik yüzeyler hiçbir şeyi kaydırmıyordu
+
+Hassas bir dokunmatik yüzey ve serbest dönen bir tekerlek, bir çentiğin 120'sinin epey
+altında delta gönderir. Yumuşak kaydırma yolu `delta / 120 * step` hesaplıyordu; bu, her biri
+için sıfırdır. Olay kabul ediliyor, sayfa yerinde kalıyordu. Yumuşak kaydırma varsayılan
+olarak açık olduğundan bu cihazlarda hiçbir sayfa kaymıyordu — ayar kapatılana kadar, ki o
+zaman olay Qt'nin kendi işleyicisine gidiyordu. Kalan artık bir olaydan diğerine taşınıyor;
+bir çentik değerindeki küçük deltalar bir çentik ediyor.
+
+#### İletişim kutusu perdesi gölge payını da kaplıyordu
+
+İletişim kutusu perdesini *pencereye* göre boyutlandırıyordu ve pencerenin dikdörtgeni,
+gölgenin çizildiği saydam payı da içerir. Her onay kutusu kartın dört yanına, masaüstünün
+üstüne taşan sert kenarlı, neredeyse mat bir dikdörtgen çiziyordu. Artık karta göre
+boyutlanıyor. Ayrıntılar'ı açıp kapamak da sürüklediğiniz kutuyu köşeye geri sıçratmıyor.
+
+#### Genel Bakış'ta düpedüz yanlış olan değerler
+
+- **Açılış süresi** olay 100'ün 0. özelliğini okuyordu; o, sabit 2 olan `BootTsVersion`.
+  Olayı olan her makinede "0,0 sn" gösteriyordu. 5. özellik `BootTime`.
+- **Boşta süresi** 32 bitlik `LASTINPUTINFO::dwTime`'ı 64 bitlik `GetTickCount64()`'ten
+  çıkarıyordu. 49,7 günlük çalışma süresinden sonra satır yetmiş bin dakika civarı okuyordu.
+- **Bekleyen etki alanı katılımı** Netlogon anahtarının bir değeri olarak aranıyordu.
+  `JoinDomain` ve `AvoidSpnSet` alt anahtardır; neden hiçbir zaman tetiklenemiyordu.
+- **Wi-Fi sinyali** "Signal" etiketiyle eşleştiriliyordu; `netsh` o etiketi görüntü dilinde
+  basar. Yüzde artık biçiminden seçiliyor.
+- **IPv4 ağ geçidi** yalnızca ilk ağ geçidi girişinden okunuyordu; çift yığın bir bağlantıda
+  o çoğu zaman IPv6 yönlendiricisidir ve satır "—" gösteriyordu. Gösterilen **IPv6 adresi**
+  genellikle link-local `fe80::` olanıydı; artık yönlendirilebilir adres tercih ediliyor.
+- **Yüzde işareti** üç yerde — DPI ölçeği, pil, commit — Türkçe konumda (sayının önünde)
+  sabitti; dokuz dil "%150" okuyordu. Pil sağlığı satırının zaten yaptığı gibi çeviri
+  tablosundan geçiyor.
+
+#### Daha küçük olanlar
+
+- Uygula perdesi fareyi engelliyor, klavyeyi engellemiyordu: Tab odağı perdenin altındaki bir
+  anahtara taşıyordu, Ctrl+K yazma sürerken arama kutusuna ulaşıyordu. İkisi de tutuluyor.
+- Perdenin "şu an yazılan" satırı her dilde ham Türkçe adı gösteriyordu; her şey gibi
+  `displayName()` üzerinden geçiyor.
+- TrustedInstaller başlatıcısı, `UpdateProcThreadAttribute` başarısız olduğunda öznitelik
+  listesini sızdırıyordu.
+- `.reg` dışa aktarma: BINARY baytlar kanonik iki basamaklı yazımdan geçmiyordu ve bir
+  MULTI_SZ, listeyi kapatan ikinci null'dan yoksundu.
+- Uygulamalar sayfasının Kaldır düğmesi, yazı tipi veya metin boyutu değişince yerinde
+  kalıyordu.
+
+### Katalog
+
+#### Yanlış şeyi yazan satırlar
+
+Her biri satırın söylediğine değil, Windows'un okuduğuna karşı denetlendi.
+
+- **gt-lockscreen-timeout** — açık ve kapalı tersti. Bir güç ayarı için `Attributes` 1
+  gizler, 2 gösterir; ayarı görünür yapmayı vadeden satır onu gizliyordu.
+- **ch-launchto** — "Giriş" 3 yazıyordu; o, İndirilenler. Giriş 2, Bu bilgisayar 1,
+  İndirilenler 3 — satır artık tam olarak bu üçünü sunuyor.
+- **aud-ducking** — değer haritası bir kaymıştı: 0 susturur, 1 %80, 2 %50, 3 hiçbir şey
+  yapmaz. Varsayılan "hiçbir şey yapma" değil %80.
+- **cln-do-cache-age** — `DOMaxCacheAge` **saniye** cinsindendir. 1–30 gün yazan kaydırıcı
+  1–30 saniye yazıyor ve Teslim İyileştirme önbelleğini neredeyse anında boşaltıyordu. Artık
+  gün seçenekleri; "Varsayılan" yapılandırılmamış demek.
+- **cln-do-cache-size** — bir bant genişliği sınırı olan `DOPercentageMaxForegroundBandwidth`
+  değerini yazıyordu; 50'ye çekmek güncelleme indirmelerini yarı hıza düşürüyordu. Önbellek
+  boyutu ilkesi `DOMaxCacheSize`, varsayılanı %20.
+- **pwr-update-wake** — `AUPowerManagement`, yazıldığı yerin bir alt seviyesinde,
+  `WindowsUpdate\AU` altında yaşar.
+- **sec-smartscreen-apps** — `SmartScreenEnabled` (Warn / Block / Off) `Policies\System`'den
+  değil Explorer anahtarından okunur.
+- **wu-WPFTweaksRevertStartMenu** — `ControlSet001` her zaman canlı denetim kümesi değildir;
+  `CurrentControlSet` öyledir.
+- **wu-WPFToggleHiddenFiles** — Gezgin "gösterme" için 0 değil 2 yazar.
+- **cln-shutdown-app-timeout** — Windows varsayılanı 5000 değil 20000.
+- **cln-evt-autobackup** — `AutoBackupLogFiles` yalnızca aynı anahtarda
+  `Retention = 0xFFFFFFFF` ile etkili olur; iki günlük de artık onu alıyor.
+- **ctx-runas-user** — `runas.exe /netonly /user:%%USERNAME%%` hiçbir zaman çalışamazdı:
+  bir REG_SZ fiil ortam değişkenlerini genişletmez ve `/netonly` programı zaten geçerli
+  kullanıcı olarak çalıştırır. Windows'ta bu fiil zaten var, Shift+sağ tıkın arkasında
+  saklı; satır artık onun `Extended` işaretini kaldırıyor.
+- **wu-WPFTweaksHiber** — `HibernateEnabled`'ı okunmadığı yere, `Session Manager\Power`
+  altına yazıyordu; değer `Control\Power` altında yaşar ve `pwr-hibernate-file` onu zaten
+  oraya yazıyor. Satır öteki yarısını koruyor ve adı ona göre: Hazırda beklet menü girdisini
+  gizle.
+- **sec-lm-hash, sys-04-2688, priv-01-4010, priv-02-4013, net-02-3286,
+  wu-WPFToggleNewOutlook** — "kapalı" konumu *yapılandırılmış* bir ilke değeri yazıyordu
+  (`sec-lm-hash`'te LM karması saklamayı açan bir değer). Kapalı artık değeri kaldırıyor.
+- **ch-taskbar-size** — `TaskbarSi` 22H2'de çalışmaz oldu; `maxBuild` 22000.
+  **net-02-19242** ve **adv-02-29115** 24H2 özellikleri; `minBuild` 26100.
+- **sec-smb1-client** — açıklama artık uyarıyor: `mrxsmb10` İş İstasyonu hizmetinin
+  bağımlılıkları arasında listeleniyorsa, devre dışı bırakmak o hizmeti bir sonraki açılışta
+  durdurur ve bütün ağ paylaşımları onunla gider. SMBv1 istemcisini Windows Özellikleri
+  üzerinden kaldırmak daha güvenli.
+
+#### Adı başka bir şey söyleyen satırlar
+
+- **perf-memory-compression** → **Sayfa birleştirme**. `DisablePagingCombining` sayfa
+  birleştirmedir, bellek sıkıştırma değil.
+- **aud-exclusive-mode** → **Korumalı ses yolu (DRM)**. `DisableProtectedAudioDG` korumalı
+  ses grafiğidir; özel kip uç nokta başına bir özelliktir.
+- **pwr-sleep-button** → **Gözetimsiz uyku zaman aşımı seçeneği**. `7bc4a2f9-…` GUID'i
+  "Sistem gözetimsiz uyku zaman aşımı"dır; Başlat menüsündeki Uyku girdisiyle ilgisi yok.
+- **pwr-adaptive-brightness** — satır ayarı görünür yapar; açıklama uyarlanır parlaklığı
+  kapattığını söylüyordu.
+
+### Kaldırıldı
+
+- **net-autotuning** — `Tcpip\Parameters` altında `TcpAutotuning` diye bir parametre yok;
+  alma penceresi seviyesi NSI deposunda tutulan bir `netsh` ayarıdır.
+- **wu-WPFToggleStandbyFix** — HKCU altındaki bir güç ilkesi hiç okunmaz; `net-02-3286` aynı
+  GUID'i HKLM altında tutuyor.
+- **pwr-pcie-aspm**, **pwr-lid-close** — `Attributes` yalnızca bir güç ayarının gösterilip
+  gösterilmediğini denetler ve ikisi de varsayılan olarak gösterilir. Satırlar hiçbir şey
+  yapamıyordu.
+
+Katalog 411 satırdan 407'ye iniyor. Kaldırılmış bir id'yi adlandıran ön ayarlar, her zaman
+olduğu gibi atlanıp sayılıyor.
+
+### Eylemler
+
+- **act-disk-cleanup** — `cleanmgr` bir GUI programı; betik onu beklemiyordu, DISM altında
+  çalışıyordu ve sürücü sabit `C:` idi.
+- **act-svchost-threshold** — `Win32_PhysicalMemory` bildirmeyen bir sanal makinede eşik 0
+  yazılıyordu; `Win32_ComputerSystem`'e düşüyor.
+- **act-remove-edge** — `${Env:ProgramFiles(x86)}`, PowerShell'in kastettiği yazımla.
+
 ## [0.12.0] — 2026-08-31
 
 ### Eklendi

@@ -587,7 +587,10 @@ void readDisplays(Facts &f)
                 reinterpret_cast<void *>(GetProcAddress(user32, "GetDpiForSystem")))) {
             const UINT dpi = fn();
             if (dpi > 0)
-                f.dpiScale = QStringLiteral("%%1").arg(qRound(dpi * 100.0 / 96.0));
+                // Through the table: the percent sign goes before the number in Turkish
+                // and after it almost everywhere else.
+                f.dpiScale = Locale::tr(QStringLiteral("sys.percentValue"))
+                                 .arg(qRound(dpi * 100.0 / 96.0));
         }
     }
 
@@ -673,7 +676,8 @@ void readPower(Facts &f)
             const QString state = (power.BatteryFlag & 8)  ? Locale::tr(QStringLiteral("sys.sarjOluyor"))
                                   : power.ACLineStatus == 1 ? Locale::tr(QStringLiteral("sys.batteryFull"))
                                                             : Locale::tr(QStringLiteral("sys.kullanimda"));
-            f.battery = QStringLiteral("%%1 · %2").arg(power.BatteryLifePercent).arg(state);
+            f.battery = Locale::tr(QStringLiteral("sys.percentValue")).arg(int(power.BatteryLifePercent))
+                        + QStringLiteral(" · ") + state;
         }
     }
 
@@ -960,24 +964,39 @@ void readNetworkDetail(Facts &f)
         if (a->OperStatus != IfOperStatusUp || !first)
             continue;
 
+        // The first routable IPv6 address, and the link-local one only when there is
+        // nothing else: every adapter has an fe80:: address, it is usually listed first,
+        // and it says nothing about whether the machine can reach an IPv6 network.
+        QString linkLocal;
         for (auto *u = a->FirstUnicastAddress; u; u = u->Next) {
             if (u->Address.lpSockaddr->sa_family != AF_INET6)
                 continue;
             auto *sa = reinterpret_cast<sockaddr_in6 *>(u->Address.lpSockaddr);
             wchar_t text[INET6_ADDRSTRLEN] = {};
-            if (InetNtopW(AF_INET6, &sa->sin6_addr, text, INET6_ADDRSTRLEN)) {
-                f.ipv6 = QString::fromWCharArray(text);
-                break;
+            if (!InetNtopW(AF_INET6, &sa->sin6_addr, text, INET6_ADDRSTRLEN))
+                continue;
+            if (IN6_IS_ADDR_LINKLOCAL(&sa->sin6_addr)) {
+                if (linkLocal.isEmpty())
+                    linkLocal = QString::fromWCharArray(text);
+                continue;
             }
+            f.ipv6 = QString::fromWCharArray(text);
+            break;
         }
+        if (f.ipv6.isEmpty())
+            f.ipv6 = linkLocal;
 
-        if (a->FirstGatewayAddress) {
-            auto *g = a->FirstGatewayAddress->Address.lpSockaddr;
+        // Every gateway, not only the first: on a dual-stack link the first entry is
+        // often the IPv6 router, and reading only that one showed no IPv4 gateway at all.
+        for (auto *gw = a->FirstGatewayAddress; gw; gw = gw->Next) {
+            auto *g = gw->Address.lpSockaddr;
+            if (g->sa_family != AF_INET)
+                continue;
+            auto *v4 = reinterpret_cast<sockaddr_in *>(g);
             wchar_t text[INET6_ADDRSTRLEN] = {};
-            if (g->sa_family == AF_INET) {
-                auto *v4 = reinterpret_cast<sockaddr_in *>(g);
-                if (InetNtopW(AF_INET, &v4->sin_addr, text, INET6_ADDRSTRLEN))
-                    f.gateway = QString::fromWCharArray(text);
+            if (InetNtopW(AF_INET, &v4->sin_addr, text, INET6_ADDRSTRLEN)) {
+                f.gateway = QString::fromWCharArray(text);
+                break;
             }
         }
         first = false;
@@ -1031,7 +1050,10 @@ LiveCounters liveCounters()
     LASTINPUTINFO last{};
     last.cbSize = sizeof(last);
     if (GetLastInputInfo(&last)) {
-        const qint64 idleMs = qint64(GetTickCount64()) - qint64(last.dwTime);
+        // dwTime is the 32-bit tick count, so the subtraction is done in 32 bits too and
+        // wraps with it. Against GetTickCount64() it was off by 2^32 ms — 49.7 days —
+        // the moment uptime passed that mark, and the row read seventy thousand minutes.
+        const qint64 idleMs = qint64(DWORD(GetTickCount() - last.dwTime));
         if (idleMs < 60000)
             c.idle = Locale::tr(QStringLiteral("sys.idleSec")).arg(qMax<qint64>(0, idleMs / 1000));
         else

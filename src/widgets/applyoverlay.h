@@ -51,6 +51,10 @@ protected:
     void resizeEvent(QResizeEvent *) override;
     void mousePressEvent(QMouseEvent *) override;
     void keyPressEvent(QKeyEvent *) override;
+    /// Tab is handled by QWidget::event before keyPressEvent ever sees it, and the next
+    /// focusable widget is a switch in the list under the scrim — one Space away from
+    /// changing a tweak that is still in the queue. The scrim keeps focus.
+    bool focusNextPrevChild(bool) override { return false; }
     void showEvent(QShowEvent *) override;
     void hideEvent(QHideEvent *) override;
 

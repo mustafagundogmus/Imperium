@@ -5,7 +5,7 @@
 **Your Windows. Your rules.**
 
 Windows ships with opinions about your privacy, your bandwidth, and what belongs on your Start menu.
-Arbitrium is where you overrule them — 391 of them, one switch at a time.
+Arbitrium is where you overrule them — 407 of them, one switch at a time.
 
 [![Windows 10 | 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?style=for-the-badge&logo=windows11&logoColor=white)](#)
 [![Portable](https://img.shields.io/badge/Install-Not%20Required-2ea44f?style=for-the-badge)](#)
@@ -39,7 +39,7 @@ it runs. Read it, then decide.
 
 ## What's inside
 
-### ⚙️ 391 tweaks that actually apply here
+### ⚙️ 407 tweaks that actually apply here
 
 Not a generic list scraped from a 2016 forum post. Arbitrium checks each tweak against **your**
 Windows build. A setting Microsoft retired three versions ago isn't quietly presented as a working
@@ -47,19 +47,19 @@ switch — it's shown greyed out, with the reason. Honesty over a longer feature
 
 | | |
 |---|---|
-| **System** · 63 | Core behaviour, lock screen, sign-in, shell policy |
-| **File Explorer** · 57 | Extensions, panes, Quick access, launch target |
-| **Privacy** · 41 | Telemetry, diagnostics, advertising ID, activity history |
+| **System** · 69 | Core behaviour, lock screen, sign-in, shell policy |
+| **File Explorer** · 60 | Extensions, panes, Quick access, launch target |
+| **Privacy** · 45 | Telemetry, diagnostics, advertising ID, activity history |
 | **Visual Effects** · 35 | Animations, transparency, shadows, thumbnails |
-| **Memory & CPU** · 32 | Paging, caching, prefetch, scheduling |
-| **Windows Update** · 29 | Deferral, drivers, delivery optimisation, restart behaviour |
-| **Network & Internet** · 27 | DNS, IPv6, Teredo, discovery, metered connections |
-| **Security hardening** · 23 | SMB, LSA, PowerShell logging, legacy protocols |
+| **Memory & CPU** · 30 | Paging, caching, prefetch, scheduling |
+| **Windows Update** · 30 | Deferral, drivers, delivery optimisation, restart behaviour |
+| **Network & Internet** · 28 | DNS, IPv6, Teredo, discovery, metered connections |
+| **Security hardening** · 22 | SMB, LSA, PowerShell logging, legacy protocols |
 | **Cleanup** · 22 | Storage Sense, temp, component store, history |
-| **Startup** · 20 | Everything that runs when you sign in |
+| **Startup** · 22 | Everything that runs when you sign in |
 | **Context menu** · 20 | Take Ownership, Services, cascading power plans, and more |
-| **Advanced** · 13 | The ones with sharp edges |
-| **Power management** · 9 | Sleep, hibernation, USB selective suspend |
+| **Advanced** · 16 | The ones with sharp edges |
+| **Power management** · 8 | Sleep, hibernation, USB selective suspend |
 
 ### 🔧 Every Windows service, in one place
 
@@ -77,7 +77,7 @@ Removal takes the app off **every account** on the machine and deprovisions it, 
 back the next time someone new signs in. Shared runtimes and anything Windows itself marks
 protected are shown with a padlock instead of a button — visible, but not a foot-gun.
 
-### ⚡ 18 one-shot actions
+### ⚡ 25 one-shot actions
 
 Remove Edge, OneDrive, or Widgets. Empty temp folders and the component store. Rebuild the icon
 cache. Switch DNS to Cloudflare, Google, or Quad9 in one click. Add the hidden **Ultimate
@@ -122,7 +122,7 @@ being one click from making one, is the part software can honestly do for you.
 
 ## Every word, in ten languages
 
-Not just the buttons — **everything**. All 391 tweak names and descriptions, every service state,
+Not just the buttons — **everything**. All 407 tweak names and descriptions, every service state,
 every action, every label on the dashboard, every line in the log.
 
 🇹🇷 Türkçe · 🇬🇧 English · 🇩🇪 Deutsch · 🇫🇷 Français · 🇪🇸 Español · 🇮🇹 Italiano · 🇵🇹 Português · 🇵🇱 Polski · 🇷🇺 Русский · 🇸🇦 العربية

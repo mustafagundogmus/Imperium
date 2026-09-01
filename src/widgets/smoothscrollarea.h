@@ -34,4 +34,5 @@ protected:
 private:
     QPropertyAnimation *m_anim = nullptr;
     int m_target = 0;
+    int m_wheelRemainder = 0;   ///< eighths of a degree not yet turned into a step
 };

@@ -70,8 +70,22 @@ void SmoothScrollArea::wheelEvent(QWheelEvent *e)
     }
 
     // Three "lines" per notch, matching Qt's default step, but eased.
+    //
+    // Accumulated rather than divided per event. A precision touchpad and a free-spinning
+    // wheel deliver deltas well under the 120 of one notch — 20, 40 — and "delta / 120"
+    // is zero for every one of them, so the event was accepted and the page did not move:
+    // with smooth scrolling on, which is the default, those devices scrolled nothing at
+    // all. The remainder is carried into the next event, so a notch's worth of small
+    // deltas still adds up to one notch.
     const int step = bar->singleStep() * 3;
-    const int delta = e->angleDelta().y() / 120 * step;
+    m_wheelRemainder += e->angleDelta().y();
+    const int notches = m_wheelRemainder / 120;
+    m_wheelRemainder -= notches * 120;
+    const int delta = notches * step;
+    if (delta == 0) {
+        e->accept();   // less than a notch so far; the rest arrives with the next event
+        return;
+    }
 
     if (m_anim->state() != QAbstractAnimation::Running)
         m_target = bar->value();

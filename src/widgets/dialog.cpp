@@ -1,6 +1,7 @@
 #include "dialog.h"
 
 #include "../css.h"
+#include "../framelesswindow.h"
 #include "../i18n.h"
 #include "../theme.h"
 #include "buttons.h"
@@ -132,7 +133,27 @@ Dialog::Dialog(QWidget *parent, const QString &title, const QString &body,
     }
 
     relayout();
+    // Once, here, rather than at the end of every relayout(): the Details toggle relays
+    // out too, and centring again from there snapped a dialog the user had dragged back
+    // to the window's corner.
+    centreOnParent();
 }
+
+namespace {
+
+/// The widget the scrim should cover: the card of a frameless window, not the window
+/// itself. The window's rectangle includes the transparent margin the drop shadow is
+/// painted in, and a scrim sized to that painted a hard-edged, near-opaque rectangle
+/// over the desktop on every side of the application.
+QWidget *scrimOwner(const QWidget *self)
+{
+    QWidget *owner = self->parentWidget() ? self->parentWidget()->window() : nullptr;
+    if (auto *frameless = qobject_cast<FramelessWindow *>(owner))
+        return frameless->card();
+    return owner;
+}
+
+} // namespace
 
 void Dialog::relayout()
 {
@@ -205,9 +226,9 @@ void Dialog::relayout()
     // on a wrap, a font and a toggle state — three things that all change at once.
     m_cardHeight = h;
 
-    // The scrim is the parent window's rectangle, so the card floats in the middle of the
-    // application rather than in the middle of nothing.
-    if (QWidget *owner = parentWidget() ? parentWidget()->window() : nullptr)
+    // The scrim is the parent's card, so the dialog floats in the middle of the
+    // application rather than in the middle of nothing — see scrimOwner().
+    if (QWidget *owner = scrimOwner(this))
         setFixedSize(owner->size());
     else
         setFixedSize(int(CardWidth) + 80, int(h + 0.5) + 80);
@@ -239,7 +260,6 @@ void Dialog::relayout()
         }
     }
 
-    centreOnParent();
     update();
 }
 
@@ -254,7 +274,7 @@ QRectF Dialog::cardRect() const
 
 void Dialog::centreOnParent()
 {
-    if (QWidget *owner = parentWidget() ? parentWidget()->window() : nullptr) {
+    if (QWidget *owner = scrimOwner(this)) {
         move(owner->mapToGlobal(QPoint(0, 0)));
         return;
     }

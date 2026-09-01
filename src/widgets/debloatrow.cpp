@@ -37,7 +37,10 @@ DebloatRow::DebloatRow(const QString &id, const QPixmap &logo, const QString &na
 
     connect(Theme::notifier(), &Theme::Notifier::accentChanged, this, qOverload<>(&QWidget::update));
     connect(Theme::notifier(), &Theme::Notifier::appearanceChanged, this, qOverload<>(&QWidget::update));
-    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, qOverload<>(&QWidget::update));
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
+        placeButton();
+        update();
+    });
 }
 
 QSize DebloatRow::sizeHint() const
@@ -86,6 +89,11 @@ QRectF DebloatRow::checkboxRect() const
 void DebloatRow::resizeEvent(QResizeEvent *e)
 {
     QWidget::resizeEvent(e);
+    placeButton();
+}
+
+void DebloatRow::placeButton()
+{
     const QSize hint = m_removeButton->sizeHint();
     m_removeButton->resize(hint);
     m_removeButton->move(qRound(width() - PadX - hint.width()),

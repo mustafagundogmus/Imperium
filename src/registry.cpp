@@ -92,6 +92,20 @@ QSettings openKey(Hive hive, const QString &path)
         {Hive::HKU,  QStringLiteral("HKEY_USERS")},
         {Hive::HKCC, QStringLiteral("HKEY_CURRENT_CONFIG")},
     };
+
+    // QSettings reaches a registry key through RegCreateKeyEx — Qt's own RegistryKey
+    // opens with read_only = false and creates what it cannot open — so pointing it at
+    // a key that is not there *makes* the key. The info modules read a dozen keys whose
+    // absence is the ordinary state of a machine (SecureBoot\State on a BIOS boot, the
+    // DataCollection and System policy keys on an unmanaged PC, the vmms service without
+    // Hyper-V), and every one of those "reads" was leaving an empty key behind in HKLM.
+    // The key is looked for first with RegOpenKeyEx, which creates nothing, and one that
+    // is missing is answered with an empty, file-less store: every value reads as absent
+    // and nothing on the machine changes. A resource path that does not exist can never
+    // be created or written, which is what makes it safe to hand back.
+    if (!keyExists(hive, path))
+        return QSettings(QStringLiteral(":/arbitrium/absent-key.ini"), QSettings::IniFormat);
+
     return QSettings(roots.value(hive) + QLatin1Char('\\') + path, QSettings::NativeFormat);
 }
 

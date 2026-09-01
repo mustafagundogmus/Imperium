@@ -169,7 +169,9 @@ AppState::StepOutcome AppState::applyOne(const QString &id)
     if (!tweak || !m_engine || !m_pending.contains(id))
         return outcome;
 
-    outcome.name = tweak->name;
+    // displayName(), like every other surface: the overlay shows this line while the
+    // write happens, and the raw field is the Turkish in catalog.json.
+    outcome.name = tweak->displayName();
     outcome.path = tweak->targetSummary();
 
     const int desired = m_on.value(id, 0);

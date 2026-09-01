@@ -47,7 +47,7 @@
      "reversible": false,
      "note": "Windows'un bazı bileşenleri Edge'i çağırır; kaldırdıktan sonra bu bağlantılar açılmayabilir.",
      "run": [
-      "$path = Resolve-Path -Path \"$Env:ProgramFiles (x86)\\Microsoft\\Edge\\Application\\*\\Installer\\setup.exe\" -ErrorAction SilentlyContinue | Select-Object -Last 1",
+      "$path = Resolve-Path -Path \"${Env:ProgramFiles(x86)}\\Microsoft\\Edge\\Application\\*\\Installer\\setup.exe\" -ErrorAction SilentlyContinue | Select-Object -Last 1",
       "if ($path) {",
       "  New-Item -Path \"$Env:SystemRoot\\SystemApps\\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\\MicrosoftEdge.exe\" -Force | Out-Null",
       "  Start-Process -FilePath $path -ArgumentList '--uninstall --system-level --force-uninstall --delete-profile' -Wait",
@@ -80,7 +80,7 @@
      "reversible": false,
      "note": "Bileşen deposu sıkıştırıldıktan sonra yüklü güncellemeler kaldırılamaz. Uzun sürebilir.",
      "run": [
-      "cleanmgr.exe /d C: /VERYLOWDISK",
+      "# Waited for, and on the system drive rather than a hard-coded C:. cleanmgr is a GUI\n# program, so a bare call returns at once and DISM would run underneath it.\nStart-Process -FilePath \"$Env:SystemRoot\\System32\\cleanmgr.exe\" -ArgumentList \"/d $Env:SystemDrive /VERYLOWDISK\" -Wait",
       "# cleanmgr is not asked for a verdict: it reports non-zero for having found nothing",
       "# to delete as readily as for failing, so its code says nothing worth acting on.",
       "Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase",
@@ -184,7 +184,7 @@
      "reversible": true,
      "note": "Değer makinenin bellek miktarından hesaplanır, sabit değildir.",
      "run": [
-      "$memory = (Get-CimInstance Win32_PhysicalMemory | Measure-Object Capacity -Sum).Sum / 1KB",
+      "$bytes = (Get-CimInstance Win32_PhysicalMemory | Measure-Object Capacity -Sum).Sum\n# Some virtual machines report no Win32_PhysicalMemory at all, which made this 0.\nif (-not $bytes) { $bytes = (Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory }\n$memory = [int64]($bytes / 1KB)",
       "Set-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Control' -Name 'SvcHostSplitThresholdInKB' -Value $memory -Type DWord",
       "Write-Output ('ARB|svchostThreshold|{0:N0}' -f $memory)"
      ]

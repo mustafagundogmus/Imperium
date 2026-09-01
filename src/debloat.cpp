@@ -1,4 +1,5 @@
 #include "debloat.h"
+#include "winpaths.h"
 
 #include <QDir>
 #include <QFile>
@@ -204,6 +205,16 @@ void DebloatScanner::start()
     QDir().mkpath(dir);
     const QString scriptPath = dir + QStringLiteral("/debloat_scan.ps1");
 
+    // The same rule actionengine.cpp follows: the absolute path from winpaths.h, never
+    // the bare name. This process is elevated and a bare "powershell.exe" is resolved
+    // through the PATH it inherited from whoever started it. Resolved before the script
+    // is written, so a machine without it fails with nothing left behind.
+    const QString powershell = WinPaths::powershell();
+    if (powershell.isEmpty()) {
+        Q_EMIT finished({});
+        return;
+    }
+
     QFile script(scriptPath);
     if (!script.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         Q_EMIT finished({});
@@ -276,7 +287,7 @@ void DebloatScanner::start()
 
     m_process = new QProcess(this);
     m_process->setProcessChannelMode(QProcess::SeparateChannels);
-    m_process->setProgram(QStringLiteral("powershell.exe"));
+    m_process->setProgram(powershell);
     m_process->setArguments({QStringLiteral("-NoProfile"), QStringLiteral("-NonInteractive"),
                              QStringLiteral("-ExecutionPolicy"), QStringLiteral("Bypass"),
                              QStringLiteral("-File"), QDir::toNativeSeparators(scriptPath)});

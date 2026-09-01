@@ -205,7 +205,11 @@ QString pendingRestartReason()
          "deep.restart.fileRename"},
         {"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Component Based Servicing\\PackagesPending",
          nullptr, "deep.restart.packages"},
-        {"SYSTEM\\CurrentControlSet\\Services\\Netlogon", "JoinDomain", "deep.restart.domain"},
+        // Both are subkeys of Netlogon, not values in it — a domain join or a pending SPN
+        // change leaves a key called JoinDomain or AvoidSpnSet behind, and reading a value
+        // of that name out of the parent answered "no" on every machine.
+        {"SYSTEM\\CurrentControlSet\\Services\\Netlogon\\JoinDomain", nullptr, "deep.restart.domain"},
+        {"SYSTEM\\CurrentControlSet\\Services\\Netlogon\\AvoidSpnSet", nullptr, "deep.restart.domain"},
     };
 
     QStringList reasons;
@@ -225,7 +229,8 @@ QString pendingRestartReason()
             // would have written the flag it was looking for.
             set = hklmKeyExists(flag.root);
         }
-        if (set)
+        // Two flags can name the same reason; say it once.
+        if (set && !reasons.contains(word(flag.key)))
             reasons << word(flag.key);
     }
 
@@ -542,10 +547,11 @@ void Probe::runInstant()
             const quint64 used = quint64(perf.CommitTotal) * perf.PageSize;
             const quint64 limit = quint64(perf.CommitLimit) * perf.PageSize;
             m_facts.commitCharge =
-                QStringLiteral("%1 / %2 · %%3")
+                QStringLiteral("%1 / %2 · %3")
                     .arg(QLocale().formattedDataSize(qint64(used), 1, QLocale::DataSizeTraditionalFormat),
-                         QLocale().formattedDataSize(qint64(limit), 1, QLocale::DataSizeTraditionalFormat))
-                    .arg(qRound(100.0 * qreal(used) / qreal(limit)));
+                         QLocale().formattedDataSize(qint64(limit), 1, QLocale::DataSizeTraditionalFormat),
+                         Locale::tr(QStringLiteral("sys.percentValue"))
+                             .arg(qRound(100.0 * qreal(used) / qreal(limit))));
         }
     }
 #endif   // Q_OS_WIN
@@ -663,7 +669,10 @@ $since = (Get-Date).AddHours(-24)
 $critical = @(Get-WinEvent -FilterHashtable @{LogName='System';Level=1,2;StartTime=$since} -ErrorAction SilentlyContinue)
 $boot = Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-Diagnostics-Performance/Operational';Id=100} -MaxEvents 1 -ErrorAction SilentlyContinue
 $bootMs = -1
-if ($boot) { try { $bootMs = [int]$boot.Properties[0].Value } catch {} }
+# Property 5 is BootTime, the milliseconds the boot took. Property 0 is BootTsVersion,
+# which is the constant 2 on every machine and used to be what this read — so the
+# row said "0.0 s" wherever event 100 existed at all.
+if ($boot) { try { $bootMs = [int]$boot.Properties[5].Value } catch {} }
 
 $pf = Get-CimInstance Win32_PageFileUsage | Select-Object -First 1
 
@@ -879,9 +888,13 @@ try {
 $wifi = ''
 try {
   $lines = netsh wlan show interfaces 2>$null
-  $ssid = ($lines | Select-String -Pattern '^\s+SSID\s+:\s+(.+)$').Matches.Groups[1].Value
-  $signal = ($lines | Select-String -Pattern '^\s+Signal\s+:\s+(.+)$').Matches.Groups[1].Value
-  if ($ssid) { $wifi = "$ssid · $signal" }
+  # The SSID label is "SSID" in every language; the "Signal" label is not — it comes out
+  # of wlancfg.dll.mui in the display language — so the signal is picked out by its shape,
+  # the one line that ends in a percentage. -First 1 because a second WLAN adapter turns
+  # .Matches into an array and Groups[1] then indexes the wrong thing.
+  $ssid = ($lines | Select-String -Pattern '^\s+SSID\s+:\s+(.+)$' | Select-Object -First 1).Matches.Groups[1].Value
+  $signal = ($lines | Select-String -Pattern ':\s+(\d{1,3}%)\s*$' | Select-Object -First 1).Matches.Groups[1].Value
+  if ($ssid) { $wifi = if ($signal) { "$ssid · $signal" } else { $ssid } }
 } catch {}
 
 [pscustomobject]@{

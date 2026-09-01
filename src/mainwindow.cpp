@@ -355,6 +355,11 @@ void MainWindow::wire()
     connect(m_applyOverlay, &ApplyOverlay::visibilityChanged, clearSearch,
             [clearSearch](bool visible) { clearSearch->setEnabled(!visible); });
     clearSearch->setEnabled(!m_applyOverlay->isVisible());
+    // Same for Ctrl+K: the search field sits behind the scrim, and typing into it
+    // rebuilds the list while the writes are still being drained.
+    connect(m_applyOverlay, &ApplyOverlay::visibilityChanged, focusSearch,
+            [focusSearch](bool visible) { focusSearch->setEnabled(!visible); });
+    focusSearch->setEnabled(!m_applyOverlay->isVisible());
 }
 
 QVector<Section> MainWindow::visibleSections() const

@@ -212,13 +212,20 @@ Result launch(const QString &program, const QString &arguments, const QString &w
     auto *attrList = reinterpret_cast<LPPROC_THREAD_ATTRIBUTE_LIST>(
         HeapAlloc(GetProcessHeap(), 0, attrSize));
 
-    bool prepared = attrList != nullptr
-                    && InitializeProcThreadAttributeList(attrList, 1, 0, &attrSize)
-                    && UpdateProcThreadAttribute(attrList, 0, PROC_THREAD_ATTRIBUTE_PARENT_PROCESS,
-                                                 &tiProcess, sizeof(tiProcess), nullptr, nullptr);
+    // Tracked apart from `prepared`, the way shell.cpp does it: a list that was
+    // initialised has to go through DeleteProcThreadAttributeList before its buffer is
+    // freed, and one that was not must not — freeing the buffer alone leaks what the
+    // list allocated inside it.
+    const bool initialised = attrList != nullptr
+                             && InitializeProcThreadAttributeList(attrList, 1, 0, &attrSize);
+    const bool prepared = initialised
+                          && UpdateProcThreadAttribute(attrList, 0, PROC_THREAD_ATTRIBUTE_PARENT_PROCESS,
+                                                       &tiProcess, sizeof(tiProcess), nullptr, nullptr);
     if (!prepared) {
         result.summary = tr("ti.err.prepare");
         result.detail = win32Message(GetLastError());
+        if (initialised)
+            DeleteProcThreadAttributeList(attrList);
         if (attrList)
             HeapFree(GetProcessHeap(), 0, attrList);
         CloseHandle(tiProcess);

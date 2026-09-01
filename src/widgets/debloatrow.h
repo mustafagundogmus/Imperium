@@ -53,6 +53,10 @@ protected:
 
 private:
     QRectF checkboxRect() const;
+    /// Sizes the button from its hint and sits it at the right edge. From resizeEvent, and
+    /// again when the typeface or text size changes: that changes the button's width
+    /// without changing the row's, so no resize arrives to move it.
+    void placeButton();
 
     QString m_id;
     QPixmap m_logo;

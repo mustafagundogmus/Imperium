@@ -453,7 +453,7 @@
          "value": "AllowAutomaticAppArchiving",
          "type": "DWORD",
          "on": "0",
-         "off": "1"
+         "off": "DELETE"
         }
        ],
        "applied": false,
@@ -1429,7 +1429,7 @@
          "value": "HideNewOutlookToggle",
          "type": "DWORD",
          "on": "0",
-         "off": "1"
+         "off": "DELETE"
         },
         {
          "hive": "HKCU",
@@ -1437,7 +1437,7 @@
          "value": "DoNewOutlookAutoMigration",
          "type": "DWORD",
          "on": "0",
-         "off": "0"
+         "off": "DELETE"
         },
         {
          "hive": "HKCU",
@@ -1533,8 +1533,8 @@
          "path": "SYSTEM\\CurrentControlSet\\Control\\Power\\PowerSettings\\7516b95f-f776-4464-8c53-06167f40cc99\\8EC4B3A5-6868-48c2-BE75-4F3044BE88A7",
          "value": "Attributes",
          "type": "DWORD",
-         "on": "1",
-         "off": "2"
+         "on": "2",
+         "off": "1"
         }
        ],
        "applied": false,
@@ -1561,15 +1561,15 @@
        ],
        "options": [
         {
-         "label": "%80 kıs",
+         "label": "Tamamen sustur",
          "data": "0"
         },
         {
-         "label": "%50 kıs",
+         "label": "%80 kıs",
          "data": "1"
         },
         {
-         "label": "Tamamen sustur",
+         "label": "%50 kıs",
          "data": "2"
         },
         {
@@ -1577,14 +1577,14 @@
          "data": "3"
         }
        ],
-       "default": 3,
+       "default": 1,
        "applied": false,
        "on": false
       },
       {
        "id": "aud-exclusive-mode",
-       "name": "Uygulamaların özel denetimi",
-       "desc": "Bir uygulamanın ses aygıtını tek başına devralmasına izin verir. Bit-perfect ses için gerekir; kapatmak sistem seslerinin kesilmesini önler.",
+       "name": "Korumalı ses yolu (DRM)",
+       "desc": "DRM korumalı içerik için kullanılan korumalı ses grafiğini (Protected Audio DG) kapatır. Bazı ses sürücülerindeki çatırdama ve gecikme sorunlarını giderebilir; korumalı içerik oynatılamayabilir. Uygulamaların özel denetimi buradan değil, ses aygıtının Gelişmiş sekmesinden ayarlanır.",
        "reg": [
         {
          "hive": "HKLM",
@@ -3868,7 +3868,7 @@
          "value": "SubmitSamplesConsent",
          "type": "DWORD",
          "on": "0",
-         "off": "1"
+         "off": "DELETE"
         }
        ],
        "applied": false,
@@ -3885,7 +3885,7 @@
          "value": "EnableControlledFolderAccess",
          "type": "DWORD",
          "on": "1",
-         "off": "0"
+         "off": "DELETE"
         }
        ],
        "applied": false,
@@ -4143,7 +4143,7 @@
        "reg": [
         {
          "hive": "HKLM",
-         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+         "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer",
          "value": "SmartScreenEnabled",
          "type": "SZ",
          "on": "",
@@ -4302,7 +4302,7 @@
          "value": "NoLMHash",
          "type": "DWORD",
          "on": "1",
-         "off": "0"
+         "off": "DELETE"
         }
        ],
        "applied": false,
@@ -4367,7 +4367,7 @@
       {
        "id": "sec-smb1-client",
        "name": "SMBv1 istemcisi",
-       "desc": "1980'lerden kalma ve WannaCry'ın yayılma yolu olan dosya paylaşım protokolünün sürücüsünü devre dışı bırakır. Çok eski NAS cihazlarına erişim kesilebilir.",
+       "desc": "1980'lerden kalma ve WannaCry'ın yayılma yolu olan dosya paylaşım protokolünün sürücüsünü devre dışı bırakır. Çok eski NAS cihazlarına erişim kesilebilir. Bu sürücü İş İstasyonu (LanmanWorkstation) hizmetinin bağımlılıkları arasında listeleniyorsa hizmet bir sonraki açılışta başlamaz ve tüm ağ paylaşımları kesilir; SMBv1 istemcisini 'Windows özelliklerini aç veya kapat' üzerinden kaldırmak daha güvenlidir.",
        "reg": [
         {
          "hive": "HKLM",
@@ -4647,7 +4647,7 @@
          "value": "ACSettingIndex",
          "type": "DWORD",
          "on": "0",
-         "off": "1"
+         "off": "DELETE"
         }
        ],
        "applied": false,
@@ -4921,7 +4921,8 @@
         }
        ],
        "applied": false,
-       "on": false
+       "on": false,
+       "minBuild": 26100
       },
       {
        "id": "net-admin-shares",
@@ -4984,66 +4985,8 @@
      ]
     },
     {
-     "title": "Güç ve bağlantı · WinUtil",
-     "tweaks": [
-      {
-       "id": "wu-WPFToggleStandbyFix",
-       "name": "Uyku modunda ağ bağlantısı",
-       "desc": "S0 uyku modunda ağ bağlantısının kesilmesini engeller.",
-       "reg": [
-        {
-         "hive": "HKCU",
-         "path": "SOFTWARE\\Policies\\Microsoft\\Power\\PowerSettings\\f15576e8-98b7-4186-b944-eafa664402d9",
-         "value": "ACSettingIndex",
-         "type": "DWORD",
-         "on": "1",
-         "off": "0"
-        }
-       ],
-       "applied": false,
-       "on": false
-      }
-     ]
-    },
-    {
      "title": "Ağ yığını",
      "tweaks": [
-      {
-       "id": "net-autotuning",
-       "name": "TCP otomatik ayarlama",
-       "desc": "Windows'un TCP alma penceresini bağlantıya göre büyütmesi. Kısıtlamak eski yönlendiricilerdeki tıkanmaları giderir, hızlı bağlantılarda verimi düşürür.",
-       "reg": [
-        {
-         "hive": "HKLM",
-         "path": "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters",
-         "value": "TcpAutotuning",
-         "type": "DWORD",
-         "on": "",
-         "off": ""
-        }
-       ],
-       "options": [
-        {
-         "label": "Normal",
-         "data": "DELETE"
-        },
-        {
-         "label": "Kısıtlı",
-         "data": "1"
-        },
-        {
-         "label": "Yüksek kısıtlı",
-         "data": "2"
-        },
-        {
-         "label": "Devre dışı",
-         "data": "0"
-        }
-       ],
-       "default": 0,
-       "applied": false,
-       "on": false
-      },
       {
        "id": "net-qos-bandwidth",
        "name": "QoS ayrılmış bant genişliği",
@@ -5890,15 +5833,15 @@
        "options": [
         {
          "label": "Giriş",
-         "data": "3"
+         "data": "2"
         },
         {
          "label": "Bu bilgisayar",
          "data": "1"
         },
         {
-         "label": "Hızlı erişim",
-         "data": "2"
+         "label": "İndirilenler",
+         "data": "3"
         }
        ],
        "default": 0,
@@ -6548,7 +6491,7 @@
        "reg": [
         {
          "hive": "HKLM",
-         "path": "SYSTEM\\ControlSet001\\Control\\FeatureManagement\\Overrides\\8\\3036241548",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\FeatureManagement\\Overrides\\8\\3036241548",
          "value": "EnabledState",
          "type": "DWORD",
          "on": "1",
@@ -6716,7 +6659,7 @@
        "applied": false,
        "on": false,
        "minBuild": 22000,
-       "maxBuild": 22621
+       "maxBuild": 22000
       },
       {
        "id": "wa-clock-seconds",
@@ -6800,7 +6743,7 @@
          "value": "Hidden",
          "type": "DWORD",
          "on": "1",
-         "off": "0"
+         "off": "2"
         }
        ],
        "applied": false,
@@ -7479,31 +7422,15 @@
       {
        "id": "ctx-runas-user",
        "name": "Farklı kullanıcı olarak çalıştır",
-       "desc": "Seçili programı başka bir hesabın kimlik bilgileriyle başlatır. İkincil oturum açma (seclogon) hizmetinin çalışması gerekir.",
+       "desc": "Windows'un Shift+sağ tık arkasına sakladığı 'Farklı kullanıcı olarak çalıştır' girdisini menüde her zaman gösterir. İkincil oturum açma (seclogon) hizmetinin çalışması gerekir.",
        "reg": [
         {
          "hive": "HKCR",
-         "path": "exefile\\shell\\ArbitriumRunAsUser",
-         "value": "MUIVerb",
+         "path": "exefile\\shell\\runasuser",
+         "value": "Extended",
          "type": "SZ",
-         "on": "Farklı kullanıcı olarak çalıştır",
-         "off": "DELETE_KEY"
-        },
-        {
-         "hive": "HKCR",
-         "path": "exefile\\shell\\ArbitriumRunAsUser",
-         "value": "Icon",
-         "type": "SZ",
-         "on": "imageres.dll,-5203",
-         "off": "DELETE"
-        },
-        {
-         "hive": "HKCR",
-         "path": "exefile\\shell\\ArbitriumRunAsUser\\command",
-         "value": "",
-         "type": "SZ",
-         "on": "runas.exe /netonly /user:%%USERNAME%% \"%1\"",
-         "off": "DELETE"
+         "on": "DELETE",
+         "off": ""
         }
        ],
        "applied": false,
@@ -7937,17 +7864,9 @@
      "tweaks": [
       {
        "id": "wu-WPFTweaksHiber",
-       "name": "Hazırda bekletme",
-       "desc": "Hazırda bekletmeyi devre dışı bırakır ve güç menüsündeki seçeneği gizler.",
+       "name": "Hazırda beklet seçeneğini gizle",
+       "desc": "Güç menüsündeki Hazırda beklet girdisini gizler. Hazırda bekletmenin kendisini kapatmak için Güç yönetimi'ndeki 'Hazırda bekletme dosyası' satırını kullanın.",
        "reg": [
-        {
-         "hive": "HKLM",
-         "path": "System\\CurrentControlSet\\Control\\Session Manager\\Power",
-         "value": "HibernateEnabled",
-         "type": "DWORD",
-         "on": "0",
-         "off": "1"
-        },
         {
          "hive": "HKLM",
          "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FlyoutMenuSettings",
@@ -8098,8 +8017,8 @@
       },
       {
        "id": "perf-memory-compression",
-       "name": "Bellek sıkıştırma",
-       "desc": "Windows'un sayfa dosyasına yazmak yerine belleği sıkıştırmasını denetler. Kapatmak CPU'yu rahatlatır, karşılığında disk daha çok kullanılır.",
+       "name": "Sayfa birleştirme",
+       "desc": "Windows'un içeriği aynı olan bellek sayfalarını tek kopyada birleştirmesini (page combining) kapatır. Bellek sıkıştırmadan farklı bir şeydir: kapatmak CPU'yu bir miktar rahatlatır, karşılığında daha çok RAM kullanılır.",
        "reg": [
         {
          "hive": "HKLM",
@@ -8514,23 +8433,6 @@
        "on": false
       },
       {
-       "id": "pwr-pcie-aspm",
-       "name": "PCIe bağlantı güç yönetimi",
-       "desc": "PCIe bağlantılarının etkin güç durumu yönetimini (ASPM) kapatır. Bazı NVMe disklerdeki ani gecikme sıçramalarını giderir, güç tüketimini artırır.",
-       "reg": [
-        {
-         "hive": "HKLM",
-         "path": "SYSTEM\\CurrentControlSet\\Control\\Power\\PowerSettings\\501a4d13-42af-4429-9fd1-a8218c268e20\\ee12f906-d277-404b-b6da-e5fa1a576df5",
-         "value": "Attributes",
-         "type": "DWORD",
-         "on": "2",
-         "off": "1"
-        }
-       ],
-       "applied": false,
-       "on": false
-      },
-      {
        "id": "pwr-hibernate-file",
        "name": "Hazırda bekletme dosyası",
        "desc": "hiberfil.sys dosyasını kaldırır ve hazırda bekletmeyi kapatır. Takılı belleğin yaklaşık %40'ı kadar disk alanı boşalır; hızlı başlatma da kapanır.",
@@ -8577,37 +8479,9 @@
      "title": "Davranış",
      "tweaks": [
       {
-       "id": "pwr-lid-close",
-       "name": "Kapak kapanınca",
-       "desc": "Dizüstü kapağı kapandığında ne yapılacağı. Şebekeye takılı ve pilde farklı davranış istiyorsanız bunu Denetim Masası'ndan ayarlamanız gerekir.",
-       "reg": [
-        {
-         "hive": "HKLM",
-         "path": "SYSTEM\\CurrentControlSet\\Control\\Power\\PowerSettings\\4f971e89-eebd-4455-a8de-9e59040e7347\\5ca83367-6e45-459f-a27b-476b1d01c936",
-         "value": "Attributes",
-         "type": "DWORD",
-         "on": "",
-         "off": ""
-        }
-       ],
-       "options": [
-        {
-         "label": "Varsayılan",
-         "data": "DELETE"
-        },
-        {
-         "label": "Seçeneği göster",
-         "data": "2"
-        }
-       ],
-       "default": 0,
-       "applied": false,
-       "on": false
-      },
-      {
        "id": "pwr-sleep-button",
-       "name": "Uyku düğmesini göster",
-       "desc": "Başlat menüsünün güç düğmesinde Uyku seçeneğini görünür yapar.",
+       "name": "Gözetimsiz uyku zaman aşımı seçeneği",
+       "desc": "Güç seçeneklerinde gizli olan 'Sistem gözetimsiz uyku zaman aşımı' ayarını görünür yapar: bilgisayar bir görev için uyandığında ne kadar sonra yeniden uyuyacağı orada ayarlanır. Başlat menüsündeki Uyku düğmesiyle ilgisi yoktur.",
        "reg": [
         {
          "hive": "HKLM",
@@ -8641,7 +8515,7 @@
       {
        "id": "pwr-adaptive-brightness",
        "name": "Uyarlanır parlaklık",
-       "desc": "Ortam ışığı sensörüne göre ekran parlaklığının kendiliğinden değişmesini kapatır.",
+       "desc": "Güç seçeneklerinde gizli olan 'Uyarlanır parlaklığı etkinleştir' ayarını görünür yapar; parlaklığın sensöre göre değişmesini oradan kapatabilirsiniz.",
        "reg": [
         {
          "hive": "HKLM",
@@ -8662,7 +8536,7 @@
        "reg": [
         {
          "hive": "HKLM",
-         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+         "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU",
          "value": "AUPowerManagement",
          "type": "DWORD",
          "on": "0",
@@ -8927,7 +8801,7 @@
         {
          "hive": "HKLM",
          "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization",
-         "value": "DOPercentageMaxForegroundBandwidth",
+         "value": "DOMaxCacheSize",
          "type": "DWORD",
          "on": "",
          "off": ""
@@ -8938,7 +8812,7 @@
         "max": 100,
         "step": 5,
         "unit": "%",
-        "default": 100
+        "default": 20
        },
        "applied": false,
        "on": false
@@ -8946,7 +8820,7 @@
       {
        "id": "cln-do-cache-age",
        "name": "Teslim iyileştirme önbellek ömrü",
-       "desc": "İndirilen güncelleme parçalarının önbellekte kaç gün tutulacağı.",
+       "desc": "İndirilen güncelleme parçalarının önbellekte ne kadar tutulacağı. Windows'un kendi varsayılanı 3 gündür.",
        "reg": [
         {
          "hive": "HKLM",
@@ -8957,15 +8831,31 @@
          "off": ""
         }
        ],
-       "range": {
-        "min": 1,
-        "max": 30,
-        "step": 1,
-        "unit": "gün",
-        "default": 7
-       },
        "applied": false,
-       "on": false
+       "on": false,
+       "options": [
+        {
+         "label": "Varsayılan",
+         "data": "DELETE"
+        },
+        {
+         "label": "1 gün",
+         "data": "86400"
+        },
+        {
+         "label": "3 gün",
+         "data": "259200"
+        },
+        {
+         "label": "7 gün",
+         "data": "604800"
+        },
+        {
+         "label": "30 gün",
+         "data": "2592000"
+        }
+       ],
+       "default": 0
       }
      ]
     },
@@ -9095,11 +8985,27 @@
         },
         {
          "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application",
+         "value": "Retention",
+         "type": "DWORD",
+         "on": "4294967295",
+         "off": "0"
+        },
+        {
+         "hive": "HKLM",
          "path": "SYSTEM\\CurrentControlSet\\Services\\EventLog\\System",
          "value": "AutoBackupLogFiles",
          "type": "DWORD",
          "on": "1",
          "off": "DELETE"
+        },
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Services\\EventLog\\System",
+         "value": "Retention",
+         "type": "DWORD",
+         "on": "4294967295",
+         "off": "0"
         }
        ],
        "applied": false,
@@ -9204,7 +9110,7 @@
         "max": 20000,
         "step": 1000,
         "unit": "ms",
-        "default": 5000
+        "default": 20000
        },
        "applied": false,
        "on": false
@@ -9406,7 +9312,8 @@
         }
        ],
        "applied": false,
-       "on": false
+       "on": false,
+       "minBuild": 26100
       },
       {
        "id": "adv-03-12970",

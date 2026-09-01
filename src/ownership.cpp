@@ -1,6 +1,7 @@
 #include "ownership.h"
 #include "console.h"
 #include "i18n.h"
+#include "winpaths.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -95,10 +96,15 @@ struct Run
 };
 
 /// Runs one of the console tools without letting a window flash on screen.
+///
+/// \a program is a bare file name and is resolved against System32 here, never through
+/// PATH: this runs elevated — it is what the shell verbs elevate for — and an elevated
+/// process must not let the environment it inherited decide which takeown.exe it runs.
+/// The same rule winpaths.h states for PowerShell.
 Run run(const QString &program, const QStringList &arguments)
 {
     QProcess process;
-    process.setProgram(program);
+    process.setProgram(WinPaths::system32() + QLatin1Char('\\') + program);
     process.setArguments(arguments);
     process.setProcessChannelMode(QProcess::MergedChannels);
 #ifdef Q_OS_WIN

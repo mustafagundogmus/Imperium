@@ -7,6 +7,7 @@
 #include "../settings.h"
 #include "../theme.h"
 #include "../updater.h"
+#include "../winpaths.h"
 #include "../widgets/accentpicker.h"
 #include "../widgets/buttons.h"
 #include "../widgets/languagepicker.h"
@@ -345,7 +346,11 @@ QWidget *SettingsPage::buildSafety()
     connect(restorePoint, &PillButton::clicked, this, [] {
         // Creating a restore point changes the system, which this build deliberately does
         // not do — so hand the user Windows' own System Protection dialog instead.
-        if (!QProcess::startDetached(QStringLiteral("SystemPropertiesProtection.exe"), {}))
+        // From System32 by absolute path, like every other program this elevated process
+        // starts; a bare name would be resolved through the inherited PATH.
+        const QString protection =
+            WinPaths::system32() + QStringLiteral("\\SystemPropertiesProtection.exe");
+        if (!QFileInfo::exists(protection) || !QProcess::startDetached(protection, {}))
             QDesktopServices::openUrl(QUrl(QStringLiteral("ms-settings:about")));
     });
 

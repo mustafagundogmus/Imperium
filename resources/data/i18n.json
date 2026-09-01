@@ -4643,6 +4643,18 @@
   "ru": "1 минута",
   "tr": "1 dakika"
  },
+ "opt.1 gün": {
+  "ar": "يوم واحد",
+  "de": "1 Tag",
+  "en": "1 day",
+  "es": "1 día",
+  "fr": "1 jour",
+  "it": "1 giorno",
+  "pl": "1 dzień",
+  "pt": "1 dia",
+  "ru": "1 день",
+  "tr": "1 gün"
+ },
  "opt.15 saniye": {
   "ar": "15 ثانية",
   "de": "15 Sekunden",
@@ -4654,6 +4666,30 @@
   "pt": "15 segundos",
   "ru": "15 секунд",
   "tr": "15 saniye"
+ },
+ "opt.3 gün": {
+  "ar": "3 أيام",
+  "de": "3 Tage",
+  "en": "3 days",
+  "es": "3 días",
+  "fr": "3 jours",
+  "it": "3 giorni",
+  "pl": "3 dni",
+  "pt": "3 dias",
+  "ru": "3 дня",
+  "tr": "3 gün"
+ },
+ "opt.30 gün": {
+  "ar": "30 يومًا",
+  "de": "30 Tage",
+  "en": "30 days",
+  "es": "30 días",
+  "fr": "30 jours",
+  "it": "30 giorni",
+  "pl": "30 dni",
+  "pt": "30 dias",
+  "ru": "30 дней",
+  "tr": "30 gün"
  },
  "opt.30 saniye": {
   "ar": "30 ثانية",
@@ -4690,6 +4726,18 @@
   "pt": "5 segundos",
   "ru": "5 секунд",
   "tr": "5 saniye"
+ },
+ "opt.7 gün": {
+  "ar": "7 أيام",
+  "de": "7 Tage",
+  "en": "7 days",
+  "es": "7 días",
+  "fr": "7 jours",
+  "it": "7 giorni",
+  "pl": "7 dni",
+  "pt": "7 dias",
+  "ru": "7 дней",
+  "tr": "7 gün"
  },
  "opt.7 saniye": {
   "ar": "7 ثوانٍ",
@@ -4774,18 +4822,6 @@
   "pt": "Grande",
   "ru": "Крупный",
   "tr": "Büyük"
- },
- "opt.Devre dışı": {
-  "ar": "معطّل",
-  "de": "Deaktiviert",
-  "en": "Disabled",
-  "es": "Deshabilitado",
-  "fr": "Désactivé",
-  "it": "Disabilitato",
-  "pl": "Wyłączony",
-  "pt": "Desativado",
-  "ru": "Отключена",
-  "tr": "Devre dışı"
  },
  "opt.Dolunca": {
   "ar": "عند الامتلاء",
@@ -4967,18 +5003,6 @@
   "ru": "Ничего не делать",
   "tr": "Hiçbir şey yapma"
  },
- "opt.Hızlı erişim": {
-  "ar": "الوصول السريع",
-  "de": "Schnellzugriff",
-  "en": "Quick access",
-  "es": "Acceso rápido",
-  "fr": "Accès rapide",
-  "it": "Accesso rapido",
-  "pl": "Szybki dostęp",
-  "pt": "Acesso rápido",
-  "ru": "Быстрый доступ",
-  "tr": "Hızlı erişim"
- },
  "opt.IPv4 öncelikli": {
   "ar": "تفضيل IPv4",
   "de": "IPv4 bevorzugen",
@@ -5063,18 +5087,6 @@
   "ru": "Без ограничения",
   "tr": "Kısılmadan"
  },
- "opt.Kısıtlı": {
-  "ar": "مقيّد",
-  "de": "Eingeschränkt",
-  "en": "Restricted",
-  "es": "Restringido",
-  "fr": "Restreint",
-  "it": "Limitato",
-  "pl": "Ograniczony",
-  "pt": "Restrito",
-  "ru": "Ограниченный",
-  "tr": "Kısıtlı"
- },
  "opt.Masaüstü · varsayılan (2)": {
   "ar": "سطح المكتب · الافتراضي (٢)",
   "de": "Desktop · Standard (2)",
@@ -5098,18 +5110,6 @@
   "pt": "Quase nunca",
   "ru": "Почти никогда",
   "tr": "Neredeyse hiçbir zaman"
- },
- "opt.Normal": {
-  "ar": "عادي",
-  "de": "Normal",
-  "en": "Normal",
-  "es": "Normal",
-  "fr": "Normal",
-  "it": "Normale",
-  "pl": "Normalny",
-  "pt": "Normal",
-  "ru": "Обычный",
-  "tr": "Normal"
  },
  "opt.Orta": {
   "ar": "متوسط",
@@ -5170,18 +5170,6 @@
   "pt": "Na mesma linha",
   "ru": "В той же строке",
   "tr": "Satır içi"
- },
- "opt.Seçeneği göster": {
-  "ar": "إظهار الخيار",
-  "de": "Option anzeigen",
-  "en": "Show the option",
-  "es": "Mostrar la opción",
-  "fr": "Afficher l'option",
-  "it": "Mostra l'opzione",
-  "pl": "Pokaż opcję",
-  "pt": "Mostrar a opção",
-  "ru": "Показать параметр",
-  "tr": "Seçeneği göster"
  },
  "opt.Sunucu · eşit (24)": {
   "ar": "خادم · متساوٍ (٢٤)",
@@ -5423,18 +5411,6 @@
   "ru": "Локальная сеть и группа",
   "tr": "Yerel ağ ve grup"
  },
- "opt.Yüksek kısıtlı": {
-  "ar": "مقيّد بشدة",
-  "de": "Stark eingeschränkt",
-  "en": "Highly restricted",
-  "es": "Muy restringido",
-  "fr": "Très restreint",
-  "it": "Molto limitato",
-  "pl": "Silnie ograniczony",
-  "pt": "Muito restrito",
-  "ru": "Сильно ограниченный",
-  "tr": "Yüksek kısıtlı"
- },
  "opt.Çekirdek bellek dökümü": {
   "ar": "تفريغ ذاكرة النواة",
   "de": "Kernelspeicherabbild",
@@ -5506,6 +5482,18 @@
   "pt": "Transferir, notificar antes de instalar",
   "ru": "Загружать, уведомлять перед установкой",
   "tr": "İndir, kurmadan önce bildir"
+ },
+ "opt.İndirilenler": {
+  "ar": "التنزيلات",
+  "de": "Downloads",
+  "en": "Downloads",
+  "es": "Descargas",
+  "fr": "Téléchargements",
+  "it": "Download",
+  "pl": "Pobrane",
+  "pt": "Transferências",
+  "ru": "Загрузки",
+  "tr": "İndirilenler"
  },
  "opt.İndirmeden önce bildir": {
   "ar": "الإعلام قبل التنزيل",
@@ -7522,18 +7510,6 @@
   "pt": "Segurança e instalação · WinUtil",
   "ru": "Безопасность и установка · WinUtil",
   "tr": "Güvenlik ve kurulum · WinUtil"
- },
- "section.Güç ve bağlantı · WinUtil": {
-  "ar": "الطاقة والاتصال · WinUtil",
-  "de": "Energie und Verbindung · WinUtil",
-  "en": "Power and connectivity · WinUtil",
-  "es": "Energía y conectividad · WinUtil",
-  "fr": "Alimentation et connectivité · WinUtil",
-  "it": "Alimentazione e connettività · WinUtil",
-  "pl": "Zasilanie i łączność · WinUtil",
-  "pt": "Energia e conectividade · WinUtil",
-  "ru": "Электропитание и подключение · WinUtil",
-  "tr": "Güç ve bağlantı · WinUtil"
  },
  "section.Güç ve bellek · WinUtil": {
   "ar": "الطاقة والذاكرة · WinUtil",
@@ -10307,6 +10283,18 @@
   "ru": "Розничная лицензия",
   "tr": "Perakende lisans"
  },
+ "sys.percentValue": {
+  "ar": "%1٪",
+  "de": "%1 %",
+  "en": "%1%",
+  "es": "%1 %",
+  "fr": "%1 %",
+  "it": "%1%",
+  "pl": "%1%",
+  "pt": "%1%",
+  "ru": "%1 %",
+  "tr": "%%1"
+ },
  "sys.sarjOluyor": {
   "ar": "قيد الشحن",
   "de": "wird geladen",
@@ -11436,28 +11424,28 @@
   "tr": "Ses geliştirmeleri"
  },
  "tweak.aud-exclusive-mode.desc": {
-  "ar": "يتيح لتطبيق الاستحواذ وحده على جهاز الصوت. لازم للتشغيل بدقة البتات؛ وإيقافه يمنع قطع أصوات النظام.",
-  "de": "Erlaubt einer Anwendung, das Audiogerät allein zu übernehmen. Für bitgenaue Wiedergabe nötig; ausgeschaltet werden Systemklänge nicht mehr abgeschnitten.",
-  "en": "Lets an application take the audio device over on its own. Needed for bit-perfect playback; turning it off stops system sounds being cut off.",
-  "es": "Permite que una aplicación tome en exclusiva el dispositivo de audio. Necesario para reproducción bit-perfect; desactivarlo evita que se corten los sonidos del sistema.",
-  "fr": "Permet à une application de prendre seule le contrôle du périphérique audio. Nécessaire pour une lecture bit-perfect ; le désactiver évite que les sons système soient coupés.",
-  "it": "Consente a un'applicazione di prendere da sola il controllo del dispositivo audio. Serve per la riproduzione bit-perfect; disattivarlo evita che i suoni di sistema vengano tagliati.",
-  "pl": "Pozwala aplikacji samodzielnie przejąć urządzenie audio. Potrzebne do odtwarzania bit-perfect; wyłączenie zapobiega ucinaniu dźwięków systemowych.",
-  "pt": "Permite que uma aplicação assuma sozinha o dispositivo de áudio. Necessário para reprodução bit-perfect; desativá-lo evita que os sons do sistema sejam cortados.",
-  "ru": "Позволяет приложению единолично захватить звуковое устройство. Нужно для bit-perfect воспроизведения; отключение не даёт обрезать системные звуки.",
-  "tr": "Bir uygulamanın ses aygıtını tek başına devralmasına izin verir. Bit-perfect ses için gerekir; kapatmak sistem seslerinin kesilmesini önler."
+  "ar": "يوقف مخطط الصوت المحمي (Protected Audio DG) المستخدم للمحتوى المحمي بـ DRM. قد يعالج الطقطقة والتأخير مع بعض برامج تشغيل الصوت؛ وقد يتعذر تشغيل المحتوى المحمي. أما التحكم الحصري للتطبيقات فيُضبط من علامة التبويب «خيارات متقدمة» للجهاز، لا من هنا.",
+  "de": "Schaltet den geschützten Audiographen (Protected Audio DG) für DRM-geschützte Inhalte ab. Kann Knistern und Latenz bei manchen Audiotreibern beheben; geschützte Inhalte spielen dann womöglich nicht mehr. Die exklusive Steuerung durch Anwendungen wird auf der Registerkarte „Erweitert“ des Geräts eingestellt, nicht hier.",
+  "en": "Turns off the protected audio graph (Protected Audio DG) used for DRM-protected content. Can cure crackling and latency with some audio drivers; protected content may then refuse to play. Exclusive control by applications is set on the device's Advanced tab, not here.",
+  "es": "Desactiva el grafo de audio protegido (Protected Audio DG) que se usa para contenido con DRM. Puede corregir chasquidos y latencia con algunos controladores de audio; el contenido protegido podría dejar de reproducirse. El control exclusivo por las aplicaciones se ajusta en la pestaña Opciones avanzadas del dispositivo, no aquí.",
+  "fr": "Désactive le graphe audio protégé (Protected Audio DG) utilisé pour les contenus sous DRM. Peut corriger crépitements et latence avec certains pilotes audio ; les contenus protégés risquent alors de ne plus se lire. Le contrôle exclusif par les applications se règle dans l'onglet Avancé du périphérique, pas ici.",
+  "it": "Disattiva il grafo audio protetto (Protected Audio DG) usato per i contenuti con DRM. Può risolvere crepitii e latenza con alcuni driver audio; i contenuti protetti potrebbero non essere più riprodotti. Il controllo esclusivo da parte delle applicazioni si imposta nella scheda Avanzate del dispositivo, non qui.",
+  "pl": "Wyłącza chroniony graf audio (Protected Audio DG) używany dla treści z DRM. Może usunąć trzaski i opóźnienia z niektórymi sterownikami audio; treści chronione mogą przestać się odtwarzać. Wyłączną kontrolę przez aplikacje ustawia się na karcie Zaawansowane urządzenia, nie tutaj.",
+  "pt": "Desativa o grafo de áudio protegido (Protected Audio DG) usado para conteúdo com DRM. Pode resolver estalidos e latência com alguns controladores de áudio; o conteúdo protegido pode deixar de reproduzir. O controlo exclusivo pelas aplicações define-se no separador Avançadas do dispositivo, não aqui.",
+  "ru": "Отключает защищённый звуковой граф (Protected Audio DG), используемый для контента с DRM. Может убрать треск и задержки с некоторыми аудиодрайверами; защищённый контент может перестать воспроизводиться. Монопольный режим для приложений задаётся на вкладке «Дополнительно» устройства, а не здесь.",
+  "tr": "DRM korumalı içerik için kullanılan korumalı ses grafiğini (Protected Audio DG) kapatır. Bazı ses sürücülerindeki çatırdama ve gecikme sorunlarını giderebilir; korumalı içerik oynatılamayabilir. Uygulamaların özel denetimi buradan değil, ses aygıtının Gelişmiş sekmesinden ayarlanır."
  },
  "tweak.aud-exclusive-mode.name": {
-  "ar": "التحكم الحصري للتطبيقات",
-  "de": "Exklusive Steuerung durch Anwendungen",
-  "en": "Exclusive control by applications",
-  "es": "Control exclusivo por las aplicaciones",
-  "fr": "Contrôle exclusif par les applications",
-  "it": "Controllo esclusivo da parte delle applicazioni",
-  "pl": "Wyłączna kontrola przez aplikacje",
-  "pt": "Controlo exclusivo pelas aplicações",
-  "ru": "Монопольный режим для приложений",
-  "tr": "Uygulamaların özel denetimi"
+  "ar": "مسار الصوت المحمي (DRM)",
+  "de": "Geschützter Audiopfad (DRM)",
+  "en": "Protected audio path (DRM)",
+  "es": "Ruta de audio protegida (DRM)",
+  "fr": "Chemin audio protégé (DRM)",
+  "it": "Percorso audio protetto (DRM)",
+  "pl": "Chroniona ścieżka audio (DRM)",
+  "pt": "Caminho de áudio protegido (DRM)",
+  "ru": "Защищённый звуковой тракт (DRM)",
+  "tr": "Korumalı ses yolu (DRM)"
  },
  "tweak.aud-notification-volume.desc": {
   "ar": "مستوى أصوات إشعارات النظام نسبةً إلى مستوى الصوت الرئيسي.",
@@ -12252,16 +12240,16 @@
   "tr": "Başarısız DNS sorgusu önbelleği"
  },
  "tweak.cln-do-cache-age.desc": {
-  "ar": "عدد الأيام التي تبقى فيها أجزاء التحديثات المنزّلة في الذاكرة المؤقتة.",
-  "de": "Wie viele Tage heruntergeladene Updateteile im Cache verbleiben.",
-  "en": "How many days downloaded update pieces are kept in the cache.",
-  "es": "Cuántos días se conservan en la caché las partes de actualización descargadas.",
-  "fr": "Nombre de jours pendant lesquels les morceaux de mises à jour téléchargés restent en cache.",
-  "it": "Per quanti giorni le parti di aggiornamento scaricate restano in cache.",
-  "pl": "Ile dni pobrane fragmenty aktualizacji pozostają w pamięci podręcznej.",
-  "pt": "Quantos dias as partes de atualização transferidas ficam na cache.",
-  "ru": "Сколько дней загруженные части обновлений хранятся в кэше.",
-  "tr": "İndirilen güncelleme parçalarının önbellekte kaç gün tutulacağı."
+  "ar": "مدة بقاء أجزاء التحديث المنزّلة في ذاكرة التخزين المؤقت. القيمة الافتراضية في Windows هي 3 أيام.",
+  "de": "Wie lange heruntergeladene Update-Teile im Cache bleiben. Der Windows-Standard ist 3 Tage.",
+  "en": "How long downloaded update pieces stay in the cache. Windows' own default is 3 days.",
+  "es": "Cuánto tiempo permanecen en la caché los fragmentos de actualización descargados. El valor predeterminado de Windows es 3 días.",
+  "fr": "Combien de temps les fragments de mise à jour téléchargés restent en cache. La valeur par défaut de Windows est 3 jours.",
+  "it": "Per quanto tempo i frammenti di aggiornamento scaricati restano nella cache. Il valore predefinito di Windows è 3 giorni.",
+  "pl": "Jak długo pobrane fragmenty aktualizacji pozostają w pamięci podręcznej. Domyślna wartość systemu Windows to 3 dni.",
+  "pt": "Durante quanto tempo os fragmentos de atualização transferidos ficam na cache. O valor predefinido do Windows é 3 dias.",
+  "ru": "Сколько загруженные фрагменты обновлений хранятся в кэше. Значение Windows по умолчанию — 3 дня.",
+  "tr": "İndirilen güncelleme parçalarının önbellekte ne kadar tutulacağı. Windows'un kendi varsayılanı 3 gündür."
  },
  "tweak.cln-do-cache-age.name": {
   "ar": "عمر ذاكرة تحسين التسليم",
@@ -12972,16 +12960,16 @@
   "tr": "Gezgin'i yeniden başlat"
  },
  "tweak.ctx-runas-user.desc": {
-  "ar": "يشغّل البرنامج المحدد ببيانات اعتماد حساب آخر. ويجب أن تكون خدمة تسجيل الدخول الثانوي (seclogon) قيد التشغيل.",
-  "de": "Startet das ausgewählte Programm mit den Anmeldedaten eines anderen Kontos. Der Dienst „Sekundäre Anmeldung“ (seclogon) muss laufen.",
-  "en": "Starts the selected program with another account's credentials. The secondary logon (seclogon) service has to be running.",
-  "es": "Inicia el programa seleccionado con las credenciales de otra cuenta. El servicio de inicio de sesión secundario (seclogon) debe estar en ejecución.",
-  "fr": "Lance le programme sélectionné avec les identifiants d'un autre compte. Le service Ouverture de session secondaire (seclogon) doit tourner.",
-  "it": "Avvia il programma selezionato con le credenziali di un altro account. Il servizio di accesso secondario (seclogon) deve essere in esecuzione.",
-  "pl": "Uruchamia wybrany program z poświadczeniami innego konta. Usługa logowania pomocniczego (seclogon) musi działać.",
-  "pt": "Inicia o programa selecionado com as credenciais de outra conta. O serviço de início de sessão secundário (seclogon) tem de estar em execução.",
-  "ru": "Запускает выбранную программу с учётными данными другой записи. Служба вторичного входа (seclogon) должна быть запущена.",
-  "tr": "Seçili programı başka bir hesabın kimlik bilgileriyle başlatır. İkincil oturum açma (seclogon) hizmetinin çalışması gerekir."
+  "ar": "يُظهر دائمًا في القائمة خيار «التشغيل كمستخدم آخر» الذي يخفيه Windows خلف Shift+النقر الأيمن. ويجب أن تكون خدمة تسجيل الدخول الثانوي (seclogon) قيد التشغيل.",
+  "de": "Zeigt den Eintrag „Als anderer Benutzer ausführen“, den Windows hinter Umschalt+Rechtsklick versteckt, immer im Menü. Der Dienst „Sekundäre Anmeldung“ (seclogon) muss laufen.",
+  "en": "Always shows the 'Run as different user' entry Windows keeps behind Shift+right-click. The secondary logon (seclogon) service has to be running.",
+  "es": "Muestra siempre en el menú la entrada «Ejecutar como otro usuario» que Windows esconde tras Mayús+clic derecho. El servicio de inicio de sesión secundario (seclogon) debe estar en ejecución.",
+  "fr": "Affiche toujours dans le menu l'entrée « Exécuter en tant qu'autre utilisateur » que Windows cache derrière Maj+clic droit. Le service Ouverture de session secondaire (seclogon) doit tourner.",
+  "it": "Mostra sempre nel menu la voce «Esegui come utente diverso» che Windows nasconde dietro Maiusc+clic destro. Il servizio di accesso secondario (seclogon) deve essere in esecuzione.",
+  "pl": "Zawsze pokazuje w menu pozycję „Uruchom jako inny użytkownik”, którą Windows chowa za Shift+prawy przycisk. Usługa logowania pomocniczego (seclogon) musi działać.",
+  "pt": "Mostra sempre no menu a entrada «Executar como outro utilizador» que o Windows esconde atrás de Shift+clique direito. O serviço de início de sessão secundário (seclogon) tem de estar em execução.",
+  "ru": "Всегда показывает в меню пункт «Запуск от имени другого пользователя», который Windows прячет за Shift+правой кнопкой. Служба вторичного входа (seclogon) должна быть запущена.",
+  "tr": "Windows'un Shift+sağ tık arkasına sakladığı 'Farklı kullanıcı olarak çalıştır' girdisini menüde her zaman gösterir. İkincil oturum açma (seclogon) hizmetinin çalışması gerekir."
  },
  "tweak.ctx-runas-user.name": {
   "ar": "التشغيل كمستخدم آخر",
@@ -14951,30 +14939,6 @@
   "ru": "Скрытые сетевые ресурсы (C$, ADMIN$)",
   "tr": "Gizli ağ paylaşımları (C$, ADMIN$)"
  },
- "tweak.net-autotuning.desc": {
-  "ar": "توسيع Windows لنافذة استقبال TCP بحسب الوصلة. وتقييدها يحلّ التوقفات على الموجّهات القديمة، ويكلّف إنتاجية على الوصلات السريعة.",
-  "de": "Windows vergrößert das TCP-Empfangsfenster passend zur Verbindung. Eine Einschränkung behebt Stockungen bei alten Routern, kostet auf schnellen Verbindungen aber Durchsatz.",
-  "en": "Windows growing the TCP receive window to suit the link. Restricting it clears up stalls on old routers, and costs throughput on fast connections.",
-  "es": "Windows agranda la ventana de recepción TCP según el enlace. Restringirla resuelve atascos en routers antiguos y cuesta rendimiento en conexiones rápidas.",
-  "fr": "Windows agrandit la fenêtre de réception TCP selon le lien. La restreindre résout les blocages sur les vieux routeurs, mais coûte du débit sur les connexions rapides.",
-  "it": "Windows amplia la finestra di ricezione TCP in base al collegamento. Limitarla risolve i blocchi sui router vecchi, ma costa throughput sulle connessioni veloci.",
-  "pl": "Windows powiększa okno odbioru TCP dopasowane do łącza. Ograniczenie usuwa zatory na starych routerach, ale kosztuje przepustowość na szybkich łączach.",
-  "pt": "O Windows aumenta a janela de receção TCP conforme a ligação. Restringi-la resolve bloqueios em routers antigos e custa débito em ligações rápidas.",
-  "ru": "Windows увеличивает окно приёма TCP под канал. Ограничение устраняет заторы на старых маршрутизаторах, но стоит пропускной способности на быстрых линиях.",
-  "tr": "Windows'un TCP alma penceresini bağlantıya göre büyütmesi. Kısıtlamak eski yönlendiricilerdeki tıkanmaları giderir, hızlı bağlantılarda verimi düşürür."
- },
- "tweak.net-autotuning.name": {
-  "ar": "الضبط التلقائي لـ TCP",
-  "de": "TCP-Autotuning",
-  "en": "TCP autotuning",
-  "es": "Ajuste automático de TCP",
-  "fr": "Réglage automatique TCP",
-  "it": "Autotuning TCP",
-  "pl": "Automatyczne dostrajanie TCP",
-  "pt": "Ajuste automático do TCP",
-  "ru": "Автонастройка TCP",
-  "tr": "TCP otomatik ayarlama"
- },
  "tweak.net-font-providers.desc": {
   "ar": "يمنع Windows من تنزيل خط مفقود من fs.microsoft.com؛ فتُستخدم الخطوط المثبَّتة محليًا فقط. ولن تصل بعد ذلك أنظمة الكتابة غير المثبَّتة لديك، بل تُرسم كبديل أو كمربّع فارغ — ويظهر ذلك بوضوح في الكتابات الصينية واليابانية والكورية والهندية. أما خطوط الويب في المتصفح فلا تتأثر، وهو ما تذكره Microsoft صراحةً. ووضع الإيقاف لا يكتب 1 بل يحذف القيمة: فالقيمة الافتراضية غير المهيّأة تختلف باختلاف إصدار Windows. يتطلب إعادة التشغيل (أو إعادة تشغيل خدمة Font Cache).",
   "de": "Verhindert, dass Windows eine fehlende Schriftart von fs.microsoft.com herunterlädt; es werden nur lokal installierte Schriftarten verwendet. Nicht installierte Schriftsysteme werden nicht mehr nachgeladen und als Ersatzzeichen oder leeres Kästchen dargestellt — am deutlichsten bei CJK- und indischen Schriften. Webschriftarten im Browser sind nicht betroffen, was Microsoft ausdrücklich festhält. Die Aus-Stellung schreibt keine 1, sie löscht den Wert: die nicht konfigurierte Vorgabe unterscheidet sich je nach Windows-Edition. Erfordert einen Neustart (oder den Neustart des Dienstes „Font Cache“).",
@@ -15564,28 +15528,28 @@
   "tr": "G/Ç sayfa kilit sınırı"
  },
  "tweak.perf-memory-compression.desc": {
-  "ar": "يتحكم في ما إذا كان Windows يضغط الذاكرة بدل الكتابة إلى ملف الترحيل. وإيقافه يريح المعالج مقابل استخدام أكبر للقرص.",
-  "de": "Steuert, ob Windows Speicher komprimiert, statt in die Auslagerungsdatei zu schreiben. Ausgeschaltet entlastet es die CPU auf Kosten stärkerer Festplattennutzung.",
-  "en": "Controls whether Windows compresses memory instead of writing to the page file. Turning it off eases the CPU at the cost of more disk use.",
-  "es": "Controla si Windows comprime la memoria en lugar de escribir en el archivo de paginación. Desactivarlo alivia la CPU a costa de más uso de disco.",
-  "fr": "Détermine si Windows compresse la mémoire au lieu d'écrire dans le fichier d'échange. La désactiver soulage le processeur au prix d'un usage disque accru.",
-  "it": "Controlla se Windows comprime la memoria invece di scrivere nel file di paging. Disattivarla alleggerisce la CPU al prezzo di un maggiore uso del disco.",
-  "pl": "Decyduje, czy Windows kompresuje pamięć zamiast zapisywać do pliku stronicowania. Wyłączenie odciąża procesor kosztem większego użycia dysku.",
-  "pt": "Controla se o Windows comprime a memória em vez de escrever no ficheiro de paginação. Desativá-la alivia o CPU à custa de mais uso de disco.",
-  "ru": "Определяет, сжимает ли Windows память вместо записи в файл подкачки. Отключение разгружает процессор ценой большей нагрузки на диск.",
-  "tr": "Windows'un sayfa dosyasına yazmak yerine belleği sıkıştırmasını denetler. Kapatmak CPU'yu rahatlatır, karşılığında disk daha çok kullanılır."
+  "ar": "يوقف دمج Windows لصفحات الذاكرة المتطابقة المحتوى في نسخة واحدة (page combining). وهو ليس ضغط الذاكرة: إيقافه يريح المعالج قليلًا مقابل استهلاك أكبر للذاكرة.",
+  "de": "Schaltet das Zusammenführen inhaltsgleicher Speicherseiten zu einer Kopie (Page Combining) ab. Nicht dasselbe wie Speicherkomprimierung: ausgeschaltet entlastet es die CPU etwas, auf Kosten von mehr belegtem RAM.",
+  "en": "Turns off Windows merging memory pages with identical contents into one copy (page combining). Not the same thing as memory compression: turning it off eases the CPU a little at the cost of more RAM in use.",
+  "es": "Desactiva que Windows fusione en una sola copia las páginas de memoria con contenido idéntico (page combining). No es lo mismo que la compresión de memoria: desactivarlo alivia un poco la CPU a costa de más RAM en uso.",
+  "fr": "Désactive la fusion par Windows des pages mémoire au contenu identique en une seule copie (page combining). Ce n'est pas la compression de la mémoire : la désactiver soulage un peu le processeur au prix d'une RAM plus occupée.",
+  "it": "Disattiva l'unione da parte di Windows delle pagine di memoria dal contenuto identico in una sola copia (page combining). Non è la compressione della memoria: disattivarla alleggerisce un po' la CPU al prezzo di più RAM occupata.",
+  "pl": "Wyłącza scalanie przez Windows stron pamięci o identycznej zawartości w jedną kopię (page combining). To nie to samo co kompresja pamięci: wyłączenie nieco odciąża procesor kosztem większego zużycia RAM.",
+  "pt": "Desativa a fusão pelo Windows de páginas de memória com conteúdo idêntico numa única cópia (page combining). Não é o mesmo que compressão de memória: desativá-la alivia um pouco o CPU à custa de mais RAM em uso.",
+  "ru": "Отключает объединение Windows страниц памяти с одинаковым содержимым в одну копию (page combining). Это не сжатие памяти: отключение немного разгружает процессор ценой большего расхода ОЗУ.",
+  "tr": "Windows'un içeriği aynı olan bellek sayfalarını tek kopyada birleştirmesini (page combining) kapatır. Bellek sıkıştırmadan farklı bir şeydir: kapatmak CPU'yu bir miktar rahatlatır, karşılığında daha çok RAM kullanılır."
  },
  "tweak.perf-memory-compression.name": {
-  "ar": "ضغط الذاكرة",
-  "de": "Speicherkomprimierung",
-  "en": "Memory compression",
-  "es": "Compresión de memoria",
-  "fr": "Compression de la mémoire",
-  "it": "Compressione della memoria",
-  "pl": "Kompresja pamięci",
-  "pt": "Compressão de memória",
-  "ru": "Сжатие памяти",
-  "tr": "Bellek sıkıştırma"
+  "ar": "دمج صفحات الذاكرة",
+  "de": "Seitenkombination",
+  "en": "Page combining",
+  "es": "Combinación de páginas",
+  "fr": "Combinaison de pages",
+  "it": "Combinazione delle pagine",
+  "pl": "Łączenie stron",
+  "pt": "Combinação de páginas",
+  "ru": "Объединение страниц памяти",
+  "tr": "Sayfa birleştirme"
  },
  "tweak.perf-network-throttling.desc": {
   "ar": "تقييد حزم الشبكة أثناء تشغيل الوسائط. والافتراضي يحدّها بعشرة آلاف حزمة في الثانية؛ وإيقافه يُحدث فرقًا حقيقيًا على الوصلات السريعة.",
@@ -16644,16 +16608,16 @@
   "tr": "Windows'un kendini uzaktan ayarlaması"
  },
  "tweak.pwr-adaptive-brightness.desc": {
-  "ar": "يمنع تغيّر سطوع الشاشة تلقائيًا وفق مستشعر الضوء المحيط.",
-  "de": "Verhindert, dass sich die Bildschirmhelligkeit anhand des Umgebungslichtsensors von selbst ändert.",
-  "en": "Stops screen brightness changing by itself according to the ambient light sensor.",
-  "es": "Impide que el brillo de la pantalla cambie solo según el sensor de luz ambiental.",
-  "fr": "Empêche la luminosité de l'écran de varier d'elle-même selon le capteur de lumière ambiante.",
-  "it": "Impedisce che la luminosità dello schermo cambi da sola in base al sensore di luce ambientale.",
-  "pl": "Powstrzymuje samoczynną zmianę jasności ekranu według czujnika światła otoczenia.",
-  "pt": "Impede que o brilho do ecrã mude sozinho com base no sensor de luz ambiente.",
-  "ru": "Отключает самостоятельное изменение яркости экрана по датчику освещённости.",
-  "tr": "Ortam ışığı sensörüne göre ekran parlaklığının kendiliğinden değişmesini kapatır."
+  "ar": "يُظهر في خيارات الطاقة الإعداد المخفي «تمكين السطوع التكيّفي»؛ ومن هناك يمكن إيقاف تغيّر السطوع وفق مستشعر الضوء.",
+  "de": "Macht die versteckte Einstellung „Adaptive Helligkeit aktivieren“ in den Energieoptionen sichtbar; dort lässt sich die Helligkeitsanpassung per Lichtsensor abschalten.",
+  "en": "Makes the hidden 'Enable adaptive brightness' setting visible in Power Options; brightness following the light sensor can then be turned off there.",
+  "es": "Hace visible en Opciones de energía el ajuste oculto «Habilitar brillo adaptable»; desde ahí se puede desactivar el brillo según el sensor de luz.",
+  "fr": "Rend visible dans les Options d'alimentation le réglage caché « Activer la luminosité adaptative » ; c'est là que l'on peut désactiver la luminosité pilotée par le capteur.",
+  "it": "Rende visibile nelle Opzioni risparmio energia l'impostazione nascosta «Abilita luminosità adattiva»; da lì si può disattivare la luminosità guidata dal sensore.",
+  "pl": "Uwidacznia w Opcjach zasilania ukryte ustawienie „Włącz jasność adaptacyjną”; tam można wyłączyć jasność sterowaną czujnikiem światła.",
+  "pt": "Torna visível nas Opções de energia a definição oculta «Ativar brilho adaptativo»; é aí que se desliga o brilho comandado pelo sensor de luz.",
+  "ru": "Делает видимым в параметрах электропитания скрытый пункт «Включить адаптивную яркость»; там можно отключить подстройку яркости по датчику.",
+  "tr": "Güç seçeneklerinde gizli olan 'Uyarlanır parlaklığı etkinleştir' ayarını görünür yapar; parlaklığın sensöre göre değişmesini oradan kapatabilirsiniz."
  },
  "tweak.pwr-adaptive-brightness.name": {
   "ar": "السطوع التكيّفي",
@@ -16739,77 +16703,29 @@
   "ru": "Размер файла гибернации",
   "tr": "Hazırda bekletme dosyası boyutu"
  },
- "tweak.pwr-lid-close.desc": {
-  "ar": "ما يحدث عند إغلاق غطاء الحاسوب المحمول. وإن أردت سلوكًا مختلفًا على الكهرباء وعلى البطارية، فيُضبط ذلك من لوحة التحكم.",
-  "de": "Was beim Schließen des Notebookdeckels geschieht. Soll es im Netz- und Akkubetrieb unterschiedlich sein, muss das in der Systemsteuerung eingestellt werden.",
-  "en": "What happens when a laptop lid closes. If you want it to differ on mains and on battery, that has to be set in Control Panel.",
-  "es": "Qué ocurre al cerrar la tapa de un portátil. Si quieres un comportamiento distinto con corriente y con batería, hay que ajustarlo en el Panel de control.",
-  "fr": "Ce qui se passe à la fermeture du capot d'un portable. Pour un comportement différent sur secteur et sur batterie, il faut le régler dans le Panneau de configuration.",
-  "it": "Cosa accade alla chiusura del coperchio di un portatile. Se lo si vuole diverso a rete e a batteria, va impostato nel Pannello di controllo.",
-  "pl": "Co dzieje się po zamknięciu pokrywy laptopa. Jeśli ma się różnić przy zasilaniu sieciowym i bateryjnym, trzeba to ustawić w Panelu sterowania.",
-  "pt": "O que acontece ao fechar a tampa de um portátil. Se quiser comportamento diferente na corrente e na bateria, isso define-se no Painel de Controlo.",
-  "ru": "Что происходит при закрытии крышки ноутбука. Если поведение должно различаться от сети и от батареи, это задаётся в Панели управления.",
-  "tr": "Dizüstü kapağı kapandığında ne yapılacağı. Şebekeye takılı ve pilde farklı davranış istiyorsanız bunu Denetim Masası'ndan ayarlamanız gerekir."
- },
- "tweak.pwr-lid-close.name": {
-  "ar": "عند إغلاق الغطاء",
-  "de": "Beim Schließen des Deckels",
-  "en": "When the lid closes",
-  "es": "Al cerrar la tapa",
-  "fr": "À la fermeture du capot",
-  "it": "Alla chiusura del coperchio",
-  "pl": "Po zamknięciu pokrywy",
-  "pt": "Ao fechar a tampa",
-  "ru": "При закрытии крышки",
-  "tr": "Kapak kapanınca"
- },
- "tweak.pwr-pcie-aspm.desc": {
-  "ar": "يعطّل إدارة طاقة الحالة النشطة (ASPM) على روابط PCIe. يعالج قفزات الكمون المفاجئة في بعض أقراص NVMe، ويرفع استهلاك الطاقة.",
-  "de": "Deaktiviert die aktive Zustandsenergieverwaltung (ASPM) auf PCIe-Verbindungen. Behebt plötzliche Latenzspitzen mancher NVMe-Laufwerke, erhöht den Verbrauch.",
-  "en": "Turns off active state power management (ASPM) on PCIe links. Cures the sudden latency spikes some NVMe drives show; raises power draw.",
-  "es": "Desactiva la administración de energía en estado activo (ASPM) de los enlaces PCIe. Cura los picos de latencia repentinos de algunos NVMe; sube el consumo.",
-  "fr": "Désactive la gestion d'alimentation à l'état actif (ASPM) des liens PCIe. Corrige les pics de latence soudains de certains SSD NVMe ; augmente la consommation.",
-  "it": "Disattiva la gestione dell'alimentazione in stato attivo (ASPM) sui collegamenti PCIe. Risolve i picchi di latenza improvvisi di alcuni NVMe; aumenta i consumi.",
-  "pl": "Wyłącza zarządzanie energią w stanie aktywnym (ASPM) na łączach PCIe. Leczy nagłe skoki opóźnień niektórych dysków NVMe; zwiększa pobór mocy.",
-  "pt": "Desativa a gestão de energia em estado ativo (ASPM) nas ligações PCIe. Cura os picos súbitos de latência de alguns NVMe; aumenta o consumo.",
-  "ru": "Отключает управление питанием активного состояния (ASPM) на каналах PCIe. Лечит внезапные скачки задержек у некоторых NVMe; повышает энергопотребление.",
-  "tr": "PCIe bağlantılarının etkin güç durumu yönetimini (ASPM) kapatır. Bazı NVMe disklerdeki ani gecikme sıçramalarını giderir, güç tüketimini artırır."
- },
- "tweak.pwr-pcie-aspm.name": {
-  "ar": "إدارة طاقة رابط PCIe",
-  "de": "PCIe-Verbindungsenergieverwaltung",
-  "en": "PCIe link power management",
-  "es": "Administración de energía del enlace PCIe",
-  "fr": "Gestion de l'alimentation des liens PCIe",
-  "it": "Gestione dell'alimentazione dei collegamenti PCIe",
-  "pl": "Zarządzanie energią łącza PCIe",
-  "pt": "Gestão de energia da ligação PCIe",
-  "ru": "Управление питанием канала PCIe",
-  "tr": "PCIe bağlantı güç yönetimi"
- },
  "tweak.pwr-sleep-button.desc": {
-  "ar": "يُظهر خيار «سكون» في زر الطاقة بقائمة ابدأ.",
-  "de": "Macht den Eintrag „Energiesparmodus“ in der Ein/Aus-Schaltfläche des Startmenüs sichtbar.",
-  "en": "Makes the Sleep entry visible on the Start menu's power button.",
-  "es": "Hace visible la opción Suspender en el botón de encendido del menú Inicio.",
-  "fr": "Rend visible l'entrée Veille dans le bouton d'alimentation du menu Démarrer.",
-  "it": "Rende visibile la voce Sospendi nel pulsante di alimentazione del menu Start.",
-  "pl": "Uwidacznia pozycję Uśpij w przycisku zasilania menu Start.",
-  "pt": "Torna visível a opção Suspender no botão de energia do menu Iniciar.",
-  "ru": "Делает видимым пункт «Спящий режим» в кнопке питания меню «Пуск».",
-  "tr": "Başlat menüsünün güç düğmesinde Uyku seçeneğini görünür yapar."
+  "ar": "يُظهر في خيارات الطاقة الإعداد المخفي «مهلة سكون النظام دون مراقبة»: كم يبقى الجهاز مستيقظًا بعد أن توقظه مهمة ما. ولا علاقة له بخيار «سكون» في قائمة ابدأ.",
+  "de": "Macht die versteckte Einstellung „Zeitlimit für unbeaufsichtigten Energiesparmodus“ in den Energieoptionen sichtbar: wie lange der Rechner wach bleibt, nachdem ihn eine Aufgabe geweckt hat. Hat nichts mit dem Eintrag „Energiesparen“ im Startmenü zu tun.",
+  "en": "Makes the hidden 'System unattended sleep timeout' setting visible in Power Options: how long the machine stays awake after something woke it for a task. Nothing to do with the Sleep entry on the Start menu.",
+  "es": "Hace visible en Opciones de energía el ajuste oculto «Tiempo de espera de suspensión desatendida del sistema»: cuánto sigue despierto el equipo después de que algo lo despierte para una tarea. No tiene relación con la opción Suspender del menú Inicio.",
+  "fr": "Rend visible dans les Options d'alimentation le réglage caché « Délai de veille sans surveillance du système » : combien de temps la machine reste éveillée après avoir été réveillée pour une tâche. Sans rapport avec l'entrée Veille du menu Démarrer.",
+  "it": "Rende visibile nelle Opzioni risparmio energia l'impostazione nascosta «Timeout sospensione non presidiata del sistema»: quanto resta sveglio il computer dopo che qualcosa lo ha riattivato per un'attività. Nulla a che vedere con la voce Sospendi del menu Start.",
+  "pl": "Uwidacznia w Opcjach zasilania ukryte ustawienie „Limit czasu uśpienia systemu bez nadzoru”: jak długo komputer pozostaje wybudzony po tym, jak coś obudziło go do zadania. Nie ma związku z pozycją Uśpij w menu Start.",
+  "pt": "Torna visível nas Opções de energia a definição oculta «Tempo limite de suspensão sem supervisão do sistema»: quanto tempo a máquina fica acordada depois de algo a despertar para uma tarefa. Nada tem a ver com a opção Suspender do menu Iniciar.",
+  "ru": "Делает видимым в параметрах электропитания скрытый пункт «Время ожидания сна без присмотра»: сколько компьютер остаётся включённым после того, как его разбудила задача. К пункту «Спящий режим» в меню «Пуск» отношения не имеет.",
+  "tr": "Güç seçeneklerinde gizli olan 'Sistem gözetimsiz uyku zaman aşımı' ayarını görünür yapar: bilgisayar bir görev için uyandığında ne kadar sonra yeniden uyuyacağı orada ayarlanır. Başlat menüsündeki Uyku düğmesiyle ilgisi yoktur."
  },
  "tweak.pwr-sleep-button.name": {
-  "ar": "إظهار زر السكون",
-  "de": "Energiesparen-Schaltfläche anzeigen",
-  "en": "Show the Sleep button",
-  "es": "Mostrar el botón Suspender",
-  "fr": "Afficher le bouton Veille",
-  "it": "Mostra il pulsante Sospendi",
-  "pl": "Pokaż przycisk Uśpij",
-  "pt": "Mostrar o botão Suspender",
-  "ru": "Показывать кнопку «Спящий режим»",
-  "tr": "Uyku düğmesini göster"
+  "ar": "إعداد مهلة السكون دون مراقبة",
+  "de": "Einstellung „Zeitlimit für unbeaufsichtigten Energiesparmodus“",
+  "en": "Unattended sleep timeout setting",
+  "es": "Ajuste de tiempo de espera de suspensión desatendida",
+  "fr": "Réglage du délai de veille sans surveillance",
+  "it": "Impostazione timeout di sospensione non presidiata",
+  "pl": "Ustawienie limitu czasu uśpienia bez nadzoru",
+  "pt": "Definição de tempo limite de suspensão sem supervisão",
+  "ru": "Параметр «Время ожидания сна без присмотра»",
+  "tr": "Gözetimsiz uyku zaman aşımı seçeneği"
  },
  "tweak.pwr-update-wake.desc": {
   "ar": "يمنع Windows Update من تنبيه الجهاز من وضع السكون لأجل تثبيت مجدوَل. ولا يعمل إلا إذا كان Windows Update مهيّأً للتثبيت التلقائي؛ عندئذٍ تصل التصحيحات متأخرة وتتراكم حتى التشغيل التالي. يتطلب إعادة التشغيل.",
@@ -17472,16 +17388,16 @@
   "tr": "SMB imzalama zorunluluğu"
  },
  "tweak.sec-smb1-client.desc": {
-  "ar": "يعطّل برنامج تشغيل بروتوكول مشاركة الملفات العائد إلى الثمانينيات والذي انتشر عبره WannaCry. وقد يُفقد الوصول إلى أجهزة NAS القديمة جدًا.",
-  "de": "Deaktiviert den Treiber für das Dateifreigabeprotokoll aus den 1980ern, über das sich WannaCry verbreitete. Der Zugriff auf sehr alte NAS-Geräte kann verloren gehen.",
-  "en": "Disables the driver for the file sharing protocol that dates from the 1980s and carried WannaCry. Access to very old NAS devices may be lost.",
-  "es": "Deshabilita el controlador del protocolo de uso compartido de archivos de los años ochenta que propagó WannaCry. Puede perderse el acceso a NAS muy antiguos.",
-  "fr": "Désactive le pilote du protocole de partage de fichiers datant des années 1980, qui a porté WannaCry. L'accès à de très vieux NAS peut être perdu.",
-  "it": "Disabilita il driver del protocollo di condivisione file degli anni ottanta che ha veicolato WannaCry. L'accesso a NAS molto vecchi può venire meno.",
-  "pl": "Wyłącza sterownik protokołu udostępniania plików z lat osiemdziesiątych, którym rozprzestrzeniał się WannaCry. Dostęp do bardzo starych urządzeń NAS może zniknąć.",
-  "pt": "Desativa o controlador do protocolo de partilha de ficheiros dos anos 80 que transportou o WannaCry. O acesso a NAS muito antigos pode perder-se.",
-  "ru": "Отключает драйвер протокола общего доступа к файлам родом из 1980-х, по которому распространялся WannaCry. Доступ к очень старым NAS может пропасть.",
-  "tr": "1980'lerden kalma ve WannaCry'ın yayılma yolu olan dosya paylaşım protokolünün sürücüsünü devre dışı bırakır. Çok eski NAS cihazlarına erişim kesilebilir."
+  "ar": "يعطّل برنامج تشغيل بروتوكول مشاركة الملفات العائد إلى الثمانينيات والذي انتشر عبره WannaCry. وقد يُفقد الوصول إلى أجهزة NAS القديمة جدًا. إن كان برنامج التشغيل هذا مدرجًا ضمن تبعيات خدمة محطة العمل (LanmanWorkstation) فلن تبدأ تلك الخدمة عند الإقلاع التالي وستنقطع كل مشاركات الشبكة؛ والأكثر أمانًا إزالة عميل SMBv1 من «تشغيل ميزات Windows أو إيقاف تشغيلها».",
+  "de": "Deaktiviert den Treiber für das Dateifreigabeprotokoll aus den 1980ern, über das sich WannaCry verbreitete. Der Zugriff auf sehr alte NAS-Geräte kann verloren gehen. Steht dieser Treiber in den Abhängigkeiten des Arbeitsstationsdiensts (LanmanWorkstation), startet dieser beim nächsten Neustart nicht mehr und alle Netzwerkfreigaben fallen aus; sicherer ist es, den SMBv1-Client über „Windows-Features aktivieren oder deaktivieren“ zu entfernen.",
+  "en": "Disables the driver for the file sharing protocol that dates from the 1980s and carried WannaCry. Access to very old NAS devices may be lost. If this driver is listed among the Workstation (LanmanWorkstation) service's dependencies, that service will not start at the next boot and every network share goes with it; removing the SMBv1 client through 'Turn Windows features on or off' is the safer route.",
+  "es": "Deshabilita el controlador del protocolo de uso compartido de archivos de los años ochenta que propagó WannaCry. Puede perderse el acceso a NAS muy antiguos. Si este controlador figura entre las dependencias del servicio Estación de trabajo (LanmanWorkstation), ese servicio no arrancará en el siguiente inicio y se perderán todos los recursos compartidos de red; es más seguro quitar el cliente SMBv1 desde «Activar o desactivar las características de Windows».",
+  "fr": "Désactive le pilote du protocole de partage de fichiers datant des années 1980, qui a porté WannaCry. L'accès à de très vieux NAS peut être perdu. Si ce pilote figure parmi les dépendances du service Station de travail (LanmanWorkstation), ce service ne démarrera plus au prochain redémarrage et tous les partages réseau seront perdus ; il est plus sûr de retirer le client SMBv1 via « Activer ou désactiver des fonctionnalités Windows ».",
+  "it": "Disabilita il driver del protocollo di condivisione file degli anni ottanta che ha veicolato WannaCry. L'accesso a NAS molto vecchi può venire meno. Se questo driver compare tra le dipendenze del servizio Workstation (LanmanWorkstation), quel servizio non si avvierà al prossimo riavvio e tutte le condivisioni di rete verranno meno; è più sicuro rimuovere il client SMBv1 da «Attivazione o disattivazione delle funzionalità Windows».",
+  "pl": "Wyłącza sterownik protokołu udostępniania plików z lat osiemdziesiątych, którym rozprzestrzeniał się WannaCry. Dostęp do bardzo starych urządzeń NAS może zniknąć. Jeśli ten sterownik jest wymieniony wśród zależności usługi Stacja robocza (LanmanWorkstation), usługa ta nie uruchomi się przy następnym rozruchu i znikną wszystkie udziały sieciowe; bezpieczniej jest usunąć klienta SMBv1 przez „Włącz lub wyłącz funkcje systemu Windows”.",
+  "pt": "Desativa o controlador do protocolo de partilha de ficheiros dos anos 80 que transportou o WannaCry. O acesso a NAS muito antigos pode perder-se. Se este controlador constar das dependências do serviço Estação de trabalho (LanmanWorkstation), esse serviço não arranca no próximo arranque e todas as partilhas de rede desaparecem; é mais seguro remover o cliente SMBv1 em «Ativar ou desativar funcionalidades do Windows».",
+  "ru": "Отключает драйвер протокола общего доступа к файлам родом из 1980-х, по которому распространялся WannaCry. Доступ к очень старым NAS может пропасть. Если этот драйвер указан среди зависимостей службы «Рабочая станция» (LanmanWorkstation), она не запустится при следующей загрузке и все сетевые папки станут недоступны; безопаснее удалить клиент SMBv1 через «Включение или отключение компонентов Windows».",
+  "tr": "1980'lerden kalma ve WannaCry'ın yayılma yolu olan dosya paylaşım protokolünün sürücüsünü devre dışı bırakır. Çok eski NAS cihazlarına erişim kesilebilir. Bu sürücü İş İstasyonu (LanmanWorkstation) hizmetinin bağımlılıkları arasında listeleniyorsa hizmet bir sonraki açılışta başlamaz ve tüm ağ paylaşımları kesilir; SMBv1 istemcisini 'Windows özelliklerini aç veya kapat' üzerinden kaldırmak daha güvenlidir."
  },
  "tweak.sec-smb1-client.name": {
   "ar": "عميل SMBv1",
@@ -20075,30 +19991,6 @@
   "ru": "Полосы прокрутки",
   "tr": "Kaydırma çubukları"
  },
- "tweak.wu-WPFToggleStandbyFix.desc": {
-  "ar": "يمنع انقطاع اتصال الشبكة أثناء وضع السكون S0.",
-  "de": "Verhindert, dass die Netzwerkverbindung im S0-Energiesparmodus getrennt wird.",
-  "en": "Prevents the network connection from dropping during S0 sleep.",
-  "es": "Impide que se pierda la conexión de red durante la suspensión S0.",
-  "fr": "Empêche la déconnexion du réseau pendant la veille S0.",
-  "it": "Impedisce la disconnessione della rete durante la sospensione S0.",
-  "pl": "Zapobiega utracie połączenia sieciowego w trybie uśpienia S0.",
-  "pt": "Impede que a conexão de rede caia durante a suspensão S0.",
-  "ru": "Не позволяет разрывать сетевое подключение в спящем режиме S0.",
-  "tr": "S0 uyku modunda ağ bağlantısının kesilmesini engeller."
- },
- "tweak.wu-WPFToggleStandbyFix.name": {
-  "ar": "اتصال الشبكة في وضع السكون",
-  "de": "Netzwerkverbindung im Energiesparmodus",
-  "en": "Network connection during sleep",
-  "es": "Conexión de red en modo de suspensión",
-  "fr": "Connexion réseau en veille",
-  "it": "Connessione di rete durante la sospensione",
-  "pl": "Połączenie sieciowe w trybie uśpienia",
-  "pt": "Conexão de rede em suspensão",
-  "ru": "Сетевое подключение в спящем режиме",
-  "tr": "Uyku modunda ağ bağlantısı"
- },
  "tweak.wu-WPFToggleStartMenuRecommendations.desc": {
   "ar": "يخفي قسم \"المُوصى به\" في قائمة ابدأ عبر نهج. وعند إيقافه يُزال النهج تمامًا.",
   "de": "Blendet den Bereich „Empfohlen“ im Startmenü per Richtlinie aus. Ausgeschaltet wird die Richtlinie wieder entfernt.",
@@ -20460,28 +20352,28 @@
   "tr": "Görev çubuğunda görevi sonlandır"
  },
  "tweak.wu-WPFTweaksHiber.desc": {
-  "ar": "يعطّل الإسبات ويخفي الخيار من قائمة الطاقة.",
-  "de": "Deaktiviert den Ruhezustand und blendet die Option im Energiemenü aus.",
-  "en": "Disables hibernation and hides the option from the power menu.",
-  "es": "Deshabilita la hibernación y oculta la opción del menú de energía.",
-  "fr": "Désactive la mise en veille prolongée et masque l'option dans le menu d'alimentation.",
-  "it": "Disattiva l'ibernazione e nasconde l'opzione dal menu di alimentazione.",
-  "pl": "Wyłącza hibernację i ukrywa tę opcję w menu zasilania.",
-  "pt": "Desabilita a hibernação e oculta a opção no menu de energia.",
-  "ru": "Отключает гибернацию и скрывает этот пункт в меню завершения работы.",
-  "tr": "Hazırda bekletmeyi devre dışı bırakır ve güç menüsündeki seçeneği gizler."
+  "ar": "يخفي خيار الإسبات من قائمة الطاقة. لإيقاف الإسبات نفسه استخدم صف «ملف الإسبات» ضمن إدارة الطاقة.",
+  "de": "Blendet den Eintrag „Ruhezustand“ im Energiemenü aus. Um den Ruhezustand selbst abzuschalten, die Zeile „Ruhezustandsdatei“ unter Energieverwaltung verwenden.",
+  "en": "Hides the Hibernate entry in the power menu. To turn hibernation itself off, use the 'Hibernation file' row under Power management.",
+  "es": "Oculta la entrada Hibernar del menú de energía. Para desactivar la hibernación en sí, use la fila «Archivo de hibernación» en Administración de energía.",
+  "fr": "Masque l'entrée Veille prolongée du menu d'alimentation. Pour désactiver la veille prolongée elle-même, utilisez la ligne « Fichier de veille prolongée » sous Gestion de l'alimentation.",
+  "it": "Nasconde la voce Ibernazione nel menu di alimentazione. Per disattivare l'ibernazione vera e propria, usare la riga «File di ibernazione» in Risparmio energia.",
+  "pl": "Ukrywa pozycję Hibernacja w menu zasilania. Aby wyłączyć samą hibernację, użyj wiersza „Plik hibernacji” w Zarządzaniu energią.",
+  "pt": "Oculta a entrada Hibernar no menu de energia. Para desligar a própria hibernação, use a linha «Ficheiro de hibernação» em Gestão de energia.",
+  "ru": "Скрывает пункт «Гибернация» в меню питания. Чтобы отключить саму гибернацию, используйте строку «Файл гибернации» в разделе «Управление питанием».",
+  "tr": "Güç menüsündeki Hazırda beklet girdisini gizler. Hazırda bekletmenin kendisini kapatmak için Güç yönetimi'ndeki 'Hazırda bekletme dosyası' satırını kullanın."
  },
  "tweak.wu-WPFTweaksHiber.name": {
-  "ar": "الإسبات",
-  "de": "Ruhezustand",
-  "en": "Hibernate",
-  "es": "Hibernación",
-  "fr": "Mise en veille prolongée",
-  "it": "Ibernazione",
-  "pl": "Hibernacja",
-  "pt": "Hibernação",
-  "ru": "Гибернация",
-  "tr": "Hazırda bekletme"
+  "ar": "إخفاء خيار الإسبات",
+  "de": "Ruhezustand-Option ausblenden",
+  "en": "Hide the Hibernate option",
+  "es": "Ocultar la opción Hibernar",
+  "fr": "Masquer l'option Veille prolongée",
+  "it": "Nascondi l'opzione Ibernazione",
+  "pl": "Ukryj opcję Hibernacja",
+  "pt": "Ocultar a opção Hibernar",
+  "ru": "Скрыть пункт «Гибернация»",
+  "tr": "Hazırda beklet seçeneğini gizle"
  },
  "tweak.wu-WPFTweaksPreventDeviceMetadataFromNetwork.desc": {
   "ar": "يمنع تثبيت تطبيقات إضافية وإعلانات عند توصيل جهاز.",

@@ -81,9 +81,11 @@ bool removeEmptyKey(Hive hive, const QString &path, QString *error = nullptr);
 /// deepinfo.cpp and startup.cpp, three times over.
 ///
 /// One hazard, worth knowing exactly once rather than rediscovering: QSettings opens a key
-/// through RegCreateKeyEx, so pointing it at a key that is not there *creates* it. Never
-/// use it where a key's existence is itself the answer — several of Windows'
-/// pending-restart flags are exactly that, and looking for one this way would set it.
+/// through RegCreateKeyEx, so pointing it at a key that is not there *creates* it. This
+/// function checks for the key with RegOpenKeyEx first and answers an absent one with an
+/// empty store, so a read here never leaves a key behind. Still, where a key's existence is
+/// itself the answer — several of Windows' pending-restart flags are exactly that — ask
+/// keyExists() directly rather than reading values out of the key.
 QSettings openKey(Hive hive, const QString &path);
 
 /// True when this process is running with an elevated token.

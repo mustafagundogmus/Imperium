@@ -148,19 +148,27 @@ QString valueLine(const RegistryEntry &entry, const QString &data)
             bytes << QStringLiteral("%1").arg((v >> (8 * i)) & 0xFF, 2, 16, QLatin1Char('0'));
         return QStringLiteral("%1=hex(b):%2").arg(name, bytes.join(QLatin1Char(',')));
     }
-    if (type == QLatin1String("BINARY"))
-        return QStringLiteral("%1=hex:%2").arg(name, data.toLower().remove(QLatin1Char(' ')));
+    if (type == QLatin1String("BINARY")) {
+        // Through the canonical spelling rather than the catalogue's own: regedit wants
+        // exactly two digits a byte, and a hand-authored "1E,0,0,0" or a blob read back
+        // from the machine is not guaranteed to arrive that way.
+        return QStringLiteral("%1=hex:%2").arg(name, Registry::canonicalBinary(data));
+    }
     if (type == QLatin1String("EXPAND_SZ") || type == QLatin1String("MULTI_SZ")) {
         // Both are stored as UTF-16 bytes in a .reg file.
+        const bool multi = type == QLatin1String("MULTI_SZ");
         QStringList bytes;
         for (QChar c : data) {
             const ushort u = c.unicode();
             bytes << QStringLiteral("%1").arg(u & 0xFF, 2, 16, QLatin1Char('0'))
                   << QStringLiteral("%1").arg((u >> 8) & 0xFF, 2, 16, QLatin1Char('0'));
         }
+        // The string's own terminator — and for a MULTI_SZ the second null that closes
+        // the list, which registry.cpp writes and which regedit expects to find.
         bytes << QStringLiteral("00") << QStringLiteral("00");
-        const QString kind = type == QLatin1String("EXPAND_SZ") ? QStringLiteral("hex(2)")
-                                                                : QStringLiteral("hex(7)");
+        if (multi)
+            bytes << QStringLiteral("00") << QStringLiteral("00");
+        const QString kind = multi ? QStringLiteral("hex(7)") : QStringLiteral("hex(2)");
         return QStringLiteral("%1=%2:%3").arg(name, kind, bytes.join(QLatin1Char(',')));
     }
 
