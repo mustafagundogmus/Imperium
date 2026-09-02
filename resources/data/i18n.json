@@ -9684,16 +9684,16 @@
   "tr": "Akıcı kaydırma"
  },
  "settings.theme.desc": {
-  "ar": "داكن وفاتح ومنتصف الليل والسيبيا والمحيط والغابة والغسق والوردي — ثماني لوحات مبنية على العلاقات اللونية نفسها.",
-  "de": "Dunkel, Hell, Mitternacht, Sepia, Ozean, Wald, Dämmerung und Rose — acht Paletten aus denselben Tonbeziehungen.",
-  "en": "Dark, Light, Midnight, Sepia, Ocean, Forest, Dusk and Rose — eight palettes built from the same tonal relationships.",
-  "es": "Oscuro, Claro, Medianoche, Sepia, Océano, Bosque, Crepúsculo y Rosa: ocho paletas construidas con las mismas relaciones tonales.",
-  "fr": "Sombre, Clair, Minuit, Sépia, Océan, Forêt, Crépuscule et Rose — huit palettes bâties sur les mêmes rapports de tons.",
-  "it": "Scuro, Chiaro, Mezzanotte, Seppia, Oceano, Foresta, Crepuscolo e Rosa — otto palette costruite sulle stesse relazioni tonali.",
-  "pl": "Ciemny, Jasny, Północ, Sepia, Ocean, Las, Zmierzch i Róż — osiem palet zbudowanych na tych samych relacjach tonalnych.",
-  "pt": "Escuro, Claro, Meia-noite, Sépia, Oceano, Floresta, Crepúsculo e Rosa — oito paletas construídas com as mesmas relações tonais.",
-  "ru": "Тёмная, Светлая, Полночь, Сепия, Океан, Лес, Сумерки и Роза — восемь палитр, построенных на одних и тех же тональных отношениях.",
-  "tr": "Koyu, Açık, Gece, Sepya, Okyanus, Orman, Alaca ve Gül — hepsi aynı ton ilişkilerinden kurulmuş sekiz palet."
+  "ar": "داكن وفاتح ومنتصف الليل والسيبيا والمحيط والغابة والغسق والوردي والضباب والتباين العالي والمرج والليلكي — اثنتا عشرة لوحة مبنية على العلاقات اللونية نفسها.",
+  "de": "Dunkel, Hell, Mitternacht, Sepia, Ozean, Wald, Dämmerung, Rose, Nebel, Hoher Kontrast, Wiese und Flieder — zwölf Paletten aus denselben Tonbeziehungen.",
+  "en": "Dark, Light, Midnight, Sepia, Ocean, Forest, Dusk, Rose, Mist, High contrast, Meadow and Lilac — twelve palettes built from the same tonal relationships.",
+  "es": "Oscuro, Claro, Medianoche, Sepia, Océano, Bosque, Crepúsculo, Rosa, Niebla, Alto contraste, Pradera y Lila: doce paletas construidas con las mismas relaciones tonales.",
+  "fr": "Sombre, Clair, Minuit, Sépia, Océan, Forêt, Crépuscule, Rose, Brume, Contraste élevé, Prairie et Lilas — douze palettes bâties sur les mêmes rapports de tons.",
+  "it": "Scuro, Chiaro, Mezzanotte, Seppia, Oceano, Foresta, Crepuscolo, Rosa, Nebbia, Alto contrasto, Prato e Lilla — dodici palette costruite sulle stesse relazioni tonali.",
+  "pl": "Ciemny, Jasny, Północ, Sepia, Ocean, Las, Zmierzch, Róż, Mgła, Wysoki kontrast, Łąka i Liliowy — dwanaście palet zbudowanych na tych samych relacjach tonalnych.",
+  "pt": "Escuro, Claro, Meia-noite, Sépia, Oceano, Floresta, Crepúsculo, Rosa, Névoa, Alto contraste, Prado e Lilás — doze paletas construídas com as mesmas relações tonais.",
+  "ru": "Тёмная, Светлая, Полночь, Сепия, Океан, Лес, Сумерки, Роза, Туман, Высокий контраст, Луг и Сирень — двенадцать палитр, построенных на одних и тех же тональных отношениях.",
+  "tr": "Koyu, Açık, Gece, Sepya, Okyanus, Orman, Alaca, Gül, Sis, Yüksek karşıtlık, Çayır ve Leylak — hepsi aynı ton ilişkilerinden kurulmuş on iki palet."
  },
  "settings.theme.label": {
   "ar": "السمة",
