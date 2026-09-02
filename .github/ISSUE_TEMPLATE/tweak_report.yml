@@ -1,0 +1,55 @@
+name: Tweak report
+description: A tweak that writes the wrong value, describes itself wrongly, or is missing.
+labels: ["catalogue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The catalogue is `resources/data/catalog.json`, one row per tweak. Reports here are the
+        most valuable kind the project gets: a wrong value is a wrong value on every machine.
+
+        Say where the *correct* behaviour is documented. Microsoft's docs, the `.admx` file the
+        policy comes from, or a registry key you read on a stock machine are all good; another
+        tweaker's list on its own is not — several rows that came from lists were found writing
+        values Windows never reads.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of report
+      options:
+        - "Wrong value, type, hive or path"
+        - "Wrong or misleading name / description"
+        - "Wrong Windows build range (works / does not work on a build it claims)"
+        - "Missing tweak that should exist"
+        - "Tweak that should be removed"
+    validations:
+      required: true
+  - type: input
+    id: tweak
+    attributes:
+      label: Tweak id
+      description: From `catalog.json`; hover the row for its registry target. Leave empty for a missing tweak.
+      placeholder: "cln-do-cache-age"
+  - type: textarea
+    id: registry
+    attributes:
+      label: Registry value(s) involved
+      description: Hive, path, value name, type, and the on / off data — as it is now and as it should be.
+      placeholder: |
+        HKLM\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization\DOMaxCacheAge (DWORD)
+        now: range 1–30 "days"; should be: seconds — 259200 is Windows' default (3 days)
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Where the correct behaviour is documented
+      description: A link, an `.admx` name, or "read on a stock Windows 11 24H2 machine".
+    validations:
+      required: true
+  - type: input
+    id: builds
+    attributes:
+      label: Windows builds this applies to
+      placeholder: "24H2 (26100) and later"

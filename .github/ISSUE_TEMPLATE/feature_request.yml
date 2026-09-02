@@ -1,0 +1,25 @@
+name: Feature request
+description: Something the application does not do yet.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A tweak that is missing from the catalogue goes in the **Tweak report** template; this one
+        is for the application itself — a page, a control, a workflow.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What you are trying to do
+      description: The situation, not the solution. "I want to undo everything I applied yesterday" says more than "add a button".
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like the application to do
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: How you do it today
+      description: Another tool, a script, by hand — or not at all.

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security problem
+    url: https://github.com/shadesofdeath/Arbitrium/security/advisories/new
+    about: Report privately. Please do not open a public issue for anything an attacker could use.
+  - name: "Windows warned me about the file"
+    url: https://github.com/shadesofdeath/Arbitrium#windows-will-warn-you-about-this-file
+    about: That is expected, and the README explains what it means and what you can verify instead.

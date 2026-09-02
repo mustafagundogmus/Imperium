@@ -1,0 +1,63 @@
+name: Bug report
+description: Something the application does that it should not, or does not do that it should.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. The three fields at the top are what make a bug reproducible on a
+        machine that is not yours; everything after them helps but is optional.
+
+        For a tweak that writes the wrong value or describes itself wrongly, use the
+        **Tweak report** template instead. For a security problem, do not open an issue —
+        see [SECURITY.md](../blob/main/SECURITY.md).
+  - type: input
+    id: version
+    attributes:
+      label: Arbitrium version
+      description: From the title bar, or `Arbitrium.exe --version`.
+      placeholder: "0.13.0"
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version and build
+      description: The title bar shows it next to the version, e.g. `Windows 11 Pro · 26100.4351`.
+      placeholder: "Windows 11 Pro · 26100.4351"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Which page, which row or button, what you expected, what you got instead.
+      placeholder: |
+        1. Opened Privacy, switched "Tanılama verisi gönderimi" on, pressed Apply.
+        2. Expected the row to stay on; after a restart it reads as off again.
+    validations:
+      required: true
+  - type: input
+    id: tweak
+    attributes:
+      label: Tweak or action id, if one is involved
+      description: Hover a row for its registry target; the id is in `resources/data/catalog.json`.
+      placeholder: "priv-01-4010"
+  - type: textarea
+    id: log
+    attributes:
+      label: What the Log page or actions.log says
+      description: |
+        The Log page shows every value the app wrote and what was there before. Actions and app
+        removals write to `%APPDATA%\Arbitrium\actions.log`. Paste the relevant lines.
+      render: text
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Drag images here. Please crop out the Overview page — it shows your machine name, BIOS strings and disk serials.
+  - type: dropdown
+    id: language
+    attributes:
+      label: Interface language
+      options: ["Türkçe", "English", "Deutsch", "Français", "Español", "Italiano", "Português", "Polski", "Русский", "العربية"]
