@@ -3,6 +3,7 @@
 
 #include "catalog.h"
 #include "registry.h"
+#include "tasks.h"
 
 #include <QCoreApplication>
 #include <QDateTime>
@@ -91,6 +92,17 @@ bool machineMatches(const Tweak &tweak, const TweakOption &option)
     for (int i = 0; i < tweak.reg.size(); ++i) {
         const RegistryEntry &entry = tweak.reg.at(i);
         const QString &want = option.data.value(i);
+
+        // A scheduled task: its state is the scheduler's answer, "1" or "0", and the
+        // registry sentinels mean nothing for it.
+        if (Tasks::isTaskEntry(entry.hive)) {
+            const int on = Tasks::isEnabled(entry.path);
+            if (on < 0 || isDelete(want) || isDeleteKey(want))
+                return false;
+            if ((on == 1) != (want == QLatin1String("1")))
+                return false;
+            continue;
+        }
 
         const Registry::Hive hive = Registry::hiveFromString(entry.hive);
         if (hive == Registry::Hive::Invalid)
@@ -254,6 +266,15 @@ QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak
         before.reserve(tweak->reg.size());
         for (const RegistryEntry &entry : tweak->reg) {
             Original state;
+            if (Tasks::isTaskEntry(entry.hive)) {
+                const int on = Tasks::isEnabled(entry.path);
+                state.existed = on >= 0;
+                state.keyExisted = state.existed;
+                state.type = Tasks::Hive;
+                state.data = on == 1 ? QStringLiteral("1") : QStringLiteral("0");
+                before.append(state);
+                continue;
+            }
             const Registry::Hive hive = Registry::hiveFromString(entry.hive);
             if (hive != Registry::Hive::Invalid) {
                 const Registry::Value value = Registry::read(hive, entry.path, entry.value);
@@ -268,6 +289,22 @@ QVector<TweakEngine::Outcome> TweakEngine::apply(const QVector<QPair<const Tweak
         bool allOk = true;
         for (int i = 0; i < tweak->reg.size(); ++i) {
             const RegistryEntry &entry = tweak->reg.at(i);
+
+            // Routed to the scheduler rather than the registry. Journalled the same way,
+            // with "1"/"0" as the data, which is all revert() needs to put it back. Task
+            // tweaks are literal, so the restore branch below never applies to them.
+            if (Tasks::isTaskEntry(entry.hive)) {
+                const QString target = option.data.value(i);
+                journal(*tweak, i, entry, target, before.at(i));
+                QString error;
+                if (!Tasks::setEnabled(entry.path, target == QLatin1String("1"), &error)) {
+                    allOk = false;
+                    if (outcome.error.isEmpty())
+                        outcome.error = error;
+                }
+                continue;
+            }
+
             const Registry::Hive hive = Registry::hiveFromString(entry.hive);
             if (hive == Registry::Hive::Invalid) {
                 allOk = false;
@@ -368,6 +405,17 @@ QVector<TweakEngine::JournalEntry> TweakEngine::history(int limit) const
 
 bool TweakEngine::revert(const JournalEntry &entry, QString *error)
 {
+    // A task's journal line holds the enabled flag it had; putting that back is the
+    // whole undo. One that recorded no previous state cannot be reverted.
+    if (Tasks::isTaskEntry(entry.hive)) {
+        if (!entry.existed) {
+            if (error)
+                *error = Locale::tr(QStringLiteral("task.err.notFound"));
+            return false;
+        }
+        return Tasks::setEnabled(entry.path, entry.previousData == QLatin1String("1"), error);
+    }
+
     const Registry::Hive hive = Registry::hiveFromString(entry.hive);
     if (hive == Registry::Hive::Invalid) {
         if (error)

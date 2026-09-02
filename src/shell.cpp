@@ -2,6 +2,7 @@
 #include "i18n.h"
 
 #include "catalog.h"
+#include "tasks.h"
 
 #include <QRegularExpression>
 
@@ -604,9 +605,13 @@ bool needsExplorerRestart(const Tweak &tweak)
                        "|\\\\Dsh\\b"),
         QRegularExpression::CaseInsensitiveOption);
 
-    for (const RegistryEntry &entry : tweak.reg)
+    for (const RegistryEntry &entry : tweak.reg) {
+        // A task path can spell "Windows\Shell" too, and the shell does not read tasks.
+        if (Tasks::isTaskEntry(entry.hive))
+            continue;
         if (shellKeys.match(entry.path).hasMatch())
             return true;
+    }
     return false;
 }
 

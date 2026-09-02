@@ -13,6 +13,7 @@
 #include "updater.h"
 #include "views/aboutpage.h"
 #include "views/actionpage.h"
+#include "views/cleanerpage.h"
 #include "views/debloatpage.h"
 #include "views/godmodepage.h"
 #include "views/journalpage.h"
@@ -210,6 +211,10 @@ void MainWindow::buildUi()
     m_debloat = new DebloatPage(m_debloatScroll);
     m_debloatScroll->setWidget(m_debloat);
 
+    m_cleanerScroll = new SmoothScrollArea(m_stack);
+    m_cleaner = new CleanerPage(m_cleanerScroll);
+    m_cleanerScroll->setWidget(m_cleaner);
+
     m_godModeScroll = new SmoothScrollArea(m_stack);
     m_godMode = new GodModePage(m_godModeScroll);
     m_godModeScroll->setWidget(m_godMode);
@@ -228,6 +233,7 @@ void MainWindow::buildUi()
     m_stack->addWidget(m_actionScroll);
     m_stack->addWidget(m_tiScroll);
     m_stack->addWidget(m_debloatScroll);
+    m_stack->addWidget(m_cleanerScroll);
     m_stack->addWidget(m_godModeScroll);
     m_stack->addWidget(m_journalScroll);
     m_stack->addWidget(m_aboutScroll);
@@ -265,6 +271,16 @@ void MainWindow::wire()
     connect(m_actions, &ActionPage::notice, m_statusBar, &StatusBar::setNotice);
     connect(m_tiLauncher, &TiLauncherPage::notice, m_statusBar, &StatusBar::setNotice);
     connect(m_debloat, &DebloatPage::notice, m_statusBar, &StatusBar::setNotice);
+    connect(m_cleaner, &CleanerPage::notice, m_statusBar, &StatusBar::setNotice);
+    // The cleaner's sidebar count is a size, not a number of rows: what a clean would
+    // free right now, refreshed after every scan — and every clean ends in a scan.
+    connect(m_cleaner, &CleanerPage::scanFinished, this, [this] {
+        const qint64 bytes = m_cleaner->reclaimableBytes();
+        m_sidebar->setCategoryCount(Sidebar::cleanerId(),
+                                    bytes > 0 ? m_cleaner->reclaimableText() : QString());
+        if (m_state->selectedCategory() == Sidebar::cleanerId())
+            refreshView();
+    });
     connect(m_godMode, &GodModePage::notice, m_statusBar, &StatusBar::setNotice);
     connect(m_journal, &JournalPage::notice, m_statusBar, &StatusBar::setNotice);
     // The scan runs in the background from construction on; if it lands while this page
@@ -433,14 +449,15 @@ void MainWindow::refreshView()
     const bool settings = !searching && current == Sidebar::settingsId();
     const bool actions = !searching && current == Sidebar::actionsId();
     const bool debloat = !searching && current == Sidebar::debloatId();
+    const bool cleaner = !searching && current == Sidebar::cleanerId();
     const bool godMode = !searching && current == Sidebar::godModeId();
     const bool journal = !searching && current == Sidebar::journalId();
     const bool tiLauncher = !searching && current == Sidebar::tiLauncherId();
     const bool about = !searching && current == Sidebar::aboutId();
     const bool overview = !searching && category && category->isOverview();
 
-    m_header->setControlsVisible(!overview && !settings && !about && !debloat && !tiLauncher
-                                 && !godMode);
+    m_header->setControlsVisible(!overview && !settings && !about && !debloat && !cleaner
+                                 && !tiLauncher && !godMode);
 
     if (about) {
         m_header->setTitle(Locale::tr(QStringLiteral("sidebar.about")));
@@ -498,6 +515,18 @@ void MainWindow::refreshView()
                                         .arg(m_debloat->removableCount()));
         m_header->setPendingLabel({});
         m_stack->setCurrentWidget(m_debloatScroll);
+        return;
+    }
+
+    if (cleaner) {
+        m_header->setTitle(Locale::tr(QStringLiteral("sidebar.cleaner")));
+        m_header->setSubtitle(m_cleaner->scanning()
+                                  ? Locale::tr(QStringLiteral("cleaner.scanning"))
+                                  : Locale::tr(QStringLiteral("cleaner.subtitle"))
+                                        .arg(m_cleaner->rowCount())
+                                        .arg(m_cleaner->reclaimableText()));
+        m_header->setPendingLabel({});
+        m_stack->setCurrentWidget(m_cleanerScroll);
         return;
     }
 

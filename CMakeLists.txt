@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(Arbitrium VERSION 0.12.1 LANGUAGES CXX)
+project(Arbitrium VERSION 0.13.0 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -30,6 +30,8 @@ set(PROJECT_SOURCES
     src/deepinfo.h                    src/deepinfo.cpp
     src/services.h                    src/services.cpp
     src/startup.h                     src/startup.cpp
+    src/tasks.h                       src/tasks.cpp
+    src/cleaner.h                     src/cleaner.cpp
     src/monitor.h                     src/monitor.cpp
     src/registry.h                    src/registry.cpp
     src/migration.h                   src/migration.cpp
@@ -67,12 +69,14 @@ set(PROJECT_SOURCES
     src/widgets/toggleswitch.h        src/widgets/toggleswitch.cpp
     src/widgets/updatedialog.h        src/widgets/updatedialog.cpp
     src/widgets/tweakrow.h            src/widgets/tweakrow.cpp
+    src/widgets/cleanerrow.h          src/widgets/cleanerrow.cpp
 
     src/views/contentheader.h         src/views/contentheader.cpp
     src/views/overviewpage.h          src/views/overviewpage.cpp
     src/views/actionpage.h            src/views/actionpage.cpp
     src/views/tilauncherpage.h        src/views/tilauncherpage.cpp
     src/views/debloatpage.h           src/views/debloatpage.cpp
+    src/views/cleanerpage.h           src/views/cleanerpage.cpp
     src/views/godmodepage.h           src/views/godmodepage.cpp
     src/views/journalpage.h           src/views/journalpage.cpp
     src/views/settingspage.h          src/views/settingspage.cpp
@@ -153,9 +157,12 @@ target_link_libraries(Arbitrium PRIVATE
 )
 
 # Win32 bits used by src/sysinfo.cpp and src/monitor.cpp. TBS and netapi32 are loaded
-# dynamically at runtime; these are the ones that are linked.
+# dynamically at runtime; these are the ones that are linked. ole32/oleaut32 carry the
+# Task Scheduler's COM plumbing for src/tasks.cpp, shell32 the recycle bin calls in
+# src/cleaner.cpp — all three are Windows' own, so the single-file build stays one file.
 if(WIN32)
-    target_link_libraries(Arbitrium PRIVATE advapi32 user32 kernel32 iphlpapi shlwapi)
+    target_link_libraries(Arbitrium PRIVATE advapi32 user32 kernel32 iphlpapi shlwapi
+                                            ole32 oleaut32 shell32)
 endif()
 
 # A static Qt is only half of a single-file build: without this the MinGW runtime still

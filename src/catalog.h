@@ -184,6 +184,10 @@ private:
     /// same StartupApproved blob Task Manager does.
     void appendStartup();
 
+    /// Every scheduled task on this machine, as a switch routed through the Task
+    /// Scheduler rather than the registry — see tasks.h for the TASK pseudo-hive.
+    void appendTasks();
+
     /// The category \a id, or nullptr. The mutable counterpart of category() below,
     /// used by the two synthesisers while the catalogue is still being built.
     Category *mutableCategory(const QString &id);

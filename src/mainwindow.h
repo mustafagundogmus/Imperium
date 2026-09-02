@@ -22,6 +22,7 @@
 class AboutPage;
 class AppState;
 class ContentHeader;
+class CleanerPage;
 class DebloatPage;
 class GodModePage;
 class OverviewPage;
@@ -100,6 +101,7 @@ private:
     SmoothScrollArea *m_actionScroll = nullptr;
     SmoothScrollArea *m_tiScroll = nullptr;
     SmoothScrollArea *m_debloatScroll = nullptr;
+    SmoothScrollArea *m_cleanerScroll = nullptr;
     SmoothScrollArea *m_godModeScroll = nullptr;
     SmoothScrollArea *m_journalScroll = nullptr;
     SmoothScrollArea *m_aboutScroll = nullptr;
@@ -107,6 +109,7 @@ private:
     ActionPage *m_actions = nullptr;
     TiLauncherPage *m_tiLauncher = nullptr;
     DebloatPage *m_debloat = nullptr;
+    CleanerPage *m_cleaner = nullptr;
     GodModePage *m_godMode = nullptr;
     JournalPage *m_journal = nullptr;
     AboutPage *m_about = nullptr;

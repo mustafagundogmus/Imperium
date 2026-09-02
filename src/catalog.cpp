@@ -4,6 +4,7 @@
 #include "services.h"
 #include "startup.h"
 #include "sysinfo.h"
+#include "tasks.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -20,6 +21,9 @@ QString Tweak::targetSummary() const
     if (reg.isEmpty())
         return {};
     const RegistryEntry &first = reg.first();
+    // A scheduled task is named by its path alone; there is no value to speak of.
+    if (Tasks::isTaskEntry(first.hive))
+        return first.path;
     // An empty value name is the key's default value, not a missing field.
     const QString value = first.value.isEmpty() ? Locale::tr(QStringLiteral("tweak.defaultValue")) : first.value;
     QString text = first.hive + QLatin1String("\\") + first.path + QLatin1String("\\") + value;
@@ -73,7 +77,8 @@ QString LiveDescription::text() const
 /// and only the fallback saved it from showing a raw key.
 static bool isSynthesised(const QString &id)
 {
-    return id.startsWith(QLatin1String("svc-")) || id.startsWith(QLatin1String("startup-"));
+    return id.startsWith(QLatin1String("svc-")) || id.startsWith(QLatin1String("startup-"))
+           || id.startsWith(QLatin1String("task-"));
 }
 
 QString Tweak::displayName() const
@@ -310,6 +315,81 @@ void Catalog::appendStartup()
     category->sections.append(section);
 }
 
+void Catalog::appendTasks()
+{
+    Category *category = mutableCategory(QStringLiteral("task"));
+    if (!category)
+        return;
+
+    const QVector<Tasks::Info> tasks = Tasks::enumerate();
+    if (tasks.isEmpty())
+        return;
+
+    // One section per folder, in the order enumerate() sorted them: the folder is the
+    // one thing that tells "Microsoft Compatibility Appraiser" and "StartupAppTask" apart
+    // from the fifty other tasks with names like that, and the tree is how Task Scheduler
+    // itself shows them. The root's few tasks get a named heading; every other heading is
+    // the folder path with its separators spelled as breadcrumbs, which is Windows' own
+    // text and needs no translation.
+    QString openFolder;
+    Section section;
+    auto flush = [&] {
+        if (!section.tweaks.isEmpty())
+            category->sections.append(section);
+        section = Section();
+    };
+
+    for (const Tasks::Info &task : tasks) {
+        // openFolder starts null and a task's folder never is, so the first task opens
+        // the first section without a special case.
+        if (task.folder != openFolder) {
+            flush();
+            openFolder = task.folder;
+            if (task.folder == QLatin1String("\\")) {
+                section.titleKey = QStringLiteral("task.rootFolder");
+            } else {
+                QString title = task.folder;
+                if (title.startsWith(QLatin1Char('\\')))
+                    title.remove(0, 1);
+                section.title = title.replace(QLatin1Char('\\'), QStringLiteral(" \u203a "));
+            }
+        }
+
+        Tweak t;
+        t.id = Tasks::idFor(task.path);
+        t.name = task.name;
+        // Folder is the section, so the row says what the scheduler says about the task:
+        // whether it is hidden, and what state it is in right now.
+        t.live.active = true;
+        if (task.hidden)
+            t.live.leadKey = QStringLiteral("task.hidden");
+        switch (task.state) {
+        case 1: t.live.stateKey = QStringLiteral("task.state.disabled"); break;
+        case 2: t.live.stateKey = QStringLiteral("task.state.queued"); break;
+        case 3: t.live.stateKey = QStringLiteral("task.state.ready"); break;
+        case 4: t.live.stateKey = QStringLiteral("task.state.running"); break;
+        default: break;
+        }
+        t.live.noteKey = task.riskNoteKey;
+        t.tooltip = task.description;
+        t.locked = task.locked;
+        t.lockReason = task.lockReason;
+        t.reg = {{Tasks::Hive, task.path, {}, Tasks::Hive, {}, {}}};
+        t.options = {{{}, {QStringLiteral("0")}, QStringLiteral("task.opt.disabled")},
+                     {{}, {QStringLiteral("1")}, QStringLiteral("task.opt.enabled")}};
+
+        // As found, like a service: some of Windows' own tasks ship disabled, so there is
+        // no universal default to measure against, and "etkin" would otherwise count
+        // every task on the machine. Literal for the same reason services are.
+        t.defaultOption = task.enabled ? 1 : 0;
+        t.literal = true;
+
+        section.tweaks.append(t);
+        ++m_total;
+    }
+    flush();
+}
+
 void Catalog::load()
 {
     QFile f(QStringLiteral(":/data/catalog.json"));
@@ -464,6 +544,11 @@ void Catalog::load()
     Splash::report(QStringLiteral("splash.stage.services"));
     appendServices();
     appendStartup();
+    // Its own stage for the same reason the service scan has one: the scheduler holds a
+    // few hundred tasks and each one is a COM call, so on a slow machine this is where
+    // the card should be able to say it is.
+    Splash::report(QStringLiteral("splash.stage.tasks"));
+    appendTasks();
 
     // Index after the vectors have stopped growing so the pointers stay valid.
     forEachTweak(*this, [this](const Tweak &t) { m_byId.insert(t.id, &t); });

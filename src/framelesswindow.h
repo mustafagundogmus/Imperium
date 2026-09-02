@@ -54,7 +54,11 @@ protected:
 private:
     QMargins shadowMargins() const;
     QRect cardRect() const;
-    Qt::Edges edgeAt(const QPoint &pos) const;
+
+    /// The resize edges under  pos.  insideToo says whether the band just inside the
+    /// card edge counts as well as the one over the shadow; see eventFilter() for when it
+    /// must not.
+    Qt::Edges edgeAt(const QPoint &pos, bool insideToo = true) const;
     void rebuildShadow();
     void layoutGlow();
 
@@ -63,7 +67,7 @@ private:
     /// mouseMoveEvent: that only fires while the pointer is directly over FramelessWindow's
     /// own (mostly unclad) area, so the moment it crosses onto any child — a scrollbar, a
     /// row, a button — nothing here would otherwise run again to put the cursor back.
-    void applyEdgeCursor(const QPoint &pos);
+    void applyEdgeCursor(const QPoint &pos, bool insideToo = true);
 
     QWidget *m_card = nullptr;
     BorderGlow *m_glow = nullptr;

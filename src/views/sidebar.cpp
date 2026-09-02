@@ -46,6 +46,13 @@ const QString DebloatIcon = QStringLiteral(
 // A window with its corner opened and an arrow leaving through it. The God Mode page runs
 // nothing of its own — every row hands a target to Windows and Windows draws the dialog —
 // so the glyph says "this leads out of here" rather than naming any one kind of setting.
+// A broom: the handle, the ferrule and three bristles. The cleaner empties folders the
+// way Temizlik's rows stop them filling, and sits beside that category for that reason.
+const QString CleanerIcon = QStringLiteral(
+    "M10.4 1.6L6.1 5.9"
+    "M6.1 5.9L4.2 4"
+    "M4.2 4L1.6 6.6a1.1 1.1 0 000 1.5l2.3 2.3a1.1 1.1 0 001.5 0l2.6-2.6"
+    "M3.2 6.4l2.4 2.4M4.6 5l2.4 2.4");
 const QString GodModeIcon = QStringLiteral(
     "M9.5 6.6v3.2a.7.7 0 01-.7.7H2.9a.7.7 0 01-.7-.7V3.9a.7.7 0 01.7-.7h3.2"
     "M7.6 2.2h2.7v2.7M10.3 2.2L5.7 6.8");
@@ -66,7 +73,7 @@ const QString AboutIcon = QStringLiteral(
 struct GroupDef
 {
     const char *labelKey;   ///< i18n key, or nullptr for the ungrouped row (Genel Bakış)
-    const char *ids[8];     ///< category ids, empty-string terminated
+    const char *ids[10];    ///< category ids, empty-string terminated
 };
 
 // Reuses whichever i18n key already carries the right word rather than adding a
@@ -79,21 +86,25 @@ struct GroupDef
 // else, and it read especially oddly sitting in the pinned utility strip at the bottom
 // next to Günlük/Ayarlar/Hakkında, which are meta pages rather than things to act on.
 constexpr GroupDef Groups[] = {
-    { nullptr,                        {"ov", "", "", "", "", "", "", ""} },
-    { "settings.section.appearance",  {"vis", "", "", "", "", "", "", ""} },
+    { nullptr,                        {"ov", ""} },
+    { "settings.section.appearance",  {"vis", ""} },
     // Windows Update sits next to Sistem because that is what it is; Güç yönetimi next
     // to Bellek & CPU because the two are read together.
-    { "category.sys",                 {"sys", "upd", "svc", "boot", "perf", "pwr", "debloat", ""} },
+    // Zamanlanmış görevler beside Başlangıç: both are lists of things the machine runs
+    // on its own, read out of the machine rather than the catalogue.
+    { "category.sys",                 {"sys", "upd", "svc", "boot", "task", "perf", "pwr", "debloat", ""} },
     // Güvenlik sertleştirme belongs beside Gizlilik: the same page of a user's mind.
-    { "sidebar.group.privacynet",     {"priv", "sec", "net", "", "", "", "", ""} },
-    { "sidebar.group.files",          {"exp", "ctx", "cln", "", "", "", "", ""} },
-    { "category.adv",                 {"adv", "", "", "", "", "", "", ""} },
+    { "sidebar.group.privacynet",     {"priv", "sec", "net", ""} },
+    // The cleaner rides with Dosyalar: Temizlik keeps the caches from refilling, the
+    // cleaner empties them, and a user thinks of the two as one job.
+    { "sidebar.group.files",          {"exp", "ctx", "cln", "cleaner", ""} },
+    { "category.adv",                 {"adv", ""} },
     // Araçlar: pages that are neither a tweak category nor a meta page. "godmode" is the
     // second non-catalogue id buildList() special-cases, and it went here rather than into
     // the pinned strip at the bottom on purpose — that strip's geometry is a hand-linked
     // chain of xRowTop() methods where adding a row means editing every one of them, and
     // a launcher is something you go and use, not a meta page like Günlük or Hakkında.
-    { "sidebar.group.tools",          {"godmode", "", "", "", "", "", "", ""} },
+    { "sidebar.group.tools",          {"godmode", ""} },
 };
 
 /// What a row in the scrolling list is called.
@@ -108,6 +119,8 @@ QString listRowLabel(const QString &id)
         return Locale::tr(QStringLiteral("sidebar.debloat"));
     if (id == Sidebar::godModeId())
         return Locale::tr(QStringLiteral("sidebar.godmode"));
+    if (id == Sidebar::cleanerId())
+        return Locale::tr(QStringLiteral("sidebar.cleaner"));
     return Locale::tr(QStringLiteral("category.") + id);
 }
 
@@ -186,7 +199,8 @@ void Sidebar::buildList()
         }
 
         for (const char *rawId : group.ids) {
-            if (!*rawId)
+            // Rows shorter than the array are zero-filled past their terminator.
+            if (!rawId || !*rawId)
                 break;
             const QString id = QString::fromLatin1(rawId);
 
@@ -195,6 +209,10 @@ void Sidebar::buildList()
                 // Not a catalogue category — a live machine scan behind the same row
                 // shape, so it reads as part of the list instead of a special case.
                 row = new CategoryRow(id, listRowLabel(id), DebloatIcon, QString(), m_list);
+            } else if (id == cleanerId()) {
+                // A measurement of the disk behind the same row shape. Its count is the
+                // reclaimable size, set by MainWindow once the first scan has answered.
+                row = new CategoryRow(id, listRowLabel(id), CleanerIcon, QString(), m_list);
             } else if (id == godModeId()) {
                 // Nor is this one — it opens Windows' own settings pages and writes
                 // nothing, so there is no tweak for the catalogue to carry. Same row

@@ -4,6 +4,109 @@ Bu dosya sürümler arasındaki dikkate değer değişiklikleri listeler.
 Biçim [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) temellidir ve
 proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
+## [0.13.0] — 2026-09-02
+
+İki yeni tıklanacak şey, kataloğun daha önce ifade edemediği bir tweak sınıfı ve bu
+kataloğun ChrisTitusTech'in WinUtil'iyle paylaştığı her satırın, o projenin son altı ayda
+değiştirdiklerine karşı gözden geçirilmesi.
+
+### Eklendi
+
+#### Her zamanlanmış görev, bir anahtar olarak
+
+Hizmetler ve başlangıç girdileri zaten bir listeden değil makineden okunuyordu; Görev
+Zamanlayıcı, Windows'un kendi başına çalışan şeyleri tuttuğu üçüncü yer ve telemetri
+yükleyicileri, uyumluluk değerlendiricileri ve üretici güncelleyicileri gerçekte orada yaşar.
+Arbitrium artık **zamanlayıcının tuttuğu her görevi** listeliyor — gizli olanlar dahil, ki bu
+Görev Zamanlayıcı'nın "Gizli görevleri göster" açıkken gösterdiğidir — zamanlayıcının kendi
+ağacı gibi klasöre göre gruplanmış, her biri etkin/devre dışı anahtarı.
+
+Bir görev bir kayıt defteri değeri değildir. Etkin bayrağı görevin kendi XML'inde ve
+zamanlayıcının önbelleğinde yaşar; onu okumanın ve yazmanın tek dürüst yolu Görev
+Zamanlayıcı'nın COM arayüzüdür. Bu yüzden bu, katalogda `Registry` üzerinden yönlendirilmeyen
+ilk tweak. Bir görev girdisi `TASK` sözde-kovanını ve görevin yolunu taşır; `TweakEngine`
+bunları `src/tasks.cpp`'ye gönderir ve geri kalan her şey aynı kalır — bekleyen sayacı, uygula
+perdesi, günlük, geri alma, ön ayarlar. Zamanlayıcıya tek bir bağlantı kurulup tutulur; açılışta
+iki yüz görevin durumunu okumak iki yüz yerine tek bir kimlik doğrulamaya mal olur.
+
+Sonucu bilinmeye değer satırlar bunu söylüyor: Defender'ın taramaları ve imza bakımı, Windows
+Update'in zamanlaması, Sistem Geri Yükleme, disk iyileştirme ve TRIM, bakım penceresi, saat
+eşitleme, bileşen deposunun kendi temizliği. Windows'un yönetici belirtecini bile reddeden bir
+ACL ile koruduğu görevler — güncelleme düzenleyicisininkiler, yanındaki Scheduled Start —
+yazması başarısız olacak bir anahtar yerine, nedeniyle ve TrustedInstaller sayfasına bir
+işaretle **kilitli** gösteriliyor.
+
+`.reg` dışa aktarma görev satırlarını dışarıda bırakıp kaç tane olduğunu söylüyor; bir görevin
+`.reg` yazımı yoktur. Ön ayarlar onları her konum gibi taşıyor.
+
+#### Silmeden önce ölçen bir disk temizleyici
+
+Dört grupta on altı hedef:
+
+- **Windows** — geçici klasör, Windows Update indirme önbelleği, Teslim İyileştirme
+  önbelleği, servis günlükleri (CBS, DISM, kurulum), çökme dökümleri, hata bildirimleri.
+- **Bu kullanıcı** — `%TEMP%`, Internet önbelleği, Geri Dönüşüm Kutusu.
+- **Programlar** — Edge, Chrome, Brave, Vivaldi, Opera ve Firefox'un önbellekleri; NVIDIA,
+  AMD, Intel ve DirectX gölgelendirici önbellekleri; Discord, Teams, Steam, Spotify ve Mağaza.
+- **Bedeli olanlar**, varsayılan olarak seçili değil — Prefetch, önceki Windows kurulumu
+  (Windows.old ve yükseltme klasörleri; TrustedInstaller'a ait olduklarından önce sahiplik
+  alınır), en yenisi dışındaki geri yükleme noktaları ve DISM üzerinden bileşen deposu.
+
+Her hedef sayfa kurulduğu anda ve her temizlikten sonra **bir işçi iş parçacığında
+ölçülüyor**; satırdaki sayı ve kenar çubuğunda *Disk temizleyici*'nin yanındaki rakam, bir
+temizliğin gerçekten boşaltacağı şey. GUI iş parçacığı hiçbir klasörü dolaşmıyor: bir geçici
+klasör yüz bin dosya, Windows.old otuz gigabayt tutabilir ve bu uygulamanın zaten donmuş gibi
+görünen bir açılışı olmuştu.
+
+İki geçici klasör son 24 saati bırakıyor — bir kurulumun yarım yazılmış dosyası henüz çöp
+değildir. Kullanımdaki dosyalar uğraşılmak yerine atlanıp satırda sayılıyor. Hiçbir şey Geri
+Dönüşüm Kutusu'ndan geçmiyor. Onay, her diğer yıkıcı yüzeyin kullandığı aynı iletişim kutusunda
+tam olarak hangi hedeflerin ve ne kadarının gideceğini listeliyor. Sembolik bağlantılar ve
+kavşaklar ne girişte ne çıkışta izleniyor.
+
+### Değiştirildi
+
+#### WinUtil satırları, WinUtil'in değiştirdiklerine karşı
+
+Bu katalogdaki kırk üç satır WinUtil'in `tweaks.json`'ından geldi. Dosyanın tamamı yeniden
+karşılaştırıldı — 122 kayıt defteri girdisi, 118'i zaten bu katalogda — ve Mart'tan beri o
+dosyaya yapılan her commit okundu. Çıkanlar:
+
+- **wu-mpo artık üç konum.** Açık, *Uyumluluk kipi* (yalnız `OverlayTestMode`, çoğu makineye
+  yeten) ve *Tamamen kapalı* (sürücü düzeyindeki `DisableOverlays` da — 25H2'de bazen gerekli
+  ve bazı AMD kartlarda tam ekran oyunlarda titremeye yol açtığı bildirilmiş). Eski anahtar
+  ikisini de yazıyordu; saldırgan olan oydu.
+- **Ayarlar'da gizlenen sayfalar** (`vis-02-16017`) de konumlara ayrıldı: Giriş sayfası,
+  24H2 ile gelen *Yapay zekâ bileşenleri* sayfası ya da ikisi. Tek bir ilke dizesi; yapay
+  zekâ sayfası için ikinci bir anahtar ilkini ezerdi.
+- **Galeri girdisi** (`exp-03-14178`) "kapalı"da kimsede olmayan bir 1 yazmak yerine kullanıcı
+  başına geçersiz kılmayı kaldırıyor.
+- **Başlat menüsü eski düzeni** 24H2'ye sınırlandı ve ne olduğu yazıldı: Microsoft'un
+  kaldırmakta olduğu bir özellik bayrağı geçersiz kılması; üst kaynak yeni derlemelerde
+  çalışmadığını söylüyor.
+- **Eksik build sınırları**: Başlat menüsü önerileri (22H2+), telefondan devam etme (24H2+)
+  ve yalnızca 22H2/23H2'nin kenar çubuğu olan Windows Copilot — 24H2'deki Mağaza uygulaması o
+  ilkeyi okumaz; satır orada Uygulamalar sayfasını gösteriyor.
+- **PowerShell 7 telemetrisi** eklendi (makine ortamında `POWERSHELL_TELEMETRY_OPTOUT`);
+  WinUtil betikle yazıyor ama sonuçta bir kayıt defteri değeri.
+- **Tam ekran optimizasyonları · genel** artık bedelini söylüyor — WinUtil kendi kopyasını
+  zararlı diye kaldırdı — yavaş Alt+Tab, kapanan HDR ve renk yönetimi, katman ve hile
+  koruması sorunları; tek oyun için exe'nin Uyumluluk sekmesi daha doğru araç.
+- **Açılışta Num Lock** "kapalı"ya değil Windows'un gerçek fabrika değerine (donanıma bırak)
+  dönüyor.
+
+İkisinin ayrıştığı yerlerde çoğunlukla bizimki doğruydu — dize tipli fare ve klavye değerleri,
+`Hidden = 2` geri dönüşü, varsayılan olarak bulunmayan ilke değerleri — onlar olduğu gibi kaldı.
+
+### Düzeltildi
+
+#### Kaydırma çubuğu üstünde yeniden boyutlandırma imleci
+
+İçerik kaydırma çubuğu kartın sağ kenarına bitişik, pencere yeniden boyutlandırmasını başlatan
+bandın içinde duruyor; dış altı pikselinin üstünde yatay çift ok görünüyordu — kaydırma
+çubuğuna gidecek bir basış için. İç bant artık yalnızca basışı pencereye geçiren bir widget'ın
+üstünde sayılıyor; kartın dışındaki gölge payı her zaman bir yeniden boyutlandırma tutamağı.
+
 ## [0.12.1] — 2026-09-02
 
 Bir düzeltme sürümü. Tıklanacak yeni bir şey yok; etiketinin söylediğini artık gerçekten

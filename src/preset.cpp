@@ -4,6 +4,7 @@
 #include "catalog.h"
 #include "registry.h"
 #include "settings.h"
+#include "tasks.h"
 #include "theme.h"
 
 #include <algorithm>
@@ -205,10 +206,18 @@ int exportRegFile(const QString &path, const QStringList &ids,
     // on the first entry and its siblings under the same key after it. The exported file
     // then did not reproduce what Apply does, which is the one thing it is for.
     QStringList deletedKeys;
+    // A scheduled task is not a registry value and has no .reg spelling. Left out and
+    // counted, so the file can say so rather than silently carry fewer changes than the
+    // page did.
+    int tasksLeftOut = 0;
     for (const QString &id : ids) {
         const Tweak *tweak = catalog.tweak(id);
         if (!tweak || tweak->options.isEmpty())
             continue;
+        if (!tweak->reg.isEmpty() && Tasks::isTaskEntry(tweak->reg.first().hive)) {
+            ++tasksLeftOut;
+            continue;
+        }
 
         const int position = qBound(0, positions.value(id, 0), int(tweak->options.size()) - 1);
         const TweakOption &option = tweak->options.at(position);
@@ -260,6 +269,9 @@ int exportRegFile(const QString &path, const QStringList &ids,
 
     if (!openKey.isEmpty())
         text += QStringLiteral("\r\n");
+    if (tasksLeftOut > 0)
+        text += QStringLiteral("; %1 scheduled task(s) left out: a task is not a registry value\r\n")
+                    .arg(tasksLeftOut);
 
     // regedit reads UTF-16LE with a BOM; anything else and Turkish paths come out wrong.
     QByteArray bytes;

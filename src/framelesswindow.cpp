@@ -1,10 +1,12 @@
 #include "framelesswindow.h"
+
 #include "settings.h"
 #include "theme.h"
 #include "widgets/borderglow.h"
 
 #include <QApplication>
 #include <QGuiApplication>
+#include <QLabel>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
@@ -223,7 +225,7 @@ void FramelessWindow::paintEvent(QPaintEvent *)
     p.drawRoundedRect(card.adjusted(0.5, 0.5, -0.5, -0.5), radius, radius);
 }
 
-Qt::Edges FramelessWindow::edgeAt(const QPoint &pos) const
+Qt::Edges FramelessWindow::edgeAt(const QPoint &pos, bool insideToo) const
 {
     if (isMaximized() || isFullScreen())
         return {};
@@ -231,6 +233,8 @@ Qt::Edges FramelessWindow::edgeAt(const QPoint &pos) const
     const QRect card = cardRect();
     const QRect outer = card.adjusted(-GrabOutside, -GrabOutside, GrabOutside, GrabOutside);
     if (!outer.contains(pos))
+        return {};
+    if (!insideToo && card.contains(pos))
         return {};
 
     Qt::Edges edges;
@@ -241,9 +245,9 @@ Qt::Edges FramelessWindow::edgeAt(const QPoint &pos) const
     return edges;
 }
 
-void FramelessWindow::applyEdgeCursor(const QPoint &pos)
+void FramelessWindow::applyEdgeCursor(const QPoint &pos, bool insideToo)
 {
-    const Qt::Edges edges = edgeAt(pos);
+    const Qt::Edges edges = edgeAt(pos, insideToo);
 
     Qt::CursorShape shape = Qt::ArrowCursor;
     if ((edges & Qt::LeftEdge && edges & Qt::TopEdge) || (edges & Qt::RightEdge && edges & Qt::BottomEdge))
@@ -277,7 +281,18 @@ bool FramelessWindow::eventFilter(QObject *watched, QEvent *e)
         // rather than fight over a cursor shape neither of them currently owns.
         if (w && w->window() == this) {
             auto *me = static_cast<QMouseEvent *>(e);
-            applyEdgeCursor(mapFromGlobal(w->mapToGlobal(me->pos())));
+            // The band inside the card edge only counts over a widget that lets a press
+            // fall through to this window: the window itself, the card, a plain container
+            // or a label. Over anything that takes the press for itself — the content
+            // scrollbar, which sits flush against the right edge, a button, a switch —
+            // a resize cursor was a lie: the press it promised went to the scrollbar,
+            // and the pointer flickered between "resize" and "arrow" across the
+            // scrollbar's outer six pixels. The band over the shadow margin is always
+            // this window's own, so it is never withheld.
+            const bool passive = w == this || w == m_card
+                                 || w->metaObject() == &QWidget::staticMetaObject
+                                 || qobject_cast<QLabel *>(w) != nullptr;
+            applyEdgeCursor(mapFromGlobal(w->mapToGlobal(me->pos())), passive);
         }
     }
     return QWidget::eventFilter(watched, e);

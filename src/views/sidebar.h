@@ -56,6 +56,10 @@ public:
     /// scan, not a real position in the catalogue, so it still needs its own id here.
     static QString debloatId() { return QStringLiteral("debloat"); }
 
+    /// …and the disk cleaner, filed under Dosyalar beside Temizlik: what that category
+    /// switches, this one empties. A live measurement of the disk, not a catalogue row.
+    static QString cleanerId() { return QStringLiteral("cleaner"); }
+
     /// …and the settings launcher, filed under the new Araçlar group at the end of the
     /// list. Also not a catalogue category: it changes nothing, it opens Windows' own
     /// pages, so there is no tweak for the catalogue to carry.
@@ -79,8 +83,8 @@ public:
     static bool isPinnedPage(const QString &id)
     {
         return id == settingsId() || id == actionsId() || id == debloatId()
-               || id == godModeId() || id == journalId() || id == tiLauncherId()
-               || id == aboutId();
+               || id == cleanerId() || id == godModeId() || id == journalId()
+               || id == tiLauncherId() || id == aboutId();
     }
 
     /// …and who built it, which is not a category, a setting, or anything you would come

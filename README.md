@@ -5,7 +5,7 @@
 **Your Windows. Your rules.**
 
 Windows ships with opinions about your privacy, your bandwidth, and what belongs on your Start menu.
-Arbitrium is where you overrule them — 407 of them, one switch at a time.
+Arbitrium is where you overrule them — 408 of them, one switch at a time.
 
 [![Windows 10 | 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?style=for-the-badge&logo=windows11&logoColor=white)](#)
 [![Portable](https://img.shields.io/badge/Install-Not%20Required-2ea44f?style=for-the-badge)](#)
@@ -39,7 +39,7 @@ it runs. Read it, then decide.
 
 ## What's inside
 
-### ⚙️ 407 tweaks that actually apply here
+### ⚙️ 408 tweaks that actually apply here
 
 Not a generic list scraped from a 2016 forum post. Arbitrium checks each tweak against **your**
 Windows build. A setting Microsoft retired three versions ago isn't quietly presented as a working
@@ -49,7 +49,7 @@ switch — it's shown greyed out, with the reason. Honesty over a longer feature
 |---|---|
 | **System** · 69 | Core behaviour, lock screen, sign-in, shell policy |
 | **File Explorer** · 60 | Extensions, panes, Quick access, launch target |
-| **Privacy** · 45 | Telemetry, diagnostics, advertising ID, activity history |
+| **Privacy** · 46 | Telemetry, diagnostics, advertising ID, activity history |
 | **Visual Effects** · 35 | Animations, transparency, shadows, thumbnails |
 | **Memory & CPU** · 30 | Paging, caching, prefetch, scheduling |
 | **Windows Update** · 30 | Deferral, drivers, delivery optimisation, restart behaviour |
@@ -67,6 +67,16 @@ All **329** services on your machine, each as a four-position control — *Autom
 *Manual*, *Disabled*. Services Windows genuinely cannot boot without are **locked**, with the reason
 stated. You can be reckless somewhere else.
 
+### ⏱️ Every scheduled task, the same way
+
+The Task Scheduler holds a couple of hundred tasks on an ordinary machine, forty of them
+hidden, and that is where the telemetry uploaders, the compatibility appraisers and the
+vendor updaters actually live. Arbitrium lists **all of them**, grouped by folder the way
+Task Scheduler does, each one a switch. Rows that cost something say so up front — Defender's
+scans, the update orchestrator, System Restore, TRIM — and the handful Windows protects with
+an ACL that turns even an administrator away are shown **locked** with the reason, rather than
+as a switch that fails. Every change is journalled and reverts like any other.
+
 ### 📦 Debloat that reads your actual machine
 
 The Apps page doesn't guess from a hardcoded list of app names. It asks Windows which packages were
@@ -83,6 +93,17 @@ Remove Edge, OneDrive, or Widgets. Empty temp folders and the component store. R
 cache. Switch DNS to Cloudflare, Google, or Quad9 in one click. Add the hidden **Ultimate
 Performance** power plan. Each one tells you up front whether it can be undone — and shows you the
 script.
+
+### 🧹 A disk cleaner that measures before it deletes
+
+Sixteen targets in four groups — Windows' temp and update caches, servicing logs, crash
+dumps and error reports; this user's temp and Internet cache and the recycle bin; the caches
+of six browsers, GPU shader caches, Discord, Teams, Steam, Spotify and the Store; and, kept
+apart and unchecked, the ones with a cost: Prefetch, a previous Windows installation, old
+restore points and the component store. Each is **measured in the background** first, so the
+number on the row and the figure in the sidebar are what a clean would actually free, not a
+guess. Files in use are skipped and counted, nothing goes through the Recycle Bin, and the
+confirmation lists exactly which targets and how much.
 
 ### 🛡️ Launch anything as TrustedInstaller
 
@@ -122,7 +143,7 @@ being one click from making one, is the part software can honestly do for you.
 
 ## Every word, in ten languages
 
-Not just the buttons — **everything**. All 407 tweak names and descriptions, every service state,
+Not just the buttons — **everything**. All 408 tweak names and descriptions, every service state,
 every action, every label on the dashboard, every line in the log.
 
 🇹🇷 Türkçe · 🇬🇧 English · 🇩🇪 Deutsch · 🇫🇷 Français · 🇪🇸 Español · 🇮🇹 Italiano · 🇵🇹 Português · 🇵🇱 Polski · 🇷🇺 Русский · 🇸🇦 العربية

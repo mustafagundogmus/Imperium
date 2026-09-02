@@ -283,7 +283,8 @@
         }
        ],
        "applied": false,
-       "on": false
+       "on": false,
+       "minBuild": 26100
       },
       {
        "id": "wu-notepad-ai",
@@ -305,7 +306,7 @@
       {
        "id": "ai-copilot-off",
        "name": "Windows Copilot",
-       "desc": "Copilot'u ilke ile kapatır; görev çubuğu düğmesi ve kısayolu çalışmaz. Windows 11 içindir.",
+       "desc": "Copilot'u ilke ile kapatır; görev çubuğu düğmesi ve kısayolu çalışmaz. Yalnızca 22H2/23H2'nin kenar çubuğu Copilot'u için: 24H2'deki Mağaza uygulaması bu ilkeyi okumaz, orada Uygulamalar sayfasından kaldırılır.",
        "reg": [
         {
          "hive": "HKCU",
@@ -317,7 +318,9 @@
         }
        ],
        "applied": false,
-       "on": false
+       "on": false,
+       "minBuild": 22621,
+       "maxBuild": 22631
       },
       {
        "id": "ai-recall-off",
@@ -2996,20 +2999,39 @@
       },
       {
        "id": "vis-02-16017",
-       "name": "Ayarlar giriş sayfası",
-       "desc": "Ayarlar uygulamasındaki öneri dolu giriş sayfasını gizler.",
+       "name": "Ayarlar'da gizlenen sayfalar",
+       "desc": "Ayarlar uygulamasının öneri dolu Giriş sayfasını ve/veya 24H2 ile gelen 'Yapay zekâ bileşenleri' sayfasını ilke ile gizler. Tek bir ilke değeri olduğundan seçenekler birbirini dışlar; eski sürümler tanımadığı sayfa adını yok sayar.",
        "reg": [
         {
          "hive": "HKLM",
          "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
          "value": "SettingsPageVisibility",
          "type": "SZ",
-         "on": "hide:home",
-         "off": "DELETE"
+         "on": "",
+         "off": ""
         }
        ],
        "applied": false,
-       "on": false
+       "on": false,
+       "options": [
+        {
+         "label": "Varsayılan",
+         "data": "DELETE"
+        },
+        {
+         "label": "Giriş sayfası gizli",
+         "data": "hide:home"
+        },
+        {
+         "label": "Yapay zekâ bileşenleri gizli",
+         "data": "hide:aicomponents"
+        },
+        {
+         "label": "İkisi de gizli",
+         "data": "hide:home;aicomponents"
+        }
+       ],
+       "default": 0
       },
       {
        "id": "vis-03-14613",
@@ -3516,6 +3538,23 @@
          "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
          "value": "DisableOneSettingsDownloads",
          "type": "DWORD",
+         "on": "1",
+         "off": "DELETE"
+        }
+       ],
+       "applied": false,
+       "on": false
+      },
+      {
+       "id": "wu-WPFTweaksPowershell7Tele",
+       "name": "PowerShell 7 telemetrisi",
+       "desc": "POWERSHELL_TELEMETRY_OPTOUT makine ortam değişkenini yazarak PowerShell 7'nin (Windows PowerShell 5.1 değil) Microsoft'a kullanım verisi göndermesini kapatır. Yeni açılan süreçlerin görmesi için oturumu kapatıp açmak gerekir; PowerShell 7 kurulu değilse hiçbir şey yapmaz.",
+       "reg": [
+        {
+         "hive": "HKLM",
+         "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment",
+         "value": "POWERSHELL_TELEMETRY_OPTOUT",
+         "type": "SZ",
          "on": "1",
          "off": "DELETE"
         }
@@ -5579,7 +5618,7 @@
          "value": "InitialKeyboardIndicators",
          "type": "SZ",
          "on": "2",
-         "off": "0"
+         "off": "2147483648"
         },
         {
          "hive": "HKCU",
@@ -5587,7 +5626,7 @@
          "value": "InitialKeyboardIndicators",
          "type": "SZ",
          "on": "2",
-         "off": "0"
+         "off": "2147483648"
         }
        ],
        "applied": false,
@@ -5620,6 +5659,12 @@
      ]
     }
    ]
+  },
+  {
+   "id": "task",
+   "name": "Zamanlanmış görevler",
+   "icon": "M6 1.6a4.4 4.4 0 100 8.8 4.4 4.4 0 000-8.8M6 3.4V6l1.9 1.2",
+   "sections": []
   },
   {
    "id": "exp",
@@ -6108,7 +6153,7 @@
          "value": "System.IsPinnedToNameSpaceTree",
          "type": "DWORD",
          "on": "0",
-         "off": "1"
+         "off": "DELETE"
         }
        ],
        "applied": false,
@@ -6487,7 +6532,7 @@
       {
        "id": "wu-WPFTweaksRevertStartMenu",
        "name": "Başlat menüsü eski düzeni",
-       "desc": "Windows'un yeni Başlat menüsü yerine eski düzeni geri getirir.",
+       "desc": "24H2/25H2'ye dağıtılan yeni Başlat menüsü düzeni yerine eskisini geri getirir. Bir özellik bayrağı geçersiz kılmasıdır: Microsoft bayrağı kaldırdıkça etkisini yitirir ve yeni derlemelerde çalışmayabilir. Yeniden başlatma gerekir.",
        "reg": [
         {
          "hive": "HKLM",
@@ -6499,7 +6544,8 @@
         }
        ],
        "applied": false,
-       "on": false
+       "on": false,
+       "minBuild": 26100
       },
       {
        "id": "wu-WPFToggleStartMenuRecommendations",
@@ -6532,7 +6578,8 @@
         }
        ],
        "applied": false,
-       "on": false
+       "on": false,
+       "minBuild": 22621
       },
       {
        "id": "wu-WPFToggleBingSearch",
@@ -7835,27 +7882,51 @@
       {
        "id": "wu-mpo",
        "name": "Multiplane Overlay (MPO)",
-       "desc": "Katman birleştirmeyi kapatır; bazı ekran kartlarında görülen titreme ve siyah ekran sorunlarını giderir.",
+       "desc": "DWM'nin görüntü katmanlarını ekran kartına birleştirtmesini kapatır; bazı kartlardaki titreme, siyah ekran ve VRR sorunlarını giderir. 'Uyumluluk kipi' yalnız OverlayTestMode yazar ve çoğu makinede yeter; 'Tamamen kapalı' sürücü düzeyinde de kapatır — 25H2'de gerekebilir, bazı AMD kartlarda tam ekran oyunlarda titreme bildirilmiştir. Yeniden başlatma gerekir.",
        "reg": [
         {
          "hive": "HKLM",
          "path": "SOFTWARE\\Microsoft\\Windows\\Dwm",
          "value": "OverlayTestMode",
          "type": "DWORD",
-         "on": "5",
-         "off": "DELETE"
+         "on": "",
+         "off": ""
         },
         {
          "hive": "HKLM",
          "path": "SYSTEM\\CurrentControlSet\\Control\\GraphicsDrivers",
          "value": "DisableOverlays",
          "type": "DWORD",
-         "on": "1",
-         "off": "DELETE"
+         "on": "",
+         "off": ""
         }
        ],
        "applied": false,
-       "on": false
+       "on": false,
+       "options": [
+        {
+         "label": "Açık",
+         "data": [
+          "DELETE",
+          "DELETE"
+         ]
+        },
+        {
+         "label": "Uyumluluk kipi",
+         "data": [
+          "5",
+          "DELETE"
+         ]
+        },
+        {
+         "label": "Tamamen kapalı",
+         "data": [
+          "5",
+          "1"
+         ]
+        }
+       ],
+       "default": 0
       }
      ]
     },
@@ -8364,7 +8435,7 @@
       {
        "id": "perf-fso-global",
        "name": "Tam ekran optimizasyonları · genel",
-       "desc": "Windows'un tam ekran oyunları kenarlıksız pencereye çevirmesini kapatır. Gerçek tam ekranda giriş gecikmesi bir kare azalır.",
+       "desc": "Windows'un tam ekran oyunları kenarlıksız pencereye çevirmesini tüm oyunlar için kapatır. Gerçek tam ekranda giriş gecikmesi bir kare azalır; karşılığında Alt+Tab yavaşlar, HDR ve renk yönetimi devre dışı kalır, bazı katman ve hile koruması yazılımları sorun çıkarır. Tek bir oyun için exe'nin Uyumluluk sekmesi daha doğru araçtır.",
        "reg": [
         {
          "hive": "HKCU",
