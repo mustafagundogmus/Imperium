@@ -167,11 +167,16 @@ Arbitrium writes nothing on its behalf.
 
 ### 📊 A dashboard that isn't decoration
 
-Live CPU and memory graphs at one-second resolution, alongside **28 blocks** of the machine facts
+Live CPU and memory graphs at one-second resolution, alongside **30 blocks** of the machine facts
 you actually go looking for: activation state, Secure Boot, TPM, BIOS and SMBIOS, core isolation,
 uptime, pending restarts and *why*, last restore point, every network adapter, every volume — plus
 BitLocker and SMART per drive, Windows Update state, driver problems, privacy posture,
-virtualisation, accounts, sensors and the last bugcheck code.
+virtualisation, accounts and the last bugcheck code. Sensors read what the machine actually
+exposes: the ACPI thermal zone, the GPU's temperature, fan, load, VRAM, power draw and PCIe link
+through the NVIDIA driver (load and VRAM through Windows' own counters on any card), and battery
+health, cycles and chemistry through `powercfg`'s report on laptops whose firmware skips the WMI
+battery classes. A protection block reads every antivirus the Security Center knows, Defender's
+signatures and last scan, tamper protection, and the firewall per profile.
 
 Nothing here blocks the window. The heavy reads arrive in three stages behind the page, and a
 value that genuinely cannot be read says so rather than guessing. Reading the machine creates

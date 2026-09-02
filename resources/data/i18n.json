@@ -2999,6 +2999,42 @@
   "ru": "Рекламный идентификатор",
   "tr": "Reklam kimliği"
  },
+ "deep.antivirus": {
+  "ar": "مكافح الفيروسات",
+  "de": "Virenschutz",
+  "en": "Antivirus",
+  "es": "Antivirus",
+  "fr": "Antivirus",
+  "it": "Antivirus",
+  "pl": "Antywirus",
+  "pt": "Antivírus",
+  "ru": "Антивирус",
+  "tr": "Antivirüs"
+ },
+ "deep.avOutOfDate": {
+  "ar": "غير محدَّث",
+  "de": "veraltet",
+  "en": "out of date",
+  "es": "desactualizado",
+  "fr": "obsolète",
+  "it": "non aggiornato",
+  "pl": "nieaktualny",
+  "pt": "desatualizado",
+  "ru": "устарел",
+  "tr": "güncel değil"
+ },
+ "deep.avSnoozed": {
+  "ar": "مؤجَّل",
+  "de": "pausiert",
+  "en": "snoozed",
+  "es": "en pausa",
+  "fr": "en pause",
+  "it": "sospeso",
+  "pl": "uśpiony",
+  "pt": "em pausa",
+  "ru": "приостановлен",
+  "tr": "ertelendi"
+ },
  "deep.batteryCapacity": {
   "ar": "%1٪ (%2 / %3 mWh)",
   "de": "%1 % (%2 / %3 mWh)",
@@ -3010,6 +3046,18 @@
   "pt": "%1% (%2 / %3 mWh)",
   "ru": "%1 % (%2 / %3 mWh)",
   "tr": "%%1 (%2 / %3 mWh)"
+ },
+ "deep.batteryChemistry": {
+  "ar": "البطارية",
+  "de": "Akku",
+  "en": "Battery",
+  "es": "Batería",
+  "fr": "Batterie",
+  "it": "Batteria",
+  "pl": "Bateria",
+  "pt": "Bateria",
+  "ru": "Батарея",
+  "tr": "Pil"
  },
  "deep.batteryCycles": {
   "ar": "عدد الدورات",
@@ -3143,6 +3191,18 @@
   "ru": "%1 дн. назад",
   "tr": "%1 gün önce"
  },
+ "deep.defenderOff": {
+  "ar": "Defender لا يعمل",
+  "de": "Defender läuft nicht",
+  "en": "Defender not running",
+  "es": "Defender no se está ejecutando",
+  "fr": "Defender inactif",
+  "it": "Defender non in esecuzione",
+  "pl": "Defender nie działa",
+  "pt": "Defender não está em execução",
+  "ru": "Defender не запущен",
+  "tr": "Defender çalışmıyor"
+ },
  "deep.disk": {
   "ar": "محرك الأقراص",
   "de": "Laufwerk",
@@ -3227,6 +3287,186 @@
   "ru": "Вентилятор",
   "tr": "Fan"
  },
+ "deep.fanCount": {
+  "ar": "%1 أجهزة تبريد",
+  "de": "%1 Kühlgeräte",
+  "en": "%1 cooling devices",
+  "es": "%1 dispositivos de refrigeración",
+  "fr": "%1 dispositifs de refroidissement",
+  "it": "%1 dispositivi di raffreddamento",
+  "pl": "%1 urządzeń chłodzących",
+  "pt": "%1 dispositivos de arrefecimento",
+  "ru": "устройств охлаждения: %1",
+  "tr": "%1 soğutma aygıtı"
+ },
+ "deep.fanNoSpeed": {
+  "ar": "السرعة غير مُبلَّغ عنها",
+  "de": "Drehzahl nicht gemeldet",
+  "en": "speed not reported",
+  "es": "velocidad no informada",
+  "fr": "vitesse non communiquée",
+  "it": "velocità non riportata",
+  "pl": "prędkość nieraportowana",
+  "pt": "velocidade não reportada",
+  "ru": "скорость не сообщается",
+  "tr": "hız bildirilmiyor"
+ },
+ "deep.firewallProfiles": {
+  "ar": "ملفات تعريف جدار الحماية",
+  "de": "Firewall-Profile",
+  "en": "Firewall profiles",
+  "es": "Perfiles del firewall",
+  "fr": "Profils du pare-feu",
+  "it": "Profili del firewall",
+  "pl": "Profile zapory",
+  "pt": "Perfis da firewall",
+  "ru": "Профили брандмауэра",
+  "tr": "Güvenlik duvarı profilleri"
+ },
+ "deep.fw.domain": {
+  "ar": "المجال",
+  "de": "Domäne",
+  "en": "Domain",
+  "es": "Dominio",
+  "fr": "Domaine",
+  "it": "Dominio",
+  "pl": "Domena",
+  "pt": "Domínio",
+  "ru": "Домен",
+  "tr": "Etki alanı"
+ },
+ "deep.fw.private": {
+  "ar": "الخاص",
+  "de": "Privat",
+  "en": "Private",
+  "es": "Privado",
+  "fr": "Privé",
+  "it": "Privato",
+  "pl": "Prywatny",
+  "pt": "Privado",
+  "ru": "Частный",
+  "tr": "Özel"
+ },
+ "deep.fw.public": {
+  "ar": "العام",
+  "de": "Öffentlich",
+  "en": "Public",
+  "es": "Público",
+  "fr": "Public",
+  "it": "Pubblico",
+  "pl": "Publiczny",
+  "pt": "Público",
+  "ru": "Общедоступный",
+  "tr": "Genel"
+ },
+ "deep.fwAllOn": {
+  "ar": "مفعّل في الملفات الثلاثة",
+  "de": "In allen drei Profilen aktiv",
+  "en": "On in all three profiles",
+  "es": "Activado en los tres perfiles",
+  "fr": "Activé sur les trois profils",
+  "it": "Attivo in tutti e tre i profili",
+  "pl": "Włączona we wszystkich trzech profilach",
+  "pt": "Ligada nos três perfis",
+  "ru": "Включён во всех трёх профилях",
+  "tr": "Üç profilde de açık"
+ },
+ "deep.fwOff": {
+  "ar": "%1: معطّل",
+  "de": "%1: aus",
+  "en": "%1: off",
+  "es": "%1: desactivado",
+  "fr": "%1 : désactivé",
+  "it": "%1: disattivato",
+  "pl": "%1: wyłączona",
+  "pt": "%1: desligada",
+  "ru": "%1: выключен",
+  "tr": "%1: kapalı"
+ },
+ "deep.gpuClock": {
+  "ar": "تردد النواة",
+  "de": "Kerntakt",
+  "en": "Core clock",
+  "es": "Reloj del núcleo",
+  "fr": "Fréquence cœur",
+  "it": "Clock core",
+  "pl": "Taktowanie rdzenia",
+  "pt": "Relógio do núcleo",
+  "ru": "Частота ядра",
+  "tr": "Çekirdek saati"
+ },
+ "deep.gpuFan": {
+  "ar": "مروحة GPU",
+  "de": "GPU-Lüfter",
+  "en": "GPU fan",
+  "es": "Ventilador de la GPU",
+  "fr": "Ventilateur GPU",
+  "it": "Ventola GPU",
+  "pl": "Wentylator GPU",
+  "pt": "Ventoinha da GPU",
+  "ru": "Вентилятор GPU",
+  "tr": "GPU fanı"
+ },
+ "deep.gpuMemory": {
+  "ar": "VRAM",
+  "de": "VRAM",
+  "en": "VRAM",
+  "es": "VRAM",
+  "fr": "VRAM",
+  "it": "VRAM",
+  "pl": "VRAM",
+  "pt": "VRAM",
+  "ru": "VRAM",
+  "tr": "VRAM"
+ },
+ "deep.gpuPcie": {
+  "ar": "الوصلة",
+  "de": "Anbindung",
+  "en": "Link",
+  "es": "Enlace",
+  "fr": "Liaison",
+  "it": "Collegamento",
+  "pl": "Łącze",
+  "pt": "Ligação",
+  "ru": "Шина",
+  "tr": "Bağlantı"
+ },
+ "deep.gpuPower": {
+  "ar": "استهلاك الطاقة",
+  "de": "Leistungsaufnahme",
+  "en": "Power draw",
+  "es": "Consumo",
+  "fr": "Consommation",
+  "it": "Assorbimento",
+  "pl": "Pobór mocy",
+  "pt": "Consumo",
+  "ru": "Потребление",
+  "tr": "Güç çekimi"
+ },
+ "deep.gpuTemp": {
+  "ar": "حرارة GPU",
+  "de": "GPU-Temperatur",
+  "en": "GPU temperature",
+  "es": "Temperatura de la GPU",
+  "fr": "Température GPU",
+  "it": "Temperatura GPU",
+  "pl": "Temperatura GPU",
+  "pt": "Temperatura da GPU",
+  "ru": "Температура GPU",
+  "tr": "GPU sıcaklığı"
+ },
+ "deep.gpuUtil": {
+  "ar": "الحمل",
+  "de": "Auslastung",
+  "en": "Load",
+  "es": "Carga",
+  "fr": "Charge",
+  "it": "Carico",
+  "pl": "Obciążenie",
+  "pt": "Carga",
+  "ru": "Загрузка",
+  "tr": "Kullanım"
+ },
  "deep.guest": {
   "ar": "الضيف",
   "de": "Gast",
@@ -3250,6 +3490,18 @@
   "pt": "Saudável",
   "ru": "Исправен",
   "tr": "İyi"
+ },
+ "deep.inUse": {
+  "ar": "%1 قيد الاستخدام",
+  "de": "%1 belegt",
+  "en": "%1 in use",
+  "es": "%1 en uso",
+  "fr": "%1 utilisés",
+  "it": "%1 in uso",
+  "pl": "%1 w użyciu",
+  "pt": "%1 em uso",
+  "ru": "используется %1",
+  "tr": "%1 kullanımda"
  },
  "deep.inkTyping": {
   "ar": "الحبر والكتابة",
@@ -3298,6 +3550,18 @@
   "pt": "Última falha",
   "ru": "Последний сбой",
   "tr": "Son çökme"
+ },
+ "deep.lastScan": {
+  "ar": "آخر فحص سريع",
+  "de": "Letzter Schnellscan",
+  "en": "Last quick scan",
+  "es": "Último examen rápido",
+  "fr": "Dernière analyse rapide",
+  "it": "Ultima scansione rapida",
+  "pl": "Ostatnie szybkie skanowanie",
+  "pt": "Última verificação rápida",
+  "ru": "Последняя быстрая проверка",
+  "tr": "Son hızlı tarama"
  },
  "deep.lifeLeft": {
   "ar": "%1٪ من العمر",
@@ -3406,6 +3670,18 @@
   "pt": "Não legível",
   "ru": "Недоступно",
   "tr": "Okunamıyor"
+ },
+ "deep.notReported": {
+  "ar": "غير مُبلَّغ عنه",
+  "de": "Nicht gemeldet",
+  "en": "Not reported",
+  "es": "No informado",
+  "fr": "Non communiqué",
+  "it": "Non riportato",
+  "pl": "Nieraportowane",
+  "pt": "Não reportado",
+  "ru": "Не сообщается",
+  "tr": "Bildirilmiyor"
  },
  "deep.pageFile": {
   "ar": "ملف الترحيل",
@@ -3719,6 +3995,30 @@
   "ru": "Служба",
   "tr": "Hizmet"
  },
+ "deep.signatures": {
+  "ar": "التوقيعات",
+  "de": "Signaturen",
+  "en": "Signatures",
+  "es": "Firmas",
+  "fr": "Signatures",
+  "it": "Firme",
+  "pl": "Sygnatury",
+  "pt": "Assinaturas",
+  "ru": "Сигнатуры",
+  "tr": "İmzalar"
+ },
+ "deep.tamper": {
+  "ar": "الحماية من العبث",
+  "de": "Manipulationsschutz",
+  "en": "Tamper protection",
+  "es": "Protección contra alteraciones",
+  "fr": "Protection contre les altérations",
+  "it": "Protezione antimanomissione",
+  "pl": "Ochrona przed manipulacją",
+  "pt": "Proteção contra adulteração",
+  "ru": "Защита от подделки",
+  "tr": "Kurcalama koruması"
+ },
  "deep.taskDisabled": {
   "ar": "معطّلة",
   "de": "Deaktiviert",
@@ -3850,6 +4150,18 @@
   "pt": "%1/%2 desativadas",
   "ru": "%1/%2 отключено",
   "tr": "%1/%2 kapalı"
+ },
+ "deep.throttled": {
+  "ar": "يجري الخنق الحراري",
+  "de": "wird gedrosselt",
+  "en": "throttling",
+  "es": "limitando",
+  "fr": "bridé",
+  "it": "in throttling",
+  "pl": "dławienie",
+  "pt": "a limitar",
+  "ru": "троттлинг",
+  "tr": "kısılıyor"
  },
  "deep.tpmOwned": {
   "ar": "مملوك",
@@ -7475,6 +7787,18 @@
   "ru": "Прошивка",
   "tr": "Bellenim"
  },
+ "overview.section.graphics": {
+  "ar": "الرسومات · مباشر",
+  "de": "Grafik · live",
+  "en": "Graphics · live",
+  "es": "Gráficos · en vivo",
+  "fr": "Carte graphique · en direct",
+  "it": "Grafica · dal vivo",
+  "pl": "Grafika · na żywo",
+  "pt": "Gráficos · ao vivo",
+  "ru": "Графика · сейчас",
+  "tr": "Ekran kartı · canlı"
+ },
  "overview.section.hardware": {
   "ar": "الأجهزة",
   "de": "Hardware",
@@ -7594,6 +7918,18 @@
   "pt": "Processador",
   "ru": "Процессор",
   "tr": "İşlemci"
+ },
+ "overview.section.protection": {
+  "ar": "الحماية",
+  "de": "Schutz",
+  "en": "Protection",
+  "es": "Protección",
+  "fr": "Protection",
+  "it": "Protezione",
+  "pl": "Ochrona",
+  "pt": "Proteção",
+  "ru": "Защита",
+  "tr": "Koruma"
  },
  "overview.section.security": {
   "ar": "الأمان",

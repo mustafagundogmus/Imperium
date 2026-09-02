@@ -64,6 +64,25 @@ Dönüşüm Kutusu'ndan geçmiyor. Onay, her diğer yıkıcı yüzeyin kullandı
 tam olarak hangi hedeflerin ve ne kadarının gideceğini listeliyor. Sembolik bağlantılar ve
 kavşaklar ne girişte ne çıkışta izleniyor.
 
+#### Genel Bakış: sensörler okunuyor, iki blok daha
+
+Sensörler bloğu bir dizüstünde "okunamıyor" diyordu: üretici yazılımı Windows'un WMI pil
+sınıflarını uygulamıyordu ve ısı bölgesi WMI sınıfı boş dönüyordu. İkisi için de ikinci kapı var.
+Pil sağlığı, döngü sayısı ve kimyası artık `powercfg`'nin pil raporundan okunuyor (aynı kayıtlar,
+pil sürücüsü üzerinden); sıcaklık ACPI ısı bölgesi performans sayacından (onda bir kelvin
+hassasiyetle) geliyor ve bölge işlemciyi kısıyorsa satır bunu söylüyor. Fan satırı "3 soğutma
+aygıtı · hız bildirilmiyor" diyor, çünkü doğru olan bu: Win32_Fan aygıtları sayar, hızını üretici
+sürücüsü olmadan vermez. Sıfır döngü "Bildirilmiyor" olarak yazılıyor; kullanılmış bir pilde sıfır,
+saymayan bir üretici yazılımıdır.
+
+**Ekran kartı · canlı**: kullanım, VRAM, güç çekimi, çekirdek saati ve PCIe bağlantısı — NVIDIA
+sürücüsünün `nvidia-smi`'si üzerinden; kullanım ve VRAM, Windows'un kendi GPU sayaçlarından her
+kartta. GPU sıcaklığı ve fanı Sensörler'e girdi.
+
+**Koruma**: Güvenlik Merkezi'nin bildiği her antivirüs ve durumu (açık, ertelenmiş, güncel değil),
+Defender'ın imza sürümü ve yaşı, son hızlı tarama, kurcalama koruması ve güvenlik duvarının üç
+profili. Blok sayısı 28'den 30'a çıktı; ızgara üçlü satırlara tam bölünüyor.
+
 ### Değiştirildi
 
 #### WinUtil satırları, WinUtil'in değiştirdiklerine karşı

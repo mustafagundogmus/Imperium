@@ -83,6 +83,8 @@ private:
     InfoSection *m_performance = nullptr;
     InfoSection *m_connection = nullptr;
     InfoSection *m_sensors = nullptr;
+    InfoSection *m_graphics = nullptr;
+    InfoSection *m_protection = nullptr;
 
     DeepInfo::Facts m_deep;
 };

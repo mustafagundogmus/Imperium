@@ -122,9 +122,26 @@ struct Facts
 
     // --- sensors, fan & battery health -------------------------------------
     QString cpuTemperature = Unknown;
+    QString gpuTemperature = Unknown;
+    QString gpuFan = Unknown;
+    QString fan = Unknown;
     QString batteryHealth = Unknown;
     QString batteryCycles = Unknown;
-    QString fan = Unknown;
+    QString batteryChemistry = Unknown;
+
+    // --- graphics, live ----------------------------------------------------
+    QString gpuUtilisation = Unknown;
+    QString gpuMemory = Unknown;
+    QString gpuPower = Unknown;
+    QString gpuClock = Unknown;
+    QString gpuPcie = Unknown;
+
+    // --- protection --------------------------------------------------------
+    QString antivirus = Unknown;
+    QString signatures = Unknown;
+    QString lastScan = Unknown;
+    QString tamperProtection = Unknown;
+    QString firewallProfiles = Unknown;
 };
 
 /// Fills a Facts in the background, publishing after each stage.

@@ -862,21 +862,113 @@ try { $style = (@(Get-Disk | Where-Object { $_.IsBoot }) | Select-Object -First 
 $trim = ''
 try { $trim = (fsutil behavior query DisableDeleteNotify) -join ' ' } catch {}
 
-$temp = -1
+$temp = -1; $throttle = 100
 try {
   $tz = Get-CimInstance -Namespace root/WMI -ClassName MSAcpi_ThermalZoneTemperature | Select-Object -First 1
   if ($tz) { $temp = [int](($tz.CurrentTemperature / 10) - 273.15) }
 } catch {}
-$fan = -1
-try { $f = Get-CimInstance Win32_Fan | Select-Object -First 1; if ($f -and $f.DesiredSpeed) { $fan = [int]$f.DesiredSpeed } } catch {}
+# Many machines answer nothing to the WMI thermal class and everything to the ACPI thermal
+# zone performance counter, which is the same sensor by another door. Tenths of a kelvin
+# when the high-precision reading is there, whole kelvins otherwise. PercentPassiveLimit
+# under 100 means the zone is throttling the processor right now.
+if ($temp -le 0) {
+  try {
+    $pc = Get-CimInstance Win32_PerfFormattedData_Counters_ThermalZoneInformation |
+          Where-Object { $_.Temperature -gt 0 } | Select-Object -First 1
+    if ($pc) {
+      $temp = if ($pc.HighPrecisionTemperature -gt 0) { [int](($pc.HighPrecisionTemperature / 10) - 273.15) } else { [int]($pc.Temperature - 273) }
+      if ($pc.PercentPassiveLimit -ne $null) { $throttle = [int]$pc.PercentPassiveLimit }
+    }
+  } catch {}
+}
+$fan = -1; $fanCount = 0
+try {
+  $fans = @(Get-CimInstance Win32_Fan)
+  $fanCount = $fans.Count
+  $f = $fans | Where-Object { $_.DesiredSpeed } | Select-Object -First 1
+  if ($f) { $fan = [int]$f.DesiredSpeed }
+} catch {}
 
-$designCapacity = -1; $fullCapacity = -1; $cycles = -1
+$designCapacity = -1; $fullCapacity = -1; $cycles = -1; $chemistry = ''; $batteryMaker = ''
 try {
   $static = Get-CimInstance -Namespace root/WMI -ClassName BatteryStaticData | Select-Object -First 1
   if ($static) { $designCapacity = [int]$static.DesignedCapacity; $cycles = [int]$static.CycleCount }
   $full = Get-CimInstance -Namespace root/WMI -ClassName BatteryFullChargedCapacity | Select-Object -First 1
   if ($full) { $fullCapacity = [int]$full.FullChargedCapacity }
 } catch {}
+# Plenty of laptop firmware never implements the root\WMI battery classes at all — an MSI
+# answered nothing to them while sitting on a 73 Wh pack. powercfg's battery report reads
+# the same registers through the battery driver, so it is the second door. XML, to a
+# temp file, deleted afterwards; a desktop fails the call and leaves everything at -1.
+if ($designCapacity -le 0) {
+  try {
+    $report = Join-Path $env:TEMP 'arbitrium-battery.xml'
+    & (Join-Path $env:SystemRoot 'System32\powercfg.exe') /batteryreport /xml /output $report 2>$null | Out-Null
+    if (Test-Path $report) {
+      [xml]$doc = Get-Content $report
+      $b = $doc.BatteryReport.Batteries.Battery | Select-Object -First 1
+      if ($b) {
+        $designCapacity = [int]$b.DesignCapacity; $fullCapacity = [int]$b.FullChargeCapacity
+        $cycles = [int]$b.CycleCount; $chemistry = [string]$b.Chemistry; $batteryMaker = [string]$b.Manufacturer
+      }
+      Remove-Item $report -Force -ErrorAction SilentlyContinue
+    }
+  } catch {}
+}
+if (-not $chemistry) {
+  try { $wb = Get-CimInstance Win32_Battery | Select-Object -First 1; if ($wb -and $wb.Chemistry) { $chemistry = [string]$wb.Chemistry } } catch {}
+}
+
+# The graphics card, live. nvidia-smi ships with the NVIDIA driver in System32 and answers
+# temperature, fan, load, memory, power and clocks in one call; nothing else exposes the
+# temperature without a kernel driver. The load and dedicated-memory figures come from
+# Windows' own GPU performance counters as well, which every vendor's driver feeds, so
+# those two rows read on AMD and Intel too.
+$gpu = $null
+$smi = Join-Path $env:SystemRoot 'System32\nvidia-smi.exe'
+if (Test-Path $smi) {
+  try {
+    $line = (& $smi --query-gpu=temperature.gpu,fan.speed,utilization.gpu,memory.used,memory.total,power.draw,clocks.gr,pcie.link.gen.current,pcie.link.width.current --format=csv,noheader,nounits 2>$null | Select-Object -First 1)
+    if ($line) {
+      $p = ($line -split ',') | ForEach-Object { $_.Trim() }
+      if ($p.Count -ge 9) {
+        $gpu = [pscustomobject]@{ temp = $p[0]; fan = $p[1]; util = $p[2]; memUsed = $p[3]; memTotal = $p[4]; power = $p[5]; clock = $p[6]; pcieGen = $p[7]; pcieWidth = $p[8] }
+      }
+    }
+  } catch {}
+}
+$gpuUtil = -1; $gpuMemUsedMB = -1
+try {
+  $eng = @(Get-CimInstance Win32_PerfFormattedData_GPUPerformanceCounters_GPUEngine | Where-Object { $_.Name -like '*engtype_3D*' })
+  if ($eng.Count) { $gpuUtil = [int](($eng | Measure-Object -Property UtilizationPercentage -Sum).Sum) }
+} catch {}
+try {
+  $mem = @(Get-CimInstance Win32_PerfFormattedData_GPUPerformanceCounters_GPUAdapterMemory)
+  if ($mem.Count) { $gpuMemUsedMB = [int64](($mem | Measure-Object -Property DedicatedUsage -Sum).Sum / 1MB) }
+} catch {}
+
+# Protection: every antivirus the Security Center knows, Defender's own signature and scan
+# state, and the firewall per profile. Get-MpComputerStatus throws when the Defender
+# service is not running, which is itself an answer.
+$antivirus = @()
+try {
+  $antivirus = @(Get-CimInstance -Namespace root/SecurityCenter2 -ClassName AntiVirusProduct |
+                 ForEach-Object { [pscustomobject]@{ name = [string]$_.displayName; state = [int]$_.productState } })
+} catch {}
+$defender = $null
+try {
+  $s = Get-MpComputerStatus -ErrorAction Stop
+  $defender = [pscustomobject]@{
+    rtp = [bool]$s.RealTimeProtectionEnabled
+    sigVersion = [string]$s.AntivirusSignatureVersion
+    sigAge = [int]$s.AntivirusSignatureAge
+    quickScan = if ($s.QuickScanEndTime) { $s.QuickScanEndTime.ToString('o') } else { '' }
+    fullScan = if ($s.FullScanEndTime) { $s.FullScanEndTime.ToString('o') } else { '' }
+    tamper = [bool]$s.IsTamperProtected
+  }
+} catch {}
+$firewall = @()
+try { $firewall = @(Get-NetFirewallProfile | ForEach-Object { [pscustomobject]@{ name = [string]$_.Name; on = [bool]$_.Enabled } }) } catch {}
 
 $tpmOwned = ''
 try {
@@ -903,10 +995,20 @@ try {
   partitionStyle = [string]$style
   trim = [string]$trim
   temperature = $temp
+  throttle = $throttle
   fan = $fan
+  fanCount = $fanCount
   batteryDesign = $designCapacity
   batteryFull = $fullCapacity
   batteryCycles = $cycles
+  batteryChemistry = [string]$chemistry
+  batteryMaker = [string]$batteryMaker
+  gpu = $gpu
+  gpuUtil = $gpuUtil
+  gpuMemUsedMB = $gpuMemUsedMB
+  antivirus = $antivirus
+  defender = $defender
+  firewall = $firewall
   tpmOwned = [string]$tpmOwned
   wifi = [string]$wifi
 } | ConvertTo-Json -Compress -Depth 4
@@ -1013,14 +1115,28 @@ void Probe::applyHardware(const QJsonObject &o)
         // --- sensors --------------------------------------------------------
         const int temperature = o.value(QStringLiteral("temperature")).toInt(-1);
         // A thermal zone that reports absolute zero is a zone that is not wired up.
-        if (temperature > 0 && temperature < 150)
+        if (temperature > 0 && temperature < 150) {
             m_facts.cpuTemperature = QStringLiteral("%1 °C").arg(temperature);
-        else
+            // The zone's passive limit under 100 means it is holding the processor back.
+            const int throttle = o.value(QStringLiteral("throttle")).toInt(100);
+            if (throttle >= 0 && throttle < 100)
+                m_facts.cpuTemperature += QStringLiteral(" · ") + word("deep.throttled");
+        } else {
             m_facts.cpuTemperature = word("deep.notReadable");
+        }
 
+        // Win32_Fan lists the cooling devices on almost every machine and gives a speed
+        // on almost none — the speed needs the vendor's own driver. "3 cooling devices,
+        // speed not reported" is what is true; "cannot be read" was not.
         const int fan = o.value(QStringLiteral("fan")).toInt(-1);
-        m_facts.fan = fan > 0 ? Locale::tr(QStringLiteral("deep.rpm")).arg(fan)
-                              : word("deep.notReadable");
+        const int fanCount = o.value(QStringLiteral("fanCount")).toInt(0);
+        if (fan > 0)
+            m_facts.fan = Locale::tr(QStringLiteral("deep.rpm")).arg(fan);
+        else if (fanCount > 0)
+            m_facts.fan = Locale::tr(QStringLiteral("deep.fanCount")).arg(fanCount)
+                          + QStringLiteral(" · ") + word("deep.fanNoSpeed");
+        else
+            m_facts.fan = word("deep.notReadable");
 
         const int design = o.value(QStringLiteral("batteryDesign")).toInt(-1);
         const int full = o.value(QStringLiteral("batteryFull")).toInt(-1);
@@ -1028,9 +1144,10 @@ void Probe::applyHardware(const QJsonObject &o)
         if (design > 0 && full > 0) {
             // Through the table, because the percent sign goes before the number in
             // Turkish and after it almost everywhere else — the literal here was the
-            // Turkish shape, so nine languages read "%92".
+            // Turkish shape, so nine languages read "%92". Capped at 100: a fresh pack
+            // often reports a full charge a little above its design figure.
             m_facts.batteryHealth = Locale::tr(QStringLiteral("deep.batteryCapacity"))
-                                        .arg(QString::number(qRound(100.0 * full / design)),
+                                        .arg(QString::number(qMin(100, qRound(100.0 * full / design))),
                                              QLocale().toString(full),
                                              QLocale().toString(design));
         } else if (design > 0 || cycleCount > 0) {
@@ -1048,6 +1165,163 @@ void Probe::applyHardware(const QJsonObject &o)
         const int cycles = o.value(QStringLiteral("batteryCycles")).toInt(-1);
         if (cycles > 0)
             m_facts.batteryCycles = QLocale().toString(cycles);
+        else if (design > 0)
+            // The pack answered its capacities and a zero for cycles: firmware that does
+            // not count them, which is common, rather than a battery that was never used.
+            m_facts.batteryCycles = word("deep.notReported");
+        else if (!hasBattery())
+            m_facts.batteryCycles = word("sys.none");
+
+        // Chemistry as powercfg spells it (LION, LiP, NiMH, PbAc) or as Win32_Battery
+        // numbers it (6 is lithium-ion, 8 lithium-polymer), plus who made the pack.
+        {
+            const QString chem = o.value(QStringLiteral("batteryChemistry")).toString().trimmed();
+            const QString maker = o.value(QStringLiteral("batteryMaker")).toString().trimmed();
+            QString name;
+            const QString upper = chem.toUpper();
+            if (upper == QLatin1String("LION") || upper == QLatin1String("LI-ION") || chem == QLatin1String("6"))
+                name = QStringLiteral("Li-ion");
+            else if (upper == QLatin1String("LIP") || upper == QLatin1String("LIPO") || chem == QLatin1String("8"))
+                name = QStringLiteral("Li-Po");
+            else if (upper == QLatin1String("NIMH") || chem == QLatin1String("5"))
+                name = QStringLiteral("NiMH");
+            else if (upper == QLatin1String("NICD") || chem == QLatin1String("4"))
+                name = QStringLiteral("NiCd");
+            else if (upper == QLatin1String("PBAC") || chem == QLatin1String("3"))
+                name = QStringLiteral("Pb");
+            else if (!chem.isEmpty() && chem != QLatin1String("1") && chem != QLatin1String("2"))
+                name = chem;
+            QStringList parts;
+            if (!name.isEmpty())
+                parts << name;
+            if (!maker.isEmpty())
+                parts << maker;
+            if (!parts.isEmpty())
+                m_facts.batteryChemistry = parts.join(QStringLiteral(" · "));
+            else if (!hasBattery())
+                m_facts.batteryChemistry = word("sys.none");
+        }
+
+        // --- graphics, live ---------------------------------------------------
+        {
+            const QJsonObject gpu = o.value(QStringLiteral("gpu")).toObject();
+            auto number = [&gpu](const char *key) -> double {
+                bool ok = false;
+                const double v = gpu.value(QLatin1String(key)).toString().trimmed().toDouble(&ok);
+                return ok ? v : -1.0;   // "[N/A]" and an empty field both land here
+            };
+            const double gpuTemp = number("temp");
+            if (gpuTemp > 0 && gpuTemp < 150)
+                m_facts.gpuTemperature = QStringLiteral("%1 °C").arg(qRound(gpuTemp));
+            const double gpuFan = number("fan");
+            if (gpuFan >= 0)
+                m_facts.gpuFan = Locale::tr(QStringLiteral("sys.percentValue")).arg(qRound(gpuFan));
+            else if (!gpu.isEmpty())
+                m_facts.gpuFan = word("deep.fanNoSpeed");   // a laptop GPU answers N/A
+
+            // Load: the driver's own figure when NVIDIA gives one, else the 3D engine
+            // counter summed over every process, which is what Task Manager draws.
+            const double smiUtil = number("util");
+            const int counterUtil = o.value(QStringLiteral("gpuUtil")).toInt(-1);
+            if (smiUtil >= 0)
+                m_facts.gpuUtilisation = Locale::tr(QStringLiteral("sys.percentValue")).arg(qRound(smiUtil));
+            else if (counterUtil >= 0)
+                m_facts.gpuUtilisation = Locale::tr(QStringLiteral("sys.percentValue")).arg(qMin(100, counterUtil));
+
+            const double memUsed = number("memUsed");
+            const double memTotal = number("memTotal");
+            const qint64 counterUsedMB = o.value(QStringLiteral("gpuMemUsedMB")).toInteger(-1);
+            auto mib = [](double v) {
+                return QLocale().formattedDataSize(qint64(v * 1024 * 1024), 1, QLocale::DataSizeTraditionalFormat);
+            };
+            if (memUsed >= 0 && memTotal > 0)
+                m_facts.gpuMemory = QStringLiteral("%1 / %2").arg(mib(memUsed), mib(memTotal));
+            else if (counterUsedMB >= 0)
+                m_facts.gpuMemory = Locale::tr(QStringLiteral("deep.inUse")).arg(mib(double(counterUsedMB)));
+
+            const double power = number("power");
+            if (power >= 0)
+                m_facts.gpuPower = QStringLiteral("%1 W").arg(QLocale().toString(power, 'f', 1));
+            const double clock = number("clock");
+            if (clock >= 0)
+                m_facts.gpuClock = QStringLiteral("%1 MHz").arg(qRound(clock));
+            const double gen = number("pcieGen");
+            const double width = number("pcieWidth");
+            if (gen > 0 && width > 0)
+                m_facts.gpuPcie = QStringLiteral("PCIe %1 ×%2").arg(qRound(gen)).arg(qRound(width));
+        }
+
+        // --- protection -------------------------------------------------------
+        {
+            // productState is three bytes: the middle one carries 0x10 for "on" and 0x20
+            // for "snoozed", the low one 0x10 for "definitions out of date".
+            const QJsonArray products = o.value(QStringLiteral("antivirus")).toArray();
+            QStringList lines;
+            for (const QJsonValue &pv : products) {
+                const QJsonObject p = pv.toObject();
+                const QString name = p.value(QStringLiteral("name")).toString().trimmed();
+                if (name.isEmpty())
+                    continue;
+                const int state = p.value(QStringLiteral("state")).toInt(0);
+                QString line = name + QStringLiteral(" · ");
+                if (state & 0x1000)
+                    line += word("sys.acik");
+                else if (state & 0x2000)
+                    line += word("deep.avSnoozed");
+                else
+                    line += word("sys.kapali");
+                if (state & 0x10)
+                    line += QStringLiteral(" · ") + word("deep.avOutOfDate");
+                lines << line;
+            }
+            if (!lines.isEmpty())
+                m_facts.antivirus = lines.join(QStringLiteral(" | "));
+
+            const QJsonObject defender = o.value(QStringLiteral("defender")).toObject();
+            if (!defender.isEmpty()) {
+                const QString version = defender.value(QStringLiteral("sigVersion")).toString().trimmed();
+                const int age = defender.value(QStringLiteral("sigAge")).toInt(-1);
+                // The cmdlet answers even when Defender is switched off, with every
+                // field blank and an age of 65535: that is "not reported", not "—".
+                if (!version.isEmpty() && version != QLatin1String("0.0.0.0")) {
+                    m_facts.signatures = version;
+                    if (age >= 0 && age < 10000)
+                        m_facts.signatures += QStringLiteral(" · ")
+                                              + Locale::tr(QStringLiteral("deep.daysAgo")).arg(age);
+                } else {
+                    m_facts.signatures = word("deep.notReported");
+                }
+                const QDateTime quick = QDateTime::fromString(
+                    defender.value(QStringLiteral("quickScan")).toString(), Qt::ISODate);
+                m_facts.lastScan = quick.isValid() ? SysInfo::friendlyDateTime(quick)
+                                                   : word("deep.notReported");
+                m_facts.tamperProtection = defender.value(QStringLiteral("tamper")).toBool()
+                                               ? word("sys.acik") : word("sys.kapali");
+            } else if (!products.isEmpty()) {
+                // Security Center answered, Defender's own cmdlet did not: the service is
+                // not running, which is what a third-party antivirus does to it.
+                m_facts.signatures = word("deep.defenderOff");
+                m_facts.lastScan = word("deep.defenderOff");
+            }
+
+            const QJsonArray profiles = o.value(QStringLiteral("firewall")).toArray();
+            if (!profiles.isEmpty()) {
+                QStringList off;
+                for (const QJsonValue &fv : profiles) {
+                    const QJsonObject f = fv.toObject();
+                    if (f.value(QStringLiteral("on")).toBool())
+                        continue;
+                    const QString name = f.value(QStringLiteral("name")).toString();
+                    if (name == QLatin1String("Domain"))       off << word("deep.fw.domain");
+                    else if (name == QLatin1String("Private")) off << word("deep.fw.private");
+                    else if (name == QLatin1String("Public"))  off << word("deep.fw.public");
+                    else                                       off << name;
+                }
+                m_facts.firewallProfiles = off.isEmpty()
+                                               ? word("deep.fwAllOn")
+                                               : Locale::tr(QStringLiteral("deep.fwOff")).arg(off.join(QStringLiteral(", ")));
+            }
+        }
 
         // Whether the TPM has an owner, which is the half of "you have a TPM" that decides
         // whether BitLocker can seal a key to it. The Encryption block has rendered this

@@ -198,6 +198,10 @@ OverviewPage::OverviewPage(SystemMonitor *monitor, QWidget *parent)
                                    Lucide::Wifi, sections);
     m_sensors = new InfoSection(Locale::tr(QStringLiteral("overview.section.sensors")),
                                 Lucide::Thermometer, sections);
+    m_graphics = new InfoSection(Locale::tr(QStringLiteral("overview.section.graphics")),
+                                 Lucide::Gauge, sections);
+    m_protection = new InfoSection(Locale::tr(QStringLiteral("overview.section.protection")),
+                                   Lucide::ShieldCheck, sections);
 
     // Three columns rather than the handoff's two: there is a lot to show and the window
     // is wide enough that a third column costs nothing but gains a whole screen of
@@ -209,13 +213,13 @@ OverviewPage::OverviewPage(SystemMonitor *monitor, QWidget *parent)
         m_system,      m_hardware,       m_processor,
         m_user,        m_memory,         m_firmware,
         m_display,     m_storage,        m_network,
-        m_security,    m_privacy,        m_accounts,
-        m_update,      m_integrity,      m_drivers,
-        m_encryption,  m_virtualisation, m_tasks,
-        m_diskHealth,  m_performance,    m_connection,
-        m_power,       m_sensors,        m_software,
-        m_session,     m_processes,      m_locale,
-        m_catalog,
+        m_security,    m_protection,     m_privacy,
+        m_accounts,    m_update,         m_integrity,
+        m_drivers,     m_encryption,     m_virtualisation,
+        m_tasks,       m_diskHealth,     m_performance,
+        m_connection,  m_power,          m_sensors,
+        m_graphics,    m_software,       m_session,
+        m_processes,   m_locale,         m_catalog,
     };
     for (int i = 0; i < order.size(); ++i)
         grid->addWidget(order.at(i), i / 3, i % 3);
@@ -267,6 +271,8 @@ OverviewPage::OverviewPage(SystemMonitor *monitor, QWidget *parent)
         m_performance->setTitle(Locale::tr(QStringLiteral("overview.section.performance")));
         m_connection->setTitle(Locale::tr(QStringLiteral("overview.section.connection")));
         m_sensors->setTitle(Locale::tr(QStringLiteral("overview.section.sensors")));
+        m_graphics->setTitle(Locale::tr(QStringLiteral("overview.section.graphics")));
+        m_protection->setTitle(Locale::tr(QStringLiteral("overview.section.protection")));
 
         // The row labels are rebuilt from the same call that fills them, so a language
         // switch replays both rather than leaving twelve blocks in the old language.
@@ -618,9 +624,28 @@ void OverviewPage::setDeepFacts(const DeepInfo::Facts &facts)
 
     m_sensors->setRows({
         {Locale::tr(QStringLiteral("deep.cpuTemp")), facts.cpuTemperature, true},
+        {Locale::tr(QStringLiteral("deep.gpuTemp")), facts.gpuTemperature, true},
+        {Locale::tr(QStringLiteral("deep.fan")), facts.fan, true},
+        {Locale::tr(QStringLiteral("deep.gpuFan")), facts.gpuFan, true},
         {Locale::tr(QStringLiteral("deep.batteryHealth")), facts.batteryHealth, true},
         {Locale::tr(QStringLiteral("deep.batteryCycles")), facts.batteryCycles, true},
-        {Locale::tr(QStringLiteral("deep.fan")), facts.fan, true},
+        {Locale::tr(QStringLiteral("deep.batteryChemistry")), facts.batteryChemistry, false},
+    });
+
+    m_graphics->setRows({
+        {Locale::tr(QStringLiteral("deep.gpuUtil")), facts.gpuUtilisation, true},
+        {Locale::tr(QStringLiteral("deep.gpuMemory")), facts.gpuMemory, true},
+        {Locale::tr(QStringLiteral("deep.gpuPower")), facts.gpuPower, true},
+        {Locale::tr(QStringLiteral("deep.gpuClock")), facts.gpuClock, true},
+        {Locale::tr(QStringLiteral("deep.gpuPcie")), facts.gpuPcie, true},
+    });
+
+    m_protection->setRows({
+        {Locale::tr(QStringLiteral("deep.antivirus")), facts.antivirus, false},
+        {Locale::tr(QStringLiteral("deep.signatures")), facts.signatures, true},
+        {Locale::tr(QStringLiteral("deep.lastScan")), facts.lastScan, true},
+        {Locale::tr(QStringLiteral("deep.tamper")), facts.tamperProtection, false},
+        {Locale::tr(QStringLiteral("deep.firewallProfiles")), facts.firewallProfiles, false},
     });
 }
 
