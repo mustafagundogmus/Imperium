@@ -4,6 +4,199 @@ Bu dosya sürümler arasındaki dikkate değer değişiklikleri listeler.
 Biçim [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) temellidir ve
 proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
+## [0.14.0] — 2026-09-03
+
+İki yüz altmış bir yeni satır — yüz otuz biri popüler araçların gizlilik ayarlarından, yüz
+otuzu Windows'un kendi ADMX ilke tanımlarından —, ikinci bir arayüz kabuğu, ve katalogdaki
+her satır artık bedelini açıklamanın önünde, renkle söylüyor.
+
+### Eklendi
+
+#### Yüz otuz bir gizlilik satırı
+
+Beş popüler aracın gizlilik ayarları kayıt defteri düzeyinde birleştirildi: privacy.sexy,
+O&O ShutUp10++, Win11Debloat, WinUtil (güncel sürümü ve gizlilik bloğunu henüz silmemiş
+Ocak 2026 sürümü) ve Sophia Script; Optimizer ve Privatezilla da karşılaştırmaya girdi.
+Üç yüz kırk altı ham adaydan zaten katalogda olanlar, hizmet ve zamanlanmış görev satırları
+(bunlar makineden okunuyor), Windows 8 kalıntıları, Internet Explorer ilkeleri ve kendi
+bedelini ödemeye değmeyecek olanlar — Smart App Control'ü kapatan bir "Recall" satırı,
+Windows Update hizmetinin kendisi — elendi. Kalan yüz otuz bir satır on iki grupta:
+
+- **Uygulama izinleri** (26) — kişiler, takvim, e-posta, arama geçmişi, mesajlaşma,
+  görevler, hesap bilgisi, hareket, varlık algılama, göz takibi, radyolar, Bluetooth,
+  Belgeler/Resimler/Videolar/Müzik/İndirilenler, dosya sistemi, bildirimler, ekran
+  yakalama, hücresel veri ve sesle etkinleştirme. Kamera, mikrofon ve konum satırlarının
+  yazdığı aynı `ConsentStore` anahtarı; Ayarlar'daki anahtarlarla bire bir.
+- **Arama ve dizin** (7) — Windows 11'in artık okumadığı `BingSearchEnabled` yerine hâlâ
+  çalışan `DisableSearchBoxSuggestions` ilkesi, arama vurguları, web sonuçları ilkesi,
+  arama verisi paylaşımı, aramanın konum kullanımı, bulut araması ilkesi ve arama
+  kutusundaki Copilot uygunluğu.
+- **Öneriler, ipuçları ve Spotlight** (19) — önerilen uygulamaların sessiz kurulumu,
+  Başlat ve Ayarlar önerileri, kilit ekranı ipuçları, Spotlight ilkeleri, "Bu resim
+  hakkında" simgesi, Önerilen ve Windows Yedekleme bildirim göndericileri, Microsoft 365
+  tanıtımları, Telefon Bağlantısı önerileri; Windows 10 için Meet Now ve Haberler ve ilgi
+  alanları.
+- **Veri toplama** (9) — tanılama verisinde cihaz adı, kurumsal işleme hatları, Edge'in
+  Desktop Analytics verisi, tanılama düzeyi üst sınırı, CEIP yükleme bayrağı, Program
+  Uyumluluk Yardımcısı, hata raporlama ek verisi; lisans telemetrisi ve uyumluluk motoru
+  kırmızı.
+- **Yazma, mürekkep ve konuşma** (8) — kişiselleştirme ilkesi, el yazısı paylaşımı ve hata
+  raporları, dil verisi, konuşma modeli indirme, yazma öngörüleri, dokunmatik klavye
+  tahmini, Gezgin'in web sihirbazları.
+- **Eşitleme ve pano** (12) — ayar eşitleme ilkesi ve sekiz grubunun her biri, pano geçmişi
+  ilkesi, bulut pano, SMS bulut eşitlemesi.
+- **Konum ve sensörler** (6) — konum ilkesi, konum sağlayıcısı, konum betikleri, sensörler,
+  Cihazımı Bul ilkesi, Bluetooth LE reklam yayını.
+- **Yapay zekâ** (4) — Recall anlık görüntü kaydı, Paint'in beş yapay zekâ özelliği, görev
+  çubuğundaki Copilot düğmesi, Click to Do ilkesi.
+- **Microsoft Edge** (25) — telemetri ve metrikler, deneyler, Copilot yan çubuğu ve sayfa
+  bağlamı, yeni sekmede Copilot, geçmişte yapay zekâ araması, Compose ve yapay zekâ
+  temaları, tanıtımlar, yeni sekme içeriği, adres çubuğu önerileri, "sayfada bul" bulut
+  eşleşmeleri, site güvenlik servisi, izleme engelleme, üçüncü taraf çerezler, Takip et,
+  görsel arama, metin tahmini, otomatik doldurma, başlangıç hızlandırma, örtük oturum
+  açma, eşitleme, sekme servisleri, varsayılan tarayıcı istekleri ve dört küçük özellik.
+- **Insider ve deneyler** (4), **Başlat menüsü ve bildirimler** (7), **Diğer bağlantılar**
+  (4) — harita indirme ilkesi, OneDrive'ın oturum öncesi trafiği; NCSI pasif yoklaması ve
+  biyometri çerçevesi kırmızı.
+
+Her satır kendi derlemesine kapılı: Cortana kalıntıları ve canlı kutucuklar gibi Windows 10
+satırları 11'de, Paint ve Recall ilkeleri 24H2'nin altında gri görünür ve nedenini söyler.
+Her satırın adı ve açıklaması on dilde.
+
+#### İkinci bir kabuk: Fluent
+
+Ayarlar > Görünüm > *Arayüz kabuğu*, Dil'in hemen altında, iki konum: **Klasik** — kenar
+çubuğu ve durum çubuğu, her sayfanın içinde tasarlandığı düzen — ve **Fluent**,
+`design_handoff_fluent_ui` teslimatındaki Windows 11 düzeni. Seçim anında uygulanır: sayfalar
+yerinde kalır, etraflarındaki her şey yeniden kurulur.
+
+İkonlar lucide'dan: ray (ev, kaydırıcılar, İngiliz anahtarı, paket, geçmiş, kalkan, dişli),
+kategori bölmesinin her satırı (kategoriler ve araçlar için birer glif) ve tweak satırlarının
+ikon kutusu. Kutudaki glif satırın kendi sözcüklerinden seçiliyor — telemetri için kapalı göz,
+konum için iğne, bildirim için zil, kamera için kamera, ses için hoparlör — ve eşleşme yoksa
+kategorinin glifi kalıyor; katalogda satır başına ikon yok, teslimatta ise var.
+
+Fluent kabuğu teslimatın ölçüleriyle bire bir: 48 piksellik başlık çubuğu (logo, ad, sürüm,
+koyu/açık düğmesi, 46×48 pencere denetimleri, kapatma üzerinde teslimatın kırmızısı), 56
+piksellik ikon rayı (Genel Bakış, Tweakler, Araçlar, Paketler, Geçmiş, Güvenlik; altta dişli),
+232 piksellik kategori bölmesi (Ctrl+K rozetli arama kutusu, KATEGORİLER başlığı, sayılı 36
+piksellik satırlar, altta canlı CPU/RAM/disk sayaçları ve geri yükleme noktasıyla *Sistem
+durumu* kartı), sol üst köşesi yuvarlatılmış `surface` içerik sütunu (ekmek kırıntısı, 28
+piksellik başlık, alt başlık, *Profil* düğmesi, sayılı Tümü / Değiştirilen / Etkin filtresi),
+kart kart gruplanmış tweak listesi (32 piksellik ikon kutusu, 14/12 piksellik ad ve açıklama,
+BEKLİYOR / BU YAPIDA YOK / KİLİTLİ rozetleri, Açık/Kapalı sözcüklü 40×20 Fluent anahtarı,
+220 piksellik kaydırıcı) ve 56 piksellik Uygula çubuğu (bekleyen noktası ve cümlesi, Günlük,
+Vazgeç, Uygula). Her ray girdisi son açılan sayfasını hatırlıyor.
+
+Koyu ve Açık temalarda kabuk teslimatın iki paletini ve mavisini birebir kullanıyor. Diğer
+on temada düzen aynı kalıyor, renkler temadan geliyor: mica temanın penceresi, surface ve
+kart ondan iki adım açık (teslimatın #202020 → #272727 → #2B2B2B basamaklarının oranıyla),
+vurgu senin seçtiğin renk ve mürekkebi klasik kabuğun çözdüğü gibi temanın zeminine karşı
+çözülmüş. Yarı saydam olan her şey — üzerine gelme yıkamaları, kenarlar, soluk metin —
+teslimatın kendisi. Yazı tipi de teslimatın dediği gibi: Segoe UI Variable (yoksa Segoe UI),
+teknik metin için Cascadia Mono (yoksa Consolas). Genel Bakış, Ayarlar, Günlük, temizleyici
+ve diğer sayfalar kabuğun renklerini paletten alıyor; hiçbiri kabuğun değiştiğini bilmiyor.
+
+Kodda dört widget bir `Chrome` arayüzü oldu — `ClassicChrome` eski yerleşim, `FluentChrome`
+yenisi — ve `MainWindow` sayfa yığınını ikisinden biriyle sarıyor. `--shell classic|fluent`
+bir çalışmalık geçersiz kılma; `ARBITRIUM_ASINVOKER` CMake seçeneği yükseltme istemeyen bir
+ekran görüntüsü derlemesi üretiyor, çünkü yönetici olmayan bir kabuktan her görüntü için UAC
+sormak `tools/screenshots.ps1`'in tek engeliydi.
+
+#### Satırın bedeli, satırın önünde
+
+Katalogdaki bir satır artık `risk` alanı taşıyabiliyor: `"cost"`, "açık" konumu bir
+kolaylığı ya da özelliği götürüyorsa — pano geçmişi, bir uygulama izni, Başlat'ın bir
+bölümü; `"unsafe"`, güvenliğe, güncellemelere ya da etkinleştirmeye dokunuyorsa. Satır bu
+sözcüğü açıklamanın önünde, kehribar ya da kırmızı, çiziyor: *Bedeli var · Pano geçmişini
+…*. O&O ShutUp10++'ın tanıdık kıldığı üç renkli şema, üçüncü rengi olmadan: çoğu satır
+rozet taşımıyor, iki rozet de bu sayede okunuyor.
+
+Renkler palet belirteci değil; on iki şemanın her birinde uyarı gibi okunması gerekiyor ve
+Rose ile Sepia'nın ödünç verecek kırmızısı yok. Aile başına bir çift, her biri o ailenin
+pencere ve satır zeminine karşı 4.5:1'i geçecek şekilde seçildi. Rozet, bu derlemede
+geçerli olmayan satırda çizilmiyor: o satırın tek çizgisi gereksinimdir.
+
+Yeni satırların otuz beşi ve mevcut satırların otuz biri etiketlendi — Copilot, Xbox oyun
+kaydı, Script Host, SMBv1, LSA koruması, ayar eşitleme, arka plan uygulamaları, kamera ve
+mikrofon izinleri kehribar; aygıt şifrelemesini engellemek ve Sistem Geri Yükleme'yi kapatmak
+kırmızı. `tools/check-data.py` alandaki yazım hatasını derlemeden önce reddediyor;
+CONTRIBUTING kuralı yazıyor.
+
+#### ADMX'ten yüz otuz satır daha
+
+Windows'un kendi ilke tanımları — `C:\Windows\PolicyDefinitions` altındaki ADMX ve ADML
+dosyaları — internetteki araçların hiçbirinin taramadığı bir kaynak. Yeni `tools/admx-scan.py`
+bu dosyaları okuyor (BOM'lu ve UTF-16 olanlar, ad alanı bozuk WindowsDefender.adml dahil),
+her ilkeyi anahtarı, değeri, açık/kapalı verisi, öğeleri, desteklendiği derleme ve on dildeki
+adı ve açıklamasıyla JSON'a döküyor, ve katalogda ya da karşılaştırılan yedi araçta zaten
+olanları işaretliyor. Geriye kalanlardan ev kullanıcısını ilgilendiren, Windows 10 ve 11'de
+hâlâ okunan ve bir açıklamada anlatılabilecek her şey seçildi: yüz otuz satır, seksen
+beşi rozetsiz, kırk biri kehribar, dördü kırmızı. On altı yeni bölüm " · İlke" son ekini
+taşıyor; gerisi mevcut bölümlere girdi.
+
+- **Başlat ve görev çubuğu** (10) — Başlat'ta "Farklı kullanıcı olarak çalıştır", web sitesi
+  önerileri ve Kategori görünümü; yeni tepsi simgelerinin öne çıkması, klasik balon
+  bildirimleri, bildirim zili, kısaltılmış saat, küçük görev çubuğu düğmeleri, Win+X'te
+  Komut İstemi ve görev çubuğu aramasının dört konumu.
+- **Gezgin ve Denetim Masası** (7) — ağ klasörlerinde simge ve Thumbs.db, şeridin açılış
+  durumu, bulut tabanlı son dosyalar, dizine bağımlı Kitaplık özellikleri, Denetim
+  Masası'nın simge görünümü; ağdan kopyalanan dosyalara Web İşareti kırmızı.
+- **Masaüstü, klavye, ekran ve dokunmatik** (9) — Windows tuşu kısayolları, Alt+Tab'deki
+  tarayıcı sekmeleri, Print Screen'in uygulamalara kaptırılması, "sistem gereksinimleri
+  karşılanmıyor" filigranı, yeni bağlanan ekranın modu, güç menüsünde Hazırda beklet; kenar
+  hareketleri, Windows Ink Çalışma Alanı, el yazısı paneli.
+- **Oturum açma ve hesap** (8) — Hızlı Kullanıcı Değiştirme, ilk oturum animasyonu,
+  uyandırmada parola gecikmesi, yerel hesap güvenlik soruları, oturum açma ekranındaki hesap
+  ayrıntıları, önceki oturum bilgisi, hesap kutucuğu bildirimleri, Windows Hello PIN
+  uzunluğu.
+- **Gizlilik ve bildirimler** (19) — tanılama ayarı değişti bildirimi, OneSettings denetim
+  günlüğü, Güvenli Önyükleme telemetrisi, Başla uygulaması, oturum açışta Copilot kurulumu,
+  üçüncü taraf önerileri, uygulamaların Windows yapay zekâ modellerine ve ön plandaki metne
+  erişimi, Windows Yedekleme ve Erişilebilirlik eşitleme ilkeleri, Push To Install, gizlilik
+  sihirbazı, yapay zekâ aracı bağlayıcıları (MCP), Olay Görüntüleyici'nin çevrimiçi
+  bağlantıları, disk arıza modeli güncellemeleri, pilde dizinleme ve paylaşılan klasör
+  dizinleme; bildirimlerin WNS trafiği ve İşlem Merkezi'nde genişletilmiş bildirimler.
+- **Windows Update ve Teslim İyileştirme** (4) — aylık güncellemelerle gelen özellikler; arka
+  plan bant genişliği, önbellek üst sınırı ve aylık karşıya yükleme sınırı kaydırıcıları.
+- **Defender taramaları** (12) — tarama CPU sınırı ve elle taramalara uygulanması, düşük
+  öncelik, taramadan önce tanım güncelleme, kaçırılan taramayı telafi, USB sürücülerin tam
+  taramaya girmesi, rastgele kaydırma, karantina süresi, tarifeli bağlantıda güncelleme,
+  uzaktan şifreleme ve kaba kuvvet korumaları, Windows Güvenliği tepsi simgesi.
+- **Aygıt kurulumu ve USB** (5) — yeni aygıt için sürücü araması, çıkarılabilir aygıt
+  kurulumu engeli (kırmızı), USB'den program çalıştırma, telefon ve kamera için Otomatik
+  Kullan, indirilen dosyaların risk düzeyi.
+- **Ağ** (9) — güvenlik duvarı bildirimleri, DoH ilkesi, DDR keşfi, akıllı ad çözümleme,
+  eşzamanlı bağlantılar, TCP pencere ölçekleme, Teredo; SMB konuk erişimi ve SMB sıkıştırması.
+- **Şifreleme ve yönetim** (4) — TPM'siz BitLocker, XTS-AES 256, PowerShell yürütme ilkesi,
+  MDM kaydı engeli.
+- **Güç ve pil** (15) — karma uyku (fişte ve pilde), kapak ve güç düğmesi eylemleri, S1–S3
+  bekleme durumları, uyanışta parola, boşta hazırda bekletme, gözetimsiz uyku, uygulamaların
+  uykuyu engellemesi, ağ dosyaları açıkken uyku, diski kapatma; kritik pil eylemi, yedek pil
+  düzeyi, düşük pil bildirimi.
+- **Disk, Installer, bakım ve kapanış** (14) — Depolama Duyarlığı'nın İndirilenler eşiği,
+  S.M.A.R.T. uyarısı, sayfa dosyası şifreleme, Hataya Dayanıklı Yığın; Windows Installer'ın
+  yama önbelleği, günlüğü, geri yükleme noktaları ve her zaman yükseltilmiş kurulum
+  (kırmızı); bakım saati, rastgele gecikme, bakım için uyandırma; eski uzaktan kapatma
+  arayüzü, askıdaki oturum süresi, çevrimdışı Defender taramasında BitLocker anahtarı.
+- **Sistem** (5) — svchost sertleştirmesi, web bağlantılarının uygulamayı açması, Point and
+  Print uyarıları (kırmızı), NTP istemcisi (sunucu seçimi ve saatlik eşitleme) ve NTP
+  sunucusu.
+- **Uzak Masaüstü** (9) — parola kaydetme, ses kalitesi, pano, sunucu kimlik uyarısı, WDDM
+  sürücüsü, H.264 donanım kodlaması ve 4:4:4, UDP, ekran kartı.
+
+Yüz otuz bir aday satır satır sunuldu ve hepsi seçildi; XP döneminden kalan ve Windows 10
+ile 11'in okuduğu gösterilemeyen bir küçük resim önbelleği ilkesi eklenmeden elendi. Her
+satır ilkenin
+kendi `supportedOn` değerine göre derlemeye kapılı, her adı ve açıklaması on dilde, ve
+`tools/check-data.py` on iki denetiminden geçiyor.
+
+### Değiştirildi
+
+- README'deki sayılar: 669 satır, Gizlilik 194.
+- Günlük ve Eylemler sayfaları artık filtre ve sıralama denetimlerini göstermiyor; ikisi de
+  tweak listesi değil, ve denetimler orada hiçbir şeyi süzmüyordu.
+
 ## [0.13.0] — 2026-09-02
 
 İki yeni tıklanacak şey, kataloğun daha önce ifade edemediği bir tweak sınıfı ve bu

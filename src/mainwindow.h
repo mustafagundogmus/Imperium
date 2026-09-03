@@ -8,6 +8,11 @@
 //             ├── ContentHeader
 //             ├── scroll stack      flex — Genel Bakış | tweak list
 //             └── StatusBar         36px
+//
+// That is the classic shell. Since 0.14.0 the four widgets around the stack are one
+// Chrome, and there are two of them — ClassicChrome above, FluentChrome for the Windows
+// 11 layout — chosen from the settings page and swapped live: the pages stay, the chrome
+// around them is rebuilt. See views/chrome.h.
 
 #pragma once
 
@@ -21,7 +26,7 @@
 
 class AboutPage;
 class AppState;
-class ContentHeader;
+class Chrome;
 class CleanerPage;
 class DebloatPage;
 class GodModePage;
@@ -75,6 +80,14 @@ protected:
 
 private:
     void buildUi();
+    /// Builds the shell Theme::shell() names around the page stack, tearing down the one
+    /// before it. Called once from buildUi() and again on every shell switch.
+    void buildChrome();
+    void wireChrome();
+    /// The card's minimum and opening size, which differ per shell.
+    void applyShellMetrics();
+    /// A few seconds of text in the shell's status line, whichever shell it is.
+    void showNotice(const QString &text);
     void syncOverlayGeometry();
     void wire();
     void refreshView();       ///< header + list + stack page
@@ -91,9 +104,7 @@ private:
     SystemMonitor *m_monitor = nullptr;
     QDateTime m_scannedAt;
 
-    TitleBar *m_titleBar = nullptr;
-    Sidebar *m_sidebar = nullptr;
-    ContentHeader *m_header = nullptr;
+    Chrome *m_chrome = nullptr;
     QStackedWidget *m_stack = nullptr;
     SmoothScrollArea *m_overviewScroll = nullptr;
     SmoothScrollArea *m_tweakScroll = nullptr;
@@ -116,7 +127,6 @@ private:
     Updater *m_updater = nullptr;
     OverviewPage *m_overview = nullptr;
     TweakPage *m_tweaks = nullptr;
-    StatusBar *m_statusBar = nullptr;
     ApplyOverlay *m_applyOverlay = nullptr;
 
     bool m_alphabetical = false;

@@ -99,6 +99,11 @@ The rules that reviews actually check:
 - **Say the cost in `desc`.** If disabling it stops something — updates, a driver's
   telemetry that a control panel depends on, Alt+Tab speed — the description says so
   before the benefit, in one or two sentences.
+- **And mark it with `risk`.** A row whose "on" position takes a convenience or a feature
+  away carries `"risk": "cost"`; one that touches security, updates or activation carries
+  `"risk": "unsafe"`. The row draws the word in amber or red ahead of the description. A
+  row that only stops data leaving the machine has no `risk` at all — the badge means
+  something only while most rows do not wear one.
 - **Every row has its ten translations**: `tweak.<id>.name` and `tweak.<id>.desc` in
   `i18n.json`, and `opt.<label>` for every option label that carries a word. The checker
   fails without them.

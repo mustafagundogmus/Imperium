@@ -135,6 +135,75 @@ enum class Persist { Yes, No };
 
 void setAppearance(Appearance a, Persist persist = Persist::Yes);
 
+// ------------------------------------------------------------------ shell ---
+//
+// Which chrome the window wears. Classic is the sidebar-and-status-bar shell every page
+// was designed in; Fluent is the Windows 11 layout from design_handoff_fluent_ui — an
+// icon rail, a category pane, a content column with its own header and an apply bar. The
+// pages are the same widgets under both; only what surrounds them changes, which is why
+// this is a Theme setting rather than a second application.
+//
+// Fluent brings its own two palettes and its own accent, so while it is in force the
+// twelve schemes collapse to their family — a dark pick is Fluent dark, a light pick is
+// Fluent light — and palette(), accent(), accentSoft() and accentInk() answer with the
+// handoff's tokens. The user's own scheme and accent are kept and come back the moment
+// the shell does.
+enum class Shell { Classic, Fluent };
+
+Shell shell();
+void setShell(Shell s, Persist persist = Persist::Yes);
+inline bool fluent() { return shell() == Shell::Fluent; }
+
+QString shellToString(Shell s);
+Shell shellFromString(const QString &name);
+
+/// The card's corner radius under the shell in force: the classic shell is square by
+/// request, the Fluent one is the handoff's 8px.
+int windowRadius();
+
+namespace Fluent {
+
+/// The handoff's design tokens, dark and light. Kept with their alpha: the pane rows, the
+/// hover washes and the control fills are translucent in the design and are painted over
+/// whatever is beneath them, which is how one token reads right on mica, on surface and on
+/// a card. Palette gets opaque composites of the same values for the code that reads a
+/// token as a colour to compare against or to name in a stylesheet.
+struct Tokens
+{
+    QColor desk, mica, surface, card, cardBorder, divider, winBorder;
+    QColor text, textSec, textMuted;
+    QColor subtleHover, rowHover, selected;
+    QColor controlBg, controlBorder, controlHover, iconBg, track;
+    QColor accent, accentSoft, accentText, onAccent, ok;
+    QColor knobOff, toggleOffBorder, closeHover;
+};
+
+/// The tokens for the scheme in force. Dark and Light are the handoff's own two sets,
+/// exactly; any other scheme keeps the Fluent layout and takes its colours from the
+/// scheme — the scheme's window for mica, two lighter steps of it for surface and card,
+/// the user's accent — so that Ocean, Forest and Rose mean something under this shell
+/// rather than collapsing to the one grey.
+const Tokens &tokens();
+const Tokens &tokens(Appearance a);
+/// The handoff's base set by family, untinted.
+const Tokens &tokens(bool light);
+
+// The handoff's fixed measurements. Literal, like Metric:: above: nothing here scales with
+// the font, because the design gives every one of them in pixels.
+inline constexpr int WindowWidth = 1280;
+inline constexpr int WindowHeight = 800;
+inline constexpr int MinWidth = 1100;
+inline constexpr int MinHeight = 680;
+inline constexpr int WindowRadius = 8;
+inline constexpr int TitleBarHeight = 48;
+inline constexpr int RailWidth = 56;
+inline constexpr int PaneWidth = 232;
+inline constexpr int ApplyBarHeight = 56;
+inline constexpr int WindowButtonWidth = 46;
+inline constexpr qreal ContentPadX = 36.0;
+
+} // namespace Fluent
+
 namespace Color {
 
 inline const QColor &Window()          { return palette().window; }
@@ -168,6 +237,21 @@ inline const QColor &IconStroke()      { return palette().iconStroke; }
 
 inline const QColor &OnAccent()        { return palette().onAccent; }
 inline const QColor &ScrollThumb()     { return palette().scrollThumb; }
+
+/// The two colours a tweak row's risk badge is drawn in: amber for a row that costs a
+/// convenience, red for one that is not recommended. Not palette tokens: the badge has
+/// to read as a warning on every one of the twelve schemes, and the rose and sepia
+/// palettes have no red or amber of their own to borrow. Two fixed pairs instead, one
+/// per family, each chosen to clear 4.5:1 against that family's window and hovered-row
+/// grounds — the same floor the text tokens are measured against in theme.cpp.
+inline QColor Warn()
+{
+    return isLightFamily(appearance()) ? QColor(0x9A, 0x62, 0x00) : QColor(0xE3, 0xA8, 0x4C);
+}
+inline QColor Danger()
+{
+    return isLightFamily(appearance()) ? QColor(0xB8, 0x2E, 0x2E) : QColor(0xE8, 0x6B, 0x6B);
+}
 
 } // namespace Color
 
@@ -341,6 +425,11 @@ Q_SIGNALS:
     /// Every metric in the app is derived from the fonts, so a listener has to relayout
     /// as well as repaint.
     void typefaceChanged();
+
+    /// The window has to be rebuilt around the same pages. Fired before typefaceChanged
+    /// and appearanceChanged, which follow it on the same switch — the chrome is replaced
+    /// first, then everything measures and repaints against the new tokens.
+    void shellChanged();
 };
 
 /// Accent presets offered by the design (`accent` prop of the mockup).

@@ -6,7 +6,7 @@
 
 **Your Windows. Your rules.**
 
-A Windows tweaker that shows its work. 408 tweaks, every service, every scheduled task and
+A Windows tweaker that shows its work. 669 tweaks, every service, every scheduled task and
 every startup entry on your machine — as switches. Nothing is written until you press *Apply*,
 and everything that is written is journalled and reversible.
 
@@ -21,7 +21,7 @@ and everything that is written is journalled and reversible.
 
 <br>
 
-<img src="docs/images/privacy.png" width="920" alt="The Privacy category: 46 switches, each with a one-line explanation, in the dark theme">
+<img src="docs/images/privacy.png" width="920" alt="The Privacy category: 177 switches, each with a one-line explanation, in the dark theme">
 
 </div>
 
@@ -62,6 +62,14 @@ someone who got tired of that deal.
 <td align="center"><sub><b>File Explorer</b> · Ocean theme · rows that don't apply to this build are marked</sub></td>
 </tr>
 <tr>
+<td><img src="docs/images/fluent.png" alt="The Fluent shell, dark: icon rail, category pane with a live status card, grouped tweak cards and the apply bar"></td>
+<td><img src="docs/images/fluent-light.png" alt="The Fluent shell, light"></td>
+</tr>
+<tr>
+<td align="center"><sub><b>Fluent shell</b> · dark · the Windows 11 layout, switched from Settings</sub></td>
+<td align="center"><sub><b>Fluent shell</b> · light · same pages, its own two palettes and blue accent</sub></td>
+</tr>
+<tr>
 <td><img src="docs/images/cleaner.png" alt="Disk cleaner page"></td>
 <td><img src="docs/images/debloat.png" alt="Apps page listing preinstalled packages with their real icons"></td>
 </tr>
@@ -79,27 +87,39 @@ someone who got tired of that deal.
 </tr>
 </table>
 
-### ⚙️ 408 tweaks that actually apply here
+### ⚙️ 669 tweaks that actually apply here
 
 Not a generic list scraped from a 2016 forum post. Arbitrium checks each tweak against **your**
 Windows build. A setting Microsoft retired three versions ago isn't quietly presented as a working
 switch — it's shown greyed out, with the reason. Honesty over a longer feature list.
 
+Two shells, one catalogue. The classic sidebar layout every page was designed in, and a
+**Fluent** shell — the Windows 11 layout: an icon rail, a category pane with a live status
+card, grouped tweak cards and an apply bar, in Segoe UI with its own dark and light palettes.
+Switch between them under Settings › Appearance, right under the language; the pages stay, the chrome around them is
+rebuilt on the spot.
+
+The price is stated before the benefit, too. A row whose "on" position takes a convenience
+away — clipboard history, an app permission, a Start section — says **Has a cost** in amber
+ahead of its description; one that touches security, updates or activation says **Not
+recommended** in red. Most rows wear neither, which is what makes the two that do worth
+reading.
+
 | | |
 |---|---|
-| **System** · 69 | Core behaviour, lock screen, sign-in, shell policy, AI and cloud features |
-| **File Explorer** · 60 | Extensions, panes, Home and Gallery, launch target, Start menu |
-| **Privacy** · 46 | Telemetry, diagnostics, advertising ID, activity history, app permissions |
+| **System** · 86 | Core behaviour, lock screen, sign-in, shell policy, AI and cloud features |
+| **File Explorer** · 77 | Extensions, panes, Home and Gallery, launch target, Start menu |
+| **Privacy** · 194 | Telemetry, diagnostics, advertising ID, activity history, app permissions |
 | **Visual Effects** · 35 | Animations, transparency, shadows, thumbnails |
-| **Memory & CPU** · 30 | Paging, caching, prefetch, scheduling, gaming |
-| **Windows Update** · 30 | Deferral, drivers, delivery optimisation, restart behaviour |
-| **Network & Internet** · 28 | DNS, IPv6, Teredo, discovery, metered connections |
-| **Security hardening** · 22 | SMB, LSA, PowerShell logging, legacy protocols, SmartScreen |
-| **Cleanup** · 22 | Storage Sense, temp, component store, event logs |
-| **Startup** · 22 | Sign-in behaviour, Num Lock, lock screen |
+| **Memory & CPU** · 33 | Paging, caching, prefetch, scheduling, gaming |
+| **Windows Update** · 34 | Deferral, drivers, delivery optimisation, restart behaviour |
+| **Network & Internet** · 37 | DNS, IPv6, Teredo, discovery, metered connections |
+| **Security hardening** · 46 | SMB, LSA, PowerShell logging, legacy protocols, SmartScreen |
+| **Cleanup** · 24 | Storage Sense, temp, component store, event logs |
+| **Startup** · 30 | Sign-in behaviour, Num Lock, lock screen |
 | **Context menu** · 20 | Take Ownership, run as different user, cascading power plans, and more |
-| **Advanced** · 16 | The ones with sharp edges |
-| **Power management** · 8 | Sleep, hibernation, USB selective suspend |
+| **Advanced** · 30 | The ones with sharp edges |
+| **Power management** · 23 | Sleep, hibernation, USB selective suspend |
 
 A switch is the simple case. Where Windows offers positions rather than on/off — a service's
 start type, Explorer's launch target, how much of the disk Delivery Optimization may use — the
@@ -201,7 +221,7 @@ being one click from making one, is the part software can honestly do for you.
 
 ## Every word, in ten languages
 
-Not just the buttons — **everything**. All 408 tweak names and descriptions, every service state,
+Not just the buttons — **everything**. All 669 tweak names and descriptions, every service state,
 every action, every label on the dashboard, every line in the log.
 
 🇹🇷 Türkçe · 🇬🇧 English · 🇩🇪 Deutsch · 🇫🇷 Français · 🇪🇸 Español · 🇮🇹 Italiano · 🇵🇹 Português · 🇵🇱 Polski · 🇷🇺 Русский · 🇸🇦 العربية

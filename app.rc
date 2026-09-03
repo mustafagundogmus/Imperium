@@ -8,11 +8,17 @@ IDI_ICON1 ICON "resources/icons/tweaker.ico"
 // generating its asInvoker one, but not enough to embed ours: that path is MSVC-only, and
 // this is a MinGW build. windres puts it where Windows actually looks — resource 1 of
 // type RT_MANIFEST, read before the process is created.
+#ifdef ARBITRIUM_ASINVOKER
+// See the option of the same name in CMakeLists.txt: a screenshot build that runs as
+// whoever started it.
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "resources/Arbitrium.asinvoker.manifest"
+#else
 CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "resources/Arbitrium.manifest"
+#endif
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION     0,13,0,0
-PRODUCTVERSION  0,13,0,0
+FILEVERSION     0,14,0,0
+PRODUCTVERSION  0,14,0,0
 FILEOS          VOS_NT_WINDOWS32
 FILETYPE        VFT_APP
 BEGIN
@@ -23,7 +29,7 @@ BEGIN
             VALUE "CompanyName",      "Arbitrium"
             // Task Manager's "Name" column shows this, not ProductName.
             VALUE "FileDescription",  "Arbitrium"
-            VALUE "FileVersion",      "0.13.0"
+            VALUE "FileVersion",      "0.14.0"
             VALUE "InternalName",     "Arbitrium"
             // MIT asks that the notice travel with every copy; on Windows a copy of the
             // binary alone is the common case, and this is where the shell shows it —
@@ -31,7 +37,7 @@ BEGIN
             VALUE "LegalCopyright",   "Copyright (c) 2026 ShadesOfDeath. MIT License."
             VALUE "OriginalFilename", "Arbitrium.exe"
             VALUE "ProductName",      "Arbitrium"
-            VALUE "ProductVersion",   "0.13.0"
+            VALUE "ProductVersion",   "0.14.0"
         END
     END
     BLOCK "VarFileInfo"

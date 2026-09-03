@@ -180,6 +180,17 @@ QWidget *SettingsPage::buildAppearance()
     auto *accent = new AccentPicker;
     connect(accent, &AccentPicker::picked, this, [](const QColor &c) { Theme::setAccent(c); });
 
+    // The shell: the one choice here that changes the shape of the window around this
+    // page rather than a detail inside it. Second, right under the language, so it is on
+    // the first screen of the page rather than filed under the switches further down —
+    // which is where it was first put, and where nobody found it.
+    auto *shell = new SegmentedControl({Locale::tr(QStringLiteral("settings.shell.classic")),
+                                        Locale::tr(QStringLiteral("settings.shell.fluent"))});
+    shell->setCurrentIndex(Theme::fluent() ? 1 : 0);
+    connect(shell, &SegmentedControl::currentIndexChanged, this, [](int i) {
+        Theme::setShell(i == 1 ? Theme::Shell::Fluent : Theme::Shell::Classic);
+    });
+
     static const char *const ScaleKeys[] = {
         "settings.fontsize.small", "settings.fontsize.normal",
         "settings.fontsize.large", "settings.fontsize.xlarge",
@@ -207,6 +218,9 @@ QWidget *SettingsPage::buildAppearance()
         new SettingRow(Locale::tr(QStringLiteral("settings.language.label")),
                        Locale::tr(QStringLiteral("settings.language.desc")),
                        language, SettingRow::Below),
+        new SettingRow(Locale::tr(QStringLiteral("settings.shell.label")),
+                       Locale::tr(QStringLiteral("settings.shell.desc")),
+                       shell, SettingRow::Below),
         new SettingRow(Locale::tr(QStringLiteral("settings.theme.label")),
                        Locale::tr(QStringLiteral("settings.theme.desc")),
                        themePicker, SettingRow::Below),

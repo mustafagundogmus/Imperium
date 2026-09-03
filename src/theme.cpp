@@ -113,6 +113,55 @@ QString loadFace(const QString &path, const QString &fallback)
 QColor g_accent{0xD2, 0xA7, 0x5A};
 bool g_compact = false;
 Appearance g_appearance = Appearance::Dark;
+Shell g_shell = Shell::Classic;
+
+/// \a over composited onto \a under, source-over at 8 bits — what the raster engine does
+/// with a translucent fill. The Fluent tokens are translucent and the Palette struct is
+/// read as opaque colours (stylesheets take .name(), the ink solver measures contrast), so
+/// the palette below carries each token already laid on the ground it is designed for.
+QColor flatten(const QColor &over, const QColor &under)
+{
+    const int a = over.alpha();
+    const auto mix = [a](int o, int u) { return (o * a + u * (255 - a) + 127) / 255; };
+    return {mix(over.red(), under.red()), mix(over.green(), under.green()),
+            mix(over.blue(), under.blue())};
+}
+
+/// A straight blend, \a t of the way from \a a to \a b.
+QColor mixColors(const QColor &a, const QColor &b, qreal t)
+{
+    t = qBound(0.0, t, 1.0);
+    return QColor::fromRgbF(a.redF() + (b.redF() - a.redF()) * t,
+                            a.greenF() + (b.greenF() - a.greenF()) * t,
+                            a.blueF() + (b.blueF() - a.blueF()) * t);
+}
+
+/// The two families a QFontDatabase lookup can be memoised against. Segoe UI Variable is a
+/// Windows 11 face; on a Windows 10 machine the fallback is the classic Segoe UI, and on a
+/// machine with neither (a test box, Wine) the family names below resolve to whatever Qt
+/// substitutes, which is still a readable sans.
+QString firstInstalled(const QStringList &candidates)
+{
+    for (const QString &family : candidates)
+        if (QFontDatabase::hasFamily(family))
+            return family;
+    return candidates.last();
+}
+
+const QString &fluentSans()
+{
+    static const QString family = firstInstalled({QStringLiteral("Segoe UI Variable Text"),
+                                                  QStringLiteral("Segoe UI Variable"),
+                                                  QStringLiteral("Segoe UI")});
+    return family;
+}
+
+const QString &fluentMono()
+{
+    static const QString family = firstInstalled({QStringLiteral("Cascadia Mono"),
+                                                  QStringLiteral("Consolas")});
+    return family;
+}
 
 /// The handoff's palette, lifted.
 ///
@@ -357,8 +406,26 @@ const Palette &sepiaPalette()
 
 } // namespace
 
+static Palette fluentPalette(Appearance a);
+
 const Palette &palette()
 {
+    // Under the Fluent shell the palette is the shell's tokens flattened onto its mica —
+    // the handoff's for Dark and Light, the scheme's own for the other ten — rebuilt
+    // whenever the scheme or the accent it is derived from changes.
+    if (g_shell == Shell::Fluent) {
+        static Palette cached;
+        static Appearance cachedFor = Appearance::Dark;
+        static QColor cachedAccent;
+        static bool valid = false;
+        if (!valid || cachedFor != g_appearance || cachedAccent != g_accent) {
+            cached = fluentPalette(g_appearance);
+            cachedFor = g_appearance;
+            cachedAccent = g_accent;
+            valid = true;
+        }
+        return cached;
+    }
     return palette(g_appearance);
 }
 
@@ -794,6 +861,218 @@ Appearance schemeFromString(const QString &name)
     return Appearance::Dark;   // the default, and the fallback for anything unrecognised
 }
 
+QColor solveInk(Appearance a);   // defined with accentInk() below
+
+namespace Fluent {
+
+// Every value is a literal from design_handoff_fluent_ui/README.md's "Design Tokens".
+const Tokens &tokens(bool light)
+{
+    static const Tokens dark = {
+        QColor(0x10, 0x14, 0x18),                 // desk
+        QColor(0x20, 0x20, 0x20),                 // mica
+        QColor(0x27, 0x27, 0x27),                 // surface
+        QColor(0x2B, 0x2B, 0x2B),                 // card
+        QColor(255, 255, 255, 0x14),              // cardBorder .08
+        QColor(255, 255, 255, 0x0F),              // divider .06
+        QColor(255, 255, 255, 0x1A),              // winBorder .10
+        QColor(0xFF, 0xFF, 0xFF),                 // text
+        QColor(255, 255, 255, 0xB8),              // textSec .72
+        QColor(255, 255, 255, 0x73),              // textMuted .45
+        QColor(255, 255, 255, 0x0F),              // subtleHover .06
+        QColor(255, 255, 255, 0x08),              // rowHover .03
+        QColor(255, 255, 255, 0x14),              // selected .08
+        QColor(255, 255, 255, 0x0F),              // controlBg .06
+        QColor(255, 255, 255, 0x17),              // controlBorder .09
+        QColor(255, 255, 255, 0x1A),              // controlHover .10
+        QColor(255, 255, 255, 0x0F),              // iconBg .06
+        QColor(255, 255, 255, 0x24),              // track .14
+        QColor(0x4C, 0xC2, 0xFF),                 // accent
+        QColor(0x4C, 0xC2, 0xFF, 0x26),           // accentSoft .15
+        QColor(0x8F, 0xDB, 0xFF),                 // accentText
+        QColor(0x00, 0x00, 0x00),                 // onAccent
+        QColor(0x6C, 0xCB, 0x5F),                 // ok
+        QColor(255, 255, 255, 0xC7),              // knobOff .78
+        QColor(255, 255, 255, 0x8C),              // toggleOffBorder .55
+        QColor(0xC4, 0x2B, 0x1C),                 // closeHover
+    };
+    static const Tokens lightTokens = {
+        QColor(0xE4, 0xE8, 0xEE),                 // desk
+        QColor(0xF3, 0xF3, 0xF3),                 // mica
+        QColor(0xF9, 0xF9, 0xF9),                 // surface
+        QColor(0xFF, 0xFF, 0xFF),                 // card
+        QColor(0, 0, 0, 0x14),                    // cardBorder .08
+        QColor(0, 0, 0, 0x0F),                    // divider .06
+        QColor(0, 0, 0, 0x1F),                    // winBorder .12
+        QColor(0x1B, 0x1B, 0x1B),                 // text
+        QColor(0, 0, 0, 0x9E),                    // textSec .62
+        QColor(0, 0, 0, 0x6B),                    // textMuted .42
+        QColor(0, 0, 0, 0x0D),                    // subtleHover .05
+        QColor(0, 0, 0, 0x05),                    // rowHover .02
+        QColor(0, 0, 0, 0x0F),                    // selected .06
+        QColor(255, 255, 255, 0xB3),              // controlBg .70
+        QColor(0, 0, 0, 0x1A),                    // controlBorder .10
+        QColor(255, 255, 255, 0xF2),              // controlHover .95
+        QColor(0, 0, 0, 0x0D),                    // iconBg .05
+        QColor(0, 0, 0, 0x1F),                    // track .12
+        QColor(0x00, 0x5F, 0xB8),                 // accent
+        QColor(0x00, 0x5F, 0xB8, 0x1F),           // accentSoft .12
+        QColor(0x00, 0x5F, 0xB8),                 // accentText
+        QColor(0xFF, 0xFF, 0xFF),                 // onAccent
+        QColor(0x0F, 0x7B, 0x0F),                 // ok
+        QColor(0, 0, 0, 0x99),                    // knobOff .60
+        QColor(0, 0, 0, 0x73),                    // toggleOffBorder .45
+        QColor(0xC4, 0x2B, 0x1C),                 // closeHover
+    };
+    return light ? lightTokens : dark;
+}
+
+/// Dark and Light are the handoff; the other ten schemes are the handoff's structure on the
+/// scheme's own ground. Mica is the scheme's window; surface and card step up from it the
+/// way the handoff's do (#202020 → #272727 → #2B2B2B: 3% and 5% towards the text on a dark
+/// ground, and towards white on a light one); the accent is the user's, with its ink solved
+/// against the scheme's window like the classic shell does, and the text on it chosen by
+/// its luminance. Everything translucent — hovers, borders, the muted text — stays the
+/// handoff's, because those are neutral washes and read the same on any ground.
+static Tokens tintedTokens(Appearance a)
+{
+    const bool light = isLightFamily(a);
+    Tokens t = tokens(light);
+    const Palette &scheme = palette(a);
+    t.mica = scheme.window;
+    if (light) {
+        t.surface = mixColors(scheme.window, QColor(Qt::white), 0.55);
+        t.card = mixColors(scheme.window, QColor(Qt::white), 0.85);
+        t.desk = scheme.window.darker(108);
+    } else {
+        t.surface = mixColors(scheme.window, scheme.textPrimary, 0.035);
+        t.card = mixColors(scheme.window, scheme.textPrimary, 0.055);
+        t.desk = scheme.window.darker(130);
+    }
+    t.accent = g_accent;
+    t.accentSoft = g_accent;
+    t.accentSoft.setAlpha(light ? 0x1F : 0x26);
+    t.accentText = light ? solveInk(a) : g_accent;
+    // WCAG's relative luminance, against the 0.179 that separates black-on from white-on.
+    const auto channel = [](qreal v) { return v <= 0.03928 ? v / 12.92 : std::pow((v + 0.055) / 1.055, 2.4); };
+    const qreal lum = 0.2126 * channel(g_accent.redF()) + 0.7152 * channel(g_accent.greenF())
+                      + 0.0722 * channel(g_accent.blueF());
+    t.onAccent = lum > 0.179 ? QColor(Qt::black) : QColor(Qt::white);
+    return t;
+}
+
+const Tokens &tokens(Appearance a)
+{
+    if (a == Appearance::Dark)
+        return tokens(false);
+    if (a == Appearance::Light)
+        return tokens(true);
+
+    // One derived set per scheme, rebuilt when the accent moves under it. Returned by
+    // reference, so the storage has to outlive the call: an array indexed by the scheme.
+    static Tokens derived[AppearanceCount];
+    static bool valid[AppearanceCount] = {};
+    static QColor derivedFor;
+    if (derivedFor != g_accent) {
+        for (bool &v : valid)
+            v = false;
+        derivedFor = g_accent;
+    }
+    const int i = qBound(0, int(a), AppearanceCount - 1);
+    if (!valid[i]) {
+        derived[i] = tintedTokens(a);
+        valid[i] = true;
+    }
+    return derived[i];
+}
+
+const Tokens &tokens()
+{
+    return tokens(g_appearance);
+}
+
+} // namespace Fluent
+
+/// The Fluent tokens laid onto mica, in the Palette's own slots, so that every page that
+/// was written against the classic tokens — the overview, the settings, the journal, the
+/// cleaner — draws itself in the handoff's colours without knowing the shell changed. The
+/// slot names are the classic design's; the comment beside each says which token it takes.
+static Palette fluentPalette(Appearance a)
+{
+    const Fluent::Tokens &t = Fluent::tokens(a);
+    const QColor ground = t.mica;
+    Palette p;
+    p.window = t.mica;
+    p.surface = flatten(t.controlBg, ground);          // search field, control fills
+    p.surfaceHover = flatten(t.subtleHover, ground);
+    p.surfaceActive = flatten(t.selected, ground);
+    p.tile = t.card;
+
+    p.borderWindow = flatten(t.winBorder, ground);
+    p.borderControl = flatten(t.controlBorder, ground);
+    p.divider = flatten(t.divider, ground);
+    p.dividerSoft = flatten(t.divider, ground);
+    p.tileBorder = flatten(t.cardBorder, ground);
+
+    p.toggleOff = flatten(t.controlBg, ground);
+    p.toggleOffBorder = flatten(t.toggleOffBorder, ground);
+    p.knobOff = flatten(t.knobOff, ground);
+    p.knobOn = t.onAccent;
+
+    p.textPrimary = t.text;
+    p.textSecondary = flatten(t.textSec, ground);
+    p.textStatus = flatten(t.textSec, ground);
+    p.textDesc = flatten(t.textSec, ground);
+    p.textMuted = flatten(t.textMuted, ground);
+    p.textDim = flatten(t.textMuted, ground);
+    p.textFaint = flatten(t.textMuted, ground);
+    p.textFainter = flatten(t.textMuted, ground);
+    p.textMono = t.text;
+    p.placeholder = flatten(t.textMuted, ground);
+    p.iconStroke = flatten(t.textSec, ground);
+
+    p.onAccent = t.onAccent;
+    p.scrollThumb = flatten(QColor(128, 128, 128, 0x59), ground);   // rgba(128,128,128,.35)
+    return p;
+}
+
+Shell shell()
+{
+    return g_shell;
+}
+
+QString shellToString(Shell s)
+{
+    return s == Shell::Fluent ? QStringLiteral("fluent") : QStringLiteral("classic");
+}
+
+Shell shellFromString(const QString &name)
+{
+    return name == QLatin1String("fluent") ? Shell::Fluent : Shell::Classic;
+}
+
+int windowRadius()
+{
+    return g_shell == Shell::Fluent ? Fluent::WindowRadius : Metric::WindowRadius;
+}
+
+void setShell(Shell s, Persist persist)
+{
+    if (persist == Persist::Yes)
+        QSettings().setValue(QStringLiteral("appearance/shell"), shellToString(s));
+    if (s == g_shell)
+        return;
+    g_shell = s;
+
+    // Three signals, in this order. The window rebuilds its chrome on the first; every
+    // style is stale on the second, because font() answers with a different family under
+    // each shell; and the third repaints the tree and rebuilds Qt's own palette.
+    ++g_fontGeneration;
+    Q_EMIT notifier()->shellChanged();
+    Q_EMIT notifier()->typefaceChanged();
+    Q_EMIT notifier()->appearanceChanged();
+}
+
 const Palette &palette(Appearance a)
 {
     switch (a) {
@@ -880,6 +1159,7 @@ void initFonts()
     g_compact = s.value(QStringLiteral("layout/compact"), false).toBool();
     g_fontScale = qBound(0.85, s.value(QStringLiteral("appearance/fontScale"), 1.0).toDouble(), 1.6);
     g_appearance = schemeFromString(s.value(QStringLiteral("appearance/theme")).toString());
+    g_shell = shellFromString(s.value(QStringLiteral("appearance/shell")).toString());
     g_typeface = QString::fromLatin1(
         faceFor(s.value(QStringLiteral("appearance/typeface")).toString())->id);
 
@@ -956,7 +1236,13 @@ QFont font(Family family, qreal px, int weight, qreal letterSpacingEm)
     const FaceTable &t = faces();
 
     QString name;
-    if (family == Family::Sans) {
+    if (g_shell == Shell::Fluent) {
+        // The handoff prototyped in IBM Plex and says so: on Windows the face to ship is
+        // Segoe UI Variable, with Cascadia Mono for the technical text. Neither is
+        // embedded — both are the system's own — so the interface-face setting is left
+        // where it is and comes back with the classic shell.
+        name = family == Family::Sans ? fluentSans() : fluentMono();
+    } else if (family == Family::Sans) {
         if (weight >= Weight::SemiBold)   name = t.sans[3];
         else if (weight >= Weight::Medium) name = t.sans[2];
         else if (weight >= Weight::Text)   name = t.sans[1];
@@ -1048,11 +1334,15 @@ QList<QColor> accentPresets()
 
 QColor accent()
 {
+    if (g_shell == Shell::Fluent)
+        return Fluent::tokens().accent;
     return g_accent;
 }
 
 QColor accentSoft(Appearance a)
 {
+    if (g_shell == Shell::Fluent)
+        return Fluent::tokens(a).accentSoft;
     QColor c = g_accent;
     // The mockup's `accent + "21"` → 13%. On white that wash all but disappears, so the
     // light palette leans on it a little harder to keep the selected row readable.
@@ -1136,8 +1426,20 @@ qreal textFloor(Appearance a)
 
 QColor accentInk()
 {
+    // The handoff names its own ink: #8FDBFF on dark, the accent itself on light, both
+    // solved by its author against its own grounds; a tinted scheme's is solved below.
+    if (g_shell == Shell::Fluent)
+        return Fluent::tokens().accentText;
     if (!isLightFamily(g_appearance))
         return g_accent;
+    return solveInk(g_appearance);
+}
+
+/// The darkened accent that reads as text on \a a's light ground — the loop accentInk()
+/// describes, for any scheme rather than only the one in force, so the Fluent shell can
+/// ask for the ink of the scheme it is tinting with.
+QColor solveInk(Appearance a)
+{
 
     // The default amber #D2A75A is 8.01:1 against this palette's own #17171B window and
     // 2.23:1 against white: on a dark ground it is already ink, on a light one it cannot
@@ -1168,15 +1470,19 @@ QColor accentInk()
     static QColor memoAccent;
     static Appearance memoAppearance = Appearance::Dark;
     static QColor memo;
-    if (memo.isValid() && memoAccent == g_accent && memoAppearance == g_appearance)
+    if (memo.isValid() && memoAccent == g_accent && memoAppearance == a)
         return memo;
 
     const QColor hsv = g_accent.toHsv();
     const int hue = hsv.hue();
     const int sat = qMin(255, int(hsv.saturation() * 1.15));
 
-    const QColor bare = palette(g_appearance).window;
-    const QColor washed = composite(accentSoft(g_appearance), bare);
+    // The wash is written out rather than taken from accentSoft(): under the Fluent shell
+    // that function answers from the tinted tokens, which are what this is computing.
+    const QColor bare = palette(a).window;
+    QColor wash = g_accent;
+    wash.setAlpha(isLightFamily(a) ? 0x30 : 0x21);
+    const QColor washed = composite(wash, bare);
 
     // The same floor as this scheme's text tokens — 4.5:1, or Contrast's 7:1 — because
     // this ink is the selected category's own label, a ticked debloat row's status line
@@ -1187,7 +1493,7 @@ QColor accentInk()
     // at 7:1: the wash is the accent at 19% over the window, so on Contrast's white ground
     // it can be no darker than #CFCFCF even if the user types --accent #000000, and black
     // is 13.3:1 against that.
-    const qreal minRatio = textFloor(g_appearance);
+    const qreal minRatio = textFloor(a);
     int value = int(hsv.value() * 0.62);
     while (value > 0) {
         const QColor ink = QColor::fromHsv(hue, sat, value);
@@ -1197,7 +1503,7 @@ QColor accentInk()
     }
 
     memoAccent = g_accent;
-    memoAppearance = g_appearance;
+    memoAppearance = a;
     memo = QColor::fromHsv(hue, sat, value);
     return memo;
 }

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(Arbitrium VERSION 0.13.0 LANGUAGES CXX)
+project(Arbitrium VERSION 0.14.0 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -85,6 +85,26 @@ set(PROJECT_SOURCES
     src/views/statusbar.h             src/views/statusbar.cpp
     src/views/titlebar.h              src/views/titlebar.cpp
     src/views/tweakpage.h             src/views/tweakpage.cpp
+    src/views/chrome.h
+    src/views/classicchrome.h         src/views/classicchrome.cpp
+
+    # The Fluent shell — design_handoff_fluent_ui. Its own widgets rather than variants of
+    # the classic ones: every measurement differs, and a row that asks "which shell?" on
+    # each line is two rows written on top of each other.
+    src/fluent/fluentchrome.h         src/fluent/fluentchrome.cpp
+    src/fluent/fluenttitlebar.h       src/fluent/fluenttitlebar.cpp
+    src/fluent/iconrail.h             src/fluent/iconrail.cpp
+    src/fluent/categorypane.h         src/fluent/categorypane.cpp
+    src/fluent/fluentheader.h         src/fluent/fluentheader.cpp
+    src/fluent/applybar.h             src/fluent/applybar.cpp
+    src/fluent/fluentcontent.h        src/fluent/fluentcontent.cpp
+    src/fluent/fluentbutton.h         src/fluent/fluentbutton.cpp
+    src/fluent/fluenttoggle.h         src/fluent/fluenttoggle.cpp
+    src/fluent/fluentslider.h         src/fluent/fluentslider.cpp
+    src/fluent/fluentsearchbox.h      src/fluent/fluentsearchbox.cpp
+    src/fluent/fluenttweakrow.h       src/fluent/fluenttweakrow.cpp
+    src/fluent/fluentgroupcard.h      src/fluent/fluentgroupcard.cpp
+    src/fluent/fluenticons.h          src/fluent/fluenticons.cpp
 
     resources/resources.qrc
 )
@@ -92,6 +112,11 @@ set(PROJECT_SOURCES
 # app.rc carries the executable icon and version block; the manifest asks for the elevated
 # token at launch. Listing the manifest as a source is also what stops Qt generating its
 # own asInvoker one — see the comment in the file.
+# A build that does not ask for the elevated token. For taking screenshots and driving the
+# window from a shell that is not an administrator's — nothing else: the catalogue's HKLM
+# half cannot be written from such a build, and it says so on Apply.
+option(ARBITRIUM_ASINVOKER "Embed an asInvoker manifest instead of requireAdministrator" OFF)
+
 if(WIN32)
     list(APPEND PROJECT_SOURCES app.rc)
 
@@ -140,6 +165,11 @@ target_include_directories(Arbitrium PRIVATE src)
 # above and nowhere else. It used to be typed out again in main.cpp, which is how a
 # 0.9.6 build spent its life announcing that 0.9.6 was available to it.
 target_compile_definitions(Arbitrium PRIVATE ARBITRIUM_VERSION="${PROJECT_VERSION}")
+# Reaches app.rc as well: CMake hands the target's definitions to windres, which is what
+# lets the resource script pick the other manifest.
+if(ARBITRIUM_ASINVOKER)
+    target_compile_definitions(Arbitrium PRIVATE ARBITRIUM_ASINVOKER)
+endif()
 
 # Which kind of Qt are we against? Everything below — deployment, runtime linkage,
 # stripping — turns on this one answer.

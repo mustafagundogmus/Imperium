@@ -654,6 +654,13 @@ def check_required_fields(report, catalog):
                     t_where = tweak["id"]
                 for field in ("id", "name", "desc"):
                     require_text(c, "tweak", t_where, tweak, field)
+                # catalog.cpp keeps only the two words TweakRow can draw and drops
+                # anything else without a word, so "costly" or "Cost" is a row that
+                # quietly loses its badge. The badge is the whole point of the field.
+                if "risk" in tweak and tweak["risk"] not in ("cost", "unsafe"):
+                    c.error("tweak", "catalog.json", t_where,
+                            "`risk` is %r; catalog.cpp accepts only \"cost\" or \"unsafe\" "
+                            "and silently drops anything else" % (tweak["risk"],))
                 if not tweak.get("reg"):
                     c.error("tweak", "catalog.json", t_where,
                             "no `reg`; the row would draw a switch that writes nothing")

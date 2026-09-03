@@ -108,6 +108,15 @@ struct Tweak
     bool locked = false;
     QString lockReason;
 
+    // What flipping the row costs, in the three-colour scheme O&O ShutUp10++ made
+    // familiar. Empty for the ordinary case, where "on" only stops data leaving the
+    // machine; "cost" where it also takes a convenience or a feature away (clipboard
+    // history, a Start section, an app permission); "unsafe" where it touches security,
+    // updates or activation. The row draws the word in amber or red ahead of its
+    // description, so the price is read before the benefit rather than found in the
+    // second sentence of a line that has been elided.
+    QString risk;
+
     QString tooltip;                ///< long text that does not belong on a one-line row
 
     /// Set for services and startup entries; see LiveDescription. When it is active,
@@ -139,6 +148,12 @@ struct Section
     QString title;
     QString titleKey;   ///< set instead of \a title by the synthesised sections
     QVector<Tweak> tweaks;
+
+    /// The owning category's id, filled in by the window when it hands a section to the
+    /// list. Only the Fluent rows read it: the handoff gives every row an icon box, and
+    /// the glyph in it is chosen from the row's words with the category as the fallback
+    /// (see fluenticons.h).
+    QString categoryId;
 
     /// Section headings are keyed by their Turkish text rather than by position, so
     /// reordering the catalogue cannot silently repoint a translation at another heading.

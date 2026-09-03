@@ -5,6 +5,7 @@
 #include "../appstate.h"
 #include "../catalog.h"
 #include "../css.h"
+#include "../i18n.h"
 #include "../theme.h"
 
 #include <QPainter>
@@ -29,6 +30,7 @@ TweakRow::TweakRow(const Tweak &tweak, AppState *state, QWidget *parent)
     , m_id(tweak.id)
     , m_name(tweak.displayName())
     , m_desc(tweak.displayDesc())
+    , m_risk(tweak.risk)
     , m_choice(tweak.isChoice || tweak.isRange)
     , m_applicable(tweak.editable())
     , m_requirement(tweak.blockReason())
@@ -199,7 +201,30 @@ void TweakRow::paintEvent(QPaintEvent *)
     // The reason replaces the description rather than crowding in beside it: a row that
     // does nothing here has nothing to explain about what it would do.
     const qreal descTop = top + Css::rowNameLine() + TextGap;
-    Css::drawText(&p, box, Css::baseline(descFont, descTop, Css::rowDescLine()), descFont,
+    const qreal descBaseline = Css::baseline(descFont, descTop, Css::rowDescLine());
+    QRectF descBox = box;
+
+    // A row with a price says so first, in colour, and the description follows on the
+    // same line: "Bedeli var · Pano geçmişini …". The word is the whole badge — a dot or
+    // an icon would need a legend, and the description is already elided at the width
+    // the badge takes, so nothing is hidden that was not hidden before. The badge stays
+    // off a row this build ignores: its line is the requirement, and greying a warning
+    // beside "requires 24H2" would be two reasons competing for one line.
+    if (m_applicable && !m_risk.isEmpty()) {
+        const bool unsafe = m_risk == QLatin1String("unsafe");
+        const QString badge = Locale::tr(unsafe ? QStringLiteral("tweak.risk.unsafe")
+                                                : QStringLiteral("tweak.risk.cost"))
+                              + QStringLiteral(" · ");
+        const qreal badgeW = Css::textWidth(descFont, badge);
+        if (badgeW < textW) {
+            Css::drawText(&p, box, descBaseline, descFont,
+                          unsafe ? Color::Danger() : Color::Warn(), badge, Qt::AlignLeft,
+                          /*elide=*/false);
+            descBox.setLeft(box.left() + badgeW);
+        }
+    }
+
+    Css::drawText(&p, descBox, descBaseline, descFont,
                   m_applicable ? Color::TextDesc() : Color::TextFainter(),
                   m_applicable ? m_desc : m_requirement, Qt::AlignLeft, /*elide=*/true);
 }

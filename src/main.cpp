@@ -498,6 +498,10 @@ int main(int argc, char *argv[])
                                     QStringLiteral("Give a file or folder back to "
                                                    "TrustedInstaller, then exit."),
                                     QStringLiteral("path"));
+    QCommandLineOption shellOption(QStringLiteral("shell"),
+                                   QStringLiteral("Window shell for this run: classic or fluent."),
+                                   QStringLiteral("name"));
+    parser.addOption(shellOption);
     parser.addOption(shotOption);
     parser.addOption(shotDelayOption);
     parser.addOption(selfTestOption);
@@ -528,6 +532,13 @@ int main(int argc, char *argv[])
         Theme::setCompact(true, Theme::Persist::No);
     if (parser.isSet(typefaceOption))
         Theme::setTypeface(parser.value(typefaceOption), Theme::Persist::No);
+    if (parser.isSet(shellOption)) {
+        const QString name = parser.value(shellOption).toLower();
+        if (name == QLatin1String("fluent") || name == QLatin1String("classic"))
+            Theme::setShell(Theme::shellFromString(name), Theme::Persist::No);
+        else
+            qWarning("--shell takes classic or fluent; ignoring '%s'", qUtf8Printable(name));
+    }
     if (parser.isSet(themeOption)) {
         // Named, not "light or else dark": the old test made every misspelling mean dark,
         // so `--theme lite` silently did the opposite of what it asked for.

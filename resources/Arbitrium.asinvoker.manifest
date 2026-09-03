@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Arbitrium writes under HKLM: services, policies, the graphics driver key. Half the
-  catalogue is unreachable from a standard token, so the app asks for the elevated one at
-  launch rather than discovering the problem on the first failed write and offering to
-  restart itself. That is why there is no "run as administrator" row in the settings.
-
-  Qt generates a manifest of its own for Windows executables, with asInvoker. It steps
-  aside when the target already carries a .manifest source file — this one — so the rest
-  of what Qt's manifest declared is repeated here: the Windows 10/11 compatibility GUID
-  and long path awareness, which the catalogue has a tweak for.
+  The manifest of a build configured with ARBITRIUM_ASINVOKER: identical to
+  Arbitrium.manifest except that it runs as whoever started it. Meant for taking the
+  README's screenshots from an unelevated shell, where the UAC prompt would otherwise
+  stop every launch; not for a release.
 -->
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"
           xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
@@ -32,7 +27,7 @@
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
     <security>
       <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
-        <requestedExecutionLevel level="requireAdministrator" uiAccess="false" />
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
       </requestedPrivileges>
     </security>
   </trustInfo>

@@ -529,6 +529,14 @@ void Catalog::load()
                 t.maxBuild = to.value(QStringLiteral("maxBuild")).toInt(0);
                 resolveApplicability(t);
 
+                // Anything but the two words the row knows how to draw is treated as no
+                // badge at all rather than as a third colour: tools/check-data.py refuses
+                // the typo at push time, and at run time a misspelt level is a row that
+                // looks ordinary, not one that looks broken.
+                const QString risk = to.value(QStringLiteral("risk")).toString();
+                if (risk == QLatin1String("cost") || risk == QLatin1String("unsafe"))
+                    t.risk = risk;
+
                 sec.tweaks.append(t);
                 ++m_total;
             }

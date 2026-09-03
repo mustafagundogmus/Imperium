@@ -6,11 +6,14 @@
 #include "i18n.h"
 #include "theme.h"
 #include "tweakengine.h"
-#include "views/contentheader.h"
+#include "fluent/fluentchrome.h"
+#include "views/chrome.h"
+#include "views/classicchrome.h"
 #include "views/overviewpage.h"
 #include "views/sidebar.h"
 #include "settings.h"
 #include "updater.h"
+#include "winpaths.h"
 #include "views/aboutpage.h"
 #include "views/actionpage.h"
 #include "views/cleanerpage.h"
@@ -18,24 +21,23 @@
 #include "views/godmodepage.h"
 #include "views/journalpage.h"
 #include "views/settingspage.h"
-#include "views/statusbar.h"
 #include "widgets/applyoverlay.h"
 #include "widgets/dialog.h"
 #include "widgets/splashscreen.h"
 #include "widgets/updatedialog.h"
-#include "views/titlebar.h"
 #include "views/tilauncherpage.h"
 #include "views/tweakpage.h"
-#include "widgets/searchfield.h"
 #include "widgets/smoothscrollarea.h"
 
 #include <QCoreApplication>
-#include <QPushButton>
-#include <QHBoxLayout>
+#include <QDesktopServices>
+#include <QFileInfo>
+#include <QLayout>
+#include <QProcess>
 #include <QShortcut>
 #include <QTimer>
 #include <QStackedWidget>
-#include <QVBoxLayout>
+#include <QUrl>
 
 namespace {
 
@@ -75,14 +77,13 @@ MainWindow::MainWindow(QWidget *parent)
     buildUi();
     wire();
 
-    setCardMinimumSize({Theme::Metric::WindowWidth, Theme::Metric::WindowHeight});
-    resize(minimumSize());
+    applyShellMetrics();
 
-    m_titleBar->setSystemSummary(SysInfo::titleBarSummary(m_facts));
+    m_chrome->setSystemSummary(SysInfo::titleBarSummary(m_facts));
 
     const auto refreshStatusSummary = [this] {
         const int total = Catalog::instance().totalTweaks();
-        m_statusBar->setSummary(total > 0
+        m_chrome->setSummary(total > 0
                                     ? Locale::tr(QStringLiteral("status.loaded")).arg(total)
                                     : Locale::tr(QStringLiteral("status.emptyCatalog")));
     };
@@ -110,7 +111,7 @@ MainWindow::MainWindow(QWidget *parent)
         // change and stayed there.
         if (m_probe)
             m_probe->retranslate();
-        m_titleBar->setSystemSummary(SysInfo::titleBarSummary(m_facts));
+        m_chrome->setSystemSummary(SysInfo::titleBarSummary(m_facts));
         m_overview->setFacts(m_facts);
         if (m_deepProbe)
             m_deepProbe->retranslate();
@@ -134,6 +135,7 @@ MainWindow::MainWindow(QWidget *parent)
                     m_facts.lastUpdate = hotfix;
                 m_overview->setFacts(m_facts);
                 m_settings->setRestorePoint(restorePoint);
+                m_chrome->setRestorePoint(m_facts.lastRestorePoint);
             });
     m_probe->start();
 
@@ -161,29 +163,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::buildUi()
 {
-    auto *root = new QVBoxLayout(card());
-    root->setContentsMargins(1, 1, 1, 1);   // the card's own 1px border
-    root->setSpacing(0);
-
-    m_titleBar = new TitleBar(card());
-    root->addWidget(m_titleBar);
-
-    auto *row = new QHBoxLayout;
-    row->setContentsMargins(0, 0, 0, 0);
-    row->setSpacing(0);
-    root->addLayout(row, 1);
-
-    m_sidebar = new Sidebar(m_state, card());
-    row->addWidget(m_sidebar);
-
-    auto *main = new QVBoxLayout;
-    main->setContentsMargins(0, 0, 0, 0);
-    main->setSpacing(0);
-    row->addLayout(main, 1);
-
-    m_header = new ContentHeader(card());
-    main->addWidget(m_header);
-
+    // The pages, once. The chrome around them is built last and can be built again.
     m_stack = new QStackedWidget(card());
 
     m_overviewScroll = new SmoothScrollArea(m_stack);
@@ -237,59 +217,133 @@ void MainWindow::buildUi()
     m_stack->addWidget(m_godModeScroll);
     m_stack->addWidget(m_journalScroll);
     m_stack->addWidget(m_aboutScroll);
-    main->addWidget(m_stack, 1);
-
-    m_statusBar = new StatusBar(card());
-    main->addWidget(m_statusBar);
 
     // Sits above the content column, not in a layout: it covers the header, the list and
     // the status bar while a write is running, and leaves the title bar reachable.
     m_applyOverlay = new ApplyOverlay(m_state, card());
     m_applyOverlay->hide();
+
+    buildChrome();
+}
+
+void MainWindow::buildChrome()
+{
+    // The stack is the one thing that survives: it is taken back onto the card before
+    // the old chrome — which may have adopted it into a column of its own — is deleted
+    // with everything it built.
+    if (m_chrome) {
+        m_stack->setParent(card());
+        delete m_chrome;
+        m_chrome = nullptr;
+    }
+    delete card()->layout();
+
+    if (Theme::fluent())
+        m_chrome = new FluentChrome(m_state, this);
+    else
+        m_chrome = new ClassicChrome(m_state, this);
+    m_chrome->build(card(), m_stack);
+    wireChrome();
+
+    // The overlay is a hand-placed child of the card; the chrome's widgets were created
+    // after it and would otherwise sit on top.
+    m_applyOverlay->raise();
+    syncOverlayGeometry();
+
+    m_chrome->setMaximized(isMaximized());
+    m_chrome->setSelected(m_state->selectedCategory());
+    m_chrome->setPending(m_state->pendingCount());
+    m_chrome->setRestorePoint(m_facts.lastRestorePoint);
+    m_chrome->setSystemSummary(SysInfo::titleBarSummary(m_facts));
+    if (m_monitor)
+        m_chrome->setSample(m_monitor->latest());
+    if (m_cleaner && m_cleaner->reclaimableBytes() > 0)
+        m_chrome->setCategoryCount(Sidebar::cleanerId(), m_cleaner->reclaimableText());
+    if (m_debloat && m_debloat->rowCount() > 0)
+        m_chrome->setCategoryCount(Sidebar::debloatId(), QString::number(m_debloat->rowCount()));
+    const int total = Catalog::instance().totalTweaks();
+    m_chrome->setSummary(total > 0 ? Locale::tr(QStringLiteral("status.loaded")).arg(total)
+                                   : Locale::tr(QStringLiteral("status.emptyCatalog")));
+}
+
+void MainWindow::wireChrome()
+{
+    connect(m_chrome, &Chrome::minimizeRequested, this, &QWidget::showMinimized);
+    connect(m_chrome, &Chrome::maximizeToggleRequested, this, &FramelessWindow::toggleMaximize);
+    connect(m_chrome, &Chrome::closeRequested, this, &QWidget::close);
+    connect(this, &FramelessWindow::maximizedChanged, m_chrome, &Chrome::setMaximized);
+
+    connect(m_chrome, &Chrome::categoryActivated, this, &MainWindow::onCategoryActivated);
+    connect(m_chrome, &Chrome::queryChanged, this, &MainWindow::onQueryChanged);
+    connect(m_chrome, &Chrome::filterChanged, this, &MainWindow::onFilterChanged);
+    connect(m_chrome, &Chrome::sortToggled, this, &MainWindow::onSortToggled);
+    connect(m_chrome, &Chrome::applyRequested, this, &MainWindow::onApply);
+    connect(m_chrome, &Chrome::revertRequested, this, &MainWindow::onRevert);
+
+    // The Fluent pane's "Oluştur": the same door the settings page opens — Windows' own
+    // System Protection dialog, since this app deliberately creates no restore point itself.
+    connect(m_chrome, &Chrome::restorePointRequested, this, [] {
+        const QString protection =
+            WinPaths::system32() + QStringLiteral("\\SystemPropertiesProtection.exe");
+        if (!QFileInfo::exists(protection) || !QProcess::startDetached(protection, {}))
+            QDesktopServices::openUrl(QUrl(QStringLiteral("ms-settings:about")));
+    });
+}
+
+void MainWindow::applyShellMetrics()
+{
+    using namespace Theme;
+    const bool fluentShell = Theme::fluent();
+    const QSize minimum = fluentShell ? QSize(Fluent::MinWidth, Fluent::MinHeight)
+                                      : QSize(Metric::WindowWidth, Metric::WindowHeight);
+    const QSize opening = fluentShell ? QSize(Fluent::WindowWidth, Fluent::WindowHeight) : minimum;
+    setCardMinimumSize(minimum);
+
+    // minimumSize() is the card's minimum plus the shadow margins; the difference is the
+    // margin, which the opening size needs added the same way.
+    const QSize margins = minimumSize() - minimum;
+    if (!isMaximized()) {
+        const QSize target = opening + margins;
+        if (width() < target.width() || height() < target.height())
+            resize(qMax(width(), target.width()), qMax(height(), target.height()));
+    }
+}
+
+void MainWindow::showNotice(const QString &text)
+{
+    if (m_chrome)
+        m_chrome->setNotice(text);
 }
 
 void MainWindow::wire()
 {
-    connect(m_titleBar, &TitleBar::minimizeRequested, this, &QWidget::showMinimized);
-    connect(m_titleBar, &TitleBar::maximizeToggleRequested, this, &FramelessWindow::toggleMaximize);
-    connect(m_titleBar, &TitleBar::closeRequested, this, &QWidget::close);
-    connect(this, &FramelessWindow::maximizedChanged, m_titleBar, &TitleBar::setMaximized);
-
-    connect(m_sidebar, &Sidebar::categoryActivated, this, &MainWindow::onCategoryActivated);
-    connect(m_sidebar->search(), &SearchField::textChanged, this, &MainWindow::onQueryChanged);
-
-    connect(m_header, &ContentHeader::filterChanged, this, &MainWindow::onFilterChanged);
-    connect(m_header, &ContentHeader::sortToggled, this, &MainWindow::onSortToggled);
-
-    connect(m_statusBar, &StatusBar::applyRequested, this, &MainWindow::onApply);
     connect(m_applyOverlay, &ApplyOverlay::finished, this, &MainWindow::onApplyFinished);
-    connect(m_applyOverlay, &ApplyOverlay::notice, m_statusBar, &StatusBar::setNotice);
-    connect(m_statusBar, &StatusBar::revertRequested, this, &MainWindow::onRevert);
+    connect(m_applyOverlay, &ApplyOverlay::notice, this, &MainWindow::showNotice);
 
     connect(m_state, &AppState::pendingChanged, this, &MainWindow::refreshCounters);
-    connect(m_settings, &SettingsPage::notice, m_statusBar, &StatusBar::setNotice);
-    connect(m_actions, &ActionPage::notice, m_statusBar, &StatusBar::setNotice);
-    connect(m_tiLauncher, &TiLauncherPage::notice, m_statusBar, &StatusBar::setNotice);
-    connect(m_debloat, &DebloatPage::notice, m_statusBar, &StatusBar::setNotice);
-    connect(m_cleaner, &CleanerPage::notice, m_statusBar, &StatusBar::setNotice);
+    connect(m_settings, &SettingsPage::notice, this, &MainWindow::showNotice);
+    connect(m_actions, &ActionPage::notice, this, &MainWindow::showNotice);
+    connect(m_tiLauncher, &TiLauncherPage::notice, this, &MainWindow::showNotice);
+    connect(m_debloat, &DebloatPage::notice, this, &MainWindow::showNotice);
+    connect(m_cleaner, &CleanerPage::notice, this, &MainWindow::showNotice);
     // The cleaner's sidebar count is a size, not a number of rows: what a clean would
     // free right now, refreshed after every scan — and every clean ends in a scan.
     connect(m_cleaner, &CleanerPage::scanFinished, this, [this] {
         const qint64 bytes = m_cleaner->reclaimableBytes();
-        m_sidebar->setCategoryCount(Sidebar::cleanerId(),
+        m_chrome->setCategoryCount(Sidebar::cleanerId(),
                                     bytes > 0 ? m_cleaner->reclaimableText() : QString());
         if (m_state->selectedCategory() == Sidebar::cleanerId())
             refreshView();
     });
-    connect(m_godMode, &GodModePage::notice, m_statusBar, &StatusBar::setNotice);
-    connect(m_journal, &JournalPage::notice, m_statusBar, &StatusBar::setNotice);
+    connect(m_godMode, &GodModePage::notice, this, &MainWindow::showNotice);
+    connect(m_journal, &JournalPage::notice, this, &MainWindow::showNotice);
     // The scan runs in the background from construction on; if it lands while this page
     // happens to be the one on screen, the header's "N uygulama bulundu" needs a refresh.
     connect(m_debloat, &DebloatPage::scanFinished, this, [this] {
         // Every other sidebar row gets its count from the catalogue at build time; this
         // one only has a number to show once the machine has answered.
         const int found = m_debloat->rowCount();
-        m_sidebar->setCategoryCount(Sidebar::debloatId(),
+        m_chrome->setCategoryCount(Sidebar::debloatId(),
                                     found > 0 ? QString::number(found) : QString());
         if (m_state->selectedCategory() == Sidebar::debloatId())
             refreshView();
@@ -332,7 +386,7 @@ void MainWindow::wire()
                                    .arg(name).arg(changed);
                 if (unknown > 0)
                     text += Locale::tr(QStringLiteral("mw.preset.unknownSkipped")).arg(unknown);
-                m_statusBar->setNotice(text);
+                showNotice(text);
                 refreshView();
             });
 
@@ -354,10 +408,10 @@ void MainWindow::wire()
     });
 
     auto *focusSearch = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_K), this);
-    connect(focusSearch, &QShortcut::activated, this, [this] { m_sidebar->search()->focusField(); });
+    connect(focusSearch, &QShortcut::activated, this, [this] { m_chrome->focusSearch(); });
 
     auto *clearSearch = new QShortcut(QKeySequence(Qt::Key_Escape), this);
-    connect(clearSearch, &QShortcut::activated, this, [this] { m_sidebar->search()->clearText(); });
+    connect(clearSearch, &QShortcut::activated, this, [this] { m_chrome->clearSearch(); });
     // A window shortcut consumes the key before any widget sees a key press, so this one
     // was eating the Escape the apply overlay listens for — the overlay could not be
     // dismissed with the keyboard, and Escape during a run cleared the search box behind
@@ -376,6 +430,21 @@ void MainWindow::wire()
     connect(m_applyOverlay, &ApplyOverlay::visibilityChanged, focusSearch,
             [focusSearch](bool visible) { focusSearch->setEnabled(!visible); });
     focusSearch->setEnabled(!m_applyOverlay->isVisible());
+
+    // The Fluent pane's status card reads the same sampler the overview does.
+    connect(m_monitor, &SystemMonitor::sampled, this, [this](const Sample &sample) {
+        if (m_chrome)
+            m_chrome->setSample(sample);
+    });
+
+    // A shell switch rebuilds the chrome around the same pages, then puts the page that
+    // was on screen back into the new header and list.
+    connect(Theme::notifier(), &Theme::Notifier::shellChanged, this, [this] {
+        buildChrome();
+        applyShellMetrics();
+        refreshView();
+        refreshCounters();
+    });
 }
 
 QVector<Section> MainWindow::visibleSections() const
@@ -400,6 +469,7 @@ QVector<Section> MainWindow::visibleSections() const
         for (const Category &c : catalog.categories()) {
             Section hits;
             hits.title = Locale::tr(QStringLiteral("category.") + c.id);
+            hits.categoryId = c.id;
             for (const Section &s : c.sections)
                 for (const Tweak &t : s.tweaks)
                     if (keep(t) && matches(t, needle))
@@ -419,6 +489,7 @@ QVector<Section> MainWindow::visibleSections() const
             // along on its own.
             Section kept = s;
             kept.tweaks.clear();
+            kept.categoryId = c->id;
             for (const Tweak &t : s.tweaks)
                 if (keep(t))
                     kept.tweaks.append(t);
@@ -456,13 +527,15 @@ void MainWindow::refreshView()
     const bool about = !searching && current == Sidebar::aboutId();
     const bool overview = !searching && category && category->isOverview();
 
-    m_header->setControlsVisible(!overview && !settings && !about && !debloat && !cleaner
-                                 && !tiLauncher && !godMode);
+    // The filter and the sort act on the tweak list and nothing else; the journal and the
+    // actions had been showing them over lists they could not filter.
+    m_chrome->setControlsVisible(!overview && !settings && !about && !debloat && !cleaner
+                                 && !tiLauncher && !godMode && !journal && !actions);
 
     if (about) {
-        m_header->setTitle(Locale::tr(QStringLiteral("sidebar.about")));
-        m_header->setSubtitle(Locale::tr(QStringLiteral("about.subtitle")));
-        m_header->setPendingLabel({});
+        m_chrome->setTitle(Locale::tr(QStringLiteral("sidebar.about")));
+        m_chrome->setSubtitle(Locale::tr(QStringLiteral("about.subtitle")));
+        m_chrome->setPendingLabel({});
         m_stack->setCurrentWidget(m_aboutScroll);
         return;
     }
@@ -470,82 +543,82 @@ void MainWindow::refreshView()
     if (journal) {
         // Re-read on every visit: an apply since the last one will have added to it.
         m_journal->reload();
-        m_header->setTitle(Locale::tr(QStringLiteral("journal.title")));
-        m_header->setSubtitle(m_journal->rowCount() > 0
+        m_chrome->setTitle(Locale::tr(QStringLiteral("journal.title")));
+        m_chrome->setSubtitle(m_journal->rowCount() > 0
                                   ? Locale::tr(QStringLiteral("journal.subtitle"))
                                         .arg(m_journal->rowCount())
                                   : Locale::tr(QStringLiteral("journal.empty.status")));
-        m_header->setPendingLabel({});
+        m_chrome->setPendingLabel({});
         m_stack->setCurrentWidget(m_journalScroll);
         return;
     }
 
     if (actions) {
-        m_header->setTitle(Locale::tr(QStringLiteral("actions.title")));
-        m_header->setSubtitle(Locale::tr(QStringLiteral("actions.subtitle"))
+        m_chrome->setTitle(Locale::tr(QStringLiteral("actions.title")));
+        m_chrome->setSubtitle(Locale::tr(QStringLiteral("actions.subtitle"))
                                   .arg(m_actions->rowCount()));
-        m_header->setPendingLabel({});
+        m_chrome->setPendingLabel({});
         m_stack->setCurrentWidget(m_actionScroll);
         return;
     }
 
     if (tiLauncher) {
-        m_header->setTitle(Locale::tr(QStringLiteral("ti.title")));
-        m_header->setSubtitle(Locale::tr(QStringLiteral("ti.subtitle")));
-        m_header->setPendingLabel({});
+        m_chrome->setTitle(Locale::tr(QStringLiteral("ti.title")));
+        m_chrome->setSubtitle(Locale::tr(QStringLiteral("ti.subtitle")));
+        m_chrome->setPendingLabel({});
         m_stack->setCurrentWidget(m_tiScroll);
         return;
     }
 
     if (godMode) {
-        m_header->setTitle(Locale::tr(QStringLiteral("godmode.title")));
-        m_header->setSubtitle(Locale::tr(QStringLiteral("godmode.subtitle"))
+        m_chrome->setTitle(Locale::tr(QStringLiteral("godmode.title")));
+        m_chrome->setSubtitle(Locale::tr(QStringLiteral("godmode.subtitle"))
                                   .arg(m_godMode->rowCount()));
-        m_header->setPendingLabel({});
+        m_chrome->setPendingLabel({});
         m_stack->setCurrentWidget(m_godModeScroll);
         return;
     }
 
     if (debloat) {
-        m_header->setTitle(Locale::tr(QStringLiteral("sidebar.debloat")));
-        m_header->setSubtitle(m_debloat->scanning()
+        m_chrome->setTitle(Locale::tr(QStringLiteral("sidebar.debloat")));
+        m_chrome->setSubtitle(m_debloat->scanning()
                                   ? Locale::tr(QStringLiteral("debloat.scanning"))
                                   : Locale::tr(QStringLiteral("debloat.subtitle"))
                                         .arg(m_debloat->rowCount())
                                         .arg(m_debloat->removableCount()));
-        m_header->setPendingLabel({});
+        m_chrome->setPendingLabel({});
         m_stack->setCurrentWidget(m_debloatScroll);
         return;
     }
 
     if (cleaner) {
-        m_header->setTitle(Locale::tr(QStringLiteral("sidebar.cleaner")));
-        m_header->setSubtitle(m_cleaner->scanning()
+        m_chrome->setTitle(Locale::tr(QStringLiteral("sidebar.cleaner")));
+        m_chrome->setSubtitle(m_cleaner->scanning()
                                   ? Locale::tr(QStringLiteral("cleaner.scanning"))
                                   : Locale::tr(QStringLiteral("cleaner.subtitle"))
                                         .arg(m_cleaner->rowCount())
                                         .arg(m_cleaner->reclaimableText()));
-        m_header->setPendingLabel({});
+        m_chrome->setPendingLabel({});
         m_stack->setCurrentWidget(m_cleanerScroll);
         return;
     }
 
     if (settings) {
-        m_header->setTitle(Locale::tr(QStringLiteral("sidebar.settings")));
-        m_header->setSubtitle(Locale::tr(QStringLiteral("mw.page.settings.subtitle"))
+        m_chrome->setTitle(Locale::tr(QStringLiteral("sidebar.settings")));
+        m_chrome->setSubtitle(Locale::tr(QStringLiteral("mw.page.settings.subtitle"))
                                   .arg(m_settings->rowCount())
                                   .arg(QCoreApplication::applicationVersion()));
-        m_header->setPendingLabel({});
+        m_chrome->setPendingLabel({});
         m_stack->setCurrentWidget(m_settingsScroll);
         return;
     }
 
     if (overview) {
-        m_header->setTitle(Locale::tr(QStringLiteral("category.") + category->id));
-        m_header->setSubtitle(Locale::tr(QStringLiteral("mw.page.overview.subtitle"))
+        m_chrome->setTitle(Locale::tr(QStringLiteral("category.") + category->id));
+        m_chrome->setSubtitle(Locale::tr(QStringLiteral("mw.page.overview.subtitle"))
                                   .arg(m_facts.computerName,
                                        SysInfo::friendlyDateTime(m_scannedAt).toLower()));
-        m_header->setPendingLabel({});
+        m_chrome->setPendingLabel({});
         m_stack->setCurrentWidget(m_overviewScroll);
         return;
     }
@@ -557,29 +630,34 @@ void MainWindow::refreshView()
         int hits = 0;
         for (const Section &s : sections)
             hits += s.tweaks.size();
-        m_header->setTitle(Locale::tr(QStringLiteral("content.search.title")));
+        m_chrome->setTitle(Locale::tr(QStringLiteral("content.search.title")));
         // One multi-argument arg(), not two chained ones: chaining substitutes the query
         // first and then rescans it, so typing "%2" into the search box put the hit count
         // inside the user's own text and left the real marker unreplaced.
-        m_header->setSubtitle(Locale::tr(QStringLiteral("content.search.subtitle"))
+        m_chrome->setSubtitle(Locale::tr(QStringLiteral("content.search.subtitle"))
                                   .arg(m_state->query().trimmed(), QString::number(hits)));
-        m_header->setPendingLabel(Locale::tr(QStringLiteral("content.pending")).arg(m_state->pendingCount()));
+        m_chrome->setPendingLabel(Locale::tr(QStringLiteral("content.pending")).arg(m_state->pendingCount()));
+        // The filter's counts are over the whole catalogue while a search is on, since
+        // that is what the search spans.
+        int on = 0;
+        forEachTweak(catalog, [&](const Tweak &t) { on += m_state->isOn(t.id) ? 1 : 0; });
+        m_chrome->setFilterCounts(catalog.totalTweaks(), on, m_state->pendingCount());
     } else if (!category) {
         // Every pinned page returned above and the overview did too, so getting here with
         // no category means an id nothing knows — the --category switch is the way in.
         // Dereferencing it was an outright crash.
-        m_header->setTitle(Locale::tr(QStringLiteral("content.search.title")));
-        m_header->setSubtitle(Locale::tr(QStringLiteral("content.emptyCategory")));
-        m_header->setPendingLabel({});
-        m_header->setControlsVisible(false);
+        m_chrome->setTitle(Locale::tr(QStringLiteral("content.search.title")));
+        m_chrome->setSubtitle(Locale::tr(QStringLiteral("content.emptyCategory")));
+        m_chrome->setPendingLabel({});
+        m_chrome->setControlsVisible(false);
         emptyMessage = Locale::tr(QStringLiteral("content.emptyPage"));
     } else if (category->tweakCount() == 0) {
         // The catalogue is being rebuilt one page at a time; an empty category says so
         // rather than offering filters over nothing.
-        m_header->setTitle(Locale::tr(QStringLiteral("category.") + category->id));
-        m_header->setSubtitle(Locale::tr(QStringLiteral("content.emptyCategory")));
-        m_header->setPendingLabel({});
-        m_header->setControlsVisible(false);
+        m_chrome->setTitle(Locale::tr(QStringLiteral("category.") + category->id));
+        m_chrome->setSubtitle(Locale::tr(QStringLiteral("content.emptyCategory")));
+        m_chrome->setPendingLabel({});
+        m_chrome->setControlsVisible(false);
         emptyMessage = Locale::tr(QStringLiteral("content.emptyPage"));
     } else {
         // Tweaks this build ignores are counted out loud rather than quietly listed as
@@ -599,9 +677,11 @@ void MainWindow::refreshView()
                            .arg(m_state->appliedCount(*category))
                            .arg(unsupported);
 
-        m_header->setTitle(Locale::tr(QStringLiteral("category.") + category->id));
-        m_header->setSubtitle(subtitle);
-        m_header->setPendingLabel(Locale::tr(QStringLiteral("content.pending")).arg(m_state->pendingCount(*category)));
+        m_chrome->setTitle(Locale::tr(QStringLiteral("category.") + category->id));
+        m_chrome->setSubtitle(subtitle);
+        m_chrome->setPendingLabel(Locale::tr(QStringLiteral("content.pending")).arg(m_state->pendingCount(*category)));
+        m_chrome->setFilterCounts(category->tweakCount(), m_state->appliedCount(*category),
+                                  m_state->pendingCount(*category));
     }
 
     m_tweaks->setSections(sections, emptyMessage);
@@ -610,16 +690,16 @@ void MainWindow::refreshView()
 
 void MainWindow::refreshCounters()
 {
-    m_statusBar->setPending(m_state->pendingCount());
+    m_chrome->setPending(m_state->pendingCount());
     refreshOverviewCatalog();
 
     const Category *category = Catalog::instance().category(m_state->selectedCategory());
     if (Sidebar::isPinnedPage(m_state->selectedCategory()))
-        m_header->setPendingLabel({});
+        m_chrome->setPendingLabel({});
     else if (m_state->searching())
-        m_header->setPendingLabel(Locale::tr(QStringLiteral("content.pending")).arg(m_state->pendingCount()));
+        m_chrome->setPendingLabel(Locale::tr(QStringLiteral("content.pending")).arg(m_state->pendingCount()));
     else if (category && !category->isOverview())
-        m_header->setPendingLabel(Locale::tr(QStringLiteral("content.pending")).arg(m_state->pendingCount(*category)));
+        m_chrome->setPendingLabel(Locale::tr(QStringLiteral("content.pending")).arg(m_state->pendingCount(*category)));
 }
 
 void MainWindow::refreshOverviewCatalog()
@@ -658,17 +738,17 @@ void MainWindow::showCategory(const QString &id)
 
 void MainWindow::showSearch(const QString &text)
 {
-    m_sidebar->search()->setText(text);
+    m_chrome->setSearchText(text);
 }
 
 void MainWindow::onCategoryActivated(const QString &id)
 {
     // Picking a category is an explicit "show me this", so it leaves the search behind.
     if (m_state->searching())
-        m_sidebar->search()->clearText();
+        m_chrome->clearSearch();
 
     m_state->setSelectedCategory(id);
-    m_sidebar->setSelected(id);
+    m_chrome->setSelected(id);
     m_tweakScroll->scrollToTop();
     m_overviewScroll->scrollToTop();
     refreshView();
@@ -720,7 +800,7 @@ QRect MainWindow::overlayRect() const
     // user should not be able to navigate away from it. The title bar stays reachable
     // so the window can still be moved or minimised.
     const QRect inner = card()->rect().adjusted(1, 1, -1, -1);
-    return inner.adjusted(0, m_titleBar->height(), 0, 0);
+    return inner.adjusted(0, m_chrome ? m_chrome->titleBarHeight() : 0, 0, 0);
 }
 
 void MainWindow::onApply()
@@ -755,7 +835,7 @@ void MainWindow::onApplyFinished(int succeeded, int failed, bool elevationRequir
 
     if (failed == 0) {
         if (succeeded > 0)
-            m_statusBar->setNotice(Locale::tr(QStringLiteral("mw.notice.applied")).arg(succeeded));
+            showNotice(Locale::tr(QStringLiteral("mw.notice.applied")).arg(succeeded));
         return;
     }
 
@@ -775,14 +855,14 @@ void MainWindow::onApplyFinished(int succeeded, int failed, bool elevationRequir
             if (TweakEngine::relaunchElevated())
                 close();
             else
-                m_statusBar->setNotice(Locale::tr(QStringLiteral("mw.notice.restartCancelled")));
+                showNotice(Locale::tr(QStringLiteral("mw.notice.restartCancelled")));
         } else {
-            m_statusBar->setNotice(Locale::tr(QStringLiteral("mw.notice.elevatePending")).arg(report.failed));
+            showNotice(Locale::tr(QStringLiteral("mw.notice.elevatePending")).arg(report.failed));
         }
         return;
     }
 
-    m_statusBar->setNotice(report.firstError.isEmpty()
+    showNotice(report.firstError.isEmpty()
                                ? Locale::tr(QStringLiteral("mw.notice.applyFailed")).arg(report.failed)
                                : Locale::tr(QStringLiteral("mw.notice.applyFailedDetail"))
                                      .arg(report.failed).arg(report.firstError));

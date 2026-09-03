@@ -41,6 +41,7 @@ private:
     QString m_id;
     QString m_name;
     QString m_desc;
+    QString m_risk;                          ///< "cost" | "unsafe" | empty; see Tweak::risk
     bool m_choice = false;
     bool m_applicable = true;
     QString m_requirement;

@@ -172,7 +172,7 @@ void FramelessWindow::layoutGlow()
     // it rather than a pixel to either side.
     m_glow->setGeometry(rect());
     m_glow->setTrack(QRectF(cardRect()).adjusted(0.5, 0.5, -0.5, -0.5),
-                     isMaximized() ? 0.0 : qreal(Theme::Metric::WindowRadius));
+                     isMaximized() ? 0.0 : qreal(Theme::windowRadius()));
     m_glow->raise();
 }
 
@@ -196,7 +196,7 @@ void FramelessWindow::rebuildShadow()
         p.setPen(Qt::NoPen);
         p.setBrush(QColor(0, 0, 0, Metric::ShadowAlpha));
         p.drawRoundedRect(card.translated(0, Metric::ShadowOffsetY),
-                          Metric::WindowRadius, Metric::WindowRadius);
+                          windowRadius(), windowRadius());
     }
     boxBlurAlpha(image, Metric::ShadowBlur / 2);
 
@@ -218,7 +218,7 @@ void FramelessWindow::paintEvent(QPaintEvent *)
     }
 
     const QRectF card = cardRect();
-    const qreal radius = isMaximized() ? 0.0 : Metric::WindowRadius;
+    const qreal radius = isMaximized() ? 0.0 : windowRadius();
 
     p.setPen(QPen(Color::BorderWindow(), 1.0));
     p.setBrush(Color::Window());
