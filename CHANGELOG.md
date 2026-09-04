@@ -4,6 +4,62 @@ Bu dosya sürümler arasındaki dikkate değer değişiklikleri listeler.
 Biçim [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) temellidir ve
 proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
+## [0.15.2] — 2026-09-04
+
+Tweak satırları açıklamayı sütun genişliğinde sarıyor ve aldığı kadar uzuyor; metnin yanına
+sığmayan bir kontrol artık metnin altına iniyor. Fluent kabuğunda ray ve kategori bölmesi
+pencerenin tam yüksekliğinde, ray üzerine gelince adlı bir menüye açılıyor, logo pencerenin
+tam ortasında. TrustedInstaller sayfası sekiz konsol, son hedefler listesi, sürükle-bırak ve
+çıplak komut adı kazandı.
+
+### Eklendi
+
+#### Fluent kabuğu
+
+- **Açılır ray** — simge rayı işaretçi üzerinde durunca 200 px'e genişliyor (140 ms sonra,
+  180 ms'de, yumuşatılmış), her düğme adıyla bir satıra dönüşüyor, adlar açılırken kayarak
+  beliriyor; işaretçi ayrılır ayrılmaz kapanıyor. Ray artık yerleşimin dışında bir katman,
+  bölmenin üstüne açılıyor ve yanındakileri itmiyor.
+- **Tam yükseklikte ray ve bölme** — ray ve kategori bölmesi başlık bandını da kaplıyor;
+  arama kutusu sol üst köşede, 48 px bandın ortasında. Başlık çubuğu içerik sütununun
+  üstünde; logo, ad ve sürüm pencerenin ortasında.
+
+#### TrustedInstaller
+
+- **Sekiz yeni hızlı araç** — Görev Yöneticisi, Hizmetler, Aygıt Yöneticisi, Görev
+  Zamanlayıcı, Olay Görüntüleyici, Disk Yönetimi, Bilgisayar Yönetimi ve Yerel Grup İlkesi
+  (Home sürümünde yok, gösterilmez). Konsollar mmc üzerinden TrustedInstaller olarak açılıyor.
+- **Son hedefler** — hedef kutusundan başlatılanlar sekize kadar hatırlanıyor, yeniden
+  başlatılabilen satırlar olarak listeleniyor; "Listeyi temizle" siliyor. Diğer ayarlarla aynı
+  yerde saklanıyor (`ti/recentPrograms`, `ti/recentArguments`).
+- **Sürükle-bırak ve komut adı** — sayfaya bırakılan bir dosya hedef kutusunu dolduruyor;
+  `notepad` gibi çıplak bir ad kabuğun bulduğu gibi bulunuyor: önce PATH, sonra App Paths
+  kayıt anahtarı (`TrustedInstaller::resolve`).
+
+#### Komut satırı
+
+- `--window GxY` — kartı verilen boyutta açar; `--screenshot` ile dar bir yerleşimi
+  fotoğraflamak için.
+
+### Değiştirildi
+
+- **Satırlar sütun genişliğinde sarıyor** — açıklama artık "…" ile kesilmiyor; sarıyor ve
+  satır aldığı satır sayısı kadar uzuyor (`heightForWidth`; kaydırma alanına kadar her
+  yerleşim bunu anlıyor). Ad da sarıyor. İki kabukta da.
+- **Geniş kontrol metnin altına** — seçim kontrolü satırın büyük payını alacaksa ya da metne
+  240 px'ten azını bırakacaksa metnin altına iniyor, metin tüm genişliği alıyor. Genişlik
+  verilen `SegmentedControl` seçenekleri gerektiği kadar satıra bölüyor, satırdan geniş tek
+  bir seçeneği kısaltıyor.
+- On dilde 20 yeni metin.
+
+### Düzeltildi
+
+- **"Kapalı" etiketi** — Fluent anahtarının etiket sütunu 36 px sabitti, "Kapalı" sığmıyor,
+  K'si soldan kesiliyordu. Sütun artık iki kelimenin genişine göre ölçülüyor; dil ve yazı
+  tipi değişince yeniden ölçülüyor.
+- **Düşen rozetler** — Fluent satırında adın yanına sığmayan rozet hiç çizilmiyordu. Artık
+  kendi satırına iniyor.
+
 ## [0.15.1] — 2026-09-04
 
 Fluent kabuğunda iki düzeltme: yazı tipi seçimi artık orada da geçerli, kategori bölmesinin

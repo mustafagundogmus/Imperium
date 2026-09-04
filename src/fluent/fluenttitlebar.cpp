@@ -324,16 +324,28 @@ void FluentTitleBar::paintEvent(QPaintEvent *)
     QPainter p(this);
     p.setRenderHint(QPainter::TextAntialiasing, true);
 
+    // The logo, the name and the version as one block, centred on the window — not on
+    // this bar, which since the rail and the pane took the left end of the top band is
+    // only the content column wide, so centring on it put the block right of the window's
+    // middle. The card is the parent; its middle, in this bar's coordinates, is where the
+    // block's middle goes, held clear of the theme button when the window is narrow.
     static const QIcon appIcon(QStringLiteral(":/icons/tweaker.ico"));
     const QPixmap logo = appIcon.pixmap(QSize(LogoSize, LogoSize), devicePixelRatioF());
-    p.drawPixmap(QPointF(PadLeft, std::round((height() - LogoSize) / 2.0)), logo);
 
     const QFont nameFont = Theme::sans(12, Theme::Weight::Medium);
     const QFont versionFont = Theme::sans(11);
-    qreal x = PadLeft + LogoSize + Gap;
     const qreal nameW = Css::textWidth(nameFont, appName());
+    const qreal versionW = Css::textWidth(versionFont, appVersion());
+    const qreal blockW = LogoSize + Gap + nameW + (appVersion().isEmpty() ? 0.0 : Gap + versionW);
+
+    const qreal windowW = parentWidget() ? parentWidget()->width() : width();
+    const qreal middle = windowW / 2.0 - x();
+    qreal x = std::round(middle - blockW / 2.0);
+    x = qMin(x, m_theme->x() - Gap - blockW);
+    x = qMax(x, PadLeft);
+    p.drawPixmap(QPointF(x, std::round((height() - LogoSize) / 2.0)), logo);
+    x += LogoSize + Gap;
     Css::drawCentered(&p, QRectF(x, 0, nameW, height()), nameFont, t.text, appName());
     x += nameW + Gap;
-    Css::drawCentered(&p, QRectF(x, 0, Css::textWidth(versionFont, appVersion()), height()),
-                      versionFont, t.textMuted, appVersion());
+    Css::drawCentered(&p, QRectF(x, 0, versionW, height()), versionFont, t.textMuted, appVersion());
 }

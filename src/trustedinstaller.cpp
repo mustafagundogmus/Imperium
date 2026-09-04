@@ -168,6 +168,52 @@ bool available()
 #endif
 }
 
+QString resolve(const QString &program)
+{
+    const QString name = program.trimmed();
+    if (name.isEmpty())
+        return QString();
+    if (QFileInfo::exists(name))
+        return QDir::toNativeSeparators(QFileInfo(name).absoluteFilePath());
+#ifdef Q_OS_WIN
+    // Only a bare name is searched for; a path that does not exist is simply that.
+    if (name.contains(QLatin1Char('\\')) || name.contains(QLatin1Char('/')))
+        return QString();
+    const bool hasExtension = !QFileInfo(name).suffix().isEmpty();
+
+    // PATH first, as CreateProcess itself would search it.
+    std::vector<wchar_t> buffer(32768);
+    const std::wstring wname = name.toStdWString();
+    const DWORD n = SearchPathW(nullptr, wname.c_str(), hasExtension ? nullptr : L".exe",
+                                DWORD(buffer.size()), buffer.data(), nullptr);
+    if (n > 0 && n < buffer.size())
+        return QString::fromWCharArray(buffer.data(), int(n));
+
+    // Then App Paths, per user and per machine, the value being the full path — often
+    // quoted, sometimes with environment variables, which RegGetValue expands.
+    const QString key = QStringLiteral("Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\")
+                        + name + (hasExtension ? QString() : QStringLiteral(".exe"));
+    const std::wstring wkey = key.toStdWString();
+    for (HKEY root : {HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE}) {
+        DWORD size = 0;
+        if (RegGetValueW(root, wkey.c_str(), nullptr, RRF_RT_REG_SZ, nullptr, nullptr, &size)
+                != ERROR_SUCCESS
+            || size == 0)
+            continue;
+        std::vector<wchar_t> value(size / sizeof(wchar_t) + 1);
+        if (RegGetValueW(root, wkey.c_str(), nullptr, RRF_RT_REG_SZ, nullptr, value.data(), &size)
+            != ERROR_SUCCESS)
+            continue;
+        QString path = QString::fromWCharArray(value.data()).trimmed();
+        if (path.size() >= 2 && path.startsWith(QLatin1Char('"')) && path.endsWith(QLatin1Char('"')))
+            path = path.mid(1, path.size() - 2);
+        if (!path.isEmpty() && QFileInfo::exists(path))
+            return QDir::toNativeSeparators(path);
+    }
+#endif
+    return QString();
+}
+
 Result launch(const QString &program, const QString &arguments, const QString &workingDir)
 {
     Result result;
@@ -181,11 +227,13 @@ Result launch(const QString &program, const QString &arguments, const QString &w
         result.summary = tr("ti.err.notElevated");
         return result;
     }
-    if (!QFileInfo::exists(program)) {
+    const QString target = resolve(program);
+    if (target.isEmpty()) {
         result.summary = tr("ti.err.notFound");
         result.detail = QDir::toNativeSeparators(program);
         return result;
     }
+    result.program = target;
 
     enablePrivilege(SE_DEBUG_NAME);
 
@@ -233,14 +281,14 @@ Result launch(const QString &program, const QString &arguments, const QString &w
     }
 
     bool newConsole = true;
-    const QString commandLine = buildCommandLine(program, arguments, &newConsole);
+    const QString commandLine = buildCommandLine(target, arguments, &newConsole);
 
     // CreateProcess writes into the command-line buffer, so it cannot be a literal.
     std::wstring cmdBuffer = commandLine.toStdWString();
     cmdBuffer.push_back(L'\0');
 
     const QString effectiveDir = workingDir.isEmpty()
-                                     ? QFileInfo(program).absolutePath()
+                                     ? QFileInfo(target).absolutePath()
                                      : workingDir;
     const std::wstring dirBuffer = QDir::toNativeSeparators(effectiveDir).toStdWString();
 

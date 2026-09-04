@@ -479,6 +479,10 @@ int main(int argc, char *argv[])
                                        QStringLiteral("Milliseconds to wait first (default 900); "
                                                       "raise it to let the live chart fill."),
                                        QStringLiteral("ms"), QStringLiteral("900"));
+    QCommandLineOption windowOption(QStringLiteral("window"),
+                                    QStringLiteral("Open with the card this size, e.g. 1100x680 - "
+                                                   "with --screenshot, to photograph a narrow layout."),
+                                    QStringLiteral("WxH"));
     parser.addOption(accentOption);
     parser.addOption(compactOption);
     parser.addOption(themeOption);
@@ -504,6 +508,7 @@ int main(int argc, char *argv[])
     parser.addOption(shellOption);
     parser.addOption(shotOption);
     parser.addOption(shotDelayOption);
+    parser.addOption(windowOption);
     parser.addOption(selfTestOption);
     parser.addOption(ownOption);
     parser.addOption(disownOption);
@@ -618,6 +623,16 @@ int main(int argc, char *argv[])
         splash->deleteLater();
     } else {
         window.show();
+    }
+
+    if (parser.isSet(windowOption)) {
+        const QStringList parts = parser.value(windowOption).split(QLatin1Char('x'));
+        const QSize card(parts.value(0).toInt(), parts.value(1).toInt());
+        if (parts.size() == 2 && !card.isEmpty())
+            window.resizeCard(card);
+        else
+            qWarning("--window takes WIDTHxHEIGHT, e.g. 1100x680; ignoring '%s'",
+                     qUtf8Printable(parser.value(windowOption)));
     }
 
     if (parser.isSet(selfTestOption)) {

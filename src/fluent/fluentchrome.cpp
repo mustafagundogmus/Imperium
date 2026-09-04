@@ -13,6 +13,7 @@
 #include "../theme.h"
 #include "../views/sidebar.h"
 
+#include <QEvent>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
@@ -62,37 +63,48 @@ void FluentChrome::buildRails()
 
 void FluentChrome::build(QWidget *card, QWidget *stack)
 {
-    auto *root = new QVBoxLayout(card);
+    // The rail and the pane run the full height of the card, and the title bar spans
+    // only the content column — so the top-left corner holds the first rail button and
+    // the search box rather than the logo, which sits centred over the content. The
+    // rail is not in the layout: a 56px gap is, and the rail is an overlay the chrome
+    // places over it (placeRail), so that it can widen over the pane while the pointer
+    // is on it without the layout moving everything beside it.
+    auto *root = new QHBoxLayout(card);
     root->setContentsMargins(1, 1, 1, 1);
     root->setSpacing(0);
-
-    m_titleBar = new FluentTitleBar(card);
-    root->addWidget(m_titleBar);
-
-    auto *body = new QHBoxLayout;
-    body->setContentsMargins(0, 0, 0, 0);
-    body->setSpacing(0);
-    root->addLayout(body, 1);
 
     m_rail = new IconRail(card);
     QVector<IconRail::Entry> entries;
     for (const Rail &r : std::as_const(m_rails))
         entries.append({Locale::tr(r.labelKey), r.glyph});
     m_rail->setEntries(entries, {Locale::tr(m_settingsRail.labelKey), m_settingsRail.glyph});
-    body->addWidget(m_rail);
+    root->addSpacing(Theme::Fluent::RailWidth);
 
     m_pane = new CategoryPane(card);
-    body->addWidget(m_pane);
+    root->addWidget(m_pane);
+
+    auto *column = new QVBoxLayout;
+    column->setContentsMargins(0, 0, 0, 0);
+    column->setSpacing(0);
+    root->addLayout(column, 1);
+
+    m_titleBar = new FluentTitleBar(card);
+    column->addWidget(m_titleBar);
 
     m_header = new FluentHeader;
     m_bar = new ApplyBar;
     m_content = new FluentContent(m_header, stack, m_bar, card);
-    body->addWidget(m_content, 1);
+    column->addWidget(m_content, 1);
     stack->show();
 
     for (QWidget *w : {static_cast<QWidget *>(m_titleBar), static_cast<QWidget *>(m_rail),
                        static_cast<QWidget *>(m_pane), static_cast<QWidget *>(m_content)})
         w->show();
+
+    // Above the pane, which it opens over; and told the card's size from now on.
+    m_rail->raise();
+    card->installEventFilter(this);
+    placeRail();
 
     connect(m_titleBar, &FluentTitleBar::minimizeRequested, this, &Chrome::minimizeRequested);
     connect(m_titleBar, &FluentTitleBar::maximizeToggleRequested, this, &Chrome::maximizeToggleRequested);
@@ -118,6 +130,21 @@ void FluentChrome::build(QWidget *card, QWidget *stack)
     static const int fromFilter[] = {0, 2, 1};
     m_header->setFilterIndex(fromFilter[qBound(0, int(m_state->filter()), 2)]);
     setSelected(m_state->selectedCategory());
+}
+
+bool FluentChrome::eventFilter(QObject *watched, QEvent *e)
+{
+    if (e->type() == QEvent::Resize && m_rail && watched == m_rail->parentWidget())
+        placeRail();
+    return Chrome::eventFilter(watched, e);
+}
+
+void FluentChrome::placeRail()
+{
+    // Inside the card's 1px border, the full height; the width is the rail's own — the
+    // closed 56 or however far open it is at the moment.
+    const QWidget *card = m_rail->parentWidget();
+    m_rail->setGeometry(1, 1, m_rail->width(), card->height() - 2);
 }
 
 int FluentChrome::titleBarHeight() const
@@ -212,7 +239,7 @@ void FluentChrome::retranslate()
 {
     QStringList labels;
     for (const Rail &r : std::as_const(m_rails))
-        labels << Locale::tr(r.labelKey);
+        labels.append(Locale::tr(r.labelKey));
     m_rail->setLabels(labels, Locale::tr(m_settingsRail.labelKey));
     showRail(m_currentRail);
     m_pane->setSelected(m_selected);

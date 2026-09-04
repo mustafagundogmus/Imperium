@@ -36,6 +36,10 @@ public:
 
     void toggleMaximize();
 
+    /// Resizes the window so the card is  size, leaving the maximized state first if
+    /// need be. The --window switch, which exists to photograph the layout at a width.
+    void resizeCard(const QSize &size);
+
     /// Renders just the card (no shadow) — used by the --screenshot switch.
     QPixmap grabCard();
 

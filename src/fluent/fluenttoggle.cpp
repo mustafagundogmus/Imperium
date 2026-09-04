@@ -3,6 +3,8 @@
 #include "../i18n.h"
 #include "../theme.h"
 
+#include <cmath>
+
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
@@ -41,12 +43,31 @@ FluentToggle::FluentToggle(QWidget *parent)
     });
 
     connect(Theme::notifier(), &Theme::Notifier::appearanceChanged, this, qOverload<>(&QWidget::update));
-    connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, qOverload<>(&QWidget::update));
+
+    // The label column is a function of the two words and the face they are set in —
+    // see the header — so either changing means measuring again. The row that owns this
+    // control listens to the same two signals and is connected after it, so by the time
+    // it moves the control the control already has its new width.
+    const auto remeasure = [this] {
+        setFixedSize(sizeHint());
+        updateGeometry();
+        update();
+    };
+    connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, remeasure);
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, remeasure);
+}
+
+int FluentToggle::labelWidth()
+{
+    const QFont f = Theme::sans(12);
+    const qreal on = Css::textWidth(f, Locale::tr(QStringLiteral("fluent.on")));
+    const qreal off = Css::textWidth(f, Locale::tr(QStringLiteral("fluent.off")));
+    return qMax(MinLabelWidth, int(std::ceil(qMax(on, off))));
 }
 
 QSize FluentToggle::sizeHint() const
 {
-    return {LabelWidth + LabelGap + TrackWidth, TrackHeight};
+    return {labelWidth() + LabelGap + TrackWidth, TrackHeight};
 }
 
 void FluentToggle::setChecked(bool on, bool animate)
@@ -74,13 +95,15 @@ void FluentToggle::paintEvent(QPaintEvent *)
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::TextAntialiasing, true);
 
-    // The word first, right-aligned in its column.
+    // The word first, right-aligned in its column: whatever the widget's width leaves
+    // before the gap and the track, which is labelWidth() as of the last measurement.
+    const qreal labelW = width() - LabelGap - TrackWidth;
     const QString label = Locale::tr(m_checked ? QStringLiteral("fluent.on") : QStringLiteral("fluent.off"));
-    Css::drawCentered(&p, QRectF(0, 0, LabelWidth, height()), Theme::sans(12), t.textSec, label,
+    Css::drawCentered(&p, QRectF(0, 0, labelW, height()), Theme::sans(12), t.textSec, label,
                       Qt::AlignRight);
 
     const qreal fill = qBound(0.0, m_t, 1.0);
-    const QRectF track(LabelWidth + LabelGap + 0.5, 0.5, TrackWidth - 1.0, TrackHeight - 1.0);
+    const QRectF track(labelW + LabelGap + 0.5, 0.5, TrackWidth - 1.0, TrackHeight - 1.0);
 
     QColor trackFill = t.accent;
     trackFill.setAlphaF(fill);

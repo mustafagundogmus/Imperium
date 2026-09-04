@@ -10,6 +10,8 @@
 #include "../theme.h"
 #include "../widgets/segmentedcontrol.h"
 
+#include <cmath>
+
 #include <QPainter>
 #include <QPainterPath>
 
@@ -28,13 +30,51 @@ constexpr qreal BadgeRadius = 3.0;
 constexpr qreal CardRadius = 6.0;
 constexpr qreal BlockedOpacity = 0.55;
 
-struct Badge
+// The narrowest text column a control may leave beside itself before it goes under the
+// text instead, and the gap between the text and a control put there.
+constexpr qreal StackBelow = 240.0;
+constexpr qreal StackGap = 8.0;
+
+QFont nameFont()
 {
-    QString text;
-    QColor bg;
-    QColor fg;
-};
+    return Theme::sans(14, Theme::Weight::Medium);
+}
+
+QFont descFont()
+{
+    return Theme::sans(12);
+}
+
+QFont badgeFont()
+{
+    return Theme::sans(10, Theme::Weight::SemiBold);
+}
 } // namespace
+
+struct FluentTweakRow::Layout
+{
+    struct Badge
+    {
+        QString text;
+        QColor bg;
+        QColor fg;
+        qreal width = 0.0;   ///< padding included
+    };
+
+    qreal textX = 0.0;        ///< left edge of the text column
+    qreal textW = 0.0;        ///< its width
+    bool stacked = false;     ///< the control is under the text rather than beside it
+    QStringList nameLines;    ///< the name wrapped at textW
+    QVector<Badge> badges;    ///< what follows the name
+    bool badgeLine = false;   ///< the badges did not fit after the name's last line
+    QStringList descLines;    ///< the description wrapped at textW
+    qreal blockHeight = 0.0;  ///< name lines, the badge line, the gap, description lines
+    qreal controlAvail = 0.0; ///< width the control may take under the text; 0 beside it
+    qreal controlH = 0.0;     ///< the control's height in the place it gets
+
+    /// The band the icon box and the text block share, each centred in it.
+    qreal region() const { return qMax(IconBox, blockHeight); }
+};
 
 FluentTweakRow::FluentTweakRow(const Tweak &tweak, AppState *state, const QString &categoryId,
                                QWidget *parent)
@@ -50,7 +90,12 @@ FluentTweakRow::FluentTweakRow(const Tweak &tweak, AppState *state, const QStrin
     , m_state(state)
 {
     setAttribute(Qt::WA_Hover, true);
-    setFixedHeight(rowHeight());
+
+    // The height follows the width — see tweakrow.h — and the layout has to be told so,
+    // or it takes sizeHint's single line and never asks.
+    QSizePolicy policy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    policy.setHeightForWidth(true);
+    setSizePolicy(policy);
 
     if (tweak.isRange) {
         QStringList labels;
@@ -86,8 +131,12 @@ FluentTweakRow::FluentTweakRow(const Tweak &tweak, AppState *state, const QStrin
         update();
     });
     // The BEKLİYOR badge is a function of the pending set, which an apply empties all at
-    // once without touching any single row.
-    connect(state, &AppState::pendingChanged, this, qOverload<>(&QWidget::update));
+    // once without touching any single row — and a badge appearing can push the others
+    // onto a line of their own, so the row measures again rather than only repainting.
+    connect(state, &AppState::pendingChanged, this, [this] {
+        updateGeometry();
+        update();
+    });
 
     if (!tweak.tooltip.isEmpty())
         setToolTip(tweak.tooltip);
@@ -106,27 +155,100 @@ FluentTweakRow::FluentTweakRow(const Tweak &tweak, AppState *state, const QStrin
         c->setAccessibleDescription(detail);
     }
 
-    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, [this] {
-        setFixedHeight(rowHeight());
+    // The control measures itself on these two signals first — its connections were made
+    // in its constructor, above — so the row sees the new width when it moves it.
+    const auto remeasure = [this] {
+        updateGeometry();
         positionControl();
         update();
-    });
+    };
+    connect(Theme::notifier(), &Theme::Notifier::typefaceChanged, this, remeasure);
+    connect(Locale::notifier(), &Locale::Notifier::languageChanged, this, remeasure);
     positionControl();
 }
 
-int FluentTweakRow::rowHeight()
+FluentTweakRow::Layout FluentTweakRow::measure(int width) const
 {
-    // The icon box sets the height: 12 + 32 + 12. The two text lines (14px at 1.4 and 12px
-    // at 1.4, 2px apart) come to 38.4 and sit centred inside it; a larger interface scale
-    // lets the text win.
-    const qreal text = Css::line(Theme::sans(14, Theme::Weight::Medium), 1.4) + TextGap
-                       + Css::line(Theme::sans(12), 1.4);
-    return qRound(2 * PadY + qMax(IconBox, text));
+    const Theme::Fluent::Tokens &t = Theme::Fluent::tokens();
+
+    Layout l;
+    l.textX = PadX + IconBox + Gap;
+    const qreal right = width - PadX;
+
+    // The control sits beside the text while the text keeps the wider share of the row
+    // and a column worth reading, and goes under it otherwise: a four-way choice with
+    // sentence-long labels took most of a wide window and left the description a dozen
+    // lines of four words each, squeezed against the icon.
+    const QWidget *c = control();
+    const qreal natural = c ? c->sizeHint().width() : 0.0;
+    const qreal beside = c ? right - natural - Gap - l.textX : right - l.textX;
+    l.stacked = c && (natural > beside || beside < StackBelow);
+    l.textW = l.stacked ? right - l.textX : beside;
+    if (c) {
+        // Under the text the control gets the column's width, and a segmented control
+        // breaks its segments into lines to fit it; beside the text it keeps its own.
+        l.controlAvail = l.stacked ? std::floor(l.textW) : 0.0;
+        l.controlH = (l.stacked && m_segments) ? m_segments->heightForWidth(int(l.controlAvail))
+                                               : c->sizeHint().height();
+    }
+
+    const QFont name = nameFont();
+    l.nameLines = Css::wrapLines(name, m_name, l.textW);
+
+    if (!m_applicable) {
+        l.badges.append({Locale::tr(QStringLiteral("fluent.badge.na")), t.track, t.textMuted});
+    } else if (m_locked) {
+        l.badges.append({Locale::tr(QStringLiteral("fluent.badge.locked")), t.track, t.textMuted});
+    } else if (m_state->isPending(m_id)) {
+        l.badges.append({Locale::tr(QStringLiteral("fluent.badge.pending")), t.accentSoft, t.accentText});
+    }
+    if (m_applicable && !m_risk.isEmpty()) {
+        const bool unsafe = m_risk == QLatin1String("unsafe");
+        QColor ink = unsafe ? Theme::Color::Danger() : Theme::Color::Warn();
+        QColor wash = ink;
+        wash.setAlpha(0x26);
+        l.badges.append({Css::upperTr(Locale::tr(unsafe ? QStringLiteral("tweak.risk.unsafe")
+                                                        : QStringLiteral("tweak.risk.cost"))),
+                         wash, ink});
+    }
+    qreal badgesW = 0.0;
+    const QFont badge = badgeFont();
+    for (Layout::Badge &b : l.badges) {
+        b.width = 2 * BadgePadX + Css::textWidth(badge, b.text);
+        badgesW += BadgeGap + b.width;
+    }
+    // After the name's last line when they fit there, on a line of their own when not:
+    // a badge that did not fit used to be dropped, which is the one thing a badge that
+    // says "this build ignores this row" must not be.
+    if (badgesW > 0.0)
+        l.badgeLine = Css::textWidth(name, l.nameLines.last()) + badgesW > l.textW;
+
+    // The description, or the reason the row cannot be operated.
+    l.descLines = Css::wrapLines(descFont(), (m_applicable && !m_locked) ? m_desc : m_blockReason,
+                                 l.textW);
+
+    l.blockHeight = (l.nameLines.size() + (l.badgeLine ? 1 : 0)) * Css::line(name, 1.4) + TextGap
+                    + l.descLines.size() * Css::line(descFont(), 1.4);
+    return l;
+}
+
+int FluentTweakRow::heightForWidth(int width) const
+{
+    // The icon box sets the floor: 12 + 32 + 12. Two text lines (14px at 1.4 and 12px at
+    // 1.4, 2px apart) come to 38.4 and sit centred inside it; a third line, or a larger
+    // interface scale, lets the text win and the row grows with it. A control under the
+    // text adds its own height below the band.
+    const Layout l = measure(width);
+    qreal h = 2 * PadY + l.region();
+    if (l.stacked)
+        h += StackGap + l.controlH;
+    return qRound(h);
 }
 
 QSize FluentTweakRow::sizeHint() const
 {
-    return {0, rowHeight()};
+    const qreal text = Css::line(nameFont(), 1.4) + TextGap + Css::line(descFont(), 1.4);
+    return {0, qRound(2 * PadY + qMax(IconBox, text))};
 }
 
 void FluentTweakRow::setEdges(bool first, bool last)
@@ -149,7 +271,13 @@ void FluentTweakRow::positionControl()
     QWidget *c = control();
     if (!c)
         return;
-    c->move(qRound(width() - PadX - c->width()), qRound((height() - c->height()) / 2.0));
+    const Layout l = measure(width());
+    if (m_segments)
+        m_segments->setAvailableWidth(l.controlAvail);
+    if (l.stacked)
+        c->move(qRound(l.textX), qRound(PadY + l.region() + StackGap));
+    else
+        c->move(qRound(width() - PadX - c->width()), qRound((height() - c->height()) / 2.0));
 }
 
 void FluentTweakRow::resizeEvent(QResizeEvent *e)
@@ -203,8 +331,10 @@ void FluentTweakRow::paintEvent(QPaintEvent *)
     if (!m_applicable)
         p.setOpacity(BlockedOpacity);
 
-    // Icon box.
-    const qreal boxY = std::round((height() - IconBox) / 2.0);
+    const Layout l = measure(width());
+
+    // Icon box, centred on the band it shares with the text.
+    const qreal boxY = std::round(PadY + (l.region() - IconBox) / 2.0);
     p.setPen(Qt::NoPen);
     p.setBrush(t.iconBg);
     p.drawRoundedRect(QRectF(PadX, boxY, IconBox, IconBox), IconRadius, IconRadius);
@@ -215,65 +345,57 @@ void FluentTweakRow::paintEvent(QPaintEvent *)
                      glyph);
     }
 
-    const QWidget *c = control();
-    const qreal textX = PadX + IconBox + Gap;
-    const qreal textRight = c ? c->x() - Gap : width() - PadX;
-    const qreal textW = textRight - textX;
-    if (textW <= 0)
+    if (l.textW <= 0)
         return;
 
-    const QFont nameFont = Theme::sans(14, Theme::Weight::Medium);
-    const QFont descFont = Theme::sans(12);
-    const QFont badgeFont = Theme::sans(10, Theme::Weight::SemiBold);
-    const qreal nameLine = Css::line(nameFont, 1.4);
-    const qreal descLine = Css::line(descFont, 1.4);
-    const qreal blockTop = (height() - (nameLine + TextGap + descLine)) / 2.0;
+    const QFont name = nameFont();
+    const QFont desc = descFont();
+    const QFont badge = badgeFont();
+    const qreal nameLine = Css::line(name, 1.4);
+    const qreal descLine = Css::line(desc, 1.4);
+    const QRectF column(l.textX, 0, l.textW, height());
 
-    // The badges are measured first so the name can be elided to the room they leave.
-    QVector<Badge> badges;
-    if (!m_applicable) {
-        badges.append({Locale::tr(QStringLiteral("fluent.badge.na")), t.track, t.textMuted});
-    } else if (m_locked) {
-        badges.append({Locale::tr(QStringLiteral("fluent.badge.locked")), t.track, t.textMuted});
-    } else if (m_state->isPending(m_id)) {
-        badges.append({Locale::tr(QStringLiteral("fluent.badge.pending")), t.accentSoft, t.accentText});
-    }
-    if (m_applicable && !m_risk.isEmpty()) {
-        const bool unsafe = m_risk == QLatin1String("unsafe");
-        QColor ink = unsafe ? Theme::Color::Danger() : Theme::Color::Warn();
-        QColor wash = ink;
-        wash.setAlpha(0x26);
-        badges.append({Css::upperTr(Locale::tr(unsafe ? QStringLiteral("tweak.risk.unsafe")
-                                                      : QStringLiteral("tweak.risk.cost"))),
-                       wash, ink});
-    }
-    qreal badgesW = 0;
-    for (const Badge &b : badges)
-        badgesW += BadgeGap + 2 * BadgePadX + Css::textWidth(badgeFont, b.text);
-
-    const qreal nameW = qMin(Css::textWidth(nameFont, m_name), qMax(0.0, textW - badgesW));
-    const qreal nameBaseline = Css::baseline(nameFont, blockTop, nameLine);
-    Css::drawText(&p, QRectF(textX, 0, nameW, height()), nameBaseline, nameFont, t.text, m_name,
-                  Qt::AlignLeft, /*elide=*/true);
-
-    qreal bx = textX + nameW;
-    const qreal badgeH = Css::normalLine(badgeFont) + 2 * BadgePadY;
-    const qreal badgeY = blockTop + (nameLine - badgeH) / 2.0;
-    for (const Badge &b : badges) {
-        bx += BadgeGap;
-        const qreal bw = 2 * BadgePadX + Css::textWidth(badgeFont, b.text);
-        if (bx + bw > textRight)
-            break;
-        p.setPen(Qt::NoPen);
-        p.setBrush(b.bg);
-        p.drawRoundedRect(QRectF(bx, badgeY, bw, badgeH), BadgeRadius, BadgeRadius);
-        Css::drawCentered(&p, QRectF(bx, badgeY, bw, badgeH), badgeFont, b.fg, b.text, Qt::AlignHCenter);
-        bx += bw;
+    // The name, one line box per wrapped line, the block centred on the band.
+    qreal lineTop = PadY + (l.region() - l.blockHeight) / 2.0;
+    for (const QString &line : l.nameLines) {
+        Css::drawText(&p, column, Css::baseline(name, lineTop, nameLine), name, t.text, line,
+                      Qt::AlignLeft, /*elide=*/false);
+        lineTop += nameLine;
     }
 
-    // The description, or the reason the row cannot be operated.
-    const QString line = (m_applicable && !m_locked) ? m_desc : m_blockReason;
-    Css::drawText(&p, QRectF(textX, 0, textW, height()),
-                  Css::baseline(descFont, blockTop + nameLine + TextGap, descLine), descFont,
-                  t.textSec, line, Qt::AlignLeft, /*elide=*/true);
+    // The badges: after the name's last line, or on the line that follows it.
+    if (!l.badges.isEmpty()) {
+        qreal bx = l.textX;
+        qreal badgeTop = lineTop - nameLine;
+        if (l.badgeLine) {
+            badgeTop = lineTop;
+            lineTop += nameLine;
+        } else {
+            bx += Css::textWidth(name, l.nameLines.last());
+        }
+        const qreal badgeH = Css::normalLine(badge) + 2 * BadgePadY;
+        const qreal badgeY = badgeTop + (nameLine - badgeH) / 2.0;
+        bool first = l.badgeLine;   // on its own line the first badge starts at the column
+        for (const Layout::Badge &b : l.badges) {
+            if (!first)
+                bx += BadgeGap;
+            first = false;
+            if (bx + b.width > column.right())
+                break;
+            p.setPen(Qt::NoPen);
+            p.setBrush(b.bg);
+            p.drawRoundedRect(QRectF(bx, badgeY, b.width, badgeH), BadgeRadius, BadgeRadius);
+            Css::drawCentered(&p, QRectF(bx, badgeY, b.width, badgeH), badge, b.fg, b.text,
+                              Qt::AlignHCenter);
+            bx += b.width;
+        }
+    }
+
+    // The description, one line box per wrapped line.
+    lineTop += TextGap;
+    for (const QString &line : l.descLines) {
+        Css::drawText(&p, column, Css::baseline(desc, lineTop, descLine), desc, t.textSec, line,
+                      Qt::AlignLeft, /*elide=*/false);
+        lineTop += descLine;
+    }
 }

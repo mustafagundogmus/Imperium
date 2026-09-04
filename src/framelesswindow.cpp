@@ -325,6 +325,14 @@ bool FramelessWindow::event(QEvent *e)
     return QWidget::event(e);
 }
 
+void FramelessWindow::resizeCard(const QSize &size)
+{
+    if (isMaximized() || isFullScreen())
+        showNormal();
+    const QMargins m = shadowMargins();
+    resize(size.width() + m.left() + m.right(), size.height() + m.top() + m.bottom());
+}
+
 QPixmap FramelessWindow::grabCard()
 {
     // Grab through the window, not the card: the card is translucent and the rounded

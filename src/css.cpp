@@ -8,6 +8,7 @@
 #include <QColor>
 #include <QFontMetricsF>
 #include <QPainter>
+#include <QTextLayout>
 #include <QTextOption>
 
 namespace Css {
@@ -108,6 +109,39 @@ void drawCentered(QPainter *p, const QRectF &box, const QFont &f, const QColor &
                   const QString &text, Qt::Alignment align, bool elide)
 {
     drawText(p, box, centeredBaseline(f, box), f, c, text, align, elide);
+}
+
+QStringList wrapLines(const QFont &f, const QString &text, qreal width, qreal firstWidth)
+{
+    if (text.isEmpty() || width <= 0.0)
+        return {text};
+
+    // The layout only finds the break points; each line is drawn afterwards through
+    // drawText, so it lands on the same baselines and gets the same bidi handling as
+    // every other run of text here. Breaking anywhere is the fallback for a word wider
+    // than the line, never the first choice — see the header.
+    QTextLayout layout(text, f);
+    QTextOption option;
+    option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    if (Locale::isRtl())
+        option.setTextDirection(Qt::RightToLeft);
+    layout.setTextOption(option);
+
+    QStringList lines;
+    layout.beginLayout();
+    for (;;) {
+        QTextLine line = layout.createLine();
+        if (!line.isValid())
+            break;
+        const bool first = lines.isEmpty();
+        line.setLineWidth(qMax(1.0, (first && firstWidth > 0.0) ? firstWidth : width));
+        lines << text.mid(line.textStart(), line.textLength()).trimmed();
+    }
+    layout.endLayout();
+
+    if (lines.isEmpty())
+        lines << text;
+    return lines;
 }
 
 QString upperTr(const QString &s)

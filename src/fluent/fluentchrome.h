@@ -1,7 +1,12 @@
 // fluentchrome.h — the Windows 11 shell from design_handoff_fluent_ui, as one Chrome.
 //
-//   FluentTitleBar 48px
-//   IconRail 56px | CategoryPane 232px | FluentContent (FluentHeader, the stack, ApplyBar)
+//   IconRail 56px | CategoryPane 232px | FluentTitleBar 48px over FluentContent
+//                                        (FluentHeader, the stack, ApplyBar)
+//
+// The rail and the pane run the full height; the title bar spans the content column only,
+// its logo centred there, so the search box and the first rail button take the top-left
+// corner. The rail is an overlay the chrome places (placeRail), not a layout item: it
+// widens over the pane while the pointer is on it — see iconrail.h.
 //
 // The rail's six entries are the handoff's — Genel Bakış, Tweakler, Araçlar, Paketler,
 // Geçmiş, Güvenlik — and the cog at its foot. Each opens a set of pages in the pane:
@@ -55,6 +60,10 @@ public:
     void setSample(const Sample &sample) override;
     void setRestorePoint(const QString &text) override;
 
+protected:
+    /// The card's resizes, to keep the rail overlay the card's height.
+    bool eventFilter(QObject *watched, QEvent *e) override;
+
 private:
     struct Rail
     {
@@ -64,6 +73,7 @@ private:
     };
 
     void buildRails();
+    void placeRail();
     void retranslate();
     int railOf(const QString &id, int preferred) const;
     QString railLabel(int index) const;

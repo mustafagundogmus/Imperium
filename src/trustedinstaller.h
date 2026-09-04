@@ -23,6 +23,7 @@ struct Result
 {
     bool ok = false;
     quint32 pid = 0;   ///< the launched process id, when ok
+    QString program;   ///< the file that was started: what resolve() made of the target
     QString summary;   ///< one translated line for the status bar and the row
     QString detail;    ///< the Win32 step that failed and its message, when not ok
 };
@@ -34,6 +35,13 @@ struct Result
 /// target's own folder. Windows only.
 Result launch(const QString &program, const QString &arguments = QString(),
               const QString &workingDir = QString());
+
+/// The file \a program names: itself when it exists; for a bare name with no folder in
+/// it, what a shell would run — the PATH search with .exe assumed when no extension is
+/// given, then the App Paths registry, which is how "code" or "chrome" resolve without
+/// being on PATH. Empty when nothing is found. launch() goes through this, so the target
+/// field takes "notepad" as well as a path.
+QString resolve(const QString &program);
 
 /// True when this can work at all: Windows, and an elevated token. The page dims its
 /// controls and says why when it is false — a standard token cannot reach TrustedInstaller

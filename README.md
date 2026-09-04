@@ -209,10 +209,12 @@ the script.
 
 The account that owns the files and registry keys even an administrator is refused. Point the
 **TrustedInstaller** page at a program or a file — or use the one-tap shortcuts for a shell,
-PowerShell, the registry editor, or the file manager — and it starts under that account, able to
-read and write all of it without changing a single permission. No service to install, no token
-juggling; it uses the elevated session the app already runs in. `whoami` in the launched shell
-says `nt service\trustedinstaller`, which is the whole point.
+PowerShell, the registry editor, the file manager and the consoles from Task Manager to Group
+Policy — and it starts under that account, able to read and write all of it without changing a
+single permission. No service to install, no token juggling; it uses the elevated session the app
+already runs in. `whoami` in the launched shell says `nt service\trustedinstaller`, which is the
+whole point. Drop a file on the page to target it, type a bare name like `notepad` and it is found
+the way a shell finds it, and what you launched stays on the page as recent targets.
 
 ### 🧭 God Mode
 

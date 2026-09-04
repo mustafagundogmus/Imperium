@@ -1,7 +1,9 @@
 // fluenttitlebar.h — §1 of the Fluent handoff.
 //
-//   48px on mica, no bottom rule · padding-left 14 · gap 10
-//   left  : logo 18×18 · "Arbitrium" 12px/500 · "v0.14.0" 11px textMuted
+//   48px on mica, no bottom rule · gap 10
+//   centre: logo 18×18 · "Arbitrium" 12px/500 · "v0.14.0" 11px textMuted — centred on
+//           the window, not on the bar, which spans the content column only (the rail
+//           and the pane took the left end of it; see fluentchrome.h)
 //   right : the theme button (28px tall, 12px text, a 12px accent dot before it, hover
 //           subtleHover, 8px before the controls), then three 46×48 window controls —
 //           hover subtleHover, the close one #C42B1C with a white glyph

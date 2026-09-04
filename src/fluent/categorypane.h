@@ -1,7 +1,8 @@
 // categorypane.h — §3 of the Fluent handoff: the 232px pane between the rail and the
 // content.
 //
-//   padding 4 8 12 4 · gap 8
+//   padding 8 8 12 4 · gap 8 — the 8 on top centres the 32px search box in the 48px
+//   band the title bar occupies beside the pane, which runs the full height
 //   the search box (32px)
 //   a heading ("KATEGORİLER") 11px/600 uppercase, letter-spacing .04em, textMuted,
 //   padding 6 12 4, then the rows — 36px, radius 4, padding 0 12, 2px apart, label 13px

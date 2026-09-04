@@ -12,7 +12,7 @@
 #include <QtMath>
 
 namespace {
-constexpr qreal PadTop = 4.0;
+constexpr qreal PadTop = 8.0;   // (48 - 32) / 2: the search box centred in the title band
 constexpr qreal PadRight = 8.0;
 constexpr qreal PadBottom = 12.0;
 constexpr qreal PadLeft = 4.0;

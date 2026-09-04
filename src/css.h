@@ -11,6 +11,7 @@
 #include <QFont>
 #include <QRectF>
 #include <QString>
+#include <QStringList>
 
 class QPainter;
 class QColor;
@@ -45,6 +46,13 @@ void drawText(QPainter *p, const QRectF &box, qreal baselineY, const QFont &f,
 void drawCentered(QPainter *p, const QRectF &box, const QFont &f, const QColor &c,
                   const QString &text, Qt::Alignment align = Qt::AlignLeft,
                   bool elide = false);
+
+/// CSS `white-space: normal`: the lines  text breaks into at  width. Breaks fall at
+/// word boundaries, or anywhere when a single word is wider than the line — a registry
+/// path with no spaces in it still has to fit.  firstWidth narrows the first line alone,
+/// for a badge that shares it. Never fewer than one line, so a row keeps its height with
+/// an empty description; a width of nothing gives the text back whole.
+QStringList wrapLines(const QFont &f, const QString &text, qreal width, qreal firstWidth = -1.0);
 
 /// Turkish-correct `text-transform: uppercase` (i → İ, ı → I).
 QString upperTr(const QString &s);
