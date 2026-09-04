@@ -61,7 +61,17 @@ const FaceFiles Faces[] = {
     {"saira", "Saira", "Saira",
      ":/fonts/Saira-Regular.ttf", ":/fonts/Saira-Regular.ttf",
      ":/fonts/Saira-Medium.ttf",  ":/fonts/Saira-SemiBold.ttf"},
+    // The system's own face, not an embedded one: Segoe UI Variable where Windows 11 has
+    // it, Segoe UI before that. Empty paths mark it — applyFace() and loadTypeface() read
+    // that as "ask the font database", and its weights come from the one variable family
+    // rather than from four files. It is the Fluent shell's face until the user picks one.
+    {"segoe", "Segoe UI", "Segoe UI", "", "", "", ""},
 };
+
+bool isSystemFace(const FaceFiles &face)
+{
+    return face.regular == nullptr || *face.regular == '\0';
+}
 
 const FaceFiles *faceFor(const QString &id)
 {
@@ -72,6 +82,13 @@ const FaceFiles *faceFor(const QString &id)
 }
 
 QString g_typeface = QStringLiteral("plex");
+
+/// Whether the user has ever picked a face. Until they do, each shell wears its own
+/// default — IBM Plex for the classic one, Segoe UI for Fluent, which is what the Fluent
+/// handoff ships in — and the moment they pick, that face is the face under both. The
+/// Fluent shell used to hard-code Segoe in font() instead, so the typeface row on the
+/// settings page did nothing at all while it was on.
+bool g_typefaceExplicit = false;
 
 /// A single multiplier applied to every text size in the app, so the whole interface can
 /// be made larger or smaller without touching the individual style definitions. 1.0 is
@@ -114,6 +131,15 @@ QColor g_accent{0xD2, 0xA7, 0x5A};
 bool g_compact = false;
 Appearance g_appearance = Appearance::Dark;
 Shell g_shell = Shell::Classic;
+
+/// The face the styles are set in right now: the user's pick once there is one, else
+/// the shell's own default.
+const FaceFiles &effectiveFace()
+{
+    if (g_typefaceExplicit)
+        return *faceFor(g_typeface);
+    return *faceFor(g_shell == Shell::Fluent ? QStringLiteral("segoe") : QStringLiteral("plex"));
+}
 
 /// \a over composited onto \a under, source-over at 8 bits — what the raster engine does
 /// with a translucent fill. The Fluent tokens are translucent and the Palette struct is
@@ -1064,9 +1090,14 @@ void setShell(Shell s, Persist persist)
         return;
     g_shell = s;
 
+    // Until the user has picked a face, each shell wears its own; the swap is the one
+    // moment that default changes, so the slots are pointed at the new one here.
+    if (!g_typefaceExplicit)
+        applyFace(effectiveFace());
+
     // Three signals, in this order. The window rebuilds its chrome on the first; every
-    // style is stale on the second, because font() answers with a different family under
-    // each shell; and the third repaints the tree and rebuilds Qt's own palette.
+    // style is stale on the second, because the mono family and the default sans differ
+    // under each shell; and the third repaints the tree and rebuilds Qt's own palette.
     ++g_fontGeneration;
     Q_EMIT notifier()->shellChanged();
     Q_EMIT notifier()->typefaceChanged();
@@ -1136,6 +1167,11 @@ qreal pixelSize(const QFont &f)
 static void applyFace(const FaceFiles &face)
 {
     FaceTable &t = faces();
+    if (isSystemFace(face)) {
+        // One variable family for every weight; font() sets the weight on the QFont.
+        t.sans[0] = t.sans[1] = t.sans[2] = t.sans[3] = fluentSans();
+        return;
+    }
     t.sans[0] = loadFace(QLatin1String(face.regular),  QLatin1String(face.family));
     t.sans[1] = loadFace(QLatin1String(face.text),     t.sans[0]);
     t.sans[2] = loadFace(QLatin1String(face.medium),   t.sans[0]);
@@ -1160,10 +1196,11 @@ void initFonts()
     g_fontScale = qBound(0.85, s.value(QStringLiteral("appearance/fontScale"), 1.0).toDouble(), 1.6);
     g_appearance = schemeFromString(s.value(QStringLiteral("appearance/theme")).toString());
     g_shell = shellFromString(s.value(QStringLiteral("appearance/shell")).toString());
+    g_typefaceExplicit = s.contains(QStringLiteral("appearance/typeface"));
     g_typeface = QString::fromLatin1(
         faceFor(s.value(QStringLiteral("appearance/typeface")).toString())->id);
 
-    applyFace(*faceFor(g_typeface));
+    applyFace(effectiveFace());
 
     // The mono face is fixed: it carries versions, paths and byte counts, which are
     // column-aligned technical text whatever the interface face happens to be.
@@ -1187,12 +1224,16 @@ QString loadTypeface(const QString &id)
     // No cache of its own: loadFace() memoises by resource path, which is the level that
     // catches applyFace()'s four loads per typeface and the two mono ones as well.
     const FaceFiles *face = faceFor(id);
+    if (isSystemFace(*face))
+        return fluentSans();
     return loadFace(QLatin1String(face->regular), QString::fromLatin1(face->family));
 }
 
 QString typeface()
 {
-    return g_typeface;
+    // The face in force, which is the shell's default until the user has picked one —
+    // so the settings row highlights the chip the interface is actually set in.
+    return QString::fromLatin1(effectiveFace().id);
 }
 
 void setTypeface(const QString &id, Persist persist)
@@ -1201,10 +1242,14 @@ void setTypeface(const QString &id, Persist persist)
     const QString resolved = QString::fromLatin1(face->id);   // resolve before storing
     if (persist == Persist::Yes)
         QSettings().setValue(QStringLiteral("appearance/typeface"), resolved);
-    if (resolved == g_typeface)
+    const bool unchanged = resolved == QLatin1String(effectiveFace().id);
+    // A pick is a pick even when it names the face already on screen: from here on it
+    // holds under both shells rather than following the shell's default.
+    g_typeface = resolved;
+    g_typefaceExplicit = true;
+    if (unchanged)
         return;
 
-    g_typeface = resolved;
     applyFace(*face);
     ++g_fontGeneration;   // every style recomputes on its next call
     Q_EMIT notifier()->typefaceChanged();
@@ -1236,12 +1281,11 @@ QFont font(Family family, qreal px, int weight, qreal letterSpacingEm)
     const FaceTable &t = faces();
 
     QString name;
-    if (g_shell == Shell::Fluent) {
-        // The handoff prototyped in IBM Plex and says so: on Windows the face to ship is
-        // Segoe UI Variable, with Cascadia Mono for the technical text. Neither is
-        // embedded — both are the system's own — so the interface-face setting is left
-        // where it is and comes back with the classic shell.
-        name = family == Family::Sans ? fluentSans() : fluentMono();
+    if (family == Family::Mono && g_shell == Shell::Fluent) {
+        // The handoff's technical face is Cascadia Mono, the system's own; the sans face
+        // comes from the table like everywhere else — the Fluent default is the "segoe"
+        // entry until the user picks another, which then holds under both shells.
+        name = fluentMono();
     } else if (family == Family::Sans) {
         if (weight >= Weight::SemiBold)   name = t.sans[3];
         else if (weight >= Weight::Medium) name = t.sans[2];

@@ -4,6 +4,26 @@ Bu dosya sürümler arasındaki dikkate değer değişiklikleri listeler.
 Biçim [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) temellidir ve
 proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
+## [0.15.1] — 2026-09-04
+
+Fluent kabuğunda iki düzeltme: yazı tipi seçimi artık orada da geçerli, kategori bölmesinin
+başlığı listenin altında kalmıyor.
+
+### Düzeltildi
+
+- **Fluent kabuğunda yazı tipi** — `font()` Fluent'te her zaman Segoe UI'a dönüyor, Ayarlar ›
+  Görünüm › Yazı tipi'ndeki seçimi yok sayıyordu. Artık seçilen yazı tipi iki kabukta da
+  geçerli. Segoe UI seçilebilir bir yazı tipi olarak listeye eklendi (sistemin kendi yüzü,
+  gömülü değil; Windows 10'da Segoe UI Variable yerine Segoe UI); bir yazı tipi seçilmediği
+  sürece Fluent Segoe UI ile, Klasik IBM Plex ile açılmaya devam ediyor. Tek aralıklı yüz
+  değişmedi: Fluent'te Cascadia Mono, Klasik'te IBM Plex Mono.
+- **Kategori bölmesinin başlığı** — "KATEGORİLER" başlığı kaydırma alanının arkasına
+  çiziliyor, listenin ilk satırlarının boş bıraktığı yerde duruyordu; liste kaydırılınca
+  satırlar başlığın üstüne biniyordu. Başlık artık arama kutusuyla liste arasında kendi
+  şeridinde; liste onun altında kırpılıyor.
+- Ayarlar'daki kabuk açıklaması "Segoe UI ile çizilir" yerine "sen bir yazı tipi seçene kadar
+  Segoe UI ile çizilir" diyor.
+
 ## [0.15.0] — 2026-09-04
 
 WinUtil'in uygulama kurma sekmesi ve Özellikler bölümü olduğu gibi taşındı: iki yüz otuz üç

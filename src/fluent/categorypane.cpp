@@ -411,14 +411,19 @@ void CategoryPane::relayout()
     const int statusH = m_status->sizeHint().height();
     m_status->setGeometry(qRound(PadLeft), qRound(height() - PadBottom - statusH), contentW, statusH);
 
-    const int listTop = qRound(PadTop + m_search->height() + Gap);
+    // The heading has a strip of its own between the search box and the list, and the
+    // scroll area starts under it. It used to be painted on the pane behind the viewport's
+    // first rows' worth of space, with the list's content offset by the same height — which
+    // held until the list scrolled, when the rows moved up into that space and were drawn
+    // over the heading by the viewport, since a child paints over its parent.
+    const qreal headH = HeadPadTop + Css::normalLine(Theme::sans(11, Theme::Weight::SemiBold, 0.04))
+                        + HeadPadBottom;
+    const int listTop = qRound(PadTop + m_search->height() + Gap + headH);
     const int listH = qMax(0, qRound(m_status->y() - Gap) - listTop);
     m_scroll->setGeometry(qRound(PadLeft), listTop, contentW, listH);
 
     const auto layoutRows = [this](int rowW) {
-        const qreal headH = HeadPadTop + Css::normalLine(Theme::sans(11, Theme::Weight::SemiBold, 0.04))
-                            + HeadPadBottom;
-        int y = qRound(headH);
+        int y = 0;
         for (int i = 0; i < m_rows.size(); ++i) {
             if (i > 0)
                 y += qRound(RowGap);
@@ -440,13 +445,14 @@ void CategoryPane::relayout()
 
 void CategoryPane::paintEvent(QPaintEvent *)
 {
-    // The heading is drawn on the pane, over the top of the scroll area's first rows'
-    // worth of space, so it stays put while the list scrolls under it.
+    // The heading sits in its own strip between the search box and the scroll area (see
+    // relayout()), so the list is clipped beneath it rather than drawn across it.
     const Theme::Fluent::Tokens &t = Theme::Fluent::tokens();
     QPainter p(this);
     p.setRenderHint(QPainter::TextAntialiasing, true);
     const QFont f = Theme::sans(11, Theme::Weight::SemiBold, 0.04);
     const qreal h = Css::normalLine(f);
-    Css::drawCentered(&p, QRectF(PadLeft + RowPadX, m_scroll->y() + HeadPadTop, m_scroll->width() - 2 * RowPadX, h),
+    const qreal top = m_search->y() + m_search->height() + Gap + HeadPadTop;
+    Css::drawCentered(&p, QRectF(PadLeft + RowPadX, top, m_scroll->width() - 2 * RowPadX, h),
                       f, t.textMuted, m_heading, Qt::AlignLeft, true);
 }
