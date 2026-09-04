@@ -1082,6 +1082,9 @@ int windowRadius()
     return g_shell == Shell::Fluent ? Fluent::WindowRadius : Metric::WindowRadius;
 }
 
+/// Defined with initFonts() below; setShell() needs it first.
+static void applyFace(const FaceFiles &face);
+
 void setShell(Shell s, Persist persist)
 {
     if (persist == Persist::Yes)
