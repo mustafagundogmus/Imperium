@@ -72,6 +72,15 @@ public:
     /// starts a program under the account that owns the files an administrator cannot.
     static QString tiLauncherId() { return QStringLiteral("tilauncher"); }
 
+    /// …and the app installer, filed under Sistem right after the app-removal row: the
+    /// one lists what Windows put here, the other what WinGet and Chocolatey can add.
+    /// A catalogue of its own (applications.json), not a position in this one.
+    static QString appsId() { return QStringLiteral("apps"); }
+
+    /// …and the Windows optional features, right after it: WinUtil's Features section,
+    /// read against DISM. Its own file (features.json), not a catalogue category.
+    static QString featuresId() { return QStringLiteral("features"); }
+
     /// True for any of the ids above: pages of their own, none of which the catalogue
     /// knows about. The comparisons were written out at three separate call sites in
     /// MainWindow, which is three places to forget one when the next such page shows up.
@@ -84,7 +93,8 @@ public:
     {
         return id == settingsId() || id == actionsId() || id == debloatId()
                || id == cleanerId() || id == godModeId() || id == journalId()
-               || id == tiLauncherId() || id == aboutId();
+               || id == tiLauncherId() || id == appsId() || id == featuresId()
+               || id == aboutId();
     }
 
     /// …and who built it, which is not a category, a setting, or anything you would come

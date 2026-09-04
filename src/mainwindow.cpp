@@ -15,6 +15,8 @@
 #include "updater.h"
 #include "winpaths.h"
 #include "views/aboutpage.h"
+#include "views/appspage.h"
+#include "views/featurespage.h"
 #include "views/actionpage.h"
 #include "views/cleanerpage.h"
 #include "views/debloatpage.h"
@@ -195,6 +197,14 @@ void MainWindow::buildUi()
     m_cleaner = new CleanerPage(m_cleanerScroll);
     m_cleanerScroll->setWidget(m_cleaner);
 
+    m_appsScroll = new SmoothScrollArea(m_stack);
+    m_apps = new AppsPage(m_appsScroll);
+    m_appsScroll->setWidget(m_apps);
+
+    m_featuresScroll = new SmoothScrollArea(m_stack);
+    m_features = new FeaturesPage(m_featuresScroll);
+    m_featuresScroll->setWidget(m_features);
+
     m_godModeScroll = new SmoothScrollArea(m_stack);
     m_godMode = new GodModePage(m_godModeScroll);
     m_godModeScroll->setWidget(m_godMode);
@@ -214,6 +224,8 @@ void MainWindow::buildUi()
     m_stack->addWidget(m_tiScroll);
     m_stack->addWidget(m_debloatScroll);
     m_stack->addWidget(m_cleanerScroll);
+    m_stack->addWidget(m_appsScroll);
+    m_stack->addWidget(m_featuresScroll);
     m_stack->addWidget(m_godModeScroll);
     m_stack->addWidget(m_journalScroll);
     m_stack->addWidget(m_aboutScroll);
@@ -261,6 +273,10 @@ void MainWindow::buildChrome()
         m_chrome->setCategoryCount(Sidebar::cleanerId(), m_cleaner->reclaimableText());
     if (m_debloat && m_debloat->rowCount() > 0)
         m_chrome->setCategoryCount(Sidebar::debloatId(), QString::number(m_debloat->rowCount()));
+    if (m_apps && m_apps->rowCount() > 0)
+        m_chrome->setCategoryCount(Sidebar::appsId(), QString::number(m_apps->rowCount()));
+    if (m_features && m_features->rowCount() > 0)
+        m_chrome->setCategoryCount(Sidebar::featuresId(), QString::number(m_features->rowCount()));
     const int total = Catalog::instance().totalTweaks();
     m_chrome->setSummary(total > 0 ? Locale::tr(QStringLiteral("status.loaded")).arg(total)
                                    : Locale::tr(QStringLiteral("status.emptyCatalog")));
@@ -326,6 +342,22 @@ void MainWindow::wire()
     connect(m_tiLauncher, &TiLauncherPage::notice, this, &MainWindow::showNotice);
     connect(m_debloat, &DebloatPage::notice, this, &MainWindow::showNotice);
     connect(m_cleaner, &CleanerPage::notice, this, &MainWindow::showNotice);
+    connect(m_apps, &AppsPage::notice, this, &MainWindow::showNotice);
+    // The header's subtitle is the page's own sentence — the selection count when it is
+    // idle, the package being installed while it is not — so it follows the page.
+    connect(m_apps, &AppsPage::stateChanged, this, [this] {
+        if (m_state->selectedCategory() == Sidebar::appsId() && !m_state->searching())
+            m_chrome->setSubtitle(m_apps->subtitle());
+    });
+    connect(m_features, &FeaturesPage::notice, this, &MainWindow::showNotice);
+    connect(m_features, &FeaturesPage::stateChanged, this, [this] {
+        if (m_state->selectedCategory() == Sidebar::featuresId() && !m_state->searching())
+            m_chrome->setSubtitle(m_features->subtitle());
+    });
+    connect(m_features, &FeaturesPage::scanFinished, this, [this] {
+        if (m_state->selectedCategory() == Sidebar::featuresId())
+            refreshView();
+    });
     // The cleaner's sidebar count is a size, not a number of rows: what a clean would
     // free right now, refreshed after every scan — and every clean ends in a scan.
     connect(m_cleaner, &CleanerPage::scanFinished, this, [this] {
@@ -521,6 +553,8 @@ void MainWindow::refreshView()
     const bool actions = !searching && current == Sidebar::actionsId();
     const bool debloat = !searching && current == Sidebar::debloatId();
     const bool cleaner = !searching && current == Sidebar::cleanerId();
+    const bool apps = !searching && current == Sidebar::appsId();
+    const bool features = !searching && current == Sidebar::featuresId();
     const bool godMode = !searching && current == Sidebar::godModeId();
     const bool journal = !searching && current == Sidebar::journalId();
     const bool tiLauncher = !searching && current == Sidebar::tiLauncherId();
@@ -530,7 +564,8 @@ void MainWindow::refreshView()
     // The filter and the sort act on the tweak list and nothing else; the journal and the
     // actions had been showing them over lists they could not filter.
     m_chrome->setControlsVisible(!overview && !settings && !about && !debloat && !cleaner
-                                 && !tiLauncher && !godMode && !journal && !actions);
+                                 && !tiLauncher && !godMode && !journal && !actions && !apps
+                                 && !features);
 
     if (about) {
         m_chrome->setTitle(Locale::tr(QStringLiteral("sidebar.about")));
@@ -588,6 +623,22 @@ void MainWindow::refreshView()
                                         .arg(m_debloat->removableCount()));
         m_chrome->setPendingLabel({});
         m_stack->setCurrentWidget(m_debloatScroll);
+        return;
+    }
+
+    if (features) {
+        m_chrome->setTitle(Locale::tr(QStringLiteral("sidebar.features")));
+        m_chrome->setSubtitle(m_features->subtitle());
+        m_chrome->setPendingLabel({});
+        m_stack->setCurrentWidget(m_featuresScroll);
+        return;
+    }
+
+    if (apps) {
+        m_chrome->setTitle(Locale::tr(QStringLiteral("sidebar.apps")));
+        m_chrome->setSubtitle(m_apps->subtitle());
+        m_chrome->setPendingLabel({});
+        m_stack->setCurrentWidget(m_appsScroll);
         return;
     }
 

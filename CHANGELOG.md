@@ -4,6 +4,89 @@ Bu dosya sürümler arasındaki dikkate değer değişiklikleri listeler.
 Biçim [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) temellidir ve
 proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
+## [0.15.0] — 2026-09-04
+
+WinUtil'in uygulama kurma sekmesi ve Özellikler bölümü olduğu gibi taşındı: iki yüz otuz üç
+program, on kategori, WinGet ile Chocolatey arasında seçim; dokuz Windows özelliği, her biri
+önce makineden okunmuş — Uygulamalar satırının hemen altında, iki yeni sayfada.
+
+### Eklendi
+
+#### Uygulama kur
+
+Sistem grubunda, Uygulamalar satırının hemen altında yeni bir sayfa; Fluent kabukta Paketler
+rayında. WinUtil'in `config/applications.json` dosyası olduğu gibi gömülü (MIT;
+`resources/licenses/winutil-MIT.txt`): 233 program, her birinin WinGet ve Chocolatey kimliği,
+kategorisi, açıklaması ve bağlantısı. Çalıştıran PowerShell de WinUtil'inki:
+`Test-WinUtilPackageManager`, `Install-WinUtilWinget`, `Install-WinUtilChoco`,
+`Install-WinUtilProgramWinget` ve `Install-WinUtilProgramChoco` betiğe `functions/private/`
+altındaki halleriyle yazılıyor; kurma, kaldırma ve "kurulu olanları göster" akışları
+`Invoke-WPFInstall`, `Invoke-WPFUnInstall` ve `Invoke-WinUtilCurrentSystem`'in adımlarını
+izliyor.
+
+- **Kur / Yükselt, Kaldır, Tümünü yükselt** — tercih WinGet ise her satır WinGet'e; Chocolatey
+  ise choco kimliği olan satırlar choco'ya, olmayanlar WinGet'e gider
+  (`Get-WinUtilSelectedPackages`). Paket yöneticisi makinede yoksa önce o kurulur: WinGet için
+  NuGet sağlayıcısı, `Microsoft.WinGet.Client` modülü ve `Repair-WinGetPackageManager -AllUsers`;
+  Chocolatey için `community.chocolatey.org/install.ps1`. Edge kaldırılırken WinUtil'in
+  oluşturduğu `MicrosoftEdge.exe` taslağı da oluşturulur. "Tümünü yükselt" WinUtil'deki gibi
+  ayrı bir PowerShell penceresi açar (`winget upgrade --all --include-unknown --silent …` ya
+  da `choco upgrade all -y`).
+- **Her çalıştırma önce onaylanır** — Eylemler ve Uygulamalar sayfaları gibi: pencere seçili
+  adları listeler, Ayrıntılar paneli çalışacak `winget install --id …` / `choco install … -y`
+  satırlarını gösterir.
+- **İlerleme paket paket** — sayfanın üstündeki şerit "X kuruluyor (i/n)" diye sayar; kart
+  bitince "kuruldu", "zaten güncel" ya da çıkış kodunu yazar. winget ve choco'nun ham çıktısı
+  "Çıktıyı göster" ile açılan panele akar ve `apps.log`'a yazılır.
+- **Arama ve kategori çipleri** — ad, açıklama ve anahtara göre 300 ms gecikmeli arama; Tümü
+  artı on kategori çipi, Ctrl ile çoklu seçim. Süzgeç açıkken eşleşen kategoriler kendiliğinden
+  açılır, süzgeç kalkınca kapalı bıraktıklarınız geri kapanır (`Find-AppsByNameOrDescription`).
+- **Seçim araçları** — "Seçili uygulama: N" açılır listesi (tek tek çıkarma), Seçimi temizle,
+  Kurulu olanları göster (`winget list` / `choco list` çıktısını WinUtil'in deseniyle eşler ve
+  seçime ekler), Tümünü daralt / genişlet ve kartta sağ tık menüsü (Kur · Kaldır · Web sitesi).
+- **İçe / dışa aktar** — WinUtil'in ön ayar biçimi: `WPFInstall<anahtar>` dizisi. WinUtil'de
+  dışa aktarılan bir dosya burada yüklenir; eski nesne biçimi de okunur.
+- **Durum satırı** — `Test-WinUtilPackageManager` ile "WinGet: kurulu · Chocolatey: kurulu
+  değil"; tercih edilen yönetici yoksa "WinGet'i kur / onar" (`Invoke-WPFFixesWinget`) ya da
+  "Chocolatey'i kur" düğmesi belirir.
+- **FOSS rozeti** — özgür yazılım kartlarının köşesinde WinUtil'in yeşil anahtar deliği.
+- Doksan bir yeni arayüz dizesi on dilde; kategori adları çevrildi. Uygulama açıklamaları
+  WinUtil'in İngilizce metinleri olarak kalıyor: 233 satır, kataloğun kendi sözleri.
+
+#### Özellikler
+
+Uygulama kur'un hemen altında ikinci bir sayfa; Fluent kabukta yine Paketler rayında.
+WinUtil'in `config/feature.json` dosyasının "Features" bölümü: .NET Framework, Hyper-V, eski
+medya bileşenleri, WSL, NFS, günlük kayıt defteri yedeği, eski F8 önyükleme kurtarması (aç /
+kapat) ve Windows Sandbox — dokuz satır. Dosya katı JSON olarak yeniden serileştirildi
+(WinUtil'deki kopya bir dizenin içinde ham satır sonu taşıyor; PowerShell bunu affediyor,
+QJsonDocument etmiyor); satırların içeriği aynı.
+
+- **Kurulum WinUtil'in fonksiyonuyla** — `Invoke-WinUtilFeatureInstall` betiğe olduğu gibi
+  yazılıyor: her satırın DISM özellikleri `Enable-WindowsOptionalFeature -Online -All
+  -NoRestart` ile açılır, ardından satırın `InvokeScript` satırları çalışır. Bir satır hata
+  verirse sonraki yine denenir ve satırda "başarısız" yazar. Sonunda WinUtil'in "A Reboot may
+  be required" uyarısı.
+- **Önce makine okunur** — `Get-WindowsOptionalFeature -Online`, `bcdedit /enum` ve kayıt
+  defteri: her satır "etkin", "devre dışı", "kısmen" ya da "bu sürümde yok" (Home'da Hyper-V ve
+  Sandbox) diyor; olmayan satır işaretlenemiyor. Her çalıştırmadan sonra yeniden tarama.
+- **Devre dışı bırakma** — WinUtil'de karşılığı olmayan tek düğme: etkin bir DISM satırında
+  `Disable-WindowsOptionalFeature`. Onay penceresi bunu söylüyor.
+- **Her çalıştırma önce onaylanır**; Ayrıntılar panelinde `Enable-WindowsOptionalFeature`
+  satırları ve betikler; çıktı paneli ve `features.log`.
+- Elli altı yeni dize on dilde: dokuz özelliğin adı ve açıklaması çevrildi.
+
+#### Araçlar
+
+- `tools/check-data.py` artık `applications.json`'ı (13. denetim: her satırın alanları, en az
+  bir paket kimliği ve her kategorinin `apps.category.<slug>` anahtarı) ve `features.json`'ı
+  (14. denetim: her satırın çalıştıracak bir şeyi ve iki i18n anahtarı) da okuyor.
+
+### Değiştirildi
+
+- Karttaki simge, WinUtil'in Google'dan çektiği favicon değil, WinUtil'in kendi yedeği olan baş
+  harf: bir gizlilik aracı iki yüz otuz üç siteye istek atmamalı.
+
 ## [0.14.0] — 2026-09-03
 
 İki yüz altmış bir yeni satır — yüz otuz biri popüler araçların gizlilik ayarlarından, yüz

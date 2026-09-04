@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(Arbitrium VERSION 0.14.0 LANGUAGES CXX)
+project(Arbitrium VERSION 0.15.0 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -32,6 +32,8 @@ set(PROJECT_SOURCES
     src/startup.h                     src/startup.cpp
     src/tasks.h                       src/tasks.cpp
     src/cleaner.h                     src/cleaner.cpp
+    src/apps.h                        src/apps.cpp
+    src/features.h                    src/features.cpp
     src/monitor.h                     src/monitor.cpp
     src/registry.h                    src/registry.cpp
     src/migration.h                   src/migration.cpp
@@ -70,6 +72,9 @@ set(PROJECT_SOURCES
     src/widgets/updatedialog.h        src/widgets/updatedialog.cpp
     src/widgets/tweakrow.h            src/widgets/tweakrow.cpp
     src/widgets/cleanerrow.h          src/widgets/cleanerrow.cpp
+    src/widgets/appentry.h            src/widgets/appentry.cpp
+    src/widgets/flowlayout.h          src/widgets/flowlayout.cpp
+    src/widgets/featurerow.h          src/widgets/featurerow.cpp
 
     src/views/contentheader.h         src/views/contentheader.cpp
     src/views/overviewpage.h          src/views/overviewpage.cpp
@@ -77,6 +82,8 @@ set(PROJECT_SOURCES
     src/views/tilauncherpage.h        src/views/tilauncherpage.cpp
     src/views/debloatpage.h           src/views/debloatpage.cpp
     src/views/cleanerpage.h           src/views/cleanerpage.cpp
+    src/views/appspage.h              src/views/appspage.cpp
+    src/views/featurespage.h          src/views/featurespage.cpp
     src/views/godmodepage.h           src/views/godmodepage.cpp
     src/views/journalpage.h           src/views/journalpage.cpp
     src/views/settingspage.h          src/views/settingspage.cpp

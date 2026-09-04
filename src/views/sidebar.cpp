@@ -43,6 +43,18 @@ const QString DebloatIcon = QStringLiteral(
     "M2.3 3.4h7.4M4.3 3.4v-1a.7.7 0 01.7-.7h2a.7.7 0 01.7.7v1"
     "M3 3.4l.5 6.3a.9.9 0 00.9.8h3.2a.9.9 0 00.9-.8l.5-6.3"
     "M5 5.1v3.4M7 5.1v3.4");
+// A parcel with a plus: the debloat row's opposite. The app installer adds packages the
+// way that row takes them off, and the two sit together for that reason.
+const QString AppsIcon = QStringLiteral(
+    "M1.4 4.2v4.1l3.3 1.9 3.3-1.9V4.2L4.7 2.3z"
+    "M1.4 4.2l3.3 1.9 3.3-1.9M4.7 6.1v4.1"
+    "M8.7 8.6h2.6M10 7.3v2.6");
+// Two blocks, one set on the other: lucide's "blocks", the optional components that stack
+// onto the image. The Features page turns Windows' own optional features on and off.
+const QString FeaturesIcon = QStringLiteral(
+    "M7 1.5h3.5v3.5H7z"
+    "M5 10.5V4a.5.5 0 00-.5-.5H2a.5.5 0 00-.5.5v6a.5.5 0 00.5.5h6a.5.5 0 00.5-.5V8"
+    "a.5.5 0 00-.5-.5H1.5");
 // A window with its corner opened and an arrow leaving through it. The God Mode page runs
 // nothing of its own — every row hands a target to Windows and Windows draws the dialog —
 // so the glyph says "this leads out of here" rather than naming any one kind of setting.
@@ -73,7 +85,7 @@ const QString AboutIcon = QStringLiteral(
 struct GroupDef
 {
     const char *labelKey;   ///< i18n key, or nullptr for the ungrouped row (Genel Bakış)
-    const char *ids[10];    ///< category ids, empty-string terminated
+    const char *ids[12];    ///< category ids, empty-string terminated
 };
 
 // Reuses whichever i18n key already carries the right word rather than adding a
@@ -92,7 +104,7 @@ constexpr GroupDef Groups[] = {
     // to Bellek & CPU because the two are read together.
     // Zamanlanmış görevler beside Başlangıç: both are lists of things the machine runs
     // on its own, read out of the machine rather than the catalogue.
-    { "category.sys",                 {"sys", "upd", "svc", "boot", "task", "perf", "pwr", "debloat", ""} },
+    { "category.sys",                 {"sys", "upd", "svc", "boot", "task", "perf", "pwr", "debloat", "apps", "features", ""} },
     // Güvenlik sertleştirme belongs beside Gizlilik: the same page of a user's mind.
     { "sidebar.group.privacynet",     {"priv", "sec", "net", ""} },
     // The cleaner rides with Dosyalar: Temizlik keeps the caches from refilling, the
@@ -121,6 +133,10 @@ QString listRowLabel(const QString &id)
         return Locale::tr(QStringLiteral("sidebar.godmode"));
     if (id == Sidebar::cleanerId())
         return Locale::tr(QStringLiteral("sidebar.cleaner"));
+    if (id == Sidebar::appsId())
+        return Locale::tr(QStringLiteral("sidebar.apps"));
+    if (id == Sidebar::featuresId())
+        return Locale::tr(QStringLiteral("sidebar.features"));
     return Locale::tr(QStringLiteral("category.") + id);
 }
 
@@ -213,6 +229,14 @@ void Sidebar::buildList()
                 // A measurement of the disk behind the same row shape. Its count is the
                 // reclaimable size, set by MainWindow once the first scan has answered.
                 row = new CategoryRow(id, listRowLabel(id), CleanerIcon, QString(), m_list);
+            } else if (id == appsId()) {
+                // WinUtil's install tab behind the same row shape. Its count is the size
+                // of its own catalogue, set by MainWindow once the page exists.
+                row = new CategoryRow(id, listRowLabel(id), AppsIcon, QString(), m_list);
+            } else if (id == featuresId()) {
+                // WinUtil's Features section, read against DISM. Count: the rows in
+                // features.json, set by MainWindow once the page exists.
+                row = new CategoryRow(id, listRowLabel(id), FeaturesIcon, QString(), m_list);
             } else if (id == godModeId()) {
                 // Nor is this one — it opens Windows' own settings pages and writes
                 // nothing, so there is no tweak for the catalogue to carry. Same row

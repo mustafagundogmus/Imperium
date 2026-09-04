@@ -51,7 +51,8 @@ void FluentChrome::buildRails()
     m_rails.append({QStringLiteral("sidebar.group.tools"), &Wrench,
                     {Sidebar::actionsId(), Sidebar::cleanerId(), Sidebar::godModeId(),
                      Sidebar::tiLauncherId()}});
-    m_rails.append({QStringLiteral("fluent.rail.packages"), &Icons::Lucide::Package, {Sidebar::debloatId()}});
+    m_rails.append({QStringLiteral("fluent.rail.packages"), &Icons::Lucide::Package,
+                    {Sidebar::debloatId(), Sidebar::appsId(), Sidebar::featuresId()}});
     m_rails.append({QStringLiteral("fluent.rail.history"), &History, {Sidebar::journalId()}});
     m_rails.append({QStringLiteral("fluent.rail.security"), &Icons::Lucide::ShieldCheck,
                     {QStringLiteral("sec"), QStringLiteral("priv")}});
@@ -157,6 +158,8 @@ QString FluentChrome::pageLabel(const QString &id) const
     if (id == Sidebar::cleanerId())     return Locale::tr(QStringLiteral("sidebar.cleaner"));
     if (id == Sidebar::actionsId())     return Locale::tr(QStringLiteral("sidebar.actions"));
     if (id == Sidebar::tiLauncherId())  return Locale::tr(QStringLiteral("sidebar.tilauncher"));
+    if (id == Sidebar::appsId())        return Locale::tr(QStringLiteral("sidebar.apps"));
+    if (id == Sidebar::featuresId())    return Locale::tr(QStringLiteral("sidebar.features"));
     if (id == Sidebar::journalId())     return Locale::tr(QStringLiteral("sidebar.journal"));
     if (id == Sidebar::settingsId())    return Locale::tr(QStringLiteral("sidebar.settings"));
     if (id == Sidebar::aboutId())       return Locale::tr(QStringLiteral("sidebar.about"));

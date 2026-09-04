@@ -66,6 +66,8 @@ extern const Icons::Glyph Menu;
 extern const Icons::Glyph Zap;
 extern const Icons::Glyph KeyRound;
 extern const Icons::Glyph Info;
+extern const Icons::Glyph PackagePlus;
+extern const Icons::Glyph Blocks;
 
 } // namespace Lucide
 

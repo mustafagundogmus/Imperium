@@ -25,7 +25,9 @@
 #include <QVector>
 
 class AboutPage;
+class AppsPage;
 class AppState;
+class FeaturesPage;
 class Chrome;
 class CleanerPage;
 class DebloatPage;
@@ -116,6 +118,8 @@ private:
     SmoothScrollArea *m_godModeScroll = nullptr;
     SmoothScrollArea *m_journalScroll = nullptr;
     SmoothScrollArea *m_aboutScroll = nullptr;
+    SmoothScrollArea *m_appsScroll = nullptr;
+    SmoothScrollArea *m_featuresScroll = nullptr;
     SettingsPage *m_settings = nullptr;
     ActionPage *m_actions = nullptr;
     TiLauncherPage *m_tiLauncher = nullptr;
@@ -124,6 +128,8 @@ private:
     GodModePage *m_godMode = nullptr;
     JournalPage *m_journal = nullptr;
     AboutPage *m_about = nullptr;
+    AppsPage *m_apps = nullptr;
+    FeaturesPage *m_features = nullptr;
     Updater *m_updater = nullptr;
     OverviewPage *m_overview = nullptr;
     TweakPage *m_tweaks = nullptr;

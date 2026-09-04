@@ -79,7 +79,8 @@ QSTRING_LITERAL = re.compile(r'QStringLiteral\("([^"]*)"\)')
 # down. Keep this set closed: an eighth prefix appearing here means a new family of keys
 # that nothing is checking.
 RUNTIME_PREFIXES = frozenset(["tweak.", "opt.", "section.", "category.", "action.",
-                              "godmode.", "godmode.group."])
+                              "godmode.", "godmode.group.", "apps.category.",
+                              "features.item."])
 
 # Registry::write's ladder of type names (registry.cpp:228-270). SZ is not in the ladder —
 # it is the fall-through, which is the whole reason unknown type strings have to be caught
@@ -1403,6 +1404,153 @@ def collect_result_keys(actions):
     return keys
 
 
+def application_category_slug(category):
+    """apps.cpp's categorySlug(): "Microsoft Tools" -> "microsoft-tools"."""
+    slug = ""
+    for ch in category:
+        if ch.isalnum():
+            slug += ch.lower()
+        elif slug and not slug.endswith("-"):
+            slug += "-"
+    return slug.rstrip("-")
+
+
+def collect_application_keys(applications):
+    """The apps.category.<slug> keys the Uygulama kur page asks for at run time — the other
+    half of the runtime prefix whitelisted above, spelled out so the orphan sweep can see
+    them the way it sees the catalogue's own families."""
+    keys = set()
+    if isinstance(applications, dict):
+        for key, entry in applications.items():
+            if key.startswith("_") or not isinstance(entry, dict):
+                continue
+            category = entry.get("category")
+            if isinstance(category, str) and category.strip():
+                keys.add("apps.category." + application_category_slug(category.strip()))
+    return keys
+
+
+def check_applications(report, applications, i18n):
+    """applications.json is WinUtil's file carried verbatim, and Apps::Catalogue reads it
+    the same forgiving way Catalog::load() reads catalog.json: a row without a name takes
+    its key, a row without a category is filed under Utilities, and a winget id that is
+    empty is simply never handed to winget. None of that fails; all of it is a row that
+    silently does less than the file says. The categories also have to be translatable —
+    the page draws them through Locale::tr, which renders a missing key as itself, so a
+    category WinUtil adds upstream shows as "apps.category.something" in ten languages
+    until this check says so."""
+    c = report.check(13, "applications.json — every row carries its fields, and every "
+                         "category has its i18n key")
+    if not isinstance(applications, dict):
+        c.error("shape", "applications.json", "(root)", "expected an object keyed by app")
+        return
+
+    rows = 0
+    categories = {}
+    for key, entry in sorted(applications.items()):
+        if key.startswith("_"):
+            continue
+        if not isinstance(entry, dict):
+            c.error("shape", "applications.json", key, "expected an object")
+            continue
+        rows += 1
+        for field in ("category", "content", "description", "link", "winget"):
+            value = entry.get(field)
+            if not isinstance(value, str) or not value.strip():
+                c.error("missing field", "applications.json", key,
+                        "%s is absent or empty; Apps::Catalogue fills it in silently" % field)
+        if "foss" in entry and not isinstance(entry["foss"], bool):
+            c.error("bad field", "applications.json", key, "foss is not a boolean")
+        choco = entry.get("choco")
+        if choco is not None and not isinstance(choco, str):
+            c.error("bad field", "applications.json", key, "choco is not a string")
+        winget = entry.get("winget")
+        if isinstance(winget, str) and winget.strip().lower() == "na" \
+                and (not isinstance(choco, str) or choco.strip().lower() in ("", "na")):
+            c.error("no package id", "applications.json", key,
+                    "neither winget nor choco names a package; the row can never install")
+        category = entry.get("category")
+        if isinstance(category, str) and category.strip():
+            categories.setdefault(category.strip(), key)
+
+    for category, first_key in sorted(categories.items()):
+        i18n_key = "apps.category." + application_category_slug(category)
+        if i18n_key not in i18n:
+            c.error("missing key", "i18n.json", i18n_key,
+                    "the category of %s and others; Locale::tr would draw the key itself"
+                    % first_key)
+    c.note("%d rows in %d categories" % (rows, len(categories)))
+
+
+def feature_slug(key):
+    """features.cpp's slugFor(): "WPFFeatureslegacymedia" -> "legacymedia"."""
+    for prefix in ("WPFFeatures", "WPFFeature"):
+        if key.startswith(prefix):
+            return key[len(prefix):].lower()
+    return key.lower()
+
+
+def feature_rows(features):
+    """The rows the Özellikler page reads: category "Features", not a button, and
+    carrying at least one DISM feature or one script — Features::Catalogue's own filter."""
+    rows = []
+    if not isinstance(features, dict):
+        return rows
+    for key, entry in features.items():
+        if not isinstance(entry, dict):
+            continue
+        if entry.get("category") != "Features":
+            continue
+        if str(entry.get("Type", "")).lower() == "button":
+            continue
+        rows.append((key, entry))
+    return rows
+
+
+def collect_feature_keys(features):
+    """features.item.<slug>.name/.desc for every row, for the orphan sweep."""
+    keys = set()
+    for key, _entry in feature_rows(features):
+        slug = feature_slug(key)
+        keys.add("features.item.%s.name" % slug)
+        keys.add("features.item.%s.desc" % slug)
+    return keys
+
+
+def check_features(report, features, i18n):
+    """features.json is WinUtil's file too, and the page draws each row's name and
+    description through Locale::tr, which renders a missing key as itself — so a row
+    WinUtil adds upstream would show as "features.item.foo.name" in ten languages until
+    this check says so. A row with neither a feature list nor a script is skipped by the
+    catalogue silently; it is reported here instead."""
+    c = report.check(14, "features.json — every Features row has something to run and its "
+                         "two i18n keys")
+    if not isinstance(features, dict):
+        c.error("shape", "features.json", "(root)", "expected an object keyed by row")
+        return
+
+    rows = feature_rows(features)
+    for key, entry in sorted(rows):
+        dism = [f for f in entry.get("feature", []) if isinstance(f, str) and f.strip()] \
+            if isinstance(entry.get("feature"), list) else []
+        scripts = [s for s in entry.get("InvokeScript", []) if isinstance(s, str) and s.strip()] \
+            if isinstance(entry.get("InvokeScript"), list) else []
+        if not dism and not scripts:
+            c.error("nothing to run", "features.json", key,
+                    "neither a feature list nor an InvokeScript; Features::Catalogue drops the row")
+        for field in ("Content", "Description"):
+            value = entry.get(field)
+            if not isinstance(value, str) or not value.strip():
+                c.error("missing field", "features.json", key, "%s is absent or empty" % field)
+        slug = feature_slug(key)
+        for suffix in ("name", "desc"):
+            i18n_key = "features.item.%s.%s" % (slug, suffix)
+            if i18n_key not in i18n:
+                c.error("missing key", "i18n.json", i18n_key,
+                        "the %s of %s; Locale::tr would draw the key itself" % (suffix, key))
+    c.note("%d Features rows" % len(rows))
+
+
 def read_languages(repo, report):
     """The ten ids from Locale's own table, so an eleventh needs no edit here."""
     body = read_source_table(repo / "src/i18n.cpp", "const QVector<Language> Languages = {",
@@ -1456,6 +1604,8 @@ def main():
     actions = read_json(data / "actions.json", report)
     links = read_json(data / "settings-links.json", report)
     i18n = read_json(data / "i18n.json", report)
+    applications = read_json(data / "applications.json", report)
+    features = read_json(data / "features.json", report)
     if report.fatal_message:
         return report.emit()
 
@@ -1479,7 +1629,8 @@ def main():
     check_service_risk_keys(report, i18n, risky)
 
     source_keys = collect_source_keys(sources, group_keys)
-    data_keys = collect_data_keys(catalog, actions, links)
+    data_keys = (collect_data_keys(catalog, actions, links) | collect_application_keys(applications)
+                 | collect_feature_keys(features))
     result_keys = collect_result_keys(actions)
     risk_keys = ["svc.risk." + name for name in risky]
 
@@ -1488,6 +1639,8 @@ def main():
     check_actions(report, actions, i18n)
     check_settings_links(report, links, i18n)
     check_catalog_translations(report, catalog, i18n)
+    check_applications(report, applications, i18n)
+    check_features(report, features, i18n)
 
     return report.emit()
 

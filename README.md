@@ -78,6 +78,14 @@ someone who got tired of that deal.
 <td align="center"><sub><b>Apps</b> · what this Windows actually came with, real icons and all</sub></td>
 </tr>
 <tr>
+<td><img src="docs/images/apps.png" alt="Install apps page in the Fluent shell: WinUtil's catalogue as tiles under collapsible category headings, with the search box and category chips above"></td>
+<td><img src="docs/images/features.png" alt="Windows features page in the Fluent shell: WinUtil's nine feature rows, each with its DISM state read from the machine"></td>
+</tr>
+<tr>
+<td align="center"><sub><b>Install apps</b> · Fluent shell · WinUtil's 233-program catalogue, WinGet or Chocolatey</sub></td>
+<td align="center"><sub><b>Windows features</b> · Fluent shell · WinUtil's Features section, read from DISM before anything is offered</sub></td>
+</tr>
+<tr>
 <td><img src="docs/images/actions.png" alt="Actions page"></td>
 <td><img src="docs/images/trustedinstaller.png" alt="TrustedInstaller launcher in the Midnight theme"></td>
 </tr>
@@ -151,6 +159,33 @@ folder. What you see is what you actually have — real names, real logos, real 
 Removal takes the app off **every account** on the machine and deprovisions it, so it doesn't
 come back the next time someone new signs in. Shared runtimes and anything Windows itself marks
 protected are shown with a padlock instead of a button — visible, but not a foot-gun.
+
+### 📥 Install apps, the WinUtil way
+
+Right under that page sits its opposite: WinUtil's install tab, carried over as it is. The
+catalogue is WinUtil's own `applications.json` — **233 programs** in ten categories, each with its
+WinGet and Chocolatey ids — and the PowerShell that runs them is WinUtil's too, function for
+function: pick WinGet or Chocolatey, tick what you want, **Install / Upgrade**, **Uninstall** or
+**Upgrade all**. A package manager that is not on the machine is installed first, exactly as
+WinUtil does it. Search, category chips, collapsible categories, "show installed", the
+selected-apps popup and the FOSS badge are all there; a selection exported from WinUtil
+imports here unchanged.
+
+What is different is the part that is this app's habit: every run is confirmed with the exact
+`winget install --id …` and `choco install … -y` lines it will issue, progress is drawn package by
+package with the exit code on the tile, and the raw winget/choco output streams into a panel you
+can open. The tile icon is the initial letter rather than a favicon fetched from Google — a
+privacy tool has no business making two hundred requests to other people's sites.
+
+### 🧩 Windows features, the WinUtil way
+
+The Features section of WinUtil's Config tab, on a page of its own: .NET Framework, Hyper-V,
+the legacy media components, WSL, NFS, the daily registry backup, legacy F8 boot recovery and
+Windows Sandbox — nine rows, installed by WinUtil's own `Invoke-WinUtilFeatureInstall`, function
+for function. Unlike WinUtil, the page asks DISM first: every row says whether it is **already
+on**, partly on, or not on this edition at all, and an enabled feature can be turned off from its
+row. Every run is confirmed with the exact `Enable-WindowsOptionalFeature` lines it will issue,
+and ends in a rescan.
 
 ### 🧹 A disk cleaner that measures before it deletes
 
@@ -382,8 +417,15 @@ Three pieces inside it carry licences of their own, and they stay with the binar
   [`resources/licenses/`](resources/licenses) is the upstream licence in full, because a few of
   the glyphs used here are on its Feather-derived list and carry that project's MIT notice in the
   same file.
+- **WinUtil's catalogues** — the Install apps page's `applications.json` and the Windows
+  features page's `features.json` are
+  [Chris Titus Tech's WinUtil](https://github.com/ChrisTitusTech/winutil) `config/applications.json`
+  and `config/feature.json`, compiled in under its
+  [MIT License](https://github.com/ChrisTitusTech/winutil/blob/main/LICENSE); the text is in
+  [`resources/licenses/`](resources/licenses) as `winutil-MIT.txt`. The PowerShell functions
+  those pages run are WinUtil's as well, written into the script as they appear upstream.
 
-The release zip carries all nine of those files in a `licenses/` folder, so a downloaded copy is
+The release zip carries all ten of those files in a `licenses/` folder, so a downloaded copy is
 complete without the repository beside it.
 
 ---

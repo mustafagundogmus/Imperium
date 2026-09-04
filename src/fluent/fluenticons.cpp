@@ -143,6 +143,20 @@ const Glyph Info{
     "<circle cx=\"12\" cy=\"12\" r=\"10\"/>"
     "<path d=\"M12 16v-4\"/>"
     "<path d=\"M12 8h.01\"/>"};
+// The debloat page's parcel with a plus on it: the same package, being added to.
+const Glyph PackagePlus{
+    "package-plus",
+    "<path d=\"M16 16h6\"/>"
+    "<path d=\"M19 13v6\"/>"
+    "<path d=\"M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14\"/>"
+    "<path d=\"m7.5 4.27 9 5.15\"/>"
+    "<polyline points=\"3.29 7 12 12 20.71 7\"/>"
+    "<line x1=\"12\" x2=\"12\" y1=\"22\" y2=\"12\"/>"};
+// Two blocks, one set on the other: the optional components stacked onto the image.
+const Glyph Blocks{
+    "blocks",
+    "<rect width=\"7\" height=\"7\" x=\"14\" y=\"3\" rx=\"1\"/>"
+    "<path d=\"M10 21V8a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H3\"/>"};
 
 } // namespace Lucide
 
@@ -186,6 +200,8 @@ const Icons::Glyph &pageGlyph(const QString &id)
         {Sidebar::godModeId(), &LayoutGrid},
         {Sidebar::tiLauncherId(), &KeyRound},
         {Sidebar::debloatId(), &Package},
+        {Sidebar::appsId(), &PackagePlus},
+        {Sidebar::featuresId(), &Blocks},
         {Sidebar::journalId(), &History},
         {Sidebar::settingsId(), &Settings},
         {Sidebar::aboutId(), &Info},

@@ -34,5 +34,13 @@
         <file alias="actions.json">data/actions.json</file>
         <file alias="settings-links.json">data/settings-links.json</file>
         <file alias="i18n.json">data/i18n.json</file>
+        <!-- The app catalogue of the Uygulama kur page: WinUtil's config/applications.json,
+             carried verbatim (MIT, resources/licenses/winutil-MIT.txt). -->
+        <file alias="applications.json">data/applications.json</file>
+        <!-- The Özellikler page: WinUtil's config/feature.json, re-serialised as strict JSON
+             (upstream carries a raw newline inside one string, which PowerShell's parser
+             forgives and QJsonDocument does not); only its "Features" rows are read, the
+             rest of the file rides along for upstream syncs. -->
+        <file alias="features.json">data/features.json</file>
     </qresource>
 </RCC>
