@@ -312,7 +312,7 @@ QWidget *SettingsPage::buildApplication()
 
     m_updateRow = new SettingRow(
         Locale::tr(QStringLiteral("settings.update.label")),
-        Locale::tr(QStringLiteral("settings.update.desc")).arg(Updater::repository()),
+        Locale::tr(QStringLiteral("settings.update.desc")).arg(Updater::repository() + QStringLiteral(" (Imperium.exe)")),
         m_updateButton, SettingRow::Trailing);
 
     auto *onLaunch = new ToggleSwitch;

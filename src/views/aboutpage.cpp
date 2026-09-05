@@ -79,7 +79,7 @@ AboutPage::AboutPage(QWidget *parent)
 
         auto *profile = new PillButton(PillButton::Ghost, QString(), list);
         connect(profile, &PillButton::clicked, this, [] {
-            QDesktopServices::openUrl(QUrl(QStringLiteral("https://github.com/shadesofdeath")));
+            QDesktopServices::openUrl(QUrl(QStringLiteral("https://github.com/mustafagundogmus")));
         });
         m_developerRow = new SettingRow(QString(), QString(), profile, SettingRow::Trailing, list);
 

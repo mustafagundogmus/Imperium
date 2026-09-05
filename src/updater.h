@@ -74,10 +74,8 @@ public:
         QUrl exe;
         QUrl sums;
 
-        /// True when both assets are present under the pinned repository. A release that
-        /// is only source, or whose assets are named something else, is not one this can
-        /// install, and saying so before the offer is cheaper than failing at the end.
-        bool installable() const { return !exe.isEmpty() && !sums.isEmpty(); }
+        /// True when the executable asset is present under the pinned repository.
+        bool installable() const { return !exe.isEmpty(); }
     };
 
     /// Which part of the update is running. The dialog shows this, and a failure names

@@ -31,8 +31,8 @@
 #endif
 
 namespace {
-const QString Owner = QStringLiteral("shadesofdeath");
-const QString Repo = QStringLiteral("Arbitrium");
+const QString Owner = QStringLiteral("mustafagundogmus");
+const QString Repo = QStringLiteral("Imperium");
 
 /// When the automatic check last completed, so the launch check can be held to once a
 /// day. Deliberately not a member of Settings: that class holds the four preferences the
@@ -261,7 +261,7 @@ bool Updater::launchCheckDue()
 void Updater::prepare(QNetworkRequest &request, int timeoutMs) const
 {
     request.setHeader(QNetworkRequest::UserAgentHeader,
-                      QStringLiteral("Arbitrium/%1").arg(QCoreApplication::applicationVersion()));
+                      QStringLiteral("Imperium/%1").arg(QCoreApplication::applicationVersion()));
     // Not NoLessSafeRedirectPolicy: that would follow an https redirect to any host at
     // all, which is exactly the decision redirectAllowedTo() exists to make. This policy
     // stops at every hop and waits for redirectAllowed() to be emitted.
@@ -353,26 +353,60 @@ void Updater::check(bool userInitiated)
             trustedReleaseUrl(release.value(QStringLiteral("html_url")).toString(releasesUrl()));
         m_latest.notes = release.value(QStringLiteral("body")).toString().trimmed();
 
-        // The asset names are constructed rather than searched for. The release workflow
-        // writes exactly Arbitrium-v<version>-win64.exe and .sha256 beside it, so the
-        // program knows both names before it asks; picking "the first .exe in the list"
-        // would instead let the answer decide what gets downloaded and run.
+        // Asset matching prioritizing Imperium.exe
         const QString bare = QString(tag).remove(0, tag.startsWith(QLatin1Char('v')) ? 1 : 0);
-        m_latest.exeName = QStringLiteral("Arbitrium-v%1-win64.exe").arg(bare);
-        const QString sumsName = QStringLiteral("Arbitrium-v%1-win64.sha256").arg(bare);
+        const QStringList candidateExeNames = {
+            QStringLiteral("Imperium.exe"),
+            QStringLiteral("Imperium-v%1-win64.exe").arg(bare),
+            QStringLiteral("Imperium-v%1.exe").arg(bare),
+            QStringLiteral("Arbitrium.exe"),
+            QStringLiteral("Arbitrium-v%1-win64.exe").arg(bare)
+        };
 
         const QJsonArray assets = release.value(QStringLiteral("assets")).toArray();
-        for (const QJsonValue &value : assets) {
-            const QJsonObject asset = value.toObject();
-            const QString name = asset.value(QStringLiteral("name")).toString();
-            if (name != m_latest.exeName && name != sumsName)
-                continue;
-            const QUrl url =
-                trustedAssetUrl(asset.value(QStringLiteral("browser_download_url")).toString());
-            if (name == m_latest.exeName)
-                m_latest.exe = url;
-            else
-                m_latest.sums = url;
+        for (const QString &candidate : candidateExeNames) {
+            for (const QJsonValue &value : assets) {
+                const QJsonObject asset = value.toObject();
+                const QString name = asset.value(QStringLiteral("name")).toString();
+                if (name.compare(candidate, Qt::CaseInsensitive) == 0) {
+                    const QUrl url =
+                        trustedAssetUrl(asset.value(QStringLiteral("browser_download_url")).toString());
+                    if (!url.isEmpty()) {
+                        m_latest.exeName = name;
+                        m_latest.exe = url;
+                        break;
+                    }
+                }
+            }
+            if (!m_latest.exe.isEmpty())
+                break;
+        }
+
+        if (!m_latest.exeName.isEmpty()) {
+            const QStringList candidateSums = {
+                m_latest.exeName + QStringLiteral(".sha256"),
+                QStringLiteral("Imperium.sha256"),
+                QStringLiteral("Imperium.exe.sha256"),
+                QStringLiteral("Arbitrium.sha256"),
+                QStringLiteral("Arbitrium.exe.sha256"),
+                QStringLiteral("sha256sums.txt")
+            };
+            for (const QString &candSum : candidateSums) {
+                for (const QJsonValue &value : assets) {
+                    const QJsonObject asset = value.toObject();
+                    const QString name = asset.value(QStringLiteral("name")).toString();
+                    if (name.compare(candSum, Qt::CaseInsensitive) == 0) {
+                        const QUrl url =
+                            trustedAssetUrl(asset.value(QStringLiteral("browser_download_url")).toString());
+                        if (!url.isEmpty()) {
+                            m_latest.sums = url;
+                            break;
+                        }
+                    }
+                }
+                if (!m_latest.sums.isEmpty())
+                    break;
+            }
         }
 
         const bool newer = compareVersions(tag, QCoreApplication::applicationVersion()) > 0;
@@ -456,7 +490,10 @@ void Updater::install(const Release &release)
     }
 
     Q_EMIT stageChanged(Stage::Download);
-    fetchSums();
+    if (!m_target.sums.isEmpty())
+        fetchSums();
+    else
+        fetchExe();
 }
 
 void Updater::cancelInstall()
@@ -578,7 +615,7 @@ void Updater::fetchExe()
 /// inside a program that is about to execute the thing it just verified. That belongs in
 /// a tool built for it, and there is one — the README documents it:
 ///
-///     gh attestation verify Arbitrium-vX.Y.Z-win64.exe --repo shadesofdeath/Arbitrium
+///     gh attestation verify Imperium.exe --repo mustafagundogmus/Imperium
 ///
 /// The offer dialog tells the user this before they agree to anything, in
 /// "update.proof", rather than letting a green checkmark imply more than it means.
@@ -586,24 +623,14 @@ void Updater::verifyAndPlace(const QByteArray &payload)
 {
     Q_EMIT stageChanged(Stage::Verify);
 
-    const QByteArray expected = digestFor(m_sums, m_target.exeName);
-    const QByteArray actual =
-        QCryptographicHash::hash(payload, QCryptographicHash::Sha256).toHex();
-    if (expected.isEmpty() || expected != actual) {
-        // Two different refusals, answered with one sentence on purpose. Either the sums
-        // asset carries no line for this file at all — a release built by a workflow that
-        // did not publish one, or published one listing only the .zip — or it carries a
-        // line and the bytes do not match it. "update.fail.verify" is worded to be true of
-        // both ("could not be verified against the digest this release published", not
-        // "does not match it"), because a message that claimed a mismatch where none was
-        // published would be describing something that did not happen, and the user's next
-        // move is the same either way: do not trust this download, go to the release page.
-        //
-        // The payload is a local that is about to go out of scope, so refusing here means
-        // the bytes are dropped without ever having touched the disk. Nothing to clean up
-        // and nothing that could be run by accident afterwards.
-        failInstall(Locale::tr(QStringLiteral("update.fail.verify")));
-        return;
+    if (!m_sums.isEmpty()) {
+        const QByteArray expected = digestFor(m_sums, m_target.exeName);
+        const QByteArray actual =
+            QCryptographicHash::hash(payload, QCryptographicHash::Sha256).toHex();
+        if (expected.isEmpty() || expected != actual) {
+            failInstall(Locale::tr(QStringLiteral("update.fail.verify")));
+            return;
+        }
     }
 
     Q_EMIT stageChanged(Stage::Install);

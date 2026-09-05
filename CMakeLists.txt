@@ -326,3 +326,13 @@ endif()
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(Arbitrium)
 endif()
+
+if(WIN32)
+    add_custom_command(TARGET Arbitrium POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "$<TARGET_FILE:Arbitrium>"
+            "$<TARGET_FILE_DIR:Arbitrium>/Imperium.exe"
+        COMMENT "Generating Imperium.exe"
+        VERBATIM
+    )
+endif()

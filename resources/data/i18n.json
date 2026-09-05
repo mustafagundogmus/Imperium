@@ -1,4 +1,4 @@
-{
+﻿{
  "about.donate.button": {
   "ar": "قدّم قهوة",
   "de": "Kaffee spendieren",
@@ -13572,16 +13572,16 @@
   "tr": "Sürüm"
  },
  "settings.version.value": {
-  "ar": "Arbitrium %1 · Qt %2 · %3 تعديل",
-  "de": "Arbitrium %1 · Qt %2 · %3 Tweaks",
-  "en": "Arbitrium %1 · Qt %2 · %3 tweaks",
-  "es": "Arbitrium %1 · Qt %2 · %3 tweaks",
-  "fr": "Arbitrium %1 · Qt %2 · %3 tweaks",
-  "it": "Arbitrium %1 · Qt %2 · %3 tweak",
-  "pl": "Arbitrium %1 · Qt %2 · %3 tweaków",
-  "pt": "Arbitrium %1 · Qt %2 · %3 tweaks",
-  "ru": "Arbitrium %1 · Qt %2 · твиков: %3",
-  "tr": "Arbitrium %1 · Qt %2 · %3 tweak"
+  "ar": "Imperium %1 · Qt %2 · %3 تعديل",
+  "de": "Imperium %1 · Qt %2 · %3 Tweaks",
+  "en": "Imperium %1 · Qt %2 · %3 tweaks",
+  "es": "Imperium %1 · Qt %2 · %3 tweaks",
+  "fr": "Imperium %1 · Qt %2 · %3 tweaks",
+  "it": "Imperium %1 · Qt %2 · %3 tweak",
+  "pl": "Imperium %1 · Qt %2 · %3 tweaków",
+  "pt": "Imperium %1 · Qt %2 · %3 tweaks",
+  "ru": "Imperium %1 · Qt %2 · твиков: %3",
+  "tr": "Imperium %1 · Qt %2 · %3 tweak"
  },
  "setup.nav.back": {
   "ar": "رجوع",
