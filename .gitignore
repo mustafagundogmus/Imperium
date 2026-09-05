@@ -86,6 +86,10 @@ CMakeLists.txt.user*
 # keep the Windows resource script (it carries the app icon)
 !app.rc
 
+# keep embedded helper binaries for Office downloader
+!resources/bin/aria2c.exe
+!resources/bin/wget.exe
+
 # Windows Explorer folder customization — per-machine, hardcodes a local absolute path
 desktop.ini
 
