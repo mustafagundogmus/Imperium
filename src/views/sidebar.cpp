@@ -68,6 +68,9 @@ const QString CleanerIcon = QStringLiteral(
 const QString GodModeIcon = QStringLiteral(
     "M9.5 6.6v3.2a.7.7 0 01-.7.7H2.9a.7.7 0 01-.7-.7V3.9a.7.7 0 01.7-.7h3.2"
     "M7.6 2.2h2.7v2.7M10.3 2.2L5.7 6.8");
+const QString OfficeIcon = QStringLiteral(
+    "M6 2v5.5M3.8 5.3l2.2 2.2 2.2-2.2"
+    "M2 9.5v1a.5.5 0 00.5.5h7a.5.5 0 00.5-.5v-1");
 // A cog: a toothed ring around a hub. What was here before was a disc with eight detached
 // rays — the same drawing as the Görsel Efektler category, i.e. a brightness icon.
 const QString SettingsIcon = QStringLiteral(
@@ -116,7 +119,7 @@ constexpr GroupDef Groups[] = {
     // the pinned strip at the bottom on purpose — that strip's geometry is a hand-linked
     // chain of xRowTop() methods where adding a row means editing every one of them, and
     // a launcher is something you go and use, not a meta page like Günlük or Hakkında.
-    { "sidebar.group.tools",          {"godmode", ""} },
+    { "sidebar.group.tools",          {"godmode", "office", ""} },
 };
 
 /// What a row in the scrolling list is called.
@@ -131,6 +134,8 @@ QString listRowLabel(const QString &id)
         return Locale::tr(QStringLiteral("sidebar.debloat"));
     if (id == Sidebar::godModeId())
         return Locale::tr(QStringLiteral("sidebar.godmode"));
+    if (id == Sidebar::officeId())
+        return Locale::tr(QStringLiteral("sidebar.office"));
     if (id == Sidebar::cleanerId())
         return Locale::tr(QStringLiteral("sidebar.cleaner"));
     if (id == Sidebar::appsId())
@@ -243,6 +248,8 @@ void Sidebar::buildList()
                 // shape again, and no count: the number of shortcuts is not a number
                 // anybody navigates by.
                 row = new CategoryRow(id, listRowLabel(id), GodModeIcon, QString(), m_list);
+            } else if (id == officeId()) {
+                row = new CategoryRow(id, listRowLabel(id), OfficeIcon, QString(), m_list);
             } else if (const Category *category = catalog.category(id)) {
                 const int count = category->tweakCount();
                 row = new CategoryRow(category->id, listRowLabel(category->id),

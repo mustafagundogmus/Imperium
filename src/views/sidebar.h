@@ -65,6 +65,9 @@ public:
     /// pages, so there is no tweak for the catalogue to carry.
     static QString godModeId() { return QStringLiteral("godmode"); }
 
+    /// …and the Office download & install page.
+    static QString officeId() { return QStringLiteral("office"); }
+
     /// …and the write history, which is not a category either.
     static QString journalId() { return QStringLiteral("journal"); }
 
@@ -92,9 +95,9 @@ public:
     static bool isPinnedPage(const QString &id)
     {
         return id == settingsId() || id == actionsId() || id == debloatId()
-               || id == cleanerId() || id == godModeId() || id == journalId()
-               || id == tiLauncherId() || id == appsId() || id == featuresId()
-               || id == aboutId();
+               || id == cleanerId() || id == godModeId() || id == officeId()
+               || id == journalId() || id == tiLauncherId() || id == appsId()
+               || id == featuresId() || id == aboutId();
     }
 
     /// …and who built it, which is not a category, a setting, or anything you would come

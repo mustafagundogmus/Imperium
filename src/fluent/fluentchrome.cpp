@@ -51,7 +51,7 @@ void FluentChrome::buildRails()
 
     m_rails.append({QStringLiteral("sidebar.group.tools"), &Wrench,
                     {Sidebar::actionsId(), Sidebar::cleanerId(), Sidebar::godModeId(),
-                     Sidebar::tiLauncherId()}});
+                     Sidebar::officeId(), Sidebar::tiLauncherId()}});
     m_rails.append({QStringLiteral("fluent.rail.packages"), &Icons::Lucide::Package,
                     {Sidebar::debloatId(), Sidebar::appsId(), Sidebar::featuresId()}});
     m_rails.append({QStringLiteral("fluent.rail.history"), &History, {Sidebar::journalId()}});
@@ -182,6 +182,7 @@ QString FluentChrome::pageLabel(const QString &id) const
 {
     if (id == Sidebar::debloatId())     return Locale::tr(QStringLiteral("sidebar.debloat"));
     if (id == Sidebar::godModeId())     return Locale::tr(QStringLiteral("sidebar.godmode"));
+    if (id == Sidebar::officeId())      return Locale::tr(QStringLiteral("sidebar.office"));
     if (id == Sidebar::cleanerId())     return Locale::tr(QStringLiteral("sidebar.cleaner"));
     if (id == Sidebar::actionsId())     return Locale::tr(QStringLiteral("sidebar.actions"));
     if (id == Sidebar::tiLauncherId())  return Locale::tr(QStringLiteral("sidebar.tilauncher"));

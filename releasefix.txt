@@ -1,0 +1,27 @@
+﻿Arbitrium - Sürüm Notları ve İyileştirme Raporu
+---------------------------------------------------
+
+1. Kaydırma Çubukları (Scrollbar) Modernize Edildi
+   - Uygulama içerisindeki eski tip kalın kaydırma çubukları tamamen yenilendi. Yerine Windows 11 ve macOS tasarımlarını andıran daha ince, zarif ve köşeleri yuvarlatılmış modern kaydırma çubukları eklendi.
+
+2. Mesaj ve Uyarı Pencereleri (MessageBox) Yenilendi
+   - Uygulamanın ekrana çıkardığı bilgi, uyarı ve hata pencereleri (diyalog kutuları) görsel olarak iyileştirildi. Eski, standart Windows pencereleri yerine kenarları yuvarlatılmış, daha yumuşak ve şık bir tasarıma geçildi.
+
+3. Çift Ekran Kartı (Dual GPU) Desteği
+   - Sistemde aynı anda bulunan hem dahili (Intel) hem de harici (NVIDIA) ekran kartlarının eksiksiz olarak algılanması ve listelenmesi sağlandı. Eskiden tasarruf modunda bekleyen harici kartlar sistemde görünmüyordu.
+
+4. Arayüz Düzenlemeleri ve Taşma Sorunları
+   - Donanım (özellikle ekran kartı) isimleri ve kapasiteleri önceden dar pencerelerde tek satıra sıkışıp taşıyordu. Artık her ekran kartı alt alta, kendi satırında ve hizalı bir şekilde gösterilerek okunabilirlik artırıldı.
+
+5. Ekran Kartı Belleği (VRAM) Düzeltmesi
+   - Sistemdeki ekran kartlarının bellek kapasitelerinin yanlış hesaplanıp ekrana hatalı yansıması (örneğin 1 GB olan Intel kartın 2 GB olarak görünmesi) sorunu çözüldü. Bellek değerleri artık %100 doğru gösteriliyor.
+
+6. Sensörler ve Batarya Okuma Sistemi Yenilendi
+   - Pil sağlığı "Okunamıyor" hatası veren ve güvenlik izinleri nedeniyle veri vermeyen sistemler (örn. MSI donanımları) için yeni bir yedek algoritma (Powercfg XML Ayrıştırıcı) geliştirildi. Artık pillerin mevcut maksimum şarj ve tasarım kapasiteleri okunup %81 (34.182 / 42.379 mWh) formatında kusursuz gösteriliyor.
+
+7. Kurulum (Build) Ekranı İyileştirmeleri
+   - Kurulum (build.ps1) ekranındaki Türkçe karakterlerin bozuk görünmesi sorunu düzeltildi.
+   - Derleme işlemi sırasında oluşan zararsız uyarıların ekrana kırmızı hata mesajı olarak yansıyıp süreci durdurması engellendi. Daha temiz ve sorunsuz bir kurulum sağlandı.
+
+8. Genel Stabilite
+   - Uygulamanın altyapısında temizlik yapılarak gelecekte sorun yaratabilecek kodlar güncellendi ve daha kararlı bir çalışma ortamı sağlandı.

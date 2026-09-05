@@ -21,6 +21,7 @@
 #include "views/cleanerpage.h"
 #include "views/debloatpage.h"
 #include "views/godmodepage.h"
+#include "views/officepage.h"
 #include "views/journalpage.h"
 #include "views/settingspage.h"
 #include "widgets/applyoverlay.h"
@@ -209,6 +210,10 @@ void MainWindow::buildUi()
     m_godMode = new GodModePage(m_godModeScroll);
     m_godModeScroll->setWidget(m_godMode);
 
+    m_officeScroll = new SmoothScrollArea(m_stack);
+    m_office = new OfficePage(m_officeScroll);
+    m_officeScroll->setWidget(m_office);
+
     m_journalScroll = new SmoothScrollArea(m_stack);
     m_journal = new JournalPage(m_engine, m_state, m_journalScroll);
     m_journalScroll->setWidget(m_journal);
@@ -227,6 +232,7 @@ void MainWindow::buildUi()
     m_stack->addWidget(m_appsScroll);
     m_stack->addWidget(m_featuresScroll);
     m_stack->addWidget(m_godModeScroll);
+    m_stack->addWidget(m_officeScroll);
     m_stack->addWidget(m_journalScroll);
     m_stack->addWidget(m_aboutScroll);
 
@@ -368,6 +374,7 @@ void MainWindow::wire()
             refreshView();
     });
     connect(m_godMode, &GodModePage::notice, this, &MainWindow::showNotice);
+    connect(m_office, &OfficePage::notice, this, &MainWindow::showNotice);
     connect(m_journal, &JournalPage::notice, this, &MainWindow::showNotice);
     // The scan runs in the background from construction on; if it lands while this page
     // happens to be the one on screen, the header's "N uygulama bulundu" needs a refresh.
@@ -556,6 +563,7 @@ void MainWindow::refreshView()
     const bool apps = !searching && current == Sidebar::appsId();
     const bool features = !searching && current == Sidebar::featuresId();
     const bool godMode = !searching && current == Sidebar::godModeId();
+    const bool office = !searching && current == Sidebar::officeId();
     const bool journal = !searching && current == Sidebar::journalId();
     const bool tiLauncher = !searching && current == Sidebar::tiLauncherId();
     const bool about = !searching && current == Sidebar::aboutId();
@@ -564,7 +572,7 @@ void MainWindow::refreshView()
     // The filter and the sort act on the tweak list and nothing else; the journal and the
     // actions had been showing them over lists they could not filter.
     m_chrome->setControlsVisible(!overview && !settings && !about && !debloat && !cleaner
-                                 && !tiLauncher && !godMode && !journal && !actions && !apps
+                                 && !tiLauncher && !godMode && !office && !journal && !actions && !apps
                                  && !features);
 
     if (about) {
@@ -611,6 +619,14 @@ void MainWindow::refreshView()
                                   .arg(m_godMode->rowCount()));
         m_chrome->setPendingLabel({});
         m_stack->setCurrentWidget(m_godModeScroll);
+        return;
+    }
+
+    if (office) {
+        m_chrome->setTitle(Locale::tr(QStringLiteral("office.title")));
+        m_chrome->setSubtitle(Locale::tr(QStringLiteral("office.subtitle")));
+        m_chrome->setPendingLabel({});
+        m_stack->setCurrentWidget(m_officeScroll);
         return;
     }
 

@@ -198,6 +198,7 @@ const Icons::Glyph &pageGlyph(const QString &id)
         {Sidebar::actionsId(), &Zap},
         {Sidebar::cleanerId(), &Trash2},
         {Sidebar::godModeId(), &LayoutGrid},
+        {Sidebar::officeId(), &Icons::Lucide::Download},
         {Sidebar::tiLauncherId(), &KeyRound},
         {Sidebar::debloatId(), &Package},
         {Sidebar::appsId(), &PackagePlus},

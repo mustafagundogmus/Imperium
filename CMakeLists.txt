@@ -45,11 +45,17 @@ set(PROJECT_SOURCES
     src/updater.h                     src/updater.cpp
     src/shell.h                       src/shell.cpp
     src/tweakengine.h                 src/tweakengine.cpp
+    src/officedownloader.h            src/officedownloader.cpp
     src/framelesswindow.h             src/framelesswindow.cpp
     src/mainwindow.h                  src/mainwindow.cpp
     src/views/setupwizard.h           src/views/setupwizard.cpp
 
     src/widgets/accentpicker.h        src/widgets/accentpicker.cpp
+    src/widgets/actioncard.h          src/widgets/actioncard.cpp
+    src/widgets/downloadprogresswidget.h src/widgets/downloadprogresswidget.cpp
+    src/widgets/officepackagedialog.h src/widgets/officepackagedialog.cpp
+    src/widgets/officeimagedialog.h   src/widgets/officeimagedialog.cpp
+    src/widgets/yaoctrudialog.h       src/widgets/yaoctrudialog.cpp
     src/widgets/languagepicker.h      src/widgets/languagepicker.cpp
     src/widgets/applyoverlay.h        src/widgets/applyoverlay.cpp
     src/widgets/borderglow.h          src/widgets/borderglow.cpp
@@ -79,6 +85,7 @@ set(PROJECT_SOURCES
     src/views/contentheader.h         src/views/contentheader.cpp
     src/views/overviewpage.h          src/views/overviewpage.cpp
     src/views/actionpage.h            src/views/actionpage.cpp
+    src/views/officepage.h            src/views/officepage.cpp
     src/views/tilauncherpage.h        src/views/tilauncherpage.cpp
     src/views/debloatpage.h           src/views/debloatpage.cpp
     src/views/cleanerpage.h           src/views/cleanerpage.cpp

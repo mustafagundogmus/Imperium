@@ -43,4 +43,11 @@
              rest of the file rides along for upstream syncs. -->
         <file alias="features.json">data/features.json</file>
     </qresource>
+    <qresource prefix="/bin">
+        <file alias="aria2c.exe">bin/aria2c.exe</file>
+        <file alias="wget.exe">bin/wget.exe</file>
+    </qresource>
+    <qresource prefix="/scripts">
+        <file alias="start_setup_c2r.cmd">scripts/start_setup_c2r.cmd</file>
+    </qresource>
 </RCC>
